@@ -1,0 +1,137 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "meta": {
+    "name": "Witness Design Tokens",
+    "source": "Figma file jXSvmuvXXvtSUONs91Yyyv",
+    "generatedAt": "2026-05-04"
+  },
+  "color": {
+    "brand": {
+      "primaryOrange": {
+        "glare": { "value": "#FFF5F1", "type": "color" },
+        "touch": { "value": "#FFE8DF", "type": "color" },
+        "peach": { "value": "#FFB299", "type": "color" },
+        "theOrange": { "value": "#FF5C1B", "type": "color" }
+      },
+      "primaryYellow": {
+        "beach": { "value": "#FFFCE9", "type": "color" },
+        "sun": { "value": "#FFEB80", "type": "color" },
+        "theYellow": { "value": "#FFD000", "type": "color" }
+      },
+      "primaryBlue": {
+        "sky": { "value": "#E7F4FF", "type": "color" },
+        "theBlue": { "value": "#155DFC", "type": "color" }
+      }
+    },
+    "neutral": {
+      "grey": { "value": "#F4F4F4", "type": "color" },
+      "lotion": { "value": "#E9E9E9", "type": "color" },
+      "darkGrey": { "value": "#ADADAD", "type": "color" },
+      "coolGrey": { "value": "#45556C", "type": "color" },
+      "black": { "value": "#120B0B", "type": "color" },
+      "white": { "value": "#FFFFFF", "type": "color" }
+    },
+    "semantic": {
+      "success": {
+        "100": { "value": "#DCFCE7", "type": "color" },
+        "500": { "value": "#16A34A", "type": "color" },
+        "1000": { "value": "#15803D", "type": "color" }
+      },
+      "waiting": {
+        "100": { "value": "#FDF2D4", "type": "color" },
+        "500": { "value": "#E9B44C", "type": "color" },
+        "1000": { "value": "#B17728", "type": "color" }
+      },
+      "pending": {
+        "100": { "value": "#FFE0CA", "type": "color" },
+        "500": { "value": "#FF6900", "type": "color" },
+        "1000": { "value": "#D95B03", "type": "color" }
+      },
+      "error": {
+        "100": { "value": "#FEE2E2", "type": "color" },
+        "500": { "value": "#DC2626", "type": "color" },
+        "1000": { "value": "#B91C1C", "type": "color" }
+      }
+    }
+  },
+  "spacing": {
+    "gap1": { "value": "8px", "type": "dimension" },
+    "gap2": { "value": "8px", "type": "dimension" },
+    "gap3": { "value": "12px", "type": "dimension" },
+    "gap4": { "value": "16px", "type": "dimension" },
+    "gap5": { "value": "18px", "type": "dimension" },
+    "gap6": { "value": "24px", "type": "dimension" },
+    "gap7": { "value": "32px", "type": "dimension" },
+    "gap8": { "value": "40px", "type": "dimension" },
+    "gap9": { "value": "52px", "type": "dimension" }
+  },
+  "radius": {
+    "sm": { "value": "6px", "type": "dimension" },
+    "md": { "value": "8px", "type": "dimension" },
+    "lg": { "value": "10px", "type": "dimension" },
+    "xl": { "value": "12px", "type": "dimension" },
+    "full": { "value": "9999px", "type": "dimension" }
+  },
+  "typography": {
+    "headingH1Sb32": {
+      "fontFamily": { "value": "Inter", "type": "fontFamily" },
+      "fontWeight": { "value": 600, "type": "fontWeight" },
+      "fontSize": { "value": "32px", "type": "dimension" },
+      "lineHeight": { "value": "32px", "type": "dimension" }
+    },
+    "headingH2Pdr28": {
+      "fontFamily": { "value": "Playfair Display", "type": "fontFamily" },
+      "fontWeight": { "value": 400, "type": "fontWeight" },
+      "fontSize": { "value": "28px", "type": "dimension" },
+      "lineHeight": { "value": "140%", "type": "number" }
+    },
+    "headingH3R22": {
+      "fontFamily": { "value": "Inter", "type": "fontFamily" },
+      "fontWeight": { "value": 400, "type": "fontWeight" },
+      "fontSize": { "value": "22px", "type": "dimension" },
+      "lineHeight": { "value": "32px", "type": "dimension" }
+    },
+    "headingH3Sb22": {
+      "fontFamily": { "value": "Inter", "type": "fontFamily" },
+      "fontWeight": { "value": 600, "type": "fontWeight" },
+      "fontSize": { "value": "22px", "type": "dimension" },
+      "lineHeight": { "value": "32px", "type": "dimension" }
+    },
+    "headingH4Sb20": {
+      "fontFamily": { "value": "Inter", "type": "fontFamily" },
+      "fontWeight": { "value": 600, "type": "fontWeight" },
+      "fontSize": { "value": "20px", "type": "dimension" },
+      "lineHeight": { "value": "28px", "type": "dimension" }
+    },
+    "subHeadingSb12": {
+      "fontFamily": { "value": "Inter", "type": "fontFamily" },
+      "fontWeight": { "value": 600, "type": "fontWeight" },
+      "fontSize": { "value": "12px", "type": "dimension" },
+      "lineHeight": { "value": "16px", "type": "dimension" }
+    },
+    "bodyB1M14": {
+      "fontFamily": { "value": "Inter", "type": "fontFamily" },
+      "fontWeight": { "value": 500, "type": "fontWeight" },
+      "fontSize": { "value": "14px", "type": "dimension" },
+      "lineHeight": { "value": "20px", "type": "dimension" }
+    },
+    "bodyB2R14": {
+      "fontFamily": { "value": "Inter", "type": "fontFamily" },
+      "fontWeight": { "value": 400, "type": "fontWeight" },
+      "fontSize": { "value": "14px", "type": "dimension" },
+      "lineHeight": { "value": "20px", "type": "dimension" }
+    },
+    "bodyB3M12": {
+      "fontFamily": { "value": "Inter", "type": "fontFamily" },
+      "fontWeight": { "value": 500, "type": "fontWeight" },
+      "fontSize": { "value": "12px", "type": "dimension" },
+      "lineHeight": { "value": "16px", "type": "dimension" }
+    },
+    "bodyB4B12": {
+      "fontFamily": { "value": "Inter", "type": "fontFamily" },
+      "fontWeight": { "value": 700, "type": "fontWeight" },
+      "fontSize": { "value": "12px", "type": "dimension" },
+      "lineHeight": { "value": "16px", "type": "dimension" }
+    }
+  }
+}
