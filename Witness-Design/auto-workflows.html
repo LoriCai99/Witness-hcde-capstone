@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Witness · Auto Workflows</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --color-brand-primary-orange-glare:#FFF5F1;--color-brand-primary-orange-touch:#FFE8DF;
+  --color-brand-primary-orange-peach:#FFB299;--color-brand-primary-orange:#FF5C1B;
+  --color-brand-primary-blue-sky:#E7F4FF;--color-brand-primary-blue:#155DFC;
+  --color-neutral-grey:#F4F4F4;--color-neutral-lotion:#E9E9E9;
+  --color-neutral-dark-grey:#ADADAD;--color-neutral-cool-grey:#45556C;
+  --color-neutral-black:#120B0B;--color-neutral-white:#FFFFFF;
+  --color-semantic-success-100:#DCFCE7;--color-semantic-success-500:#16A34A;
+  --color-semantic-waiting-100:#FDF2D4;--color-semantic-waiting-500:#E9B44C;
+  --color-semantic-pending-100:#FFE0CA;--color-semantic-pending-500:#FF6900;--color-semantic-pending-1000:#D95B03;
+  --color-semantic-error-100:#FEE2E2;--color-semantic-error-500:#DC2626;
+  --spacing-1:8px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;
+  --spacing-5:18px;--spacing-6:24px;--spacing-7:32px;--spacing-8:40px;
+  --radius-sm:6px;--radius-md:8px;--radius-lg:10px;--radius-xl:12px;--radius-full:9999px;
+  --bg:var(--color-neutral-grey);--surface:var(--color-neutral-white);
+  --ink:var(--color-neutral-black);--ink-2:var(--color-neutral-cool-grey);--ink-3:var(--color-neutral-dark-grey);
+  --border:rgba(69,85,108,0.14);--border-md:rgba(69,85,108,0.24);
+  --ai:var(--color-semantic-pending-500);--ai-deep:var(--color-semantic-pending-1000);
+  --ai-soft:var(--color-brand-primary-orange-glare);
+  --ok:var(--color-semantic-success-500);--warn:var(--color-semantic-waiting-500);--crit:var(--color-semantic-error-500);
+  --font-display:'Playfair Display',Georgia,serif;--font-body:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* ── Layout ── */
+.app{display:grid;grid-template-rows:52px 1fr;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 var(--spacing-6);gap:var(--spacing-4);position:sticky;top:0;z-index:30}
+.brand-link{display:flex;align-items:center;gap:var(--spacing-2);text-decoration:none;color:var(--ink)}
+.brand-mark{width:26px;height:26px;border-radius:var(--radius-sm);background:var(--ink);color:var(--surface);display:grid;place-items:center;font-family:var(--font-display);font-style:italic;font-size:14px}
+.brand-name{font-family:var(--font-display);font-size:16px;font-weight:500;letter-spacing:-0.02em}
+.topbar-nav{display:flex;gap:2px;margin-left:var(--spacing-6)}
+.tnav{font-size:12px;font-weight:500;padding:5px var(--spacing-3);border-radius:var(--radius-md);color:var(--ink-2);cursor:pointer;border:none;background:none;font-family:var(--font-body);transition:all .12s}
+.tnav:hover{background:var(--bg);color:var(--ink)}
+.tnav.active{background:var(--bg);color:var(--ink);font-weight:600}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:var(--spacing-3)}
+.user-chip{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--ink-2);cursor:pointer}
+.user-av{width:26px;height:26px;border-radius:var(--radius-full);background:linear-gradient(135deg,var(--ink-2),var(--ink));color:white;font-size:10px;font-weight:600;display:grid;place-items:center}
+
+.shell{display:grid;grid-template-columns:220px 1fr}
+
+/* ── Sidebar ── */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:var(--spacing-5) var(--spacing-3);display:flex;flex-direction:column;gap:2px;overflow-y:auto;height:calc(100vh - 52px);position:sticky;top:52px}
+.sidebar-label{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);padding:var(--spacing-2) var(--spacing-3) 4px}
+.si{display:flex;align-items:center;gap:9px;padding:7px var(--spacing-3);border-radius:var(--radius-md);font-size:12px;font-weight:500;color:var(--ink-2);cursor:pointer;border:none;background:none;font-family:var(--font-body);width:100%;text-align:left;transition:all .12s}
+.si:hover{background:var(--bg);color:var(--ink)}
+.si.active{background:var(--bg);color:var(--ink);font-weight:600}
+.si-num{margin-left:auto;font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:var(--radius-sm);font-weight:600}
+.si-num.g{background:var(--color-semantic-success-100);color:var(--ok)}
+.si-num.r{background:var(--color-semantic-error-100);color:var(--crit)}
+.sdiv{height:1px;background:var(--border);margin:6px 0}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px var(--spacing-4);border-radius:var(--radius-md);font-family:var(--font-body);font-size:12px;font-weight:500;border:1px solid var(--border-md);background:var(--surface);color:var(--ink);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--bg)}
+.btn.solid{background:var(--ink);color:white;border-color:var(--ink)}
+.btn.solid:hover{background:var(--ink-2)}
+.btn.sm{padding:5px var(--spacing-3);font-size:11px}
+
+/* ── Main ── */
+.main{padding:var(--spacing-7) var(--spacing-7);display:flex;flex-direction:column;gap:var(--spacing-6);overflow-y:auto;max-height:calc(100vh - 52px)}
+
+/* ── Page header ── */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--spacing-4)}
+.ph-title{font-family:var(--font-display);font-size:28px;font-weight:500;letter-spacing:-0.02em;margin-bottom:4px}
+.ph-sub{font-size:13px;color:var(--ink-2);max-width:480px;line-height:1.6}
+.ph-actions{display:flex;gap:var(--spacing-2);flex-shrink:0}
+
+/* ── Overnight banner ── */
+.ob{background:var(--ink);border-radius:var(--radius-xl);padding:var(--spacing-6) var(--spacing-7);position:relative;overflow:hidden}
+.ob::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.ob-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--spacing-5);position:relative;z-index:1}
+.ob-eyebrow{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,237,232,.4);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.ob-pulse{width:5px;height:5px;border-radius:50%;background:var(--ok);animation:pls 2s ease-in-out infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.35}}
+.ob-title{font-family:var(--font-display);font-size:20px;color:rgba(255,255,255,.9);letter-spacing:-0.01em}
+.ob-title em{font-style:italic;color:var(--ok)}
+.ob-review{font-size:11px;font-weight:500;padding:6px var(--spacing-3);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:rgba(240,237,232,.7);cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
+.ob-review:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.9)}
+.ob-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--spacing-3);position:relative;z-index:1}
+.ob-stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-lg);padding:var(--spacing-3) var(--spacing-4)}
+.ob-val{font-family:var(--font-mono);font-size:24px;font-weight:600;letter-spacing:-.02em;margin-bottom:3px;color:rgba(255,255,255,.9)}
+.ob-val.g{color:var(--ok)}
+.ob-val.a{color:var(--warn)}
+.ob-lab{font-size:11px;color:rgba(240,237,232,.4);line-height:1.3}
+
+/* ── Two col ── */
+.two-col{display:grid;grid-template-columns:1fr 340px;gap:var(--spacing-6);align-items:start}
+
+/* ── Section header ── */
+.sec-hd{display:flex;align-items:baseline;gap:var(--spacing-3);flex-wrap:wrap;margin-bottom:var(--spacing-3)}
+.sec-label{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.sec-hint{font-size:11px;color:var(--ink-3);line-height:1.5}
+
+/* ── Workflow card ── */
+.wf-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:var(--spacing-3)}
+.wf-head{padding:var(--spacing-5) var(--spacing-6);display:flex;align-items:flex-start;gap:var(--spacing-4);cursor:pointer;transition:background .12s}
+.wf-head:hover{background:var(--color-brand-primary-orange-glare)}
+.wf-icon{width:32px;height:32px;border-radius:var(--radius-md);display:grid;place-items:center;flex-shrink:0;margin-top:2px}
+.wf-icon.g{background:var(--color-semantic-success-100)}
+.wf-icon.a{background:var(--color-semantic-waiting-100)}
+.wf-icon.b{background:var(--color-brand-primary-blue-sky)}
+.wf-icon.n{background:var(--color-neutral-lotion)}
+.wf-main{flex:1;min-width:0}
+.wf-title-row{display:flex;align-items:center;gap:var(--spacing-2);flex-wrap:wrap;margin-bottom:4px}
+.wf-title{font-size:14px;font-weight:600;color:var(--ink)}
+.wf-badge{font-family:var(--font-mono);font-size:9px;font-weight:600;padding:2px 7px;border-radius:var(--radius-sm)}
+.wb-auto{background:var(--color-semantic-success-100);color:var(--ok)}
+.wb-ask{background:var(--color-semantic-waiting-100);color:var(--warn)}
+.wb-off{background:var(--color-neutral-lotion);color:var(--ink-3)}
+.wb-new{background:var(--color-brand-primary-blue-sky);color:var(--color-brand-primary-blue)}
+.wf-desc{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin-bottom:var(--spacing-2)}
+.wf-sched{display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10px;color:var(--ink-3)}
+
+/* ── Toggle ── */
+.tog{width:36px;height:20px;border-radius:var(--radius-full);border:none;cursor:pointer;position:relative;transition:all .2s;flex-shrink:0;margin-top:4px}
+.tog::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:white;top:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog.on{background:var(--ok)}
+.tog.on::after{left:19px}
+.tog.off{background:var(--ink-3)}
+.tog.off::after{left:3px}
+
+/* ── Detail panel ── */
+.wf-detail{display:none;border-top:1px solid var(--border);padding:var(--spacing-5) var(--spacing-6)}
+.wf-detail.open{display:block}
+
+/* permission selector */
+.perm-sel{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-2);margin-bottom:var(--spacing-5)}
+.po{border:1px solid var(--border-md);border-radius:var(--radius-lg);padding:var(--spacing-3) var(--spacing-4);cursor:pointer;transition:all .12s;text-align:center}
+.po:hover{border-color:var(--ink-2)}
+.po-ico{font-size:18px;margin-bottom:4px}
+.po-label{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.po-desc{font-size:11px;color:var(--ink-3)}
+.po.sel-g{border-color:var(--ok);background:var(--color-semantic-success-100)}
+.po.sel-a{border-color:var(--warn);background:var(--color-semantic-waiting-100)}
+.po.sel-r{border-color:var(--crit);background:var(--color-semantic-error-100)}
+
+/* action list */
+.act-list{display:flex;flex-direction:column;gap:var(--spacing-2);margin-bottom:var(--spacing-5)}
+.act-item{display:flex;align-items:center;gap:var(--spacing-3);padding:var(--spacing-3) var(--spacing-4);background:var(--bg);border-radius:var(--radius-md)}
+.act-ico{width:28px;height:28px;border-radius:var(--radius-md);display:grid;place-items:center;font-size:14px;flex-shrink:0}
+.act-ico.g{background:var(--color-semantic-success-100)}
+.act-ico.a{background:var(--color-semantic-waiting-100)}
+.act-name{font-size:12.5px;font-weight:500;color:var(--ink)}
+.act-desc{font-size:11px;color:var(--ink-3);margin-top:1px}
+.perm-pill{margin-left:auto;font-family:var(--font-mono);font-size:10px;font-weight:600;padding:3px 9px;border-radius:var(--radius-full);border:none;cursor:pointer;flex-shrink:0}
+.pp-a{background:var(--color-semantic-success-100);color:var(--ok)}
+.pp-q{background:var(--color-semantic-waiting-100);color:var(--warn)}
+.pp-o{background:var(--color-neutral-lotion);color:var(--ink-3)}
+
+/* schedule row */
+.sched-row{display:flex;align-items:center;gap:var(--spacing-4);padding-top:var(--spacing-3);border-top:1px solid var(--border)}
+.sched-label{font-size:12px;color:var(--ink-2);white-space:nowrap}
+.sched-sel{font-family:var(--font-body);font-size:12px;border:1px solid var(--border-md);border-radius:var(--radius-md);padding:5px var(--spacing-3);background:var(--surface);color:var(--ink);outline:none;cursor:pointer}
+
+/* ── User-defined section ── */
+.udef-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden}
+.udef-head{padding:var(--spacing-5) var(--spacing-6);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.udef-title{font-size:13px;font-weight:600;color:var(--ink)}
+.udef-badge{font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:var(--radius-sm);background:var(--color-brand-primary-blue-sky);color:var(--color-brand-primary-blue);border:1px solid rgba(21,93,252,.2)}
+.nl-area{padding:var(--spacing-5) var(--spacing-6);border-bottom:1px solid var(--border)}
+.nl-label{font-size:11.5px;color:var(--ink-2);margin-bottom:var(--spacing-3);line-height:1.5}
+.nl-input-wrap{display:flex;gap:var(--spacing-2);align-items:flex-start}
+.nl-input{flex:1;padding:var(--spacing-3) var(--spacing-4);border:1px solid var(--border-md);border-radius:var(--radius-lg);font-family:var(--font-body);font-size:13px;color:var(--ink);background:var(--bg);resize:none;outline:none;line-height:1.5}
+.nl-input:focus{border-color:var(--ink-2);background:var(--surface)}
+.nl-send{width:36px;height:36px;border-radius:var(--radius-md);background:var(--ink);border:none;cursor:pointer;display:grid;place-items:center;flex-shrink:0;margin-top:2px;transition:background .15s}
+.nl-send:hover{background:var(--ink-2)}
+
+/* Interpretation preview */
+.interp-preview{display:none;border-top:1px solid var(--border);padding:var(--spacing-5) var(--spacing-6);background:var(--color-brand-primary-orange-glare)}
+.interp-preview.visible{display:block}
+.ip-eyebrow{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ai-deep);margin-bottom:var(--spacing-4)}
+.ip-read-back{background:var(--surface);border:1px solid var(--color-brand-primary-orange-peach);border-radius:var(--radius-lg);padding:var(--spacing-4) var(--spacing-5);margin-bottom:var(--spacing-4)}
+.ip-rb-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ai);margin-bottom:var(--spacing-2);display:flex;align-items:center;gap:5px}
+.ip-rb-text{font-family:var(--font-display);font-size:15px;line-height:1.5;color:var(--ink)}
+.ip-structured-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:var(--spacing-3)}
+.ip-structured{display:flex;flex-direction:column;gap:var(--spacing-2);margin-bottom:var(--spacing-4)}
+.ip-row{display:flex;align-items:flex-start;gap:var(--spacing-3)}
+.ip-row-label{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);min-width:80px;padding-top:3px}
+.ip-row-val{display:flex;flex-wrap:wrap;gap:4px}
+.ip-tag{font-size:11px;font-weight:500;padding:2px 9px;border-radius:var(--radius-full)}
+.ip-tag.trigger{background:var(--color-brand-primary-blue-sky);color:var(--color-brand-primary-blue)}
+.ip-tag.condition{background:var(--color-neutral-lotion);color:var(--ink-2)}
+.ip-tag.condition.pending{background:var(--color-semantic-waiting-100);color:var(--warn);font-style:italic}
+.ip-tag.condition.resolved{background:var(--color-semantic-success-100);color:var(--ok)}
+.ip-tag.action{background:var(--color-semantic-pending-100);color:var(--ai)}
+.ip-tag.perm{background:var(--color-semantic-success-100);color:var(--ok)}
+.ip-question{background:var(--surface);border:1px solid var(--warn);border-radius:var(--radius-lg);padding:var(--spacing-4) var(--spacing-5);margin-bottom:var(--spacing-4)}
+.ip-q-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);margin-bottom:var(--spacing-2);display:flex;align-items:center;gap:5px}
+.ip-q-text{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin-bottom:var(--spacing-3)}
+.ip-q-text strong{color:var(--ink)}
+.ip-q-options{display:flex;gap:var(--spacing-2)}
+.ip-q-opt{padding:6px var(--spacing-4);border-radius:var(--radius-md);border:1px solid var(--border-md);background:var(--surface);font-size:12px;color:var(--ink);cursor:pointer;font-family:var(--font-body);transition:all .12s}
+.ip-q-opt:hover{border-color:var(--ink)}
+.ip-q-opt.selected{background:var(--ink);color:white;border-color:var(--ink)}
+.ip-actions{display:flex;gap:var(--spacing-2);flex-wrap:wrap}
+.ip-confirm{padding:8px var(--spacing-6);border-radius:var(--radius-md);border:none;background:var(--ink);color:white;font-size:12.5px;font-weight:500;cursor:pointer;font-family:var(--font-body);transition:all .15s}
+.ip-confirm:disabled{background:var(--ink-3);cursor:not-allowed}
+.ip-confirm:not(:disabled):hover{background:var(--ink-2)}
+.ip-edit,.ip-discard{padding:8px var(--spacing-4);border-radius:var(--radius-md);border:1px solid var(--border-md);background:transparent;font-size:12px;color:var(--ink-2);cursor:pointer;font-family:var(--font-body)}
+
+/* Saved user workflows */
+.user-wf-list{border-top:1px solid var(--border)}
+.uwf-card{display:flex;align-items:center;gap:var(--spacing-4);padding:var(--spacing-4) var(--spacing-6);border-bottom:1px solid var(--border)}
+.uwf-card:last-child{border-bottom:none}
+.uwf-icon{font-size:18px;flex-shrink:0}
+.uwf-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.uwf-rule{font-family:var(--font-mono);font-size:10px;color:var(--ink-3)}
+.uwf-controls{margin-left:auto;flex-shrink:0}
+
+/* ── Activity panel (run log) ── */
+.act-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;position:sticky;top:var(--spacing-6)}
+.ap-head{padding:var(--spacing-5) var(--spacing-6);border-bottom:1px solid var(--border);display:flex;align-items:baseline;justify-content:space-between}
+.ap-title{font-family:var(--font-display);font-size:17px;font-weight:500;letter-spacing:-0.01em}
+.ap-meta{font-family:var(--font-mono);font-size:10px;color:var(--ink-3)}
+.ap-tabs{display:flex;gap:2px;padding:var(--spacing-2) var(--spacing-6);border-bottom:1px solid var(--border);background:var(--bg)}
+.ap-tab{font-size:11px;font-weight:500;padding:4px var(--spacing-3);border-radius:var(--radius-md);color:var(--ink-2);cursor:pointer;border:none;background:none;font-family:var(--font-body);transition:all .12s}
+.ap-tab:hover{background:var(--surface);color:var(--ink)}
+.ap-tab.active{background:var(--surface);color:var(--ink)}
+.ap-scroll{max-height:480px;overflow-y:auto;padding:var(--spacing-4) var(--spacing-6)}
+
+/* log entry */
+.ae{display:grid;grid-template-columns:22px 1fr;gap:var(--spacing-3);margin-bottom:var(--spacing-4)}
+.ae-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:4px}
+.ae-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ae-dot.g{background:var(--ok)}
+.ae-dot.a{background:var(--warn)}
+.ae-dot.b{background:var(--color-brand-primary-blue)}
+.ae-dot.gr{background:var(--ink-3)}
+.ae-line{flex:1;width:2px;background:var(--border);margin-top:4px}
+.ae-body{padding-bottom:var(--spacing-4);border-bottom:1px solid var(--border)}
+.ae:last-child .ae-body{border-bottom:none}
+.ae-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px}
+.ae-title{font-size:12.5px;font-weight:600;color:var(--ink)}
+.ae-time{font-family:var(--font-mono);font-size:10px;color:var(--ink-3)}
+.ae-desc{font-size:12px;color:var(--ink-2);margin-bottom:var(--spacing-2);line-height:1.4}
+.ae-actors{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:var(--spacing-2)}
+.ae-actor{font-size:10px;font-weight:500;padding:2px 7px;border-radius:var(--radius-sm)}
+.ac-ai{background:var(--color-semantic-pending-100);color:var(--ai)}
+.ac-hu{background:var(--color-semantic-success-100);color:var(--ok)}
+.ac-wa{background:var(--color-semantic-waiting-100);color:var(--warn)}
+.ac-of{background:var(--color-neutral-lotion);color:var(--ink-3)}
+.ac-via{background:transparent;color:var(--ink-3);padding-left:0}
+.ae-expand{font-size:11px;color:var(--ink-3);cursor:pointer;margin-bottom:var(--spacing-2)}
+.ae-expand:hover{color:var(--ink)}
+.ae-detail{display:none;margin-top:var(--spacing-3)}
+.ae-detail.open{display:block}
+.ae-section{margin-bottom:var(--spacing-3)}
+.ae-sec-label{display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--spacing-2)}
+.ae-sec-label.read{color:var(--color-brand-primary-blue)}
+.ae-sec-label.wrote{color:var(--ok)}
+.ae-sec-label.skip{color:var(--ink-3)}
+.ae-sec-dot{width:6px;height:6px;border-radius:50%}
+.ae-sec-dot.read{background:var(--color-brand-primary-blue)}
+.ae-sec-dot.wrote{background:var(--ok)}
+.ae-sec-dot.skip{background:var(--ink-3)}
+.ae-line-item{font-size:11.5px;color:var(--ink-2);padding:3px 0 3px var(--spacing-5);line-height:1.4}
+.ae-li-arrow{color:var(--ink-3);margin-right:4px}
+.ae-li-src{color:var(--ink-3)}
+.ae-li-skip-reason{color:var(--ink-3)}
+.ae-btns{display:flex;gap:var(--spacing-2);margin-top:var(--spacing-2)}
+.undo-btn{font-size:11px;font-weight:500;padding:4px var(--spacing-3);border-radius:var(--radius-md);border:1px solid var(--border-md);background:transparent;color:var(--ink-2);cursor:pointer;font-family:var(--font-body)}
+.undo-btn:hover{color:var(--crit);border-color:var(--crit)}
+.verify-btn{font-size:11px;font-weight:500;padding:4px var(--spacing-3);border-radius:var(--radius-md);border:none;background:var(--color-semantic-success-100);color:var(--ok);cursor:pointer;font-family:var(--font-body)}
+
+.ap-foot{padding:var(--spacing-3) var(--spacing-6);border-top:1px solid var(--border);background:var(--bg);display:flex;justify-content:space-between;align-items:center}
+.ap-foot-txt{font-size:11px;color:var(--ink-3)}
+.ap-foot-link{font-size:11px;font-weight:500;color:var(--ai);cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <a class="brand-link" href="#">
+      <div class="brand-mark">W</div>
+      <span class="brand-name">Witness</span>
+    </a>
+    <nav class="topbar-nav">
+      <button class="tnav">Brief</button>
+      <button class="tnav">Waiting Hub</button>
+      <button class="tnav">Cases</button>
+      <button class="tnav active">Workflows</button>
+      <button class="tnav">Analytics</button>
+    </nav>
+    <div class="topbar-right">
+      <div class="user-chip"><div class="user-av">MC</div><span>Maya Chen</span></div>
+    </div>
+  </div>
+
+  <div class="shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-label">Workflows</div>
+      <button class="si active">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M5 3l-3 4 3 4M9 3l3 4-3 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Auto workflows <span class="si-num g">3</span>
+      </button>
+      <button class="si">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M5 4V2.5M9 4V2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Run history
+      </button>
+      <button class="si">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Create workflow
+      </button>
+      <button class="si">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M7 2v5l3 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Undone actions
+      </button>
+      <div class="sdiv"></div>
+      <div class="sidebar-label">Settings</div>
+      <button class="si">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M7 1v2M7 11v2M1 7h2M11 7h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Global AI limits
+      </button>
+    </aside>
+
+    <main class="main">
+
+      <!-- Page header -->
+      <div class="ph">
+        <div>
+          <div class="ph-title">Auto workflows</div>
+          <p class="ph-sub">Define what Witness can do on your behalf — automatically, or only with your approval. Every action is logged overnight and fully reversible.</p>
+        </div>
+        <div class="ph-actions">
+          <button class="btn">View run log</button>
+          <button class="btn solid">Save changes</button>
+        </div>
+      </div>
+
+      <!-- Overnight banner -->
+      <div class="ob">
+        <div class="ob-top">
+          <div>
+            <div class="ob-eyebrow"><div class="ob-pulse"></div>Last night · Apr 29 → Apr 30 · 11 PM – 7 AM</div>
+            <div class="ob-title">Witness ran <em>3 workflows</em> while you were away.</div>
+          </div>
+          <button class="ob-review">Review step by step →</button>
+        </div>
+        <div class="ob-stats">
+          <div class="ob-stat"><div class="ob-val g">24</div><div class="ob-lab">Invoices auto-matched, no exceptions</div></div>
+          <div class="ob-stat"><div class="ob-val">8</div><div class="ob-lab">Routed for payment · ERP</div></div>
+          <div class="ob-stat"><div class="ob-val a">3</div><div class="ob-lab">Held for your review · exceptions</div></div>
+          <div class="ob-stat"><div class="ob-val">2</div><div class="ob-lab">Nudges sent · pre-approved</div></div>
+        </div>
+      </div>
+
+      <!-- Two column layout -->
+      <div class="two-col">
+
+        <!-- Left: Workflows -->
+        <div>
+          <div class="sec-hd">
+            <div class="sec-label">Witness-suggested workflows</div>
+            <div class="sec-hint">Pre-built for the most common AP tasks. Adjust permissions or turn off any rule.</div>
+          </div>
+
+          <!-- Workflow 1: 3-way match -->
+          <div class="wf-card">
+            <div class="wf-head" onclick="toggleWf(this)">
+              <div class="wf-icon g">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M5 4l-3 4 3 4M11 4l3 4-3 4" stroke="#16A34A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="wf-main">
+                <div class="wf-title-row">
+                  <div class="wf-title">3-way match on invoice arrival</div>
+                  <div class="wf-badge wb-auto">Auto</div>
+                </div>
+                <div class="wf-desc">Pulls PO from Amazon Business and GRN from ERP the moment an invoice arrives. Flags exceptions before you open it.</div>
+                <div class="wf-sched">
+                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="3.5" stroke="currentColor" stroke-width="1"/><path d="M4.5 2.5v2.5l1.5 1" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                  On event · every new invoice · Amazon Business + ERP
+                </div>
+              </div>
+              <button class="tog on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></button>
+            </div>
+            <div class="wf-detail">
+              <div class="perm-sel">
+                <div class="po sel-g" onclick="selPerm(this,'g')"><div class="po-ico">⚡</div><div class="po-label">Auto</div><div class="po-desc">Runs silently. Results in brief.</div></div>
+                <div class="po" onclick="selPerm(this,'a')"><div class="po-ico">👆</div><div class="po-label">Ask me first</div><div class="po-desc">Shows plan, waits for you.</div></div>
+                <div class="po" onclick="selPerm(this,'r')"><div class="po-ico">🚫</div><div class="po-label">Off</div><div class="po-desc">Manual only.</div></div>
+              </div>
+              <div class="act-list">
+                <div class="act-item"><div class="act-ico g">📥</div><div class="act-main"><div class="act-name">Pull PO from Amazon Business</div><div class="act-desc">Read-only · no consequence</div></div><button class="perm-pill pp-a" onclick="cyclePill(this)">Auto</button></div>
+                <div class="act-item"><div class="act-ico g">📦</div><div class="act-main"><div class="act-name">Pull GRN from ERP</div><div class="act-desc">Read-only · no consequence</div></div><button class="perm-pill pp-a" onclick="cyclePill(this)">Auto</button></div>
+                <div class="act-item"><div class="act-ico a">⚠️</div><div class="act-main"><div class="act-name">Flag exceptions in case</div><div class="act-desc">Writes exception note to Witness case</div></div><button class="perm-pill pp-a" onclick="cyclePill(this)">Auto</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Workflow 2: Approval nudges -->
+          <div class="wf-card">
+            <div class="wf-head" onclick="toggleWf(this)">
+              <div class="wf-icon a">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#E9B44C" stroke-width="1.4"/><path d="M8 4.5v4l2.5 1.5" stroke="#E9B44C" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+              <div class="wf-main">
+                <div class="wf-title-row">
+                  <div class="wf-title">Approval nudges · overdue approvers</div>
+                  <div class="wf-badge wb-ask">Ask me</div>
+                </div>
+                <div class="wf-desc">When an approval has been waiting over 2 days, Witness drafts a nudge email and waits for your sign-off before sending.</div>
+                <div class="wf-sched">
+                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="3.5" stroke="currentColor" stroke-width="1"/><path d="M4.5 2.5v2.5l1.5 1" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                  Daily at 8 AM · approval system + email
+                </div>
+              </div>
+              <button class="tog on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></button>
+            </div>
+            <div class="wf-detail open">
+              <div class="perm-sel">
+                <div class="po" onclick="selPerm(this,'g')"><div class="po-ico">⚡</div><div class="po-label">Auto</div><div class="po-desc">Runs silently.</div></div>
+                <div class="po sel-a" onclick="selPerm(this,'a')"><div class="po-ico">👆</div><div class="po-label">Ask me first</div><div class="po-desc">Shows plan, waits.</div></div>
+                <div class="po" onclick="selPerm(this,'r')"><div class="po-ico">🚫</div><div class="po-label">Off</div><div class="po-desc">Manual only.</div></div>
+              </div>
+              <div class="act-list">
+                <div class="act-item"><div class="act-ico g">🔍</div><div class="act-main"><div class="act-name">Check overdue approvals</div><div class="act-desc">Read-only scan of approval system</div></div><button class="perm-pill pp-a" onclick="cyclePill(this)">Auto</button></div>
+                <div class="act-item"><div class="act-ico a">✍️</div><div class="act-main"><div class="act-name">Draft nudge email</div><div class="act-desc">Creates draft with invoice context</div></div><button class="perm-pill pp-a" onclick="cyclePill(this)">Auto</button></div>
+                <div class="act-item"><div class="act-ico a">📤</div><div class="act-main"><div class="act-name">Send nudge email</div><div class="act-desc">Reaches another person · always ask</div></div><button class="perm-pill pp-q" onclick="cyclePill(this)">Ask me</button></div>
+              </div>
+              <div class="sched-row">
+                <div class="sched-label">Run this workflow</div>
+                <select class="sched-sel"><option>Daily at 8:00 AM</option><option>Daily at 7:00 AM</option><option>Every 12 hours</option><option>Weekdays only</option></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Workflow 3: Payment routing -->
+          <div class="wf-card">
+            <div class="wf-head" onclick="toggleWf(this)">
+              <div class="wf-icon b">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="5" width="12" height="7" rx="1.5" stroke="#155DFC" stroke-width="1.4"/><path d="M2 8h12" stroke="#155DFC" stroke-width="1.4"/><circle cx="5" cy="11" r=".8" fill="#155DFC"/></svg>
+              </div>
+              <div class="wf-main">
+                <div class="wf-title-row">
+                  <div class="wf-title">Clean invoice payment routing</div>
+                  <div class="wf-badge wb-ask">Ask me</div>
+                </div>
+                <div class="wf-desc">For invoices that pass 3-way match with zero exceptions, Witness prepares the payment in ERP — and always asks before executing.</div>
+                <div class="wf-sched">
+                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="3.5" stroke="currentColor" stroke-width="1"/><path d="M4.5 2.5v2.5l1.5 1" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                  On event · clean match result · ERP
+                </div>
+              </div>
+              <button class="tog on" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></button>
+            </div>
+          </div>
+
+          <!-- Workflow 4: Off / suggested -->
+          <div class="wf-card">
+            <div class="wf-head" onclick="toggleWf(this)">
+              <div class="wf-icon n">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2C4.69 2 2 4.69 2 8s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 2.5v4l2.5 2" stroke="#ADADAD" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="wf-main">
+                <div class="wf-title-row">
+                  <div class="wf-title">Vendor dispute follow-up</div>
+                  <div class="wf-badge wb-off">Off</div>
+                  <div class="wf-badge wb-new">Suggested</div>
+                </div>
+                <div class="wf-desc">Tracks vendor responses to dispute emails. If no reply after 3 days, Witness drafts an escalation for your review. 2 disputes currently overdue.</div>
+                <div class="wf-sched">
+                  <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="3.5" stroke="currentColor" stroke-width="1"/><path d="M4.5 2.5v2.5l1.5 1" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                  Disabled · email + Amazon Business
+                </div>
+              </div>
+              <button class="tog off" onclick="event.stopPropagation();this.classList.toggle('on');this.classList.toggle('off')"></button>
+            </div>
+          </div>
+
+          <!-- My workflows -->
+          <div class="sec-hd" style="margin-top:var(--spacing-6)">
+            <div class="sec-label">My workflows · user-defined</div>
+            <div class="sec-hint">Write your own rules in plain English. Witness reads them back before activating.</div>
+          </div>
+
+          <div class="udef-section">
+            <div class="udef-head">
+              <div class="udef-title">Describe a rule in your own words</div>
+              <div class="udef-badge">Natural language</div>
+            </div>
+            <div class="nl-area">
+              <div class="nl-label">Tell Witness what you want it to do. <strong>Be as specific or as loose as you like</strong> — it will ask if it needs clarification.</div>
+              <div class="nl-input-wrap">
+                <textarea class="nl-input" id="nl-input" placeholder="e.g. When a Staples invoice arrives and all lines match and the amount is under $500, pay it automatically without asking me." rows="3"></textarea>
+                <button class="nl-send" onclick="interpretRule()">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="interp-preview" id="interp-preview">
+              <div class="ip-eyebrow"><div class="ob-pulse"></div>Witness understood — with one thing to confirm</div>
+              <div class="ip-read-back">
+                <div class="ip-rb-label">↳ What I heard you say</div>
+                <div class="ip-rb-text">When a Staples invoice arrives in Amazon Business and the 3-way match is clean and the amount is under $500, pay it automatically via ERP — without asking you first.</div>
+              </div>
+              <div class="ip-structured-label">How I'll structure it</div>
+              <div class="ip-structured">
+                <div class="ip-row"><span class="ip-row-label">Trigger</span><span class="ip-row-val"><span class="ip-tag trigger">Invoice arrives</span><span class="ip-tag trigger">Amazon Business</span></span></div>
+                <div class="ip-row"><span class="ip-row-label">Conditions</span><span class="ip-row-val"><span class="ip-tag condition pending" id="vendor-tag">Vendor = Staples (?)</span><span class="ip-tag condition">3-way match = clean</span><span class="ip-tag condition">Amount &lt; $500</span></span></div>
+                <div class="ip-row"><span class="ip-row-label">Action</span><span class="ip-row-val"><span class="ip-tag action">Execute payment · ERP</span></span></div>
+                <div class="ip-row"><span class="ip-row-label">Permission</span><span class="ip-row-val"><span class="ip-tag perm">⚡ Auto · no approval needed</span></span></div>
+              </div>
+              <div class="ip-question" id="ip-question">
+                <div class="ip-q-label">❓ Question · about "Vendor = Staples"</div>
+                <div class="ip-q-text">You said <strong>"Staples"</strong>. Should this also apply to <strong>Staples Advantage</strong> (a Staples subsidiary), or only invoices where the vendor name is exactly "Staples"?</div>
+                <div class="ip-q-options">
+                  <button class="ip-q-opt" onclick="resolveVendor(this,'all')">Include all Staples subsidiaries</button>
+                  <button class="ip-q-opt" onclick="resolveVendor(this,'exact')">Only exact match "Staples"</button>
+                </div>
+              </div>
+              <div class="ip-actions">
+                <button class="ip-confirm" id="ip-confirm" onclick="saveRule()" disabled>Answer the question above to save</button>
+                <button class="ip-edit" onclick="document.getElementById('nl-input').focus()">Edit in text</button>
+                <button class="ip-discard" onclick="document.getElementById('interp-preview').classList.remove('visible')">Discard</button>
+              </div>
+            </div>
+
+            <div class="user-wf-list" id="user-wf-list">
+              <div class="uwf-card">
+                <div class="uwf-icon">📋</div>
+                <div class="uwf-main">
+                  <div class="uwf-name">Staples auto-pay · clean + under $500</div>
+                  <div class="uwf-rule">IF vendor=Staples AND match=clean AND amount&lt;500 → pay · Auto</div>
+                </div>
+                <div class="uwf-controls"><button class="tog on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button></div>
+              </div>
+              <div class="uwf-card">
+                <div class="uwf-icon">📅</div>
+                <div class="uwf-main">
+                  <div class="uwf-name">Friday vendor overdue summary</div>
+                  <div class="uwf-rule">Every Friday 4 PM → summarize vendor items waiting &gt;5 days · Auto</div>
+                </div>
+                <div class="uwf-controls"><button class="tog on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Run log -->
+        <div class="act-panel">
+          <div class="ap-head">
+            <div class="ap-title">Last night's run log</div>
+            <div class="ap-meta">Apr 29 · 11 PM – 7 AM</div>
+          </div>
+          <div class="ap-tabs">
+            <button class="ap-tab active" onclick="filterTab(this)">All</button>
+            <button class="ap-tab" onclick="filterTab(this)">AI</button>
+            <button class="ap-tab" onclick="filterTab(this)">Human</button>
+            <button class="ap-tab" onclick="filterTab(this)">Flagged</button>
+          </div>
+          <div class="ap-scroll">
+
+            <div class="ae">
+              <div class="ae-dot-col"><div class="ae-dot g"></div><div class="ae-line"></div></div>
+              <div class="ae-body">
+                <div class="ae-top"><div class="ae-title">24 invoices auto-matched · all clean</div><div class="ae-time">11:02 PM</div></div>
+                <div class="ae-desc">3-way match ran on all invoices received after 6 PM.</div>
+                <div class="ae-actors"><span class="ae-actor ac-ai">⚡ Witness AI</span><span class="ae-actor ac-via">via 3-way match workflow</span></div>
+                <div class="ae-expand" onclick="toggleDetail(this)">See what was read, written, and skipped →</div>
+                <div class="ae-detail">
+                  <div class="ae-section"><div class="ae-sec-label read"><div class="ae-sec-dot read"></div>Read · 24 records from 2 systems</div>
+                    <div class="ae-line-item"><span class="ae-li-arrow">↳</span>24 POs <span class="ae-li-src">· Amazon Business</span></div>
+                    <div class="ae-line-item"><span class="ae-li-arrow">↳</span>24 GRNs <span class="ae-li-src">· ERP / receiving</span></div>
+                  </div>
+                  <div class="ae-section"><div class="ae-sec-label wrote"><div class="ae-sec-dot wrote"></div>Wrote · 1 system</div>
+                    <div class="ae-line-item"><span class="ae-li-arrow">↳</span>Match result = clean (×24) <span class="ae-li-src">· Witness case file</span></div>
+                  </div>
+                  <div class="ae-section"><div class="ae-sec-label skip"><div class="ae-sec-dot skip"></div>Did not touch</div>
+                    <div class="ae-line-item"><span class="ae-li-skip-reason">Payment execution — out of scope for this workflow.</span></div>
+                    <div class="ae-line-item"><span class="ae-li-skip-reason">ERP GL coding — not authorized at this step.</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ae">
+              <div class="ae-dot-col"><div class="ae-dot a"></div><div class="ae-line"></div></div>
+              <div class="ae-body">
+                <div class="ae-top"><div class="ae-title">INV-1048 · exception flagged · held</div><div class="ae-time">11:03 PM</div></div>
+                <div class="ae-desc">Qty mismatch on line 2. Held for your review — no payment, no email sent.</div>
+                <div class="ae-actors"><span class="ae-actor ac-ai">⚡ Witness AI</span><span class="ae-actor ac-wa">Waiting for you</span></div>
+                <div class="ae-expand" onclick="toggleDetail(this)">See what was read, written, and skipped →</div>
+                <div class="ae-detail open">
+                  <div class="ae-section"><div class="ae-sec-label read"><div class="ae-sec-dot read"></div>Read</div>
+                    <div class="ae-line-item"><span class="ae-li-arrow">↳</span>PO #4823 · 12 units <span class="ae-li-src">· Amazon Business</span></div>
+                    <div class="ae-line-item"><span class="ae-li-arrow">↳</span>GRN #4823-R · 10 units received <span class="ae-li-src">· ERP</span></div>
+                    <div class="ae-line-item"><span class="ae-li-arrow">↳</span>INV-1048 · 12 units billed <span class="ae-li-src">· Brightline</span></div>
+                  </div>
+                  <div class="ae-section"><div class="ae-sec-label wrote"><div class="ae-sec-dot wrote"></div>Wrote</div>
+                    <div class="ae-line-item"><span class="ae-li-arrow">↳</span>Exception note: "Line 2 qty mismatch · GRN&lt;PO" <span class="ae-li-src">· Witness case</span></div>
+                    <div class="ae-line-item"><span class="ae-li-arrow">↳</span>Status = held_for_review <span class="ae-li-src">· Witness queue</span></div>
+                  </div>
+                  <div class="ae-section"><div class="ae-sec-label skip"><div class="ae-sec-dot skip"></div>Did not touch — and why</div>
+                    <div class="ae-line-item"><span class="ae-li-skip-reason"><strong>Did not pay.</strong> Match was not clean.</span></div>
+                    <div class="ae-line-item"><span class="ae-li-skip-reason"><strong>Did not email vendor.</strong> Outbound communication needs your approval.</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ae">
+              <div class="ae-dot-col"><div class="ae-dot g"></div><div class="ae-line"></div></div>
+              <div class="ae-body">
+                <div class="ae-top"><div class="ae-title">8 invoices routed for payment · ERP</div><div class="ae-time">12:14 AM</div></div>
+                <div class="ae-desc">Clean invoices under $5,000. Routed under your pre-authorization.</div>
+                <div class="ae-actors"><span class="ae-actor ac-ai">⚡ Witness AI</span><span class="ae-actor ac-hu">Pre-approved by you</span></div>
+                <div class="ae-expand" onclick="toggleDetail(this)">See what was read, written, and skipped →</div>
+                <div class="ae-detail">
+                  <div class="ae-section"><div class="ae-sec-label wrote"><div class="ae-sec-dot wrote"></div>Wrote · payment batch posted</div>
+                    <div class="ae-line-item"><span class="ae-li-arrow">↳</span>Payment batch #PB-0429-A · $18,420.00 <span class="ae-li-src">· ERP</span></div>
+                  </div>
+                  <div class="ae-section"><div class="ae-sec-label skip"><div class="ae-sec-dot skip"></div>Did not touch — and why</div>
+                    <div class="ae-line-item"><span class="ae-li-skip-reason"><strong>Did not route 2 invoices over $5,000.</strong> Above your pre-authorized limit.</span></div>
+                  </div>
+                </div>
+                <div class="ae-btns">
+                  <button class="undo-btn" onclick="this.textContent='Undone ✓';this.style.color='var(--crit)'">↩ Undo batch</button>
+                  <button class="verify-btn">✓ Verify in ERP</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="ae">
+              <div class="ae-dot-col"><div class="ae-dot b"></div><div class="ae-line"></div></div>
+              <div class="ae-body">
+                <div class="ae-top"><div class="ae-title">Nudge draft ready · J. Park · INV-1048</div><div class="ae-time">2:00 AM</div></div>
+                <div class="ae-desc">Approval pending 3 days. Draft ready — waiting for your sign-off before sending.</div>
+                <div class="ae-actors"><span class="ae-actor ac-ai">⚡ Witness AI</span><span class="ae-actor ac-wa">Waiting for you</span></div>
+                <div class="ae-expand" onclick="toggleDetail(this)">See what was prepared →</div>
+                <div class="ae-detail">
+                  <div class="ae-section"><div class="ae-sec-label skip"><div class="ae-sec-dot skip"></div>Did not touch — and why</div>
+                    <div class="ae-line-item"><span class="ae-li-skip-reason"><strong>Did not send the email.</strong> Outbound to people requires your approval per workflow setting.</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ae">
+              <div class="ae-dot-col"><div class="ae-dot gr"></div><div class="ae-line"></div></div>
+              <div class="ae-body">
+                <div class="ae-top"><div class="ae-title">Vendor dispute follow-up · skipped</div><div class="ae-time">3:30 AM</div></div>
+                <div class="ae-desc">Workflow is off. 2 disputes overdue — flagged but no action taken.</div>
+                <div class="ae-actors"><span class="ae-actor ac-of">Workflow off</span></div>
+                <div class="ae-expand" onclick="toggleDetail(this)">See what would have happened →</div>
+                <div class="ae-detail">
+                  <div class="ae-section"><div class="ae-sec-label skip"><div class="ae-sec-dot skip"></div>Did not run — workflow off</div>
+                    <div class="ae-line-item"><span class="ae-li-skip-reason">Disputes #D-204 and #D-211 are 4+ days without reply. No data read, no records modified.</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="ap-foot">
+            <div class="ap-foot-txt">Every AI action is logged here. Nothing runs without appearing in this log.</div>
+            <div class="ap-foot-link">Full history →</div>
+          </div>
+        </div>
+
+      </div><!-- /two-col -->
+    </main>
+  </div><!-- /shell -->
+</div><!-- /app -->
+
+<script>
+let vendorChoice = null;
+
+function interpretRule() {
+  const input = document.getElementById('nl-input').value.trim();
+  if (!input) return;
+  vendorChoice = null;
+  const tag = document.getElementById('vendor-tag');
+  tag.classList.remove('resolved'); tag.classList.add('pending'); tag.textContent = 'Vendor = Staples (?)';
+  document.querySelectorAll('.ip-q-opt').forEach(b => b.classList.remove('selected'));
+  const confirmBtn = document.getElementById('ip-confirm');
+  confirmBtn.disabled = true; confirmBtn.textContent = 'Answer the question above to save';
+  document.getElementById('ip-question').style.display = 'block';
+  document.getElementById('interp-preview').classList.add('visible');
+}
+
+function resolveVendor(btn, choice) {
+  vendorChoice = choice;
+  document.querySelectorAll('.ip-q-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const tag = document.getElementById('vendor-tag');
+  tag.classList.remove('pending'); tag.classList.add('resolved');
+  tag.textContent = choice === 'all' ? 'Vendor = Staples*' : 'Vendor = Staples (exact)';
+  const confirmBtn = document.getElementById('ip-confirm');
+  confirmBtn.disabled = false; confirmBtn.textContent = 'Looks right · save workflow';
+}
+
+function saveRule() {
+  if (!vendorChoice) return;
+  document.getElementById('interp-preview').classList.remove('visible');
+  document.getElementById('nl-input').value = '';
+  const list = document.getElementById('user-wf-list');
+  const card = document.createElement('div');
+  card.className = 'uwf-card';
+  const vendorRule = vendorChoice === 'all' ? 'vendor=Staples*' : 'vendor="Staples"';
+  const vendorName = vendorChoice === 'all' ? 'all subsidiaries' : 'exact match';
+  card.innerHTML = `<div class="uwf-icon">✅</div><div class="uwf-main"><div class="uwf-name">Staples auto-pay · ${vendorName}</div><div class="uwf-rule">IF ${vendorRule} AND match=clean AND amount&lt;500 → pay · Auto</div></div><div class="uwf-controls"><button class="tog on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button></div>`;
+  list.appendChild(card);
+  vendorChoice = null;
+}
+
+function toggleWf(head) {
+  const detail = head.nextElementSibling;
+  if (detail && detail.classList.contains('wf-detail')) detail.classList.toggle('open');
+}
+
+function selPerm(el, color) {
+  el.parentElement.querySelectorAll('.po').forEach(p => p.classList.remove('sel-g','sel-a','sel-r'));
+  el.classList.add('sel-' + color);
+}
+
+function cyclePill(btn) {
+  const states = [{cls:'pp-a',label:'Auto'},{cls:'pp-q',label:'Ask me'},{cls:'pp-o',label:'Off'}];
+  const cur = states.findIndex(s => btn.classList.contains(s.cls));
+  const next = (cur + 1) % states.length;
+  states.forEach(s => btn.classList.remove(s.cls));
+  btn.classList.add(states[next].cls);
+  btn.textContent = states[next].label;
+}
+
+function toggleDetail(el) {
+  const detail = el.nextElementSibling;
+  if (!detail) return;
+  if (!el.dataset.label) el.dataset.label = el.textContent;
+  const open = detail.classList.toggle('open');
+  el.textContent = open ? 'Collapse ↑' : el.dataset.label;
+}
+
+function filterTab(tab) {
+  document.querySelectorAll('.ap-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+}
+</script>
+</body>
+</html>

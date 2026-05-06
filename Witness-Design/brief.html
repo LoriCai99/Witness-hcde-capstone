@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Witness · Daily Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  /* ── Witness Design Tokens ── */
+  --color-brand-primary-orange-glare: #FFF5F1;
+  --color-brand-primary-orange-touch: #FFE8DF;
+  --color-brand-primary-orange-peach: #FFB299;
+  --color-brand-primary-orange: #FF5C1B;
+  --color-brand-primary-yellow-beach: #FFFCE9;
+  --color-brand-primary-yellow-sun: #FFEB80;
+  --color-brand-primary-yellow: #FFD000;
+  --color-brand-primary-blue-sky: #E7F4FF;
+  --color-brand-primary-blue: #155DFC;
+  --color-neutral-grey: #F4F4F4;
+  --color-neutral-lotion: #E9E9E9;
+  --color-neutral-dark-grey: #ADADAD;
+  --color-neutral-cool-grey: #45556C;
+  --color-neutral-black: #120B0B;
+  --color-neutral-white: #FFFFFF;
+  --color-semantic-success-100: #DCFCE7;
+  --color-semantic-success-500: #16A34A;
+  --color-semantic-success-1000: #15803D;
+  --color-semantic-waiting-100: #FDF2D4;
+  --color-semantic-waiting-500: #E9B44C;
+  --color-semantic-waiting-1000: #B17728;
+  --color-semantic-pending-100: #FFE0CA;
+  --color-semantic-pending-500: #FF6900;
+  --color-semantic-pending-1000: #D95B03;
+  --color-semantic-error-100: #FEE2E2;
+  --color-semantic-error-500: #DC2626;
+  --color-semantic-error-1000: #B91C1C;
+
+  /* spacing */
+  --spacing-1: 8px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
+  --spacing-5: 18px; --spacing-6: 24px; --spacing-7: 32px; --spacing-8: 40px; --spacing-9: 52px;
+  /* radius */
+  --radius-sm: 6px; --radius-md: 8px; --radius-lg: 10px; --radius-xl: 12px; --radius-full: 9999px;
+
+  /* ── Semantic aliases ── */
+  --bg: var(--color-neutral-grey);
+  --surface: var(--color-neutral-white);
+  --surface-2: var(--color-brand-primary-orange-glare);
+  --ink: var(--color-neutral-black);
+  --ink-2: var(--color-neutral-cool-grey);
+  --ink-3: var(--color-neutral-dark-grey);
+  --border: rgba(69,85,108,0.14);
+  --border-md: rgba(69,85,108,0.24);
+  --ai: var(--color-semantic-pending-500);
+  --ai-deep: var(--color-semantic-pending-1000);
+  --ai-soft: var(--color-brand-primary-orange-glare);
+  --ok: var(--color-semantic-success-500);
+  --warn: var(--color-semantic-waiting-500);
+  --crit: var(--color-semantic-error-500);
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── Shell ── */
+.app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: var(--spacing-6) var(--spacing-3);
+  display: flex; flex-direction: column; gap: var(--spacing-6);
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.brand {
+  display: flex; align-items: center; gap: var(--spacing-3);
+  padding: 0 var(--spacing-3);
+}
+.brand-mark {
+  width: 28px; height: 28px; border-radius: var(--radius-sm);
+  background: var(--ink); color: var(--surface);
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-style: italic; font-size: 15px;
+}
+.brand-name {
+  font-family: var(--font-display); font-size: 18px; font-weight: 500; letter-spacing: -0.02em;
+}
+.nav-section { display: flex; flex-direction: column; gap: 2px; }
+.nav-label {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+  padding: var(--spacing-2) var(--spacing-3) 4px;
+}
+.nav-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px var(--spacing-3); border-radius: var(--radius-md);
+  color: var(--ink-2); cursor: pointer; font-size: 13px; font-weight: 500;
+  transition: all .15s; border: none; background: none; font-family: var(--font-body);
+  width: 100%; text-align: left;
+}
+.nav-item:hover { background: var(--bg); color: var(--ink); }
+.nav-item.active { background: var(--ink); color: var(--surface); }
+.nav-item.active .nav-badge { background: rgba(255,255,255,0.18); color: white; }
+.nav-badge {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: var(--radius-sm);
+  background: var(--color-semantic-pending-100); color: var(--ai);
+}
+.sidebar-footer {
+  margin-top: auto; padding: var(--spacing-3); border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: var(--spacing-3);
+}
+.avatar {
+  width: 30px; height: 30px; border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-neutral-cool-grey), var(--ink));
+  color: white; display: grid; place-items: center;
+  font-size: 11px; font-weight: 600; flex-shrink: 0;
+}
+.avatar-info { font-size: 12px; }
+.avatar-name { font-weight: 600; color: var(--ink); }
+.avatar-role { color: var(--ink-3); font-size: 11px; }
+
+/* ── Main ── */
+main { background: var(--bg); min-width: 0; }
+
+/* ── Topbar ── */
+.topbar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--spacing-7); height: 52px; position: sticky; top: 0; z-index: 20;
+}
+.topbar-date {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em;
+  color: var(--ink-3); text-transform: uppercase;
+}
+.topbar-right { display: flex; align-items: center; gap: var(--spacing-3); }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px var(--spacing-4); border-radius: var(--radius-md);
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  border: 1px solid var(--border-md); background: var(--surface); color: var(--ink);
+  cursor: pointer; transition: all .15s;
+}
+.btn:hover { background: var(--bg); border-color: var(--ink-2); }
+.btn.primary { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.btn.primary:hover { background: var(--ink-2); }
+.btn.ai { background: var(--ai-soft); color: var(--ai); border-color: var(--color-brand-primary-orange-peach); }
+.btn.ai:hover { background: var(--color-brand-primary-orange-touch); }
+.btn.sm { padding: 5px var(--spacing-3); font-size: 12px; }
+
+/* ── Page ── */
+.page { padding: var(--spacing-7) var(--spacing-7); max-width: 1100px; }
+
+/* ── Hero / Greeting ── */
+.hero {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); padding: var(--spacing-7) var(--spacing-8);
+  margin-bottom: var(--spacing-6); position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 340px; height: 100%;
+  background: linear-gradient(135deg, transparent 40%, var(--color-brand-primary-orange-glare) 100%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ai); margin-bottom: var(--spacing-4);
+  display: flex; align-items: center; gap: var(--spacing-2);
+}
+.pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--ai);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+.hero-greeting {
+  font-family: var(--font-display); font-size: 32px; font-weight: 400;
+  line-height: 1.25; letter-spacing: -0.02em; color: var(--ink);
+  max-width: 640px; margin-bottom: var(--spacing-6);
+}
+.hero-greeting em { font-style: italic; color: var(--ai); }
+.hero-metrics {
+  display: flex; gap: var(--spacing-8); flex-wrap: wrap;
+}
+.hero-metric { }
+.hero-metric-val {
+  font-family: var(--font-display); font-size: 28px; font-weight: 500;
+  line-height: 1; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 4px;
+}
+.hero-metric-val.ok { color: var(--ok); }
+.hero-metric-val.warn { color: var(--warn); }
+.hero-metric-label { font-size: 12px; color: var(--ink-2); }
+
+/* ── Sections ── */
+.sections { display: flex; flex-direction: column; gap: var(--spacing-4); }
+
+.section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); overflow: hidden;
+  animation: riseIn .4s ease-out backwards;
+}
+.section:nth-child(1) { animation-delay: .05s; }
+.section:nth-child(2) { animation-delay: .12s; }
+.section:nth-child(3) { animation-delay: .18s; }
+
+@keyframes riseIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none; transition: background .15s;
+}
+.section-header:hover { background: var(--bg); }
+.section-header-left { display: flex; align-items: center; gap: var(--spacing-4); }
+.section-icon {
+  width: 32px; height: 32px; border-radius: var(--radius-md);
+  display: grid; place-items: center; font-size: 15px; flex-shrink: 0;
+}
+.section-icon.crit { background: var(--color-semantic-error-100); color: var(--crit); }
+.section-icon.warn { background: var(--color-semantic-waiting-100); color: var(--warn); }
+.section-icon.ok { background: var(--color-semantic-success-100); color: var(--ok); }
+.section-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 500;
+  letter-spacing: -0.01em; color: var(--ink);
+}
+.section-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.section-header-right { display: flex; align-items: center; gap: var(--spacing-5); }
+.section-stat {
+  text-align: right;
+  font-size: 12px; color: var(--ink-2);
+}
+.section-stat-val {
+  font-family: var(--font-display); font-size: 20px; font-weight: 500;
+  color: var(--ink); display: block; line-height: 1;
+}
+.section-stat-val.crit { color: var(--crit); }
+.section-chevron { color: var(--ink-3); transition: transform .2s; font-size: 12px; }
+.section.collapsed .section-chevron { transform: rotate(-90deg); }
+.section.collapsed .section-body { display: none; }
+
+/* ── Invoice rows ── */
+.invoice-row {
+  display: grid;
+  grid-template-columns: 38px 1fr 120px 100px 120px 110px;
+  gap: var(--spacing-4); align-items: center;
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .12s;
+}
+.invoice-row:last-child { border-bottom: none; }
+.invoice-row:hover { background: var(--color-brand-primary-orange-glare); }
+
+.priority-marker {
+  width: 32px; height: 32px; border-radius: var(--radius-md);
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+}
+.priority-marker.crit { background: var(--color-semantic-error-100); color: var(--crit); }
+.priority-marker.warn { background: var(--color-semantic-waiting-100); color: var(--warn); }
+.priority-marker.ok { background: var(--color-semantic-success-100); color: var(--ok); }
+
+.inv-id {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  color: var(--color-brand-primary-blue); margin-bottom: 2px;
+}
+.inv-vendor { font-size: 13px; font-weight: 500; color: var(--ink); }
+.inv-detail { font-size: 11.5px; color: var(--ink-3); margin-top: 1px; }
+
+.inv-amount {
+  font-family: var(--font-display); font-size: 18px; font-weight: 500;
+  color: var(--ink); text-align: right;
+}
+.inv-amount-sub { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); text-align: right; }
+
+.inv-age { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); }
+.inv-age.warn { color: var(--warn); font-weight: 600; }
+.inv-age.crit { color: var(--crit); font-weight: 600; }
+
+/* ── Status badge ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px var(--spacing-3); border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+.badge.blocked { background: var(--color-semantic-error-100); color: var(--crit); }
+.badge.blocked::before { background: var(--crit); }
+.badge.pending { background: var(--color-semantic-pending-100); color: var(--ai); }
+.badge.pending::before { background: var(--ai); }
+.badge.approved { background: var(--color-semantic-success-100); color: var(--ok); }
+.badge.approved::before { background: var(--ok); }
+.badge.healthy { background: var(--color-semantic-success-100); color: var(--ok); }
+.badge.healthy::before { background: var(--ok); }
+
+/* ── AI Block ── */
+.ai-row {
+  padding: var(--spacing-3) var(--spacing-6) var(--spacing-3) calc(var(--spacing-6) + 38px + var(--spacing-4));
+  background: linear-gradient(90deg, var(--ai-soft) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: var(--spacing-3);
+  font-size: 12.5px; color: var(--ink-2);
+}
+.ai-row-icon {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ai); font-weight: 600;
+  background: var(--color-brand-primary-orange-touch); border: 1px solid var(--color-brand-primary-orange-peach);
+  padding: 2px 6px; border-radius: var(--radius-sm); white-space: nowrap; margin-top: 1px;
+}
+.ai-row-text { line-height: 1.5; }
+.ai-row-text .link { color: var(--ai-deep); font-weight: 500; text-decoration: underline; cursor: pointer; }
+
+/* ── Expanded detail ── */
+.inv-detail-panel {
+  display: none; background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: var(--spacing-6);
+}
+.invoice-row.expanded + .inv-detail-panel { display: grid; }
+.inv-detail-panel {
+  grid-template-columns: 1fr 260px; gap: var(--spacing-7);
+}
+.match-block { }
+.match-title {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: var(--spacing-4);
+}
+.match-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-3); }
+.match-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: var(--spacing-4); position: relative;
+}
+.match-card.matched { border-color: rgba(22,163,74,.3); }
+.match-card.discrepancy { border-color: rgba(220,38,38,.3); }
+.match-card-type {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: var(--spacing-2);
+}
+.match-card-id { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--color-brand-primary-blue); }
+.match-card-amount { font-family: var(--font-display); font-size: 20px; color: var(--ink); margin: var(--spacing-1) 0; }
+.match-card-status {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 500;
+}
+.match-card-status.ok { color: var(--ok); }
+.match-card-status.err { color: var(--crit); }
+
+.conf-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: var(--spacing-5);
+}
+.conf-label {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: var(--spacing-4);
+}
+.conf-val {
+  font-family: var(--font-display); font-size: 48px; font-weight: 400;
+  line-height: 1; color: var(--ai); margin-bottom: var(--spacing-3);
+}
+.conf-bar { height: 4px; background: var(--color-neutral-lotion); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: var(--spacing-5); }
+.conf-fill { height: 100%; background: var(--ai); }
+.conf-text { font-size: 12px; color: var(--ink-2); line-height: 1.5; }
+.conf-text strong { color: var(--ink); }
+.det-actions { display: flex; gap: var(--spacing-2); margin-top: var(--spacing-5); flex-wrap: wrap; }
+
+/* ── Overnight banner ── */
+.overnight {
+  background: var(--ink); border-radius: var(--radius-xl);
+  padding: var(--spacing-7) var(--spacing-8); margin-bottom: var(--spacing-4);
+  position: relative; overflow: hidden;
+}
+.overnight::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+.overnight-eyebrow {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(255,255,255,.4);
+  display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-3);
+  position: relative; z-index: 1;
+}
+.overnight-title {
+  font-family: var(--font-display); font-size: 22px; color: rgba(255,255,255,.9);
+  margin-bottom: var(--spacing-6); position: relative; z-index: 1;
+  letter-spacing: -0.01em;
+}
+.overnight-title em { font-style: italic; color: var(--color-semantic-success-500); }
+.overnight-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-3);
+  position: relative; z-index: 1;
+}
+.ov-stat {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg); padding: var(--spacing-4) var(--spacing-5);
+}
+.ov-val {
+  font-family: var(--font-mono); font-size: 26px; font-weight: 600;
+  letter-spacing: -0.02em; color: rgba(255,255,255,.9); margin-bottom: 4px;
+}
+.ov-val.ok { color: var(--color-semantic-success-500); }
+.ov-val.warn { color: var(--color-semantic-waiting-500); }
+.ov-label { font-size: 11px; color: rgba(255,255,255,.4); line-height: 1.3; }
+
+/* ── Section footer ── */
+.section-footer {
+  padding: var(--spacing-3) var(--spacing-6); border-top: 1px solid var(--border);
+  background: var(--bg); text-align: center;
+}
+.section-footer a { font-size: 12px; color: var(--ink-2); text-decoration: none; }
+.section-footer a:hover { color: var(--ai); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">W</div>
+      <span class="brand-name">Witness</span>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Today</div>
+      <button class="nav-item active">Brief</button>
+      <button class="nav-item">Waiting Hub <span class="nav-badge">24</span></button>
+      <button class="nav-item">Cases</button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Intelligence</div>
+      <button class="nav-item">Patterns</button>
+      <button class="nav-item">Analytics</button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <button class="nav-item">Vendors</button>
+      <button class="nav-item">Approvals</button>
+      <button class="nav-item">Reports</button>
+      <button class="nav-item">Settings</button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="avatar">MC</div>
+      <div class="avatar-info">
+        <div class="avatar-name">Maya Chen</div>
+        <div class="avatar-role">AP Lead</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main>
+    <div class="topbar">
+      <span class="topbar-date">Mon · Apr 28 · 2025 · 08:42 PT</span>
+      <div class="topbar-right">
+        <button class="btn sm">↻ Refresh</button>
+        <button class="btn sm ai">✦ Ask Witness</button>
+      </div>
+    </div>
+
+    <div class="page">
+
+      <!-- Hero Greeting -->
+      <div class="hero" style="margin-bottom: var(--spacing-6);">
+        <div class="hero-eyebrow">
+          <span class="pulse-dot"></span>
+          Witness Daily Brief · Generated 06:00
+        </div>
+        <h1 class="hero-greeting">
+          Good morning, Maya.<br/>
+          I handled <em>24 cases</em> overnight and saved you about <em>3 hours</em>.<br/>
+          Three need your judgment today — I've prepared everything.
+        </h1>
+        <div class="hero-metrics">
+          <div class="hero-metric">
+            <div class="hero-metric-val">$105,180</div>
+            <div class="hero-metric-label">Total at risk</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-val warn">3</div>
+            <div class="hero-metric-label">Need your decision</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-val ok">21</div>
+            <div class="hero-metric-label">Agent resolved</div>
+          </div>
+          <div class="hero-metric">
+            <div class="hero-metric-val ok">$8,200</div>
+            <div class="hero-metric-label">Recovered overnight</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overnight Banner -->
+      <div class="overnight">
+        <div class="overnight-eyebrow">
+          <span class="pulse-dot" style="background:var(--color-semantic-success-500);"></span>
+          Agent Activity · While You Were Away
+        </div>
+        <div class="overnight-title">
+          Drafted <em>6 vendor follow-ups</em>, escalated 2 stalled approvals to backup approvers, and matched 3 receipts from Brightline's portal.
+        </div>
+        <div class="overnight-stats">
+          <div class="ov-stat">
+            <div class="ov-val ok">11</div>
+            <div class="ov-label">Actions taken autonomously</div>
+          </div>
+          <div class="ov-stat">
+            <div class="ov-val warn">4</div>
+            <div class="ov-label">Drafts need your review</div>
+          </div>
+          <div class="ov-stat">
+            <div class="ov-val ok">$8.2k</div>
+            <div class="ov-label">Cash recovered</div>
+          </div>
+          <div class="ov-stat">
+            <div class="ov-val">3</div>
+            <div class="ov-label">Receipts matched automatically</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Priority Sections -->
+      <div class="sections">
+
+        <!-- Section 1: Critical -->
+        <div class="section">
+          <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+            <div class="section-header-left">
+              <div class="section-icon crit">⚡</div>
+              <div>
+                <div class="section-title">Needs your judgment today</div>
+                <div class="section-sub">These cannot be auto-resolved — your decision is required</div>
+              </div>
+            </div>
+            <div class="section-header-right">
+              <div class="section-stat">
+                <span class="section-stat-val crit">3</span>
+                invoices · $12,720
+              </div>
+              <span class="section-chevron">▼</span>
+            </div>
+          </div>
+          <div class="section-body">
+
+            <!-- Invoice 1 -->
+            <div class="invoice-row" onclick="this.classList.toggle('expanded'); this.nextElementSibling.nextElementSibling && 0">
+              <div class="priority-marker crit">1</div>
+              <div>
+                <div class="inv-id">INV-1101</div>
+                <div class="inv-vendor">Staples Advantage</div>
+                <div class="inv-detail">PO-7835 · Possible duplicate — 92% match with INV-1089 paid Apr 22</div>
+              </div>
+              <div>
+                <div class="inv-amount">$3,240</div>
+                <div class="inv-amount-sub">duplicate risk</div>
+              </div>
+              <div class="inv-age crit">3d waiting</div>
+              <span class="badge blocked">Duplicate</span>
+              <button class="btn sm primary" onclick="event.stopPropagation()">Investigate</button>
+            </div>
+            <div class="ai-row">
+              <span class="ai-row-icon">Witness AI</span>
+              <span class="ai-row-text">92% match with INV-1089 (paid Apr 22). Same items, same vendor, 2-day difference. <span class="link">View side-by-side comparison →</span></span>
+            </div>
+
+            <!-- Invoice 2 -->
+            <div class="invoice-row">
+              <div class="priority-marker crit">2</div>
+              <div>
+                <div class="inv-id">INV-1092</div>
+                <div class="inv-vendor">Brightline Office Supply</div>
+                <div class="inv-detail">PO-7821 · $87 freight variance (3.2%) — below 5% tolerance</div>
+              </div>
+              <div>
+                <div class="inv-amount">$1,125</div>
+                <div class="inv-amount-sub">+$87 variance</div>
+              </div>
+              <div class="inv-age warn">1d waiting</div>
+              <span class="badge pending">Variance</span>
+              <button class="btn sm primary" onclick="event.stopPropagation()">Review</button>
+            </div>
+            <div class="ai-row">
+              <span class="ai-row-icon">Witness AI</span>
+              <span class="ai-row-text">Last 4 Brightline freight variances all approved. Confidence 94%. <span class="link">Approve and learn this pattern?</span></span>
+            </div>
+
+            <!-- Invoice 3 -->
+            <div class="invoice-row">
+              <div class="priority-marker warn">3</div>
+              <div>
+                <div class="inv-id">INV-1048</div>
+                <div class="inv-vendor">Brightline Office Supply</div>
+                <div class="inv-detail">PO-7721 · Waiting on J. Park approval · discount expires Apr 29</div>
+              </div>
+              <div>
+                <div class="inv-amount">$8,420</div>
+                <div class="inv-amount-sub">2% discount risk</div>
+              </div>
+              <div class="inv-age crit">3d waiting</div>
+              <span class="badge blocked">Discount at risk</span>
+              <button class="btn sm primary" onclick="event.stopPropagation()">Escalate</button>
+            </div>
+            <div class="ai-row">
+              <span class="ai-row-icon">Witness AI</span>
+              <span class="ai-row-text">J. Park hasn't approved anything in 5 days. <span class="link">Escalate to Sarah Kim (backup)?</span> · <span class="link">Send personalized nudge</span></span>
+            </div>
+
+          </div>
+          <div class="section-footer"><a href="#">View full AP judgment queue →</a></div>
+        </div>
+
+        <!-- Section 2: Handled -->
+        <div class="section">
+          <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+            <div class="section-header-left">
+              <div class="section-icon ok">✓</div>
+              <div>
+                <div class="section-title">Agent handled while you slept</div>
+                <div class="section-sub">Autonomous actions taken · fully traceable · no approval needed</div>
+              </div>
+            </div>
+            <div class="section-header-right">
+              <div class="section-stat">
+                <span class="section-stat-val ok">21</span>
+                resolved · $92,460
+              </div>
+              <span class="section-chevron">▼</span>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="invoice-row">
+              <div class="priority-marker ok">✓</div>
+              <div>
+                <div class="inv-id">INV-1084</div>
+                <div class="inv-vendor">Amazon Business</div>
+                <div class="inv-detail">PO-7802 · Delivery confirmed Apr 25 · ERP auto-synced</div>
+              </div>
+              <div>
+                <div class="inv-amount">$7,960</div>
+                <div class="inv-amount-sub">matched</div>
+              </div>
+              <div class="inv-age">Today 06:14</div>
+              <span class="badge healthy">3-way matched</span>
+              <button class="btn sm" onclick="event.stopPropagation()">View log</button>
+            </div>
+            <div class="invoice-row">
+              <div class="priority-marker ok">✓</div>
+              <div>
+                <div class="inv-id">INV-1056</div>
+                <div class="inv-vendor">Grainger</div>
+                <div class="inv-detail">PO-7728 · Industrial fasteners · GRN posted automatically</div>
+              </div>
+              <div>
+                <div class="inv-amount">$4,210</div>
+                <div class="inv-amount-sub">processed</div>
+              </div>
+              <div class="inv-age">Today 06:08</div>
+              <span class="badge approved">Ready to pay</span>
+              <button class="btn sm" onclick="event.stopPropagation()">View log</button>
+            </div>
+          </div>
+          <div class="section-footer"><a href="#">View all 21 resolved items →</a></div>
+        </div>
+
+      </div><!-- /sections -->
+    </div><!-- /page -->
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll('.section-header').forEach(h => {
+    h.addEventListener('click', () => h.parentElement.classList.toggle('collapsed'));
+  });
+</script>
+</body>
+</html>

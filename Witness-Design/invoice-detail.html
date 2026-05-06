@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Witness · INV-1048</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --color-brand-primary-orange-glare:#FFF5F1;--color-brand-primary-orange-touch:#FFE8DF;
+  --color-brand-primary-orange-peach:#FFB299;--color-brand-primary-orange:#FF5C1B;
+  --color-brand-primary-blue-sky:#E7F4FF;--color-brand-primary-blue:#155DFC;
+  --color-neutral-grey:#F4F4F4;--color-neutral-lotion:#E9E9E9;
+  --color-neutral-dark-grey:#ADADAD;--color-neutral-cool-grey:#45556C;
+  --color-neutral-black:#120B0B;--color-neutral-white:#FFFFFF;
+  --color-semantic-success-100:#DCFCE7;--color-semantic-success-500:#16A34A;
+  --color-semantic-waiting-100:#FDF2D4;--color-semantic-waiting-500:#E9B44C;
+  --color-semantic-pending-100:#FFE0CA;--color-semantic-pending-500:#FF6900;--color-semantic-pending-1000:#D95B03;
+  --color-semantic-error-100:#FEE2E2;--color-semantic-error-500:#DC2626;--color-semantic-error-1000:#B91C1C;
+  --spacing-1:8px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;
+  --spacing-5:18px;--spacing-6:24px;--spacing-7:32px;
+  --radius-sm:6px;--radius-md:8px;--radius-lg:10px;--radius-xl:12px;--radius-full:9999px;
+  --bg:var(--color-neutral-grey);--surface:var(--color-neutral-white);
+  --ink:var(--color-neutral-black);--ink-2:var(--color-neutral-cool-grey);--ink-3:var(--color-neutral-dark-grey);
+  --border:rgba(69,85,108,0.14);--border-md:rgba(69,85,108,0.24);
+  --ai:var(--color-semantic-pending-500);--ai-deep:var(--color-semantic-pending-1000);
+  --ai-soft:var(--color-brand-primary-orange-glare);
+  --ok:var(--color-semantic-success-500);--warn:var(--color-semantic-waiting-500);--crit:var(--color-semantic-error-500);
+  --font-display:'Playfair Display',Georgia,serif;--font-body:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;display:grid;grid-template-rows:52px 1fr}
+
+/* ── Topbar ── */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 var(--spacing-5);gap:var(--spacing-3);flex-shrink:0}
+.brand-link{display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink)}
+.brand-mark{width:24px;height:24px;border-radius:var(--radius-sm);background:var(--ink);color:var(--surface);display:grid;place-items:center;font-family:var(--font-display);font-style:italic;font-size:13px}
+.brand-name{font-family:var(--font-display);font-size:15px;font-weight:500;letter-spacing:-0.02em}
+.breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-3);margin-left:var(--spacing-3)}
+.breadcrumb a{color:var(--ink-2);text-decoration:none;cursor:pointer}
+.breadcrumb a:hover{color:var(--ink)}
+.bc-sep{opacity:.4}
+.bc-cur{color:var(--ink);font-weight:500}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.btn-tb{font-size:12px;font-weight:500;padding:6px var(--spacing-3);border-radius:var(--radius-md);border:1px solid var(--border-md);background:var(--surface);color:var(--ink);cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:5px;transition:all .12s}
+.btn-tb:hover{background:var(--bg)}
+.btn-tb.ask-w{border-color:rgba(22,163,74,.3);color:var(--ok);background:var(--color-semantic-success-100)}
+.btn-tb.ask-w:hover{background:rgba(22,163,74,.14)}
+.btn-tb.action{background:var(--ink);color:white;border-color:var(--ink);position:relative}
+.btn-tb.action:hover{background:var(--ink-2)}
+.dry-run{position:absolute;top:calc(100% + 6px);right:0;background:var(--ink);color:#F0EDE8;border-radius:var(--radius-xl);padding:var(--spacing-4) var(--spacing-5);width:280px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;transform:translateY(-4px);transition:all .18s;z-index:50;text-align:left}
+.btn-tb.action:hover .dry-run{opacity:1;pointer-events:auto;transform:translateY(0)}
+.dr-label{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(240,237,232,.4);margin-bottom:var(--spacing-3)}
+.dr-list{display:flex;flex-direction:column;gap:var(--spacing-2)}
+.dr-item{display:flex;gap:7px;font-size:11px;color:rgba(240,237,232,.75);line-height:1.4}
+.dr-num{color:var(--ok);font-family:var(--font-mono);font-size:9px;font-weight:600;flex-shrink:0;margin-top:2px}
+.dr-foot{font-size:10px;color:rgba(240,237,232,.4);margin-top:var(--spacing-3);padding-top:var(--spacing-3);border-top:1px solid rgba(255,255,255,.08)}
+
+/* ── Shell ── */
+.shell{display:grid;grid-template-columns:200px 1fr;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:var(--spacing-5) var(--spacing-3);display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.si{display:flex;align-items:center;justify-content:space-between;padding:7px var(--spacing-3);border-radius:var(--radius-md);font-size:12px;font-weight:500;color:var(--ink-2);cursor:pointer;border:none;background:none;font-family:var(--font-body);width:100%;text-align:left;transition:all .12s}
+.si:hover{background:var(--bg);color:var(--ink)}
+.si.active{background:var(--bg);color:var(--ink);font-weight:600}
+.si-badge{font-family:var(--font-mono);font-size:9px;font-weight:600;padding:1px 6px;border-radius:var(--radius-sm);background:var(--color-semantic-error-100);color:var(--crit)}
+.sdiv{height:1px;background:var(--border);margin:6px 0}
+.sidebar-label{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);padding:var(--spacing-1) var(--spacing-3) 4px}
+
+/* ── Content ── */
+.content-area{display:flex;flex-direction:column;overflow:hidden}
+
+/* ── Invoice Header ── */
+.inv-header{background:var(--surface);border-bottom:1px solid var(--border);padding:var(--spacing-5) var(--spacing-6);flex-shrink:0}
+.inv-h-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--spacing-4)}
+.inv-title-group{display:flex;align-items:center;gap:var(--spacing-3);margin-bottom:4px}
+.inv-number{font-family:var(--font-display);font-size:24px;font-weight:500;letter-spacing:-0.02em}
+.status-badge{font-size:11px;font-weight:600;padding:3px var(--spacing-3);border-radius:var(--radius-full);letter-spacing:.02em}
+.sb-blocked{background:var(--color-semantic-error-100);color:var(--crit)}
+.sb-pending{background:var(--color-semantic-waiting-100);color:var(--warn)}
+.sb-clean{background:var(--color-semantic-success-100);color:var(--ok)}
+.inv-meta{font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:var(--spacing-2);flex-wrap:wrap}
+.inv-sep{opacity:.4}
+.inv-h-right{text-align:right}
+.inv-amount-label{font-size:10px;color:var(--ink-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.inv-amount{font-family:var(--font-display);font-size:28px;font-weight:400;letter-spacing:-0.02em}
+
+/* ── Financial impact strip ── */
+.fin-impact{display:flex;align-items:stretch;border-top:1px solid var(--border);padding-top:var(--spacing-4)}
+.fi-cell{padding:0 var(--spacing-5);border-right:1px solid var(--border)}
+.fi-cell:first-child{padding-left:0}
+.fi-cell:last-child{border-right:none}
+.fi-label{font-family:var(--font-mono);font-size:9px;font-weight:600;color:var(--ink-3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:2px}
+.fi-val{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--ink)}
+.fi-val.red{color:var(--crit)}
+.fi-val.amber{color:var(--warn)}
+.fi-sub{font-size:9px;color:var(--ink-3)}
+
+/* ── Three column ── */
+.three-col{display:grid;grid-template-columns:220px 1fr 240px;flex:1;overflow:hidden}
+
+/* ── Left col ── */
+.left-col{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;gap:var(--spacing-6);padding:var(--spacing-5) var(--spacing-5);overflow-y:auto}
+.col-section-title{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:var(--spacing-3);display:flex;align-items:center;gap:5px}
+.field-list{display:flex;flex-direction:column}
+.field-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--border);font-size:11.5px;gap:var(--spacing-2)}
+.field-row:last-child{border-bottom:none}
+.field-label{color:var(--ink-3);flex-shrink:0}
+.field-val{color:var(--ink);font-weight:500;text-align:right}
+.field-val.red{color:var(--crit)}
+.field-avatar{display:flex;align-items:center;gap:5px}
+.fa-circle{width:18px;height:18px;border-radius:50%;color:white;display:grid;place-items:center;font-size:8px;font-weight:700}
+
+/* Blockers */
+.blocker-list{display:flex;flex-direction:column;gap:var(--spacing-2)}
+.blocker-item{display:flex;align-items:flex-start;gap:var(--spacing-3);padding:var(--spacing-3) var(--spacing-4);background:var(--color-semantic-error-100);border:1px solid rgba(220,38,38,.2);border-radius:var(--radius-lg)}
+.blocker-ico{font-size:14px;flex-shrink:0;margin-top:1px}
+.blocker-title{font-size:12px;font-weight:600;color:var(--crit)}
+.blocker-desc{font-size:11px;color:var(--ink-2);margin-top:2px;line-height:1.4}
+.blocker-impact{font-family:var(--font-mono);font-size:10px;color:var(--crit);font-weight:600;margin-top:4px;padding-top:4px;border-top:1px dashed rgba(220,38,38,.25)}
+
+/* Next steps */
+.next-steps{display:flex;flex-direction:column;gap:var(--spacing-2)}
+.ns-primary{width:100%;padding:var(--spacing-3) var(--spacing-4);border-radius:var(--radius-md);border:none;background:var(--ink);color:white;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:6px;transition:background .15s}
+.ns-primary:hover{background:var(--ink-2)}
+.ns-secondary{width:100%;padding:var(--spacing-2) var(--spacing-3);border-radius:var(--radius-md);border:1px solid var(--border-md);background:var(--surface);color:var(--ink-2);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:6px;transition:all .12s}
+.ns-secondary:hover{background:var(--bg);color:var(--ink)}
+.ns-secondary.ai{border-color:rgba(22,163,74,.3);color:var(--ok);background:var(--color-semantic-success-100)}
+.ns-ico{width:20px;height:20px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;font-size:11px;flex-shrink:0}
+.ns-secondary.ai .ns-ico{background:var(--color-semantic-success-100);border-color:rgba(22,163,74,.3);color:var(--ok)}
+.auto-pill{font-family:var(--font-mono);font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--color-semantic-success-100);color:var(--ok);border:1px solid rgba(22,163,74,.3);margin-left:auto}
+.ns-primary .auto-pill{background:rgba(255,255,255,.15);color:white;border-color:rgba(255,255,255,.25)}
+.add-note{width:100%;padding:var(--spacing-2) var(--spacing-3);border-radius:var(--radius-md);border:1px dashed var(--border-md);background:transparent;color:var(--ink-3);font-size:12px;cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;gap:6px;transition:all .12s}
+.add-note:hover{border-color:var(--ink-2);color:var(--ink-2)}
+
+/* ── Center col: Timeline ── */
+.center-col{display:flex;flex-direction:column;overflow:hidden}
+.center-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.ctab{flex:1;text-align:center;padding:var(--spacing-3) var(--spacing-2);font-size:12px;font-weight:500;color:var(--ink-2);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s}
+.ctab:hover{color:var(--ink);background:var(--bg)}
+.ctab.active{color:var(--ink);border-bottom-color:var(--ink)}
+.tl-header{display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-4) var(--spacing-6);border-bottom:1px solid var(--border);background:var(--bg)}
+.tl-header-title{font-family:var(--font-display);font-size:15px;font-weight:500;color:var(--ink)}
+.tl-collapse-btn{font-size:11px;color:var(--ink-3);cursor:pointer;border:none;background:none;font-family:var(--font-body)}
+.timeline{flex:1;overflow-y:auto;padding:var(--spacing-5) var(--spacing-6)}
+
+.tl-step{display:grid;grid-template-columns:24px 1fr;gap:var(--spacing-3);position:relative;padding-bottom:var(--spacing-5)}
+.tl-step:last-child{padding-bottom:0}
+.tl-line{position:absolute;left:11px;top:24px;width:2px;bottom:0;background:var(--border)}
+.tl-step.tl-done .tl-line{background:rgba(22,163,74,.25)}
+.tl-step.tl-blocked .tl-line{background:rgba(220,38,38,.2);background-image:repeating-linear-gradient(to bottom,rgba(220,38,38,.2) 0,rgba(220,38,38,.2) 4px,transparent 4px,transparent 8px)}
+.tl-dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0;z-index:1;position:relative}
+.tl-dot.done{background:var(--ok);color:white}
+.tl-dot.ai{background:var(--warn);color:white;font-size:11px}
+.tl-dot.blocked{background:var(--crit);color:white}
+.tl-dot.future{background:var(--color-neutral-lotion);color:var(--ink-3);border:2px dashed var(--border-md)}
+.tl-content{cursor:pointer}
+.tl-main-row{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--spacing-3)}
+.tl-step-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.tl-step-name.warn{color:var(--warn)}
+.tl-step-name.blocked{color:var(--crit)}
+.tl-step-name.muted{color:var(--ink-3)}
+.tl-step-desc{font-size:12px;color:var(--ink-2);margin-bottom:var(--spacing-2);line-height:1.4}
+.tl-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:var(--spacing-2)}
+.tl-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:var(--radius-full)}
+.tt-done{background:var(--color-semantic-success-100);color:var(--ok)}
+.tt-issues{background:var(--color-semantic-error-100);color:var(--crit)}
+.tt-ai{background:var(--color-semantic-pending-100);color:var(--ai)}
+.tt-waiting{background:var(--color-semantic-waiting-100);color:var(--warn)}
+.tt-future{background:var(--color-neutral-lotion);color:var(--ink-3)}
+.tl-step-right{text-align:right;flex-shrink:0}
+.tl-source{font-family:var(--font-mono);font-size:9px;font-weight:600;padding:2px 6px;border-radius:var(--radius-sm);margin-bottom:2px}
+.ts-ab{background:var(--color-brand-primary-blue-sky);color:var(--color-brand-primary-blue)}
+.ts-erp{background:var(--color-neutral-lotion);color:var(--ink-2)}
+.ts-wit{background:var(--color-semantic-pending-100);color:var(--ai)}
+.ts-appr{background:var(--color-semantic-waiting-100);color:var(--warn)}
+.tl-time{font-family:var(--font-mono);font-size:10px;color:var(--ink-3)}
+
+.tl-ai-annotation{margin-top:var(--spacing-2);padding:var(--spacing-3) var(--spacing-4);background:linear-gradient(90deg,var(--ai-soft) 0%,transparent 100%);border-left:2px solid var(--color-brand-primary-orange-peach);font-size:12px;color:var(--ink-2);line-height:1.5;border-radius:0 var(--radius-md) var(--radius-md) 0}
+.ai-ann-head{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ai);margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.ai-pulse{width:5px;height:5px;border-radius:50%;background:var(--ai);animation:pls 2s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.35}}
+
+.tl-action-needed{margin-top:var(--spacing-2);padding:var(--spacing-3) var(--spacing-4);background:var(--color-semantic-error-100);border:1px solid rgba(220,38,38,.2);border-radius:var(--radius-md);font-size:12px;color:var(--ink-2);line-height:1.5}
+.tl-action-needed strong{color:var(--crit)}
+
+.tl-expanded{display:none;margin-top:var(--spacing-3)}
+.tl-expanded.open{display:block}
+.te-inner{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--spacing-4)}
+.te-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:11.5px}
+.te-row:last-child{border-bottom:none}
+.te-k{color:var(--ink-3);font-family:var(--font-mono);font-size:10px;letter-spacing:.03em}
+.te-v{color:var(--ink);font-weight:500}
+.te-v.ok{color:var(--ok)}
+.te-v.warn{color:var(--warn)}
+.te-v.crit{color:var(--crit)}
+.te-conf{display:flex;align-items:center;gap:var(--spacing-3);margin-top:var(--spacing-3);padding-top:var(--spacing-3);border-top:1px solid var(--border)}
+.te-conf-bar{flex:1;height:4px;background:var(--color-neutral-lotion);border-radius:var(--radius-sm);overflow:hidden;max-width:100px}
+.te-conf-fill{height:100%;background:var(--ok);border-radius:var(--radius-sm)}
+.te-conf-label{font-family:var(--font-mono);font-size:9px;color:var(--ink-3)}
+.te-conf-val{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--ink)}
+.te-sources{display:flex;flex-wrap:wrap;gap:4px;margin-top:var(--spacing-2);padding-top:var(--spacing-2);border-top:1px solid var(--border);align-items:center}
+.te-src-label{font-family:var(--font-mono);font-size:9px;color:var(--ink-3)}
+.te-src-chip{font-family:var(--font-mono);font-size:9px;font-weight:500;padding:2px 6px;border-radius:var(--radius-sm);background:var(--bg);color:var(--ink-2);border:1px solid var(--border);cursor:pointer}
+.te-src-chip:hover{border-color:var(--ink-2)}
+.te-why{margin-top:var(--spacing-2);padding-top:var(--spacing-2);border-top:1px solid var(--border);font-size:10.5px;color:var(--ink-2);font-style:italic;line-height:1.5}
+
+/* ── Right col ── */
+.right-col{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:var(--spacing-5)}
+.rs{margin-bottom:var(--spacing-6)}
+.rs-title{font-size:12.5px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.rs-link{font-size:11px;font-weight:400;color:var(--ai);cursor:pointer;text-decoration:underline}
+.rs-meta{font-family:var(--font-mono);font-size:9px;color:var(--ink-3);margin-bottom:var(--spacing-4)}
+
+/* Match triangle */
+.match-triangle svg{width:100%;height:auto}
+.mt-node-circle{fill:var(--surface);stroke:var(--border-md);stroke-width:1.5}
+.mt-node-circle.mismatch{stroke:var(--crit);stroke-width:2}
+.mt-node-label{font-family:var(--font-mono);font-size:9px;font-weight:600;fill:var(--ink);text-anchor:middle}
+.mt-node-detail{font-family:var(--font-mono);font-size:8px;fill:var(--ink-3);text-anchor:middle}
+.mt-edge{stroke:var(--border-md);stroke-width:1.5;fill:none}
+.mt-edge.miss{stroke:var(--crit);stroke-dasharray:3 3}
+.mt-edge.miss.pri{stroke-width:2.5;stroke-dasharray:none}
+.mt-edge-label{font-size:9px;font-weight:600;text-anchor:middle}
+.mt-edge-label.miss{fill:var(--crit)}
+.mt-edge-bg{fill:var(--surface);stroke:var(--border);stroke-width:1}
+.mt-edge-bg.pri{stroke:var(--crit);stroke-width:1.5}
+
+.mt-legend{margin-top:var(--spacing-4);padding-top:var(--spacing-4);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+.mt-leg{display:flex;align-items:flex-start;gap:6px;font-size:10.5px;color:var(--ink-2);line-height:1.4}
+.mt-leg-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+
+/* Approval status */
+.as-title{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:var(--spacing-3)}
+.as-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--spacing-4)}
+.as-person{display:flex;align-items:center;gap:var(--spacing-3);margin-bottom:var(--spacing-4);padding-bottom:var(--spacing-4);border-bottom:1px solid var(--border)}
+.as-av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:white;flex-shrink:0}
+.as-name{font-size:13px;font-weight:600;color:var(--ink)}
+.as-role{font-size:11px;color:var(--ink-3)}
+.as-pending{font-family:var(--font-mono);font-size:9px;font-weight:700;padding:2px 7px;border-radius:var(--radius-sm);background:var(--color-semantic-waiting-100);color:var(--warn);margin-left:auto}
+.as-field-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0}
+.as-field-label{color:var(--ink-3)}
+.as-field-val{color:var(--ink);font-weight:500}
+.view-chain{display:block;margin-top:var(--spacing-3);font-size:11px;color:var(--ai);cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<header class="topbar">
+  <a class="brand-link" href="#">
+    <div class="brand-mark">W</div>
+    <span class="brand-name">Witness</span>
+  </a>
+  <nav class="breadcrumb">
+    <a>Cases</a>
+    <span class="bc-sep">›</span>
+    <span class="bc-cur">INV-1048</span>
+  </nav>
+  <div class="topbar-right">
+    <button class="btn-tb ask-w">✦ Ask Witness</button>
+    <button class="btn-tb">Share</button>
+    <button class="btn-tb">More</button>
+    <button class="btn-tb action">
+      Take action ▾
+      <div class="dry-run">
+        <div class="dr-label">If you proceed, Witness will:</div>
+        <div class="dr-list">
+          <div class="dr-item"><span class="dr-num">1.</span><span>Send credit memo request to <strong style="color:#F0EDE8">Brightline</strong> ($280, 2 units)</span></div>
+          <div class="dr-item"><span class="dr-num">2.</span><span>Nudge <strong style="color:#F0EDE8">J. Park</strong> with attached GRN evidence</span></div>
+          <div class="dr-item"><span class="dr-num">3.</span><span>Flag $42 freight variance for your review</span></div>
+        </div>
+        <div class="dr-foot">All actions are reversible · You'll review each before sending</div>
+      </div>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Navigation</div>
+    <button class="si">Brief</button>
+    <button class="si">Waiting Hub <span class="si-badge">24</span></button>
+    <button class="si active">Cases</button>
+    <button class="si">Patterns</button>
+    <button class="si">Analytics</button>
+    <div class="sdiv"></div>
+    <button class="si">Vendors</button>
+    <button class="si">Approvals</button>
+    <button class="si">Reports</button>
+    <button class="si">Settings</button>
+  </aside>
+
+  <!-- Content area -->
+  <div class="content-area">
+
+    <!-- Invoice header -->
+    <div class="inv-header">
+      <div class="inv-h-top">
+        <div>
+          <div class="inv-title-group">
+            <div class="inv-number">INV-1048</div>
+            <span class="status-badge sb-blocked">Blocked</span>
+          </div>
+          <div class="inv-meta">
+            <span>PO-7721</span><span class="inv-sep">·</span>
+            <span>Brightline Office Supply</span><span class="inv-sep">·</span>
+            <span>Amazon Business</span>
+          </div>
+        </div>
+        <div class="inv-h-right">
+          <div class="inv-amount-label">Amount</div>
+          <div class="inv-amount">$8,420.00</div>
+        </div>
+      </div>
+      <div class="fin-impact">
+        <div class="fi-cell">
+          <div class="fi-label">Priority</div>
+          <div class="fi-val red">High</div>
+        </div>
+        <div class="fi-cell">
+          <div class="fi-label">Discount at risk</div>
+          <div class="fi-val red">−$168.40</div>
+          <div class="fi-sub">2% if paid by Apr 30 (in 2 days)</div>
+        </div>
+        <div class="fi-cell">
+          <div class="fi-label">Vendor overbilled</div>
+          <div class="fi-val red">−$280.00</div>
+          <div class="fi-sub">2 units not delivered</div>
+        </div>
+        <div class="fi-cell">
+          <div class="fi-label">Freight variance</div>
+          <div class="fi-val amber">+$42.00</div>
+          <div class="fi-sub">Not in original PO</div>
+        </div>
+        <div class="fi-cell">
+          <div class="fi-label">Net exposure</div>
+          <div class="fi-val red">−$406.40</div>
+          <div class="fi-sub">If unresolved by due date</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Three column -->
+    <div class="three-col">
+
+      <!-- Left: Case summary -->
+      <div class="left-col">
+
+        <div>
+          <div class="col-section-title">Case summary</div>
+          <div class="field-list">
+            <div class="field-row"><span class="field-label">Status</span><span class="field-val red">Blocked</span></div>
+            <div class="field-row"><span class="field-label">Type</span><span class="field-val">Invoice exception</span></div>
+            <div class="field-row"><span class="field-label">Invoice date</span><span class="field-val">Apr 24, 2025</span></div>
+            <div class="field-row"><span class="field-label">Due date</span><span class="field-val">Apr 30, 2025</span></div>
+            <div class="field-row"><span class="field-label">Discount expires</span><span class="field-val red">Apr 30 (2 days)</span></div>
+            <div class="field-row"><span class="field-label">Vendor</span><span class="field-val">Brightline Office</span></div>
+            <div class="field-row"><span class="field-label">Requester</span><span class="field-val">Nina Lee</span></div>
+            <div class="field-row"><span class="field-label">Approver</span>
+              <span class="field-val">
+                <div class="field-avatar">
+                  <div class="fa-circle" style="background:var(--warn)">JP</div>
+                  J. Park
+                </div>
+              </span>
+            </div>
+            <div class="field-row"><span class="field-label">Department</span><span class="field-val">Facilities</span></div>
+            <div class="field-row"><span class="field-label">Amount</span><span class="field-val">$8,420.00 USD</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="col-section-title">
+            Current blockers
+            <span style="width:16px;height:16px;border-radius:50%;background:var(--crit);color:white;display:inline-grid;place-items:center;font-size:9px;font-weight:700">2</span>
+          </div>
+          <div class="blocker-list">
+            <div class="blocker-item">
+              <div class="blocker-ico">⚠</div>
+              <div>
+                <div class="blocker-title">Quantity mismatch</div>
+                <div class="blocker-desc">12 ordered / 10 received. Invoice bills for 12.</div>
+                <div class="blocker-impact">Impact: −$280.00</div>
+              </div>
+            </div>
+            <div class="blocker-item">
+              <div class="blocker-ico">⏳</div>
+              <div>
+                <div class="blocker-title">Approval pending</div>
+                <div class="blocker-desc">Waiting on J. Park for 3 days.</div>
+                <div class="blocker-impact">Impact: −$168.40 if discount missed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="col-section-title">✦ Recommended next steps</div>
+          <div class="next-steps">
+            <button class="ns-primary">
+              Request credit memo from vendor
+              <span class="auto-pill">AUTO</span>
+            </button>
+            <button class="ns-secondary ai">
+              <div class="ns-ico">✦</div>
+              Nudge J. Park
+              <span class="auto-pill" style="background:transparent;color:var(--ok);border:none">AUTO</span>
+            </button>
+            <button class="ns-secondary">
+              <div class="ns-ico">📎</div>
+              Add receipt evidence to ERP
+            </button>
+            <button class="add-note">+ Add case note</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Center: Timeline -->
+      <div class="center-col">
+        <div class="center-tabs">
+          <div class="ctab active">Timeline</div>
+          <div class="ctab" onclick="switchTab(this)">Match summary</div>
+          <div class="ctab" onclick="switchTab(this)">Financial impact</div>
+          <div class="ctab" onclick="switchTab(this)">Comments (3)</div>
+        </div>
+        <div class="tl-header">
+          <div class="tl-header-title">PO to Payment Journey</div>
+          <button class="tl-collapse-btn">Collapse all ↑</button>
+        </div>
+        <div class="timeline">
+
+          <!-- Step 1: PO created -->
+          <div class="tl-step tl-done">
+            <div class="tl-line"></div>
+            <div class="tl-dot done">✓</div>
+            <div class="tl-content" onclick="toggleStep(this)">
+              <div class="tl-main-row">
+                <div>
+                  <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                  <div class="tl-step-name">PO created</div>
+                  <div class="tl-step-desc">PO-7721 created for 12 units of Monitor Arm. Budget approved by Nina Lee.</div>
+                </div>
+                <div class="tl-step-right">
+                  <div class="tl-source ts-ab">Amazon Business</div>
+                  <div class="tl-time">Apr 15 · 9:12 AM</div>
+                </div>
+              </div>
+              <div class="tl-expanded">
+                <div class="te-inner">
+                  <div class="te-row"><span class="te-k">PO amount</span><span class="te-v ok">$8,420.00 approved</span></div>
+                  <div class="te-row"><span class="te-k">Units</span><span class="te-v">12 × Monitor Arm Pro</span></div>
+                  <div class="te-row"><span class="te-k">Approved by</span><span class="te-v">Nina Lee · Facilities</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Order delivered -->
+          <div class="tl-step tl-done">
+            <div class="tl-line"></div>
+            <div class="tl-dot done">✓</div>
+            <div class="tl-content" onclick="toggleStep(this)">
+              <div class="tl-main-row">
+                <div>
+                  <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                  <div class="tl-step-name">Order delivered</div>
+                  <div class="tl-step-desc">Delivered 10 units. Delivery confirmed by Nina Lee.</div>
+                </div>
+                <div class="tl-step-right">
+                  <div class="tl-source ts-ab">Amazon Business</div>
+                  <div class="tl-time">Apr 23 · 2:41 PM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Invoice received -->
+          <div class="tl-step tl-done">
+            <div class="tl-line"></div>
+            <div class="tl-dot done">✓</div>
+            <div class="tl-content" onclick="toggleStep(this)">
+              <div class="tl-main-row">
+                <div>
+                  <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                  <div class="tl-step-name">Invoice received</div>
+                  <div class="tl-step-desc">Invoice INV-1048 received for $8,420.00 (12 units billed).</div>
+                </div>
+                <div class="tl-step-right">
+                  <div class="tl-source ts-erp">ERP</div>
+                  <div class="tl-time">Apr 24 · 9:05 AM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4: AI 3-way match (EXPANDED) -->
+          <div class="tl-step">
+            <div class="tl-line"></div>
+            <div class="tl-dot ai">✦</div>
+            <div class="tl-content" onclick="toggleStep(this)">
+              <div class="tl-main-row">
+                <div>
+                  <div class="tl-tags">
+                    <span class="tl-tag tt-issues">2 issues</span>
+                    <span class="tl-tag tt-ai">Witness AI</span>
+                  </div>
+                  <div class="tl-step-name warn">3-way match exception</div>
+                  <div class="tl-step-desc">Quantity mismatch and freight variance detected automatically.</div>
+                  <div class="tl-ai-annotation">
+                    <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected</div>
+                    <strong>Qty mismatch:</strong> PO ordered 12, receipt shows 10, invoice bills 12. Vendor overbilled ~$280. Also found $42 freight not in original PO.
+                  </div>
+                </div>
+                <div class="tl-step-right">
+                  <div class="tl-source ts-wit">Witness AI</div>
+                  <div class="tl-time">Apr 24 · 9:06 AM</div>
+                </div>
+              </div>
+              <div class="tl-expanded open">
+                <div class="te-inner">
+                  <div class="te-row"><span class="te-k">PO qty</span><span class="te-v">12 units</span></div>
+                  <div class="te-row"><span class="te-k">GRN qty</span><span class="te-v warn">10 units received</span></div>
+                  <div class="te-row"><span class="te-k">Invoice qty</span><span class="te-v crit">12 billed — mismatch</span></div>
+                  <div class="te-row"><span class="te-k">Freight</span><span class="te-v warn">$42 variance · not in PO</span></div>
+                  <div class="te-row"><span class="te-k">Ran in</span><span class="te-v">0.6s</span></div>
+                  <div class="te-conf">
+                    <span class="te-conf-label">Confidence</span>
+                    <div class="te-conf-bar"><div class="te-conf-fill" style="width:96%"></div></div>
+                    <span class="te-conf-val">96%</span>
+                  </div>
+                  <div class="te-sources">
+                    <span class="te-src-label">Sources</span>
+                    <span class="te-src-chip">PO-7721.pdf · L4</span>
+                    <span class="te-src-chip">Receipt_20250423.pdf · L7</span>
+                    <span class="te-src-chip">INV-1048.pdf · L3,L11</span>
+                  </div>
+                  <div class="te-why">Qty extracted from line 3 of invoice ("12 ea") and line 7 of receipt ("10 received"). Freight $42 appears in invoice line 11 but no freight line found in PO.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5: Approval requested -->
+          <div class="tl-step tl-done">
+            <div class="tl-line"></div>
+            <div class="tl-dot done">✓</div>
+            <div class="tl-content" onclick="toggleStep(this)">
+              <div class="tl-main-row">
+                <div>
+                  <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                  <div class="tl-step-name">Approval requested</div>
+                  <div class="tl-step-desc">Approval requested from J. Park, Director of Finance.</div>
+                </div>
+                <div class="tl-step-right">
+                  <div class="tl-source ts-appr">Approval</div>
+                  <div class="tl-time">Apr 24 · 9:10 AM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 6: Blocked -->
+          <div class="tl-step tl-blocked">
+            <div class="tl-line"></div>
+            <div class="tl-dot blocked">✕</div>
+            <div class="tl-content" onclick="toggleStep(this)">
+              <div class="tl-main-row">
+                <div>
+                  <div class="tl-tags"><span class="tl-tag tt-waiting">Waiting 3 days</span></div>
+                  <div class="tl-step-name blocked">Approval pending</div>
+                  <div class="tl-step-desc">Waiting on J. Park's approval. No response since Apr 25.</div>
+                  <div class="tl-action-needed">
+                    <strong>Action needed:</strong> J. Park has not responded in 3 days. Escalation triggers in 2 days. Witness can send a nudge or reroute to backup approver K. Ito.
+                  </div>
+                </div>
+                <div class="tl-step-right">
+                  <div class="tl-source ts-appr">Approval</div>
+                  <div class="tl-time">Apr 25 · 9:12 AM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 7: Future -->
+          <div class="tl-step">
+            <div class="tl-dot future">○</div>
+            <div class="tl-content">
+              <div class="tl-main-row">
+                <div>
+                  <div class="tl-tags"><span class="tl-tag tt-future">Projected</span></div>
+                  <div class="tl-step-name muted">Payment blocked</div>
+                  <div class="tl-step-desc">On hold until mismatches and approval are resolved.</div>
+                </div>
+                <div class="tl-step-right">
+                  <div class="tl-source ts-erp">ERP</div>
+                  <div class="tl-time">— pending —</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /timeline -->
+      </div><!-- /center-col -->
+
+      <!-- Right: AI context -->
+      <div class="right-col">
+
+        <!-- Match triangle -->
+        <div class="rs">
+          <div class="rs-title">AI match snapshot <span class="rs-link">View full</span></div>
+          <div class="rs-meta">Apr 24, 2025 · 9:06 AM · 96% confidence</div>
+
+          <svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg">
+            <line x1="55" y1="55" x2="130" y2="180" class="mt-edge miss"/>
+            <line x1="55" y1="55" x2="205" y2="55" class="mt-edge miss"/>
+            <line x1="130" y1="180" x2="205" y2="55" class="mt-edge miss pri"/>
+            <rect x="64" y="110" width="46" height="16" rx="3" class="mt-edge-bg"/>
+            <text x="87" y="121" class="mt-edge-label miss">−2 units</text>
+            <rect x="106" y="46" width="46" height="16" rx="3" class="mt-edge-bg"/>
+            <text x="129" y="57" class="mt-edge-label miss">+$42</text>
+            <rect x="148" y="110" width="64" height="20" rx="3" class="mt-edge-bg pri"/>
+            <text x="180" y="123" class="mt-edge-label miss">+$280 ◆</text>
+            <circle cx="55" cy="55" r="24" class="mt-node-circle"/>
+            <text x="55" y="53" class="mt-node-label">PO</text>
+            <text x="55" y="65" class="mt-node-detail">12 units</text>
+            <circle cx="205" cy="55" r="24" class="mt-node-circle mismatch"/>
+            <text x="205" y="53" class="mt-node-label">Invoice</text>
+            <text x="205" y="65" class="mt-node-detail">12 billed</text>
+            <circle cx="130" cy="180" r="24" class="mt-node-circle"/>
+            <text x="130" y="178" class="mt-node-label">Receipt</text>
+            <text x="130" y="190" class="mt-node-detail">10 rcvd</text>
+          </svg>
+
+          <div class="mt-legend">
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:var(--crit)"></div><div>Primary issue ◆ — Vendor overbilled $280 (Receipt vs Invoice)</div></div>
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:var(--warn)"></div><div>Underdelivery — 2 units short (PO vs Receipt)</div></div>
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:var(--warn)"></div><div>Unauthorized freight — $42 not in PO</div></div>
+          </div>
+        </div>
+
+        <!-- Approval status -->
+        <div class="rs">
+          <div class="as-title">Approval status</div>
+          <div class="as-card">
+            <div class="as-person">
+              <div class="as-av" style="background:var(--warn)">JP</div>
+              <div>
+                <div class="as-name">J. Park</div>
+                <div class="as-role">Director of Finance</div>
+              </div>
+              <span class="as-pending">Pending</span>
+            </div>
+            <div class="as-field-row"><span class="as-field-label">Requested on</span><span class="as-field-val">Apr 24 · 9:10 AM</span></div>
+            <div class="as-field-row"><span class="as-field-label">Waiting</span><span class="as-field-val" style="color:var(--crit)">3 days</span></div>
+            <div class="as-field-row"><span class="as-field-label">Escalation rule</span><span class="as-field-val">After 5 days → Controller</span></div>
+          </div>
+          <a class="view-chain">View approval chain →</a>
+        </div>
+
+      </div><!-- /right-col -->
+
+    </div><!-- /three-col -->
+  </div><!-- /content-area -->
+</div><!-- /shell -->
+
+<script>
+function toggleStep(el) {
+  const expanded = el.querySelector('.tl-expanded');
+  if (expanded) expanded.classList.toggle('open');
+}
+function switchTab(tab) {
+  document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+}
+</script>
+</body>
+</html>

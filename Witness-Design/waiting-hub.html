@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Witness · Waiting Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --color-brand-primary-orange-glare: #FFF5F1;
+  --color-brand-primary-orange-touch: #FFE8DF;
+  --color-brand-primary-orange-peach: #FFB299;
+  --color-brand-primary-orange: #FF5C1B;
+  --color-brand-primary-blue-sky: #E7F4FF;
+  --color-brand-primary-blue: #155DFC;
+  --color-neutral-grey: #F4F4F4;
+  --color-neutral-lotion: #E9E9E9;
+  --color-neutral-dark-grey: #ADADAD;
+  --color-neutral-cool-grey: #45556C;
+  --color-neutral-black: #120B0B;
+  --color-neutral-white: #FFFFFF;
+  --color-semantic-success-100: #DCFCE7;
+  --color-semantic-success-500: #16A34A;
+  --color-semantic-waiting-100: #FDF2D4;
+  --color-semantic-waiting-500: #E9B44C;
+  --color-semantic-waiting-1000: #B17728;
+  --color-semantic-pending-100: #FFE0CA;
+  --color-semantic-pending-500: #FF6900;
+  --color-semantic-pending-1000: #D95B03;
+  --color-semantic-error-100: #FEE2E2;
+  --color-semantic-error-500: #DC2626;
+  --color-semantic-error-1000: #B91C1C;
+
+  --spacing-1:8px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;
+  --spacing-5:18px;--spacing-6:24px;--spacing-7:32px;--spacing-8:40px;
+  --radius-sm:6px;--radius-md:8px;--radius-lg:10px;--radius-xl:12px;--radius-full:9999px;
+
+  --bg: var(--color-neutral-grey);
+  --surface: var(--color-neutral-white);
+  --ink: var(--color-neutral-black);
+  --ink-2: var(--color-neutral-cool-grey);
+  --ink-3: var(--color-neutral-dark-grey);
+  --border: rgba(69,85,108,0.14);
+  --border-md: rgba(69,85,108,0.24);
+  --ai: var(--color-semantic-pending-500);
+  --ai-deep: var(--color-semantic-pending-1000);
+  --ai-soft: var(--color-brand-primary-orange-glare);
+  --ok: var(--color-semantic-success-500);
+  --warn: var(--color-semantic-waiting-500);
+  --crit: var(--color-semantic-error-500);
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+/* ── Shell ── */
+.app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar {
+  background: var(--surface); border-right: 1px solid var(--border);
+  padding: var(--spacing-6) var(--spacing-3);
+  display: flex; flex-direction: column; gap: var(--spacing-6);
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.brand { display: flex; align-items: center; gap: var(--spacing-3); padding: 0 var(--spacing-3); }
+.brand-mark {
+  width: 28px; height: 28px; border-radius: var(--radius-sm);
+  background: var(--ink); color: var(--surface);
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-style: italic; font-size: 15px;
+}
+.brand-name { font-family: var(--font-display); font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
+.nav-section { display: flex; flex-direction: column; gap: 2px; }
+.nav-label {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);
+  padding: var(--spacing-2) var(--spacing-3) 4px;
+}
+.nav-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px var(--spacing-3); border-radius: var(--radius-md);
+  color: var(--ink-2); cursor: pointer; font-size: 13px; font-weight: 500;
+  transition: all .15s; border: none; background: none; font-family: var(--font-body); width: 100%; text-align: left;
+}
+.nav-item:hover { background: var(--bg); color: var(--ink); }
+.nav-item.active { background: var(--ink); color: var(--surface); }
+.nav-item.active .nav-badge { background: rgba(255,255,255,.2); color: white; }
+.nav-badge {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: var(--radius-sm);
+  background: var(--color-semantic-pending-100); color: var(--ai);
+}
+.sidebar-footer {
+  margin-top: auto; padding: var(--spacing-3); border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: var(--spacing-3);
+}
+.avatar {
+  width: 30px; height: 30px; border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--ink-2), var(--ink));
+  color: white; display: grid; place-items: center; font-size: 11px; font-weight: 600; flex-shrink: 0;
+}
+.avatar-name { font-size: 12px; font-weight: 600; }
+.avatar-role { font-size: 11px; color: var(--ink-3); }
+
+/* ── Main ── */
+main { background: var(--bg); min-width: 0; }
+
+/* ── Topbar ── */
+.topbar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 0 var(--spacing-7); height: 52px; position: sticky; top: 0; z-index: 20;
+  gap: var(--spacing-2);
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px var(--spacing-4); border-radius: var(--radius-md);
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  border: 1px solid var(--border-md); background: var(--surface); color: var(--ink);
+  cursor: pointer; transition: all .15s;
+}
+.btn:hover { background: var(--bg); }
+.btn.primary { background: var(--ink); color: white; border-color: var(--ink); }
+.btn.primary:hover { background: var(--ink-2); }
+.btn.sm { padding: 5px var(--spacing-3); font-size: 12px; }
+.btn.ghost { border-color: transparent; background: transparent; }
+.btn.ghost:hover { background: rgba(0,0,0,.05); }
+
+/* ── Page layout ── */
+.page { padding: var(--spacing-7); }
+
+/* ── Page header ── */
+.page-header {
+  display: grid; grid-template-columns: 1fr auto; gap: var(--spacing-8);
+  align-items: start; margin-bottom: var(--spacing-6);
+}
+.page-title { font-family: var(--font-display); font-size: 28px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 4px; }
+.page-subtitle { font-size: 13px; color: var(--ink-2); max-width: 440px; }
+
+.hero-metric { text-align: right; }
+.hero-amount {
+  font-family: var(--font-display); font-size: 38px; font-weight: 400;
+  letter-spacing: -0.03em; color: var(--ink); line-height: 1;
+}
+.hero-meta { font-size: 12px; color: var(--ink-3); margin-top: 4px; margin-bottom: var(--spacing-3); }
+.delta { color: var(--crit); font-weight: 500; }
+.breakdown-bar {
+  height: 5px; border-radius: var(--radius-sm); overflow: hidden;
+  display: flex; width: 220px; margin-left: auto; margin-bottom: var(--spacing-2);
+}
+.breakdown-legend {
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; font-size: 10.5px; color: var(--ink-2);
+}
+.legend-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 3px; }
+
+/* ── Agent bar ── */
+.agent-bar {
+  background: var(--ink); border-radius: var(--radius-xl);
+  padding: var(--spacing-5) var(--spacing-6);
+  display: flex; align-items: flex-start; gap: var(--spacing-5);
+  margin-bottom: var(--spacing-6);
+}
+.agent-icon {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: var(--radius-md); background: var(--ai);
+  color: white; display: grid; place-items: center;
+  font-family: var(--font-display); font-style: italic; font-size: 14px;
+}
+.agent-text { flex: 1; font-size: 13px; color: rgba(255,255,255,.75); line-height: 1.6; }
+.agent-text strong { color: white; }
+.agent-text .lede { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 4px; }
+.agent-stats { display: flex; gap: var(--spacing-5); }
+.agent-stat { text-align: center; }
+.agent-stat .n { display: block; font-family: var(--font-mono); font-size: 22px; font-weight: 600; color: white; line-height: 1; }
+.agent-stat .l { font-size: 10px; color: rgba(255,255,255,.4); margin-top: 2px; }
+
+/* ── Filter bar ── */
+.filter-bar {
+  display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-5); flex-wrap: wrap;
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: var(--radius-full);
+  border: 1px solid var(--border-md); background: var(--surface);
+  font-size: 12.5px; cursor: pointer; color: var(--ink-2); transition: all .15s; font-family: var(--font-body);
+}
+.chip:hover { border-color: var(--ink); color: var(--ink); }
+.chip.active { background: var(--ink); color: white; border-color: var(--ink); }
+.chip .count { font-family: var(--font-mono); font-size: 10px; background: rgba(0,0,0,.08); padding: 0 5px; border-radius: 3px; }
+.chip.active .count { background: rgba(255,255,255,.18); }
+.search { flex: 1; max-width: 260px; position: relative; }
+.search input {
+  width: 100%; padding: 6px 10px 6px 28px;
+  border: 1px solid var(--border-md); border-radius: var(--radius-md);
+  background: var(--surface); font-family: var(--font-body); font-size: 12.5px; color: var(--ink);
+  outline: none; transition: border-color .15s;
+}
+.search input:focus { border-color: var(--ink); }
+.search::before { content: "⌕"; position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--ink-3); font-size: 14px; }
+.filter-spacer { flex: 1; }
+
+/* ── Selection bar ── */
+.selection-bar {
+  display: none; background: var(--ink); color: white; border-radius: var(--radius-md);
+  padding: 8px var(--spacing-4); align-items: center; gap: var(--spacing-4);
+  font-size: 12.5px; margin-bottom: var(--spacing-4);
+}
+.selection-bar.show { display: flex; }
+.selection-bar .btn { background: rgba(255,255,255,.12); color: white; border-color: rgba(255,255,255,.2); }
+
+/* ── Sections ── */
+.section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); margin-bottom: var(--spacing-4);
+  overflow: hidden;
+  animation: riseIn .4s ease-out backwards;
+}
+.section:nth-child(1) { animation-delay:.04s; }
+.section:nth-child(2) { animation-delay:.10s; }
+.section:nth-child(3) { animation-delay:.16s; }
+.section:nth-child(4) { animation-delay:.22s; }
+@keyframes riseIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.section-header {
+  display: grid; grid-template-columns: 36px 1fr auto auto;
+  gap: var(--spacing-4); align-items: center;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; transition: background .15s;
+}
+.section-header:hover { background: var(--bg); }
+.section-icon {
+  width: 32px; height: 32px; border-radius: var(--radius-md);
+  display: grid; place-items: center; font-size: 15px;
+}
+.section-icon.approver { background: var(--color-semantic-waiting-100); color: var(--warn); }
+.section-icon.vendor { background: var(--color-semantic-error-100); color: var(--crit); }
+.section-icon.receipt { background: var(--color-semantic-success-100); color: var(--ok); }
+.section-icon.judgment { background: var(--color-brand-primary-blue-sky); color: var(--color-brand-primary-blue); }
+
+.section-title { font-family: var(--font-display); font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+.section-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.section-stats {
+  display: flex; gap: var(--spacing-5); align-items: center; font-size: 12px; color: var(--ink-2);
+}
+.stat-amount { font-family: var(--font-display); font-weight: 500; font-size: 20px; color: var(--ink); }
+.stat-amount.danger { color: var(--crit); }
+.stat-divider { width: 1px; height: 22px; background: var(--border-md); }
+.section-toggle { color: var(--ink-3); transition: transform .2s; font-size: 12px; }
+.section.collapsed .section-toggle { transform: rotate(-90deg); }
+.section.collapsed .section-body { display: none; }
+
+/* ── Group rows ── */
+.group-row {
+  display: grid; grid-template-columns: 22px 1fr 120px 130px 160px 140px;
+  gap: var(--spacing-4); align-items: center;
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid var(--border); cursor: pointer; transition: background .12s;
+}
+.group-row:last-child { border-bottom: none; }
+.group-row:hover { background: var(--color-brand-primary-orange-glare); }
+.group-row.expanded { background: var(--color-brand-primary-orange-glare); }
+
+.checkbox {
+  width: 16px; height: 16px; border: 1.5px solid var(--border-md);
+  border-radius: 3px; background: var(--surface); cursor: pointer;
+  display: grid; place-items: center; transition: all .12s;
+}
+.checkbox:hover { border-color: var(--ink); }
+.checkbox.checked { background: var(--ink); border-color: var(--ink); }
+.checkbox.checked::after { content: "✓"; color: white; font-size: 10px; }
+
+.group-identity { display: flex; align-items: center; gap: var(--spacing-3); min-width: 0; }
+.group-avatar {
+  width: 34px; height: 34px; border-radius: var(--radius-full); flex-shrink: 0;
+  display: grid; place-items: center; font-size: 11px; font-weight: 600; color: white;
+}
+.group-avatar.av-1 { background: linear-gradient(135deg, #e07b3a, #c25a1a); }
+.group-avatar.av-2 { background: linear-gradient(135deg, #6a5dd0, #4a3eb0); }
+.group-avatar.av-3 { background: linear-gradient(135deg, #3aa56e, #1a8550); }
+.vlogo {
+  width: 34px; height: 34px; border-radius: var(--radius-md);
+  border: 1px solid var(--border); background: var(--bg);
+  display: grid; place-items: center; font-family: var(--font-display); font-size: 14px; color: var(--ink-2); flex-shrink: 0;
+}
+.vlogo.amzn { background: #232f3e; color: #ff9900; border-color: #232f3e; }
+.vlogo.brl { background: var(--color-brand-primary-orange-glare); color: var(--ai); border-color: var(--color-brand-primary-orange-peach); }
+.vlogo.gi { background: var(--color-brand-primary-blue-sky); color: var(--color-brand-primary-blue); border-color: rgba(21,93,252,.2); }
+.vlogo.od { background: #ffe8e8; color: #cc0000; border-color: #f5cccc; }
+.vlogo.gr { background: #ffe9d6; color: #e67e22; border-color: #f5d4a8; }
+.vlogo.stp { background: #e3ecf5; color: #c8001a; border-color: #c5d4e8; }
+
+.group-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+.inv-count {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: var(--radius-sm);
+  background: var(--color-semantic-pending-100); color: var(--ai); margin-left: 6px;
+}
+.group-meta { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; }
+.meta-dot { color: var(--border-md); }
+
+.group-amount { font-family: var(--font-display); font-size: 18px; font-weight: 500; text-align: right; }
+.group-amount-sub { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); text-align: right; }
+
+.group-waiting { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); }
+.group-waiting strong { display: block; font-family: var(--font-display); font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 1px; }
+.group-waiting strong.warn { color: var(--warn); }
+.group-waiting strong.crit { color: var(--crit); }
+
+/* ── Risk badges ── */
+.risk {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.risk::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+.risk.money { background: var(--color-semantic-error-100); color: var(--crit); }
+.risk.money::before { background: var(--crit); }
+.risk.time { background: var(--color-semantic-waiting-100); color: var(--warn); }
+.risk.time::before { background: var(--warn); }
+.risk.compliance { background: var(--color-brand-primary-blue-sky); color: var(--color-brand-primary-blue); }
+.risk.compliance::before { background: var(--color-brand-primary-blue); }
+.risk.relationship { background: var(--color-semantic-success-100); color: var(--ok); }
+.risk.relationship::before { background: var(--ok); }
+
+.group-action { display: flex; gap: var(--spacing-1); justify-content: flex-end; }
+
+/* ── AI suggestion strip ── */
+.agent-suggestion {
+  margin: 0 var(--spacing-6) 0 calc(var(--spacing-6) + 22px + var(--spacing-4) + 34px + var(--spacing-3));
+  padding: var(--spacing-3) var(--spacing-4);
+  background: linear-gradient(90deg, var(--ai-soft) 0%, transparent 100%);
+  border-left: 2px solid var(--color-brand-primary-orange-peach);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 12px; color: var(--ink-2); display: flex; align-items: flex-start; gap: var(--spacing-2);
+}
+.agent-suggestion::before { content: "✦"; color: var(--ai); font-size: 11px; margin-top: 1px; flex-shrink: 0; }
+.agent-suggestion .link { color: var(--ai-deep); font-weight: 500; text-decoration: underline; cursor: pointer; }
+
+/* ── Child rows (expanded) ── */
+.children {
+  display: none; background: var(--color-neutral-grey); border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.group-row.expanded ~ .children { display: block; }
+.child-row {
+  display: grid; grid-template-columns: 22px 120px 1fr 110px 110px 100px;
+  gap: var(--spacing-4); align-items: center;
+  padding: var(--spacing-3) var(--spacing-6) var(--spacing-3) calc(var(--spacing-6) + 22px + var(--spacing-4) + 34px + var(--spacing-3));
+  border-top: 1px dashed var(--border-md); font-size: 13px;
+}
+.child-row:first-child { border-top: 1px solid var(--border); }
+.child-id { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--color-brand-primary-blue); cursor: pointer; }
+.child-id:hover { text-decoration: underline; }
+.child-id .po { display: block; color: var(--ink-3); font-size: 10px; font-weight: 400; margin-top: 1px; }
+.child-detail { font-size: 12.5px; color: var(--ink-2); }
+.child-amount { font-family: var(--font-mono); font-size: 13px; text-align: right; color: var(--ink); font-weight: 500; }
+.child-waiting { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-3); }
+.child-waiting.warn { color: var(--warn); }
+.child-waiting.crit { color: var(--crit); }
+
+/* ── Section footer ── */
+.section-footer {
+  padding: var(--spacing-3) var(--spacing-6); border-top: 1px solid var(--border);
+  background: var(--bg); text-align: center;
+}
+.section-footer a { font-size: 12px; color: var(--ink-2); text-decoration: none; }
+.section-footer a:hover { color: var(--ai); }
+
+/* ── Modal ── */
+.modal-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(18,11,11,.45); backdrop-filter: blur(3px);
+  z-index: 50; align-items: center; justify-content: center;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: var(--surface); border-radius: var(--radius-xl);
+  width: 520px; max-width: calc(100vw - 40px);
+  border: 1px solid var(--border-md); box-shadow: 0 30px 60px -20px rgba(0,0,0,.3); overflow: hidden;
+}
+.modal-header { padding: var(--spacing-6) var(--spacing-6) var(--spacing-4); border-bottom: 1px solid var(--border); }
+.modal-title { font-family: var(--font-display); font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+.modal-sub { font-size: 12.5px; color: var(--ink-3); }
+.timeline { padding: var(--spacing-6); }
+.tl-item { display: grid; grid-template-columns: 18px 90px 1fr; gap: var(--spacing-3); padding: 8px 0; font-size: 12.5px; position: relative; }
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border-md); margin-top: 4px; margin-left: 4px; position: relative; z-index: 1; }
+.tl-item.current .tl-dot { background: var(--ai); box-shadow: 0 0 0 4px var(--ai-soft); }
+.tl-item.done .tl-dot { background: var(--ok); }
+.tl-item.done .tl-dot::after { content: ''; position: absolute; top: 10px; left: 4px; width: 2px; height: calc(100% + 8px); background: var(--border); }
+.tl-time { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); padding-top: 2px; }
+.tl-text { color: var(--ink-2); }
+.tl-text strong { color: var(--ink); font-weight: 500; }
+.modal-footer {
+  padding: var(--spacing-4) var(--spacing-6); background: var(--bg);
+  display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border);
+}
+
+/* ── Success card ── */
+.success-card {
+  background: linear-gradient(135deg, var(--color-semantic-success-100), var(--bg));
+  border: 1px solid rgba(22,163,74,.2); border-radius: var(--radius-xl);
+  padding: var(--spacing-8); text-align: center; margin-top: var(--spacing-7);
+}
+.success-quote {
+  font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--ink);
+  max-width: 480px; margin: 0 auto var(--spacing-3); line-height: 1.4;
+}
+.success-meta { font-size: 12px; color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">W</div>
+      <span class="brand-name">Witness</span>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Today</div>
+      <button class="nav-item">Brief</button>
+      <button class="nav-item active">Waiting Hub <span class="nav-badge">24</span></button>
+      <button class="nav-item">Cases</button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Intelligence</div>
+      <button class="nav-item">Patterns</button>
+      <button class="nav-item">Analytics</button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <button class="nav-item">Vendors</button>
+      <button class="nav-item">Approvals</button>
+      <button class="nav-item">Reports</button>
+      <button class="nav-item">Settings</button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="avatar">MC</div>
+      <div>
+        <div class="avatar-name">Maya Chen</div>
+        <div class="avatar-role">AP Lead</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main>
+    <div class="topbar">
+      <button class="btn ghost sm">↻ Refresh</button>
+      <button class="btn sm">↗ Export</button>
+      <button class="btn primary sm">+ New follow-up</button>
+    </div>
+
+    <div class="page">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Waiting Hub</h1>
+          <p class="page-subtitle">Everything blocking progress, grouped by <em>who</em> or <em>what</em> is holding it up. Sorted by impact and time-at-risk.</p>
+        </div>
+        <div class="hero-metric">
+          <div class="hero-amount">$105,180</div>
+          <div class="hero-meta"><span class="delta">↑ $12,400 vs last week</span> · across 24 items</div>
+          <div class="breakdown-bar">
+            <div style="width:35%;background:var(--warn);"></div>
+            <div style="width:28%;background:var(--crit);"></div>
+            <div style="width:22%;background:var(--ok);"></div>
+            <div style="width:15%;background:var(--color-brand-primary-blue);"></div>
+          </div>
+          <div class="breakdown-legend">
+            <span><span class="legend-dot" style="background:var(--warn)"></span>Approver $42.6k</span>
+            <span><span class="legend-dot" style="background:var(--crit)"></span>Vendor $31.2k</span>
+            <span><span class="legend-dot" style="background:var(--ok)"></span>Receipt $18.6k</span>
+            <span><span class="legend-dot" style="background:var(--color-brand-primary-blue)"></span>AP $12.7k</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent activity bar -->
+      <div class="agent-bar">
+        <div class="agent-icon">W</div>
+        <div class="agent-text">
+          <span class="lede">Overnight, while you were away</span>
+          I drafted <strong>6 vendor follow-ups</strong>, escalated <strong>2 stalled approvals</strong> to backup approvers, and matched <strong>3 receipts</strong> from Brightline's portal. <strong>4 drafts are ready for your review</strong> before they go out.
+        </div>
+        <div class="agent-stats">
+          <div class="agent-stat"><span class="n">11</span><span class="l">Actions taken</span></div>
+          <div class="agent-stat"><span class="n">4</span><span class="l">Need review</span></div>
+          <div class="agent-stat"><span class="n">$8.2k</span><span class="l">Recovered</span></div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="chip active" onclick="setChip(this)">All <span class="count">24</span></div>
+        <div class="chip" onclick="setChip(this)">Discount at risk <span class="count">8</span></div>
+        <div class="chip" onclick="setChip(this)">Due today <span class="count">6</span></div>
+        <div class="chip" onclick="setChip(this)">Over 3 days <span class="count">11</span></div>
+        <div class="chip" onclick="setChip(this)">Mine only <span class="count">14</span></div>
+        <div class="search"><input placeholder="Search PO, vendor, approver…" /></div>
+        <div class="filter-spacer"></div>
+        <button class="btn sm">⇅ Sort: Priority</button>
+        <button class="btn sm">◫ Saved views</button>
+      </div>
+
+      <!-- Selection bar -->
+      <div class="selection-bar" id="selectionBar">
+        <strong id="selectionCount"></strong>
+        <button class="btn sm">↗ Bulk nudge</button>
+        <button class="btn sm">⏰ Snooze</button>
+        <button class="btn sm">✎ Reassign</button>
+        <div style="flex:1"></div>
+        <button class="btn sm" onclick="clearSelection()">Clear</button>
+      </div>
+
+      <!-- ══════════ SECTION 1: APPROVER ══════════ -->
+      <div class="section">
+        <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <div class="section-icon approver">⏱</div>
+          <div>
+            <div class="section-title">Waiting on approver</div>
+            <div class="section-sub">Approval pending from decision owner · grouped by approver</div>
+          </div>
+          <div class="section-stats">
+            <span><strong>3</strong> people · <strong>8</strong> invoices</span>
+            <div class="stat-divider"></div>
+            <span class="stat-amount danger">$42,580</span>
+          </div>
+          <div class="section-toggle">▼</div>
+        </div>
+
+        <div class="section-body">
+
+          <!-- J. Park -->
+          <div class="group-row" onclick="toggleExpand(this)">
+            <div class="checkbox" onclick="event.stopPropagation();toggleCheck(this)"></div>
+            <div class="group-identity">
+              <div class="group-avatar av-1">JP</div>
+              <div>
+                <div class="group-name">J. Park <span class="inv-count">3 invoices</span></div>
+                <div class="group-meta">
+                  <span>Director of Operations</span><span class="meta-dot">·</span>
+                  <span>Last login: 2d ago</span><span class="meta-dot">·</span><span>Avg: 4.1d</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="group-amount">$15,840</div>
+              <div class="group-amount-sub">$8.4k highest</div>
+            </div>
+            <div class="group-waiting"><strong class="crit">3 days</strong>oldest item</div>
+            <div><span class="risk money">Discount in 2d</span></div>
+            <div class="group-action">
+              <button class="btn sm primary" onclick="event.stopPropagation()">Nudge all</button>
+              <button class="btn sm" onclick="event.stopPropagation()">⋯</button>
+            </div>
+          </div>
+          <div class="agent-suggestion">
+            J. Park hasn't approved anything in 5 days. <span class="link">Escalate to Sarah Kim (backup)?</span> · <span class="link">Send personalized nudge from agent</span>
+          </div>
+          <div class="children">
+            <div class="child-row">
+              <div></div>
+              <div class="child-id">INV-1048<span class="po">PO-7721</span></div>
+              <div class="child-detail">Brightline Office Supply · monthly office supplies</div>
+              <div class="child-amount">$8,420</div>
+              <div class="child-waiting crit">3d · Apr 25</div>
+              <div><span class="risk money" style="cursor:pointer" onclick="showWhyStuck()">Discount 2d</span></div>
+            </div>
+            <div class="child-row">
+              <div></div>
+              <div class="child-id">INV-1056<span class="po">PO-7728</span></div>
+              <div class="child-detail">Grainger · industrial fasteners (3-way matched)</div>
+              <div class="child-amount">$4,210</div>
+              <div class="child-waiting warn">3d · Apr 25</div>
+              <div><span class="risk time">Aging</span></div>
+            </div>
+            <div class="child-row">
+              <div></div>
+              <div class="child-id">INV-1071<span class="po">PO-7735</span></div>
+              <div class="child-detail">Office Depot · printer toner consolidated order</div>
+              <div class="child-amount">$3,210</div>
+              <div class="child-waiting">2d · Apr 26</div>
+              <div><span class="risk money">Discount 4d</span></div>
+            </div>
+          </div>
+
+          <!-- M. Chen -->
+          <div class="group-row" onclick="toggleExpand(this)">
+            <div class="checkbox" onclick="event.stopPropagation();toggleCheck(this)"></div>
+            <div class="group-identity">
+              <div class="group-avatar av-2">MC</div>
+              <div>
+                <div class="group-name">M. Chen <span class="inv-count">3 invoices</span></div>
+                <div class="group-meta">
+                  <span>Finance Manager</span><span class="meta-dot">·</span><span>Active today</span><span class="meta-dot">·</span><span>Avg: 1.6d</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="group-amount">$15,210</div>
+              <div class="group-amount-sub">$8.2k highest</div>
+            </div>
+            <div class="group-waiting"><strong>1 day</strong>oldest item</div>
+            <div><span class="risk money">Discount in 4d</span></div>
+            <div class="group-action">
+              <button class="btn sm primary" onclick="event.stopPropagation()">Nudge all</button>
+              <button class="btn sm" onclick="event.stopPropagation()">⋯</button>
+            </div>
+          </div>
+
+          <!-- E. Johnson -->
+          <div class="group-row" onclick="toggleExpand(this)">
+            <div class="checkbox" onclick="event.stopPropagation();toggleCheck(this)"></div>
+            <div class="group-identity">
+              <div class="group-avatar av-3">EJ</div>
+              <div>
+                <div class="group-name">E. Johnson <span class="inv-count">2 invoices</span></div>
+                <div class="group-meta">
+                  <span>VP Engineering</span><span class="meta-dot">·</span><span>OOO until May 5</span><span class="meta-dot">·</span><span>Avg: 5.2d</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="group-amount">$11,530</div>
+              <div class="group-amount-sub">$5.7k highest</div>
+            </div>
+            <div class="group-waiting"><strong class="crit">4 days</strong>oldest item</div>
+            <div><span class="risk relationship">3rd reminder</span></div>
+            <div class="group-action">
+              <button class="btn sm primary" onclick="event.stopPropagation()">Escalate</button>
+              <button class="btn sm" onclick="event.stopPropagation()">⋯</button>
+            </div>
+          </div>
+          <div class="agent-suggestion">
+            E. Johnson is OOO. Their delegate Lin Park can approve up to $10k. <span class="link">Reroute INV-1105 ($5,780) to Lin?</span>
+          </div>
+
+        </div>
+        <div class="section-footer"><a href="#">View all 8 approver items →</a></div>
+      </div>
+
+      <!-- ══════════ SECTION 2: VENDOR ══════════ -->
+      <div class="section">
+        <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <div class="section-icon vendor">✉</div>
+          <div>
+            <div class="section-title">Waiting on vendor</div>
+            <div class="section-sub">Vendor action or document required · grouped by vendor</div>
+          </div>
+          <div class="section-stats">
+            <span><strong>4</strong> vendors · <strong>6</strong> requests</span>
+            <div class="stat-divider"></div>
+            <span class="stat-amount danger">$31,240</span>
+          </div>
+          <div class="section-toggle">▼</div>
+        </div>
+
+        <div class="section-body">
+          <div class="group-row" onclick="toggleExpand(this)">
+            <div class="checkbox" onclick="event.stopPropagation();toggleCheck(this)"></div>
+            <div class="group-identity">
+              <div class="vlogo brl">B</div>
+              <div>
+                <div class="group-name">Brightline Office Supply <span class="inv-count">2 needs</span></div>
+                <div class="group-meta">
+                  <span>Net 30</span><span class="meta-dot">·</span><span>Responded 2/3 follow-ups</span><span class="meta-dot">·</span><span>ar@brightline.co</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="group-amount">$10,470</div>
+              <div class="group-amount-sub">credit memo + POD</div>
+            </div>
+            <div class="group-waiting"><strong class="warn">2 days</strong>oldest</div>
+            <div><span class="risk money">Due in 2d</span></div>
+            <div class="group-action">
+              <button class="btn sm primary" onclick="event.stopPropagation()">Follow up</button>
+              <button class="btn sm" onclick="event.stopPropagation()">⋯</button>
+            </div>
+          </div>
+          <div class="agent-suggestion">
+            Drafted a consolidated email requesting both items. <span class="link">Review draft →</span>
+          </div>
+
+          <div class="group-row" onclick="toggleExpand(this)">
+            <div class="checkbox" onclick="event.stopPropagation();toggleCheck(this)"></div>
+            <div class="group-identity">
+              <div class="vlogo gr">G</div>
+              <div>
+                <div class="group-name">Grainger <span class="inv-count">1 need</span></div>
+                <div class="group-meta">
+                  <span>Proof of delivery · INV-1112</span><span class="meta-dot">·</span><span>2nd reminder sent</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="group-amount">$4,320</div>
+              <div class="group-amount-sub">POD pending</div>
+            </div>
+            <div class="group-waiting"><strong class="crit">3 days</strong>since request</div>
+            <div><span class="risk relationship">2nd reminder</span></div>
+            <div class="group-action">
+              <button class="btn sm primary" onclick="event.stopPropagation()">Escalate</button>
+              <button class="btn sm" onclick="event.stopPropagation()">⋯</button>
+            </div>
+          </div>
+
+          <div class="group-row" onclick="toggleExpand(this)">
+            <div class="checkbox" onclick="event.stopPropagation();toggleCheck(this)"></div>
+            <div class="group-identity">
+              <div class="vlogo gi">G</div>
+              <div>
+                <div class="group-name">Global Industrial <span class="inv-count">2 needs</span></div>
+                <div class="group-meta">
+                  <span>Credit memo + revised invoice</span><span class="meta-dot">·</span><span>High-volume vendor</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="group-amount">$13,610</div>
+              <div class="group-amount-sub">across 2 docs</div>
+            </div>
+            <div class="group-waiting"><strong>1 day</strong>oldest</div>
+            <div><span class="risk time">Due May 3</span></div>
+            <div class="group-action">
+              <button class="btn sm primary" onclick="event.stopPropagation()">Follow up</button>
+              <button class="btn sm" onclick="event.stopPropagation()">⋯</button>
+            </div>
+          </div>
+        </div>
+        <div class="section-footer"><a href="#">View all 6 vendor items →</a></div>
+      </div>
+
+      <!-- ══════════ SECTION 3: RECEIPT ══════════ -->
+      <div class="section">
+        <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <div class="section-icon receipt">☑</div>
+          <div>
+            <div class="section-title">Waiting on receipt confirmation</div>
+            <div class="section-sub">Goods receipt or delivery confirmation missing in ERP</div>
+          </div>
+          <div class="section-stats">
+            <span><strong>4</strong> invoices</span>
+            <div class="stat-divider"></div>
+            <span class="stat-amount">$18,640</span>
+          </div>
+          <div class="section-toggle">▼</div>
+        </div>
+        <div class="section-body">
+          <div class="group-row" onclick="toggleExpand(this)">
+            <div class="checkbox" onclick="event.stopPropagation();toggleCheck(this)"></div>
+            <div class="group-identity">
+              <div class="vlogo amzn">a</div>
+              <div>
+                <div class="group-name">Amazon Business · INV-1084</div>
+                <div class="group-meta">
+                  <span>PO-7802</span><span class="meta-dot">·</span><span>Delivered Apr 25, not recorded in ERP</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="group-amount">$7,960</div>
+              <div class="group-amount-sub">tracked: delivered</div>
+            </div>
+            <div class="group-waiting"><strong>1 day</strong>since delivery</div>
+            <div><span class="risk compliance">ERP sync</span></div>
+            <div class="group-action">
+              <button class="btn sm primary" onclick="event.stopPropagation()">Sync now</button>
+              <button class="btn sm" onclick="event.stopPropagation()">⋯</button>
+            </div>
+          </div>
+          <div class="agent-suggestion">
+            Receiving dock log shows full delivery confirmed Apr 26 at 3:42 PM but ERP wasn't updated. <span class="link">Auto-reconcile and post GRN?</span>
+          </div>
+        </div>
+        <div class="section-footer"><a href="#">View all 4 receipt items →</a></div>
+      </div>
+
+      <!-- ══════════ SECTION 4: AP JUDGMENT ══════════ -->
+      <div class="section">
+        <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <div class="section-icon judgment">★</div>
+          <div>
+            <div class="section-title">Waiting on AP judgment</div>
+            <div class="section-sub">Needs your review or decision · cannot be auto-resolved</div>
+          </div>
+          <div class="section-stats">
+            <span><strong>6</strong> invoices</span>
+            <div class="stat-divider"></div>
+            <span class="stat-amount">$12,720</span>
+          </div>
+          <div class="section-toggle">▼</div>
+        </div>
+        <div class="section-body">
+          <div class="group-row" onclick="toggleExpand(this)">
+            <div class="checkbox" onclick="event.stopPropagation();toggleCheck(this)"></div>
+            <div class="group-identity">
+              <div class="vlogo brl">B</div>
+              <div>
+                <div class="group-name">Brightline · INV-1092 <span class="inv-count">freight variance</span></div>
+                <div class="group-meta">
+                  <span>PO-7821</span><span class="meta-dot">·</span><span>$87 over expected freight (3.2%)</span><span class="meta-dot">·</span><span>Below 5% tolerance</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="group-amount">$1,125</div>
+              <div class="group-amount-sub">+$87 variance</div>
+            </div>
+            <div class="group-waiting"><strong>1 day</strong>since flag</div>
+            <div><span class="risk compliance">Variance</span></div>
+            <div class="group-action">
+              <button class="btn sm primary" onclick="event.stopPropagation()">Review</button>
+              <button class="btn sm" onclick="event.stopPropagation()">⋯</button>
+            </div>
+          </div>
+          <div class="agent-suggestion">
+            Last 4 Brightline freight variances were all approved. Confidence 94%. <span class="link">Approve and learn this pattern?</span>
+          </div>
+
+          <div class="group-row" onclick="toggleExpand(this)">
+            <div class="checkbox" onclick="event.stopPropagation();toggleCheck(this)"></div>
+            <div class="group-identity">
+              <div class="vlogo stp">S</div>
+              <div>
+                <div class="group-name">Staples Advantage · INV-1101 <span class="inv-count">possible duplicate</span></div>
+                <div class="group-meta">
+                  <span>PO-7835</span><span class="meta-dot">·</span><span>92% match with INV-1089 paid Apr 22</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="group-amount">$3,240</div>
+              <div class="group-amount-sub">duplicate risk</div>
+            </div>
+            <div class="group-waiting"><strong class="crit">3 days</strong>since flag</div>
+            <div><span class="risk money">Duplicate</span></div>
+            <div class="group-action">
+              <button class="btn sm primary" onclick="event.stopPropagation()">Investigate</button>
+              <button class="btn sm" onclick="event.stopPropagation()">⋯</button>
+            </div>
+          </div>
+        </div>
+        <div class="section-footer"><a href="#">View all 6 AP judgment items →</a></div>
+      </div>
+
+      <div class="success-card">
+        <div class="success-quote">"When everything's clear, this space stays quiet. Until then, your agent is working in the background."</div>
+        <div class="success-meta">Yesterday's hub closed at <strong>$0 blocked</strong> · 18 items resolved · agent handled 14 autonomously</div>
+      </div>
+
+    </div><!-- /page -->
+  </main>
+</div>
+
+<!-- ── Why Stuck Modal ── -->
+<div class="modal-backdrop" id="whyStuckModal" onclick="if(event.target===this)hideWhyStuck()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Why is INV-1048 stuck?</div>
+      <div class="modal-sub">Brightline Office Supply · $8,420 · waiting 3 days</div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item done"><div class="tl-dot"></div><div class="tl-time">Apr 22<br/>10:14 AM</div><div class="tl-text"><strong>Invoice received</strong> via Brightline EDI feed</div></div>
+      <div class="tl-item done"><div class="tl-dot"></div><div class="tl-time">Apr 22<br/>10:15 AM</div><div class="tl-text"><strong>3-way match passed</strong> · PO-7721, GRN-4421, INV-1048</div></div>
+      <div class="tl-item done"><div class="tl-dot"></div><div class="tl-time">Apr 22<br/>10:16 AM</div><div class="tl-text"><strong>Routed to J. Park</strong> for approval (over $5k threshold)</div></div>
+      <div class="tl-item done"><div class="tl-dot"></div><div class="tl-time">Apr 24<br/>9:00 AM</div><div class="tl-text"><strong>Agent reminder sent</strong> · auto-followup #1</div></div>
+      <div class="tl-item done"><div class="tl-dot"></div><div class="tl-time">Apr 25<br/>9:00 AM</div><div class="tl-text"><strong>Agent reminder sent</strong> · auto-followup #2</div></div>
+      <div class="tl-item current"><div class="tl-dot"></div><div class="tl-time">Now</div><div class="tl-text"><strong>Awaiting J. Park's approval</strong> · 2% early-pay discount expires Apr 29</div></div>
+    </div>
+    <div class="modal-footer">
+      <span style="font-size:12px;color:var(--ink-3)">Audit log · all actions visible</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn sm" onclick="hideWhyStuck()">Close</button>
+        <button class="btn sm primary">Escalate to backup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleExpand(row) {
+  const wasExpanded = row.classList.contains('expanded');
+  document.querySelectorAll('.group-row.expanded').forEach(r => r.classList.remove('expanded'));
+  if (!wasExpanded) row.classList.add('expanded');
+}
+function toggleCheck(box) {
+  box.classList.toggle('checked');
+  updateSelectionBar();
+}
+function updateSelectionBar() {
+  const n = document.querySelectorAll('.checkbox.checked').length;
+  const bar = document.getElementById('selectionBar');
+  const counter = document.getElementById('selectionCount');
+  bar.classList.toggle('show', n > 0);
+  counter.textContent = n + (n === 1 ? ' item selected' : ' items selected');
+}
+function clearSelection() {
+  document.querySelectorAll('.checkbox.checked').forEach(c => c.classList.remove('checked'));
+  updateSelectionBar();
+}
+function setChip(el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+function showWhyStuck() { document.getElementById('whyStuckModal').classList.add('show'); }
+function hideWhyStuck() { document.getElementById('whyStuckModal').classList.remove('show'); }
+</script>
+</body>
+</html>
