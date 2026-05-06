@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Witness – All Invoices (Grouped)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #0b0d12; display: flex; min-height: 100vh; }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 257px; background: #f4f4f4; display: flex; flex-direction: column; z-index: 20; overflow-y: auto; }
+    .sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .brand-logo { width: 32px; height: 32px; background: #120b0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .brand-logo img { width: 20px; height: 20px; display: block; object-fit: contain; }
+    .brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
+    .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+    .nav-group { display: flex; flex-direction: column; gap: 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-items { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: #45556c; font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: -0.15px; text-decoration: none; cursor: pointer; }
+    .nav-item:hover { background: rgba(0,0,0,0.04); }
+    .nav-item.active { background: white; color: #120b0b; padding: 8px 12px; }
+    .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
+    .nav-badge { margin-left: auto; background: #120b0b; color: white; font-size: 12px; font-weight: 700; line-height: 16px; padding: 2px 8px; border-radius: 999px; }
+
+    /* ─── MAIN ─── */
+    .main { margin-left: 257px; flex: 1; display: flex; flex-direction: column; }
+
+    /* ─── TOPBAR ─── */
+    .topbar { position: sticky; top: 0; z-index: 10; background: white; border-bottom: 1px solid #ededed; display: flex; align-items: center; justify-content: space-between; padding: 23px 24px; flex-shrink: 0; }
+    .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
+    .topbar-right { display: flex; align-items: center; gap: 24px; }
+    .health-chip { display: flex; align-items: center; gap: 8px; background: #dcfce7; border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
+    .health-chip img { width: 16px; height: 16px; object-fit: contain; }
+    .health-chip span { font-size: 14px; font-weight: 500; color: #00a63e; letter-spacing: -0.15px; white-space: nowrap; }
+    .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+
+    /* ─── CONTENT ─── */
+    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 52px; }
+
+    /* ─── PAGE HEADING ─── */
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; }
+    .page-hd-left { display: flex; flex-direction: column; gap: 6px; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+    .page-sub { font-size: 14px; font-weight: 400; color: #45556c; line-height: 20px; letter-spacing: -0.15px; }
+    .hd-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-outline { background: white; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 8px 16px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #0b0d12; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-outline:hover { background: #f4f4f4; }
+    .btn-solid { background: #ff7a3d; border: none; border-radius: 999px; padding: 0 24px; height: 32px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: white; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-solid:hover { background: #ff6826; }
+
+    /* ─── STAT CARDS ─── */
+    .stat-row { display: flex; }
+    .stat-card { background: white; border: 2px solid #e9e9e9; padding: 18px; flex: 1; min-width: 0; }
+    .stat-card:first-child { border-radius: 10px 0 0 10px; }
+    .stat-card:last-child  { border-radius: 0 10px 10px 0; }
+    .stat-card + .stat-card { border-left: none; }
+    .stat-inner { display: flex; flex-direction: column; gap: 16px; }
+    .stat-num { font-size: 32px; font-weight: 600; color: #0f172b; line-height: 32px; letter-spacing: 0.07px; margin-bottom: 8px; }
+    .stat-num.red   { color: #dc2626; }
+    .stat-num.amber { color: #e9b44c; }
+    .stat-num.green { color: #16a34a; }
+    .stat-lbl { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; }
+    .stat-sub { font-size: 12px; font-weight: 400; color: #45556c; margin-top: 6px; line-height: 16px; }
+
+    /* ─── SEARCH ─── */
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .search-wrap { position: relative; flex: 1; max-width: 400px; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; display: flex; align-items: center; }
+    .search-icon svg { width: 15px; height: 15px; }
+    .search-input { width: 100%; padding: 8px 12px 8px 36px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-size: 13px; font-family: 'Inter', sans-serif; color: #0b0d12; outline: none; }
+    .search-input::placeholder { color: #adadad; }
+    .search-input:focus { border-color: #c8c8c8; }
+    .sort-select { padding: 7px 10px; border-radius: 8px; border: 1.5px solid #e9e9e9; background: white; color: #45556c; font-size: 12px; font-family: 'Inter', sans-serif; cursor: pointer; outline: none; }
+
+    /* ─── GROUP SECTIONS ─── */
+    .groups { display: flex; flex-direction: column; gap: 32px; }
+
+    .group { border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+
+    /* Group header */
+    .group-hd {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px;
+      background: white;
+      border-bottom: 1px solid #e9e9e9;
+      cursor: pointer;
+      user-select: none;
+    }
+    .group-hd:hover { background: #fafafa; }
+
+    .group-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .gi-red    { background: #fee2e2; }
+    .gi-amber  { background: #fdf2d4; }
+    .gi-blue   { background: #e7f4ff; }
+    .gi-green  { background: #dcfce7; }
+
+    .group-title-wrap { display: flex; flex-direction: column; gap: 2px; }
+    .group-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 400; color: #120b0b; line-height: 1.3; }
+    .group-sub { font-size: 12px; font-weight: 400; color: #45556c; }
+
+    .group-hd-right { margin-left: auto; display: flex; align-items: center; gap: 20px; }
+    .group-meta { font-size: 12px; font-weight: 500; color: #45556c; white-space: nowrap; }
+    .group-total { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+    .group-total.red   { color: #dc2626; }
+    .group-total.amber { color: #e9b44c; }
+    .group-total.green { color: #16a34a; }
+    .group-total.neutral { color: #0b0d12; }
+    .group-chevron { font-size: 12px; color: #adadad; transition: transform 0.2s; }
+    .group.collapsed .group-chevron { transform: rotate(-90deg); }
+
+    /* Group body */
+    .group-body { display: block; }
+    .group.collapsed .group-body { display: none; }
+
+    /* AI insight banner inside group */
+    .ai-insight-row { background: #fff5f0; border-top: 1px solid #ffb088; border-bottom: 1px solid #ffb088; padding: 11px 20px; }
+    .ai-insight-inner { display: flex; align-items: center; gap: 10px; }
+    .ai-insight-badge { display: inline-flex; align-items: center; gap: 6px; background: white; color: #ff6900; font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; border: 1px solid #ffb088; white-space: nowrap; flex-shrink: 0; }
+    .ai-insight-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #ff6900; animation: pls 2s infinite; flex-shrink: 0; }
+    .ai-insight-txt { font-size: 13px; font-weight: 400; color: black; line-height: 20px; }
+    .ai-insight-txt strong { font-weight: 600; }
+    .ai-insight-link { margin-left: auto; font-size: 12px; font-weight: 500; color: #0b0d12; text-decoration: underline; cursor: pointer; white-space: nowrap; }
+
+    /* View all footer */
+    .group-footer { padding: 12px 20px; border-top: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: center; }
+    .view-all-link { font-size: 13px; font-weight: 500; color: #45556c; text-decoration: underline; cursor: pointer; }
+    .view-all-link:hover { color: #0b0d12; }
+
+    /* ─── TABLE ─── */
+    table.inv { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    table.inv col.c-inv { width: 11%; }
+    table.inv col.c-vnd { width: 26%; }
+    table.inv col.c-src { width: 16%; }
+    table.inv col.c-amt { width: 13%; }
+    table.inv col.c-sta { width: 10%; }
+    table.inv col.c-urg { width: 12%; }
+    table.inv col.c-act { width: 12%; }
+
+    table.inv thead tr { background: #f7f7f7; }
+    table.inv thead th { font-size: 11px; font-weight: 600; color: #45556c; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; text-align: left; padding: 10px 12px; white-space: nowrap; }
+    table.inv thead th:first-child { padding-left: 20px; }
+    table.inv thead th:last-child  { padding-right: 20px; }
+
+    table.inv tbody tr { background: white; border-top: 1px solid #f0f0f0; transition: background 0.1s; }
+    table.inv tbody tr:hover { background: #fafafa; }
+    table.inv tbody td { padding: 14px 12px; vertical-align: middle; font-size: 14px; font-weight: 400; color: #0b0d12; line-height: 20px; }
+    table.inv tbody td:first-child { padding-left: 20px; }
+    table.inv tbody td:last-child  { padding-right: 20px; }
+
+    /* Cells */
+    .inv-id { display: block; font-size: 14px; font-weight: 600; color: #0b0d12; line-height: 20px; }
+    .po-id  { display: block; font-size: 12px; font-weight: 400; color: #45556c; line-height: 16px; margin-top: 2px; }
+    .vnd-name { font-size: 14px; font-weight: 500; color: #0b0d12; }
+    .vnd-meta { font-size: 11px; font-weight: 400; color: #adadad; margin-top: 2px; }
+    .td-amount { font-size: 14px; font-weight: 600; color: #0b0d12; }
+    .amt-sub { font-size: 11px; font-weight: 400; color: #adadad; margin-top: 2px; display: block; }
+
+    .src-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .src-amazon { background: #e7f4ff; color: #155dfc; }
+    .src-erp    { background: #f4f4f4; color: #45556c; }
+    .src-dot    { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .src-amazon .src-dot { background: #155dfc; }
+    .src-erp    .src-dot { background: #45556c; }
+
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .badge.blocked  { background: #fee2e2; color: #b91c1c; }
+    .badge.pending  { background: #fff0e0; color: #d95b03; }
+    .badge.waiting  { background: #fdf2d4; color: #b17728; }
+    .badge.approved { background: #dcfce7; color: #15803d; }
+    .bdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge.blocked .bdot  { background: #dc2626; }
+    .badge.pending .bdot  { background: #ff6900; }
+    .badge.waiting .bdot  { background: #e9b44c; }
+    .badge.approved .bdot { background: #16a34a; }
+
+    .issue-ai { display: inline-flex; align-items: center; gap: 4px; margin-top: 3px; font-size: 11px; font-weight: 600; color: #ff6900; background: #fff5f0; border: 1px solid #ffb088; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+    .ai-pulse { width: 4px; height: 4px; border-radius: 50%; background: #ff6900; animation: pls 2s infinite; flex-shrink: 0; }
+    @keyframes pls { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .urg-chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .urg-chip .urg-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .urg-red   { background: #fee2e2; color: #b91c1c; } .urg-red   .urg-dot { background: #dc2626; }
+    .urg-amber { background: #fdf2d4; color: #b17728; } .urg-amber .urg-dot { background: #e9b44c; }
+    .urg-green { background: #dcfce7; color: #15803d; } .urg-green .urg-dot { background: #16a34a; }
+
+    .action-cell { display: flex; align-items: center; gap: 6px; width: 100%; }
+    .btn-open { background: white; border: 1.5px solid #0b0d12; border-radius: 8px; padding: 5px 0; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; color: #0b0d12; cursor: pointer; flex: 1; text-align: center; }
+    .btn-open:hover { background: #f4f4f4; }
+    .btn-ctx { background: #120b0b; border: none; border-radius: 8px; padding: 5px 0; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: white; cursor: pointer; flex: 1; text-align: center; }
+    .btn-ctx:hover { background: #45556c; }
+    .btn-ctx.escalate { background: #dc2626; }
+    .btn-ctx.escalate:hover { background: #b91c1c; }
+  </style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─── -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo"><img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="" /></div>
+    <span class="brand-name">Witness</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="#"><img src="https://www.figma.com/api/mcp/asset/0078dabe-156c-4a53-8ee8-14b88f08edd3" alt="" />Dashboard</a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item active" href="#"><img src="https://www.figma.com/api/mcp/asset/036eeafd-95b9-42ec-8e9e-b11d8ae871e6" alt="" />All Invoice<span class="nav-badge">26</span></a>
+        <a class="nav-item" href="#"><img src="https://www.figma.com/api/mcp/asset/fa6e7e9d-f011-45b5-a25d-7c902c02ede2" alt="" />Exceptions</a>
+        <a class="nav-item" href="#"><img src="https://www.figma.com/api/mcp/asset/15e3ed1a-12d2-46a2-a544-d4c76b6af402" alt="" />Approvals</a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Data</div>
+      <div class="nav-items">
+        <a class="nav-item" href="#"><img src="https://www.figma.com/api/mcp/asset/7ac49f75-1d24-4839-a160-168c688113c5" alt="" />Insights</a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="#"><img src="https://www.figma.com/api/mcp/asset/78a18923-bc00-41cf-a369-1310d323404e" alt="" />Settings</a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-date">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
+    <div class="topbar-right">
+      <div class="health-chip"><img src="https://www.figma.com/api/mcp/asset/7be4afc7-921a-48d2-8e2b-bca5dd6a50fc" alt="" /><span>All systems healthy</span></div>
+      <div class="avatar">MC</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- PAGE HEADING -->
+    <div class="page-hd">
+      <div class="page-hd-left">
+        <h1 class="ptitle">All Invoices</h1>
+        <p class="page-sub">26 invoices · synced from Amazon Business &amp; NetSuite · updated 2 min ago</p>
+      </div>
+      <div class="hd-actions">
+        <button class="btn-outline">↑ Export CSV</button>
+        <button class="btn-solid">✦ Run batch match</button>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-inner"><div><div class="stat-num">$284K</div><div class="stat-lbl">Total Invoice Value</div><div class="stat-sub">across 26 invoices</div></div></div></div>
+      <div class="stat-card"><div class="stat-inner"><div><div class="stat-num red">5</div><div class="stat-lbl">Blocked</div><div class="stat-sub">need your action</div></div></div></div>
+      <div class="stat-card"><div class="stat-inner"><div><div class="stat-num amber">8</div><div class="stat-lbl">Pending Approval</div><div class="stat-sub">waiting on approvers</div></div></div></div>
+      <div class="stat-card"><div class="stat-inner"><div><div class="stat-num green">11</div><div class="stat-lbl">Approved</div><div class="stat-sub">ready to pay</div></div></div></div>
+      <div class="stat-card"><div class="stat-inner"><div><div class="stat-num">14</div><div class="stat-lbl">Handled by AI</div><div class="stat-sub">auto-resolved overnight</div></div></div></div>
+      <div class="stat-card"><div class="stat-inner"><div><div class="stat-num red">$123K</div><div class="stat-lbl">At Risk</div><div class="stat-sub">discount or exposure</div></div></div></div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="#adadad" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="#adadad" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        <input class="search-input" id="search-input" type="text" placeholder="Search invoices, vendors, POs…" />
+      </div>
+      <select class="sort-select">
+        <option>Due date (soonest)</option>
+        <option>Amount (highest)</option>
+        <option>Vendor A–Z</option>
+      </select>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         GROUPED SECTIONS
+    ══════════════════════════════════════ -->
+    <div class="groups">
+
+      <!-- ── GROUP 1: Blocked / Needs your action ── -->
+      <div class="group" id="g-blocked">
+        <div class="group-hd" onclick="toggleGroup('g-blocked')">
+          <div class="group-icon gi-red">⚠</div>
+          <div class="group-title-wrap">
+            <div class="group-title">Needs your action</div>
+            <div class="group-sub">Blocked invoices · approval, mismatch or duplicate issues</div>
+          </div>
+          <div class="group-hd-right">
+            <span class="group-meta">5 invoices</span>
+            <span class="group-total red">$36,100</span>
+            <span class="group-chevron">▾</span>
+          </div>
+        </div>
+        <div class="group-body">
+          <!-- AI insight -->
+          <div class="ai-insight-row">
+            <div class="ai-insight-inner">
+              <span class="ai-insight-badge"><span class="ai-insight-badge-dot"></span>✦ Witness AI</span>
+              <span class="ai-insight-txt"><strong>Global Industrial</strong> appears in 3 blocked invoices this week. A vendor rate card issue may be the root cause.</span>
+              <span class="ai-insight-link">Investigate pattern →</span>
+            </div>
+          </div>
+          <table class="inv">
+            <colgroup><col class="c-inv"/><col class="c-vnd"/><col class="c-src"/><col class="c-amt"/><col class="c-sta"/><col class="c-urg"/><col class="c-act"/></colgroup>
+            <thead><tr><th>Invoice</th><th>Vendor</th><th>Source</th><th>Amount</th><th>Status</th><th>Urgency</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="inv-id">INV-1062</span><span class="po-id">PO-7704</span></td>
+                <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div><div class="issue-ai"><span class="ai-pulse"></span>Pattern detected</div></td>
+                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><div class="td-amount">$8,420.00</div><span class="amt-sub">$8.4k highest</span></td>
+                <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+                <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Discount in 1d</span></td>
+                <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1048</span><span class="po-id">PO-7721</span></td>
+                <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div><div class="issue-ai"><span class="ai-pulse"></span>Qty mismatch · freight</div></td>
+                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><div class="td-amount">$3,210.45</div><span class="amt-sub">−$280 overbilled</span></td>
+                <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+                <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 1d</span></td>
+                <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1039</span><span class="po-id">PO-7698</span></td>
+                <td><div class="vnd-name">Acme Logistics Co.</div><div class="vnd-meta">Freight · Avg 2.1d response</div><div class="issue-ai"><span class="ai-pulse"></span>Price variance</div></td>
+                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><div class="td-amount">$12,750.00</div><span class="amt-sub">+$340 variance</span></td>
+                <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+                <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 2d</span></td>
+                <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1124</span><span class="po-id">PO-7748</span></td>
+                <td><div class="vnd-name">Meridian Freight Co.</div><div class="vnd-meta">Freight · Avg 2.8d response</div><div class="issue-ai"><span class="ai-pulse"></span>Witness flagged</div></td>
+                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><div class="td-amount">$14,500.00</div><span class="amt-sub">PO exceeded</span></td>
+                <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+                <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 2d</span></td>
+                <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1101</span><span class="po-id">PO-7730</span></td>
+                <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div><div class="issue-ai"><span class="ai-pulse"></span>Possible duplicate</div></td>
+                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><div class="td-amount">$5,620.00</div><span class="amt-sub">Duplicate risk</span></td>
+                <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+                <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 1d</span></td>
+                <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open">Open</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── GROUP 2: Waiting on approver ── -->
+      <div class="group" id="g-pending">
+        <div class="group-hd" onclick="toggleGroup('g-pending')">
+          <div class="group-icon gi-amber">⏳</div>
+          <div class="group-title-wrap">
+            <div class="group-title">Waiting on approver</div>
+            <div class="group-sub">Approval pending from decision owner · grouped by due date</div>
+          </div>
+          <div class="group-hd-right">
+            <span class="group-meta">4 invoices</span>
+            <span class="group-total amber">$19,730</span>
+            <span class="group-chevron">▾</span>
+          </div>
+        </div>
+        <div class="group-body">
+          <table class="inv">
+            <colgroup><col class="c-inv"/><col class="c-vnd"/><col class="c-src"/><col class="c-amt"/><col class="c-sta"/><col class="c-urg"/><col class="c-act"/></colgroup>
+            <thead><tr><th>Invoice</th><th>Vendor</th><th>Source</th><th>Amount</th><th>Status</th><th>Urgency</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="inv-id">INV-1092</span><span class="po-id">PO-7705</span></td>
+                <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div></td>
+                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><div class="td-amount">$6,100.45</div><span class="amt-sub">$6.1k pending</span></td>
+                <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+                <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>2nd reminder</span></td>
+                <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1081</span><span class="po-id">PO-7710</span></td>
+                <td><div class="vnd-name">TechSupply Inc.</div><div class="vnd-meta">IT Procurement · Last login 1d ago</div></td>
+                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><div class="td-amount">$4,890.00</div><span class="amt-sub">$4.9k pending</span></td>
+                <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+                <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>3 days</span></td>
+                <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1074</span><span class="po-id">PO-7706</span></td>
+                <td><div class="vnd-name">Sierra Packaging LLC</div><div class="vnd-meta">Packaging · Avg 4.5d response</div></td>
+                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><div class="td-amount">$1,540.20</div><span class="amt-sub">$1.5k pending</span></td>
+                <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+                <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>3 days</span></td>
+                <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1119</span><span class="po-id">PO-7741</span></td>
+                <td><div class="vnd-name">Vantage Systems LLC</div><div class="vnd-meta">Software · Avg 1.8d response</div></td>
+                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><div class="td-amount">$7,200.00</div><span class="amt-sub">$7.2k pending</span></td>
+                <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+                <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>4 days</span></td>
+                <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="group-footer"><span class="view-all-link">View all 8 pending invoices →</span></div>
+        </div>
+      </div>
+
+      <!-- ── GROUP 3: Waiting on goods receipt ── -->
+      <div class="group" id="g-waiting">
+        <div class="group-hd" onclick="toggleGroup('g-waiting')">
+          <div class="group-icon gi-blue">📦</div>
+          <div class="group-title-wrap">
+            <div class="group-title">Waiting on goods receipt</div>
+            <div class="group-sub">GRN or delivery confirmation missing in ERP</div>
+          </div>
+          <div class="group-hd-right">
+            <span class="group-meta">3 invoices</span>
+            <span class="group-total neutral">$9,450</span>
+            <span class="group-chevron">▾</span>
+          </div>
+        </div>
+        <div class="group-body">
+          <table class="inv">
+            <colgroup><col class="c-inv"/><col class="c-vnd"/><col class="c-src"/><col class="c-amt"/><col class="c-sta"/><col class="c-urg"/><col class="c-act"/></colgroup>
+            <thead><tr><th>Invoice</th><th>Vendor</th><th>Source</th><th>Amount</th><th>Status</th><th>Urgency</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="inv-id">INV-1067</span><span class="po-id">PO-7699</span></td>
+                <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div></td>
+                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><div class="td-amount">$2,200.00</div><span class="amt-sub">GRN pending</span></td>
+                <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
+                <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>4 days</span></td>
+                <td><div class="action-cell"><button class="btn-ctx">Follow up</button><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1136</span><span class="po-id">PO-7759</span></td>
+                <td><div class="vnd-name">Crestline Interiors</div><div class="vnd-meta">Facilities · GRN pending</div></td>
+                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><div class="td-amount">$2,640.00</div><span class="amt-sub">GRN pending</span></td>
+                <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
+                <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>5 days</span></td>
+                <td><div class="action-cell"><button class="btn-ctx">Follow up</button><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1161</span><span class="po-id">PO-7784</span></td>
+                <td><div class="vnd-name">Acme Logistics Co.</div><div class="vnd-meta">Freight · GRN pending</div></td>
+                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><div class="td-amount">$4,610.00</div><span class="amt-sub">GRN pending</span></td>
+                <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
+                <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>9 days</span></td>
+                <td><div class="action-cell"><button class="btn-ctx">Follow up</button><button class="btn-open">Open</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── GROUP 4: Approved / Ready to pay ── -->
+      <div class="group collapsed" id="g-approved">
+        <div class="group-hd" onclick="toggleGroup('g-approved')">
+          <div class="group-icon gi-green">✓</div>
+          <div class="group-title-wrap">
+            <div class="group-title">Approved · ready to pay</div>
+            <div class="group-sub">3-way match passed · cleared for payment</div>
+          </div>
+          <div class="group-hd-right">
+            <span class="group-meta">11 invoices</span>
+            <span class="group-total green">$100,060</span>
+            <span class="group-chevron">▾</span>
+          </div>
+        </div>
+        <div class="group-body">
+          <table class="inv">
+            <colgroup><col class="c-inv"/><col class="c-vnd"/><col class="c-src"/><col class="c-amt"/><col class="c-sta"/><col class="c-urg"/><col class="c-act"/></colgroup>
+            <thead><tr><th>Invoice</th><th>Vendor</th><th>Source</th><th>Amount</th><th>Status</th><th>Urgency</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="inv-id">INV-1055</span><span class="po-id">PO-7695</span></td>
+                <td><div class="vnd-name">Atlas Freight Services</div><div class="vnd-meta">Freight · Active vendor</div></td>
+                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><div class="td-amount">$9,300.00</div><span class="amt-sub">Clean match</span></td>
+                <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+                <td><span class="urg-chip urg-green"><span class="urg-dot"></span>5 days</span></td>
+                <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1043</span><span class="po-id">PO-7690</span></td>
+                <td><div class="vnd-name">NovaTech Supplies</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
+                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><div class="td-amount">$17,400.00</div><span class="amt-sub">$17.4k highest</span></td>
+                <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+                <td><span class="urg-chip urg-green"><span class="urg-dot"></span>7 days</span></td>
+                <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1033</span><span class="po-id">PO-7682</span></td>
+                <td><div class="vnd-name">Pacific Rim Supplies</div><div class="vnd-meta">Facilities · Active vendor</div></td>
+                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><div class="td-amount">$3,880.00</div><span class="amt-sub">Clean match</span></td>
+                <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+                <td><span class="urg-chip urg-green"><span class="urg-dot"></span>8 days</span></td>
+                <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1027</span><span class="po-id">PO-7674</span></td>
+                <td><div class="vnd-name">Keystone Hardware</div><div class="vnd-meta">Facilities · Active vendor</div></td>
+                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><div class="td-amount">$6,750.00</div><span class="amt-sub">Clean match</span></td>
+                <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+                <td><span class="urg-chip urg-green"><span class="urg-dot"></span>10 days</span></td>
+                <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
+              </tr>
+              <tr>
+                <td><span class="inv-id">INV-1021</span><span class="po-id">PO-7668</span></td>
+                <td><div class="vnd-name">TechSupply Inc.</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
+                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><div class="td-amount">$9,150.00</div><span class="amt-sub">Clean match</span></td>
+                <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+                <td><span class="urg-chip urg-green"><span class="urg-dot"></span>12 days</span></td>
+                <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="group-footer"><span class="view-all-link">View all 11 approved invoices →</span></div>
+        </div>
+      </div>
+
+    </div><!-- /groups -->
+
+  </main>
+</div>
+
+<script>
+  function toggleGroup(id) {
+    document.getElementById(id).classList.toggle('collapsed');
+  }
+
+  // Live search across all rows
+  document.getElementById('search-input').addEventListener('input', function () {
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('table.inv tbody tr').forEach(tr => {
+      tr.style.display = (!q || tr.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    });
+  });
+</script>
+
+</body>
+</html>
