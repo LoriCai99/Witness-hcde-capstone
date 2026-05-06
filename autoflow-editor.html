@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Witness – Autoflow Editor</title>
+  <link rel="stylesheet" href="Witness-Design/tokens/design-tokens.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', sans-serif; background: var(--color-neutral-white); color: var(--color-neutral-black); display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 257px; background: var(--color-neutral-grey); display: flex; flex-direction: column; z-index: 20; overflow-y: auto; }
+    .sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .brand-logo { width: 32px; height: 32px; background: var(--color-neutral-black); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .brand-logo img { width: 20px; height: 20px; display: block; object-fit: contain; }
+    .brand-name { font-size: 18px; font-weight: 600; color: var(--color-neutral-black); letter-spacing: -0.44px; }
+    .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+    .nav-group { display: flex; flex-direction: column; gap: 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-items { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--color-neutral-cool-grey); font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: -0.15px; text-decoration: none; cursor: pointer; }
+    .nav-item:hover { background: rgba(0,0,0,0.04); }
+    .nav-item.active { background: var(--color-neutral-white); color: var(--color-neutral-black); padding: 8px 12px; }
+    .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
+    .nav-badge { margin-left: auto; background: var(--color-neutral-black); color: var(--color-neutral-white); font-size: 12px; font-weight: 700; line-height: 16px; padding: 2px 8px; border-radius: 999px; }
+
+    /* MAIN */
+    .main { margin-left: 257px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    /* TOPBAR */
+    .topbar { position: sticky; top: 0; z-index: 10; background: var(--color-neutral-white); border-bottom: 1px solid #ededed; display: flex; align-items: center; justify-content: space-between; padding: 23px 24px; flex-shrink: 0; }
+    .topbar-left { display: flex; flex-direction: column; gap: 4px; }
+    .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-neutral-dark-grey); }
+    .breadcrumb a { color: var(--color-neutral-cool-grey); text-decoration: none; cursor: pointer; font-weight: 500; }
+    .breadcrumb a:hover { color: var(--color-neutral-black); }
+    .bc-cur { color: var(--color-neutral-black); font-weight: 500; }
+    .topbar-right { display: flex; align-items: center; gap: 24px; }
+    .health-chip { display: flex; align-items: center; gap: 8px; background: var(--color-semantic-success-100); border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
+    .health-chip img { width: 16px; height: 16px; object-fit: contain; }
+    .health-chip span { font-size: 14px; font-weight: 500; color: #00a63e; letter-spacing: -0.15px; white-space: nowrap; }
+    .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--color-neutral-white); }
+
+    /* EDITOR TOOLBAR */
+    .ed-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 24px 32px; gap: 24px; background: var(--color-neutral-white); border-bottom: 1px solid var(--color-neutral-lotion); flex-shrink: 0; }
+    .ed-title-block { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .ed-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 400; color: var(--color-neutral-black); border: none; outline: none; padding: 4px 6px; margin-left: -6px; border-radius: 6px; background: transparent; }
+    .ed-title:hover { background: var(--color-neutral-grey); }
+    .ed-title:focus { background: var(--color-brand-primary-orange-glare); box-shadow: 0 0 0 1.5px var(--color-brand-primary-orange-the-orange); }
+    .ed-meta { font-size: 12px; color: var(--color-neutral-cool-grey); display: flex; align-items: center; gap: 8px; }
+    .ed-meta .saved-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-semantic-success-500); }
+    .ed-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .btn-outline { background: var(--color-neutral-white); border: 1.5px solid var(--color-neutral-lotion); border-radius: 8px; padding: 8px 14px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--color-neutral-black); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-outline:hover { background: var(--color-neutral-grey); }
+    .btn-solid { background: var(--color-neutral-black); border: 1.5px solid var(--color-neutral-black); border-radius: 8px; padding: 8px 14px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--color-neutral-white); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-solid:hover { background: #2a2222; }
+    .btn-brand { background: var(--color-brand-primary-orange-the-orange); border: 1.5px solid var(--color-brand-primary-orange-the-orange); color: white; border-radius: 8px; padding: 8px 14px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-brand:hover { filter: brightness(0.95); }
+
+    /* EDITOR AREA */
+    .ed-area { flex: 1; display: flex; min-height: 0; position: relative; }
+
+    /* CANVAS */
+    .canvas { flex: 1; overflow: auto; padding: 64px 24px 96px; background-color: #fafafa; background-image: radial-gradient(circle, var(--color-neutral-lotion) 1px, transparent 1.5px); background-size: 24px 24px; }
+    .canvas-inner { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+    /* NODE */
+    .node { background: var(--color-neutral-white); border: 1.5px solid var(--color-neutral-lotion); border-left: 4px solid var(--color-neutral-cool-grey); border-radius: var(--radius-xl); padding: 20px; width: 360px; max-width: 100%; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .15s; position: relative; }
+    .node:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); transform: translateY(-1px); }
+    .node.selected { box-shadow: 0 0 0 2px var(--color-brand-primary-orange-the-orange), 0 8px 24px rgba(255,92,27,0.12); }
+
+    .node-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+    .node-type { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--color-neutral-dark-grey); text-transform: uppercase; letter-spacing: 0.8px; padding: 2px 8px; background: var(--color-neutral-grey); border-radius: 999px; flex-shrink: 0; }
+    .node-title { font-size: 15px; font-weight: 600; color: var(--color-neutral-black); line-height: 20px; letter-spacing: -0.2px; }
+    .node-desc { font-size: 12px; color: var(--color-neutral-cool-grey); line-height: 17px; margin-top: 8px; }
+
+    /* Permission state colors on node left border */
+    .node[data-perm="manual"] { border-left-color: var(--color-neutral-cool-grey); }
+    .node[data-perm="suggest"] { border-left-color: var(--color-semantic-waiting-500); }
+    .node[data-perm="auto"] { border-left-color: var(--color-semantic-success-500); }
+
+    /* TRIGGER NODE — orange brand */
+    .node.trigger { border-left-color: var(--color-brand-primary-orange-the-orange); background: linear-gradient(180deg, var(--color-brand-primary-orange-glare) 0%, var(--color-neutral-white) 60%); }
+    .node.trigger .node-type { background: var(--color-brand-primary-orange-touch); color: var(--color-brand-primary-orange-the-orange); }
+
+    /* PERMISSION TOGGLE (3-segment on node header) */
+    .perm-toggle { display: inline-flex; background: var(--color-neutral-grey); border-radius: 999px; padding: 3px; gap: 0; margin-top: 12px; width: 100%; }
+    .perm-opt { flex: 1; padding: 5px 10px; border-radius: 999px; border: none; background: transparent; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: var(--color-neutral-cool-grey); cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+    .perm-opt:hover { color: var(--color-neutral-black); }
+    .perm-opt.active { background: var(--color-neutral-white); color: var(--color-neutral-black); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+    .perm-opt.active[data-perm="manual"] { background: var(--color-neutral-cool-grey); color: var(--color-neutral-white); }
+    .perm-opt.active[data-perm="suggest"] { background: var(--color-semantic-waiting-500); color: var(--color-neutral-black); }
+    .perm-opt.active[data-perm="auto"] { background: var(--color-semantic-success-500); color: var(--color-neutral-white); }
+    .perm-opt .pdot { width: 6px; height: 6px; border-radius: 50%; }
+    .perm-opt[data-perm="manual"] .pdot { background: var(--color-neutral-cool-grey); }
+    .perm-opt[data-perm="suggest"] .pdot { background: var(--color-semantic-waiting-500); }
+    .perm-opt[data-perm="auto"] .pdot { background: var(--color-semantic-success-500); }
+    .perm-opt.active[data-perm="manual"] .pdot,
+    .perm-opt.active[data-perm="auto"] .pdot { background: var(--color-neutral-white); }
+    .perm-opt.active[data-perm="suggest"] .pdot { background: var(--color-neutral-black); }
+
+    /* CONNECTOR */
+    .connector { width: 2px; height: 28px; background: var(--color-neutral-lotion); margin: 0 auto; position: relative; }
+    .connector.tall { height: 40px; }
+    .connector::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid var(--color-neutral-lotion); }
+
+    /* CONDITION (decision diamond — pill style) */
+    .condition { display: flex; align-items: center; justify-content: center; }
+    .cond-pill { background: var(--color-brand-primary-blue-sky); color: var(--color-brand-primary-blue-the-blue); padding: 10px 20px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1.5px solid var(--color-brand-primary-blue-the-blue); display: inline-flex; align-items: center; gap: 10px; cursor: pointer; transition: all .15s; }
+    .cond-pill:hover { background: white; box-shadow: 0 2px 8px rgba(21,93,252,0.15); }
+    .cond-pill.selected { background: white; box-shadow: 0 0 0 2px var(--color-brand-primary-blue-the-blue), 0 4px 12px rgba(21,93,252,0.15); }
+    .cond-pill .cond-icon { font-size: 14px; }
+
+    /* BRANCH */
+    .branch { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; width: 100%; max-width: 760px; margin-top: 0; }
+    .branch-col { display: flex; flex-direction: column; align-items: center; gap: 0; position: relative; }
+    .branch-line { width: 2px; height: 32px; background: var(--color-neutral-lotion); margin: 0 auto; }
+    .branch-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: var(--color-neutral-cool-grey); text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 12px; background: var(--color-neutral-white); border: 1.5px solid var(--color-neutral-lotion); border-radius: 999px; margin: 8px 0; }
+    .branch-label.yes { color: var(--color-semantic-success-1000); border-color: var(--color-semantic-success-100); background: var(--color-semantic-success-100); }
+    .branch-label.no { color: var(--color-neutral-cool-grey); }
+
+    /* MERGE INDICATOR (where branches come back together) */
+    .merge-line { width: 80%; max-width: 600px; height: 2px; background: var(--color-neutral-lotion); position: relative; margin: 0 auto; }
+    .merge-line::before, .merge-line::after { content: ''; position: absolute; top: -16px; width: 2px; height: 16px; background: var(--color-neutral-lotion); }
+    .merge-line::before { left: 25%; }
+    .merge-line::after { right: 25%; }
+    .merge-line .merge-down { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 28px; background: var(--color-neutral-lotion); }
+
+    /* ADD STEP BUTTON */
+    .add-step-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--color-neutral-white); border: 1.5px dashed var(--color-neutral-lotion); border-radius: 999px; padding: 8px 16px; font-size: 12px; font-weight: 500; color: var(--color-neutral-cool-grey); cursor: pointer; margin-top: 24px; transition: all .15s; }
+    .add-step-btn:hover { border-color: var(--color-brand-primary-orange-the-orange); color: var(--color-brand-primary-orange-the-orange); background: var(--color-brand-primary-orange-glare); }
+    .add-step-btn .plus { width: 16px; height: 16px; border-radius: 50%; background: var(--color-neutral-grey); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+    .add-step-btn:hover .plus { background: var(--color-brand-primary-orange-the-orange); color: white; }
+
+    /* SIDE PANEL */
+    .side-panel { width: 380px; background: var(--color-neutral-white); border-left: 1px solid var(--color-neutral-lotion); flex-shrink: 0; display: flex; flex-direction: column; transform: translateX(100%); transition: transform .25s ease; position: absolute; right: 0; top: 0; bottom: 0; box-shadow: -4px 0 24px rgba(0,0,0,0.04); }
+    .side-panel.open { transform: translateX(0); }
+    .sp-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 24px 24px 16px; border-bottom: 1px solid var(--color-neutral-lotion); }
+    .sp-type { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--color-neutral-dark-grey); text-transform: uppercase; letter-spacing: 0.8px; padding: 2px 8px; background: var(--color-neutral-grey); border-radius: 999px; display: inline-block; margin-bottom: 8px; }
+    .sp-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: var(--color-neutral-black); line-height: 1.3; }
+    .sp-close { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--color-neutral-grey); color: var(--color-neutral-cool-grey); font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .sp-close:hover { background: var(--color-neutral-lotion); color: var(--color-neutral-black); }
+    .sp-body { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 24px; }
+
+    .sp-section { display: flex; flex-direction: column; gap: 8px; }
+    .sp-section-label { font-size: 11px; font-weight: 600; color: var(--color-neutral-cool-grey); text-transform: uppercase; letter-spacing: 0.5px; }
+    .sp-section-text { font-size: 13px; color: var(--color-neutral-black); line-height: 19px; }
+    .sp-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .sp-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--color-neutral-black); line-height: 19px; }
+    .sp-list li::before { content: '✓'; color: var(--color-semantic-success-500); font-weight: 700; flex-shrink: 0; }
+    .sp-list.cond li::before { content: '◇'; color: var(--color-brand-primary-blue-the-blue); }
+    .sp-list.warn li::before { content: '!'; color: var(--color-semantic-pending-500); font-weight: 700; }
+
+    /* Permission panel inside side panel */
+    .sp-perm { padding: 16px; background: var(--color-neutral-grey); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 12px; }
+    .sp-perm-current { display: flex; align-items: center; gap: 10px; }
+    .sp-perm-current .perm-badge { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .sp-perm-current .perm-badge.manual { background: var(--color-neutral-cool-grey); color: white; }
+    .sp-perm-current .perm-badge.suggest { background: var(--color-semantic-waiting-500); color: var(--color-neutral-black); }
+    .sp-perm-current .perm-badge.auto { background: var(--color-semantic-success-500); color: white; }
+    .sp-perm-warn { font-size: 12px; color: var(--color-semantic-pending-1000); background: var(--color-semantic-pending-100); padding: 8px 10px; border-radius: 6px; border-left: 3px solid var(--color-semantic-pending-500); display: flex; gap: 8px; align-items: flex-start; }
+    .sp-perm-warn::before { content: '⚠'; flex-shrink: 0; }
+
+    /* Threshold input mock */
+    .threshold-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--color-neutral-grey); border-radius: var(--radius-md); }
+    .threshold-row label { font-size: 13px; color: var(--color-neutral-cool-grey); flex-shrink: 0; }
+    .threshold-row input { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: var(--color-neutral-black); background: var(--color-neutral-white); border: 1.5px solid var(--color-neutral-lotion); border-radius: 6px; padding: 6px 10px; flex: 1; min-width: 0; }
+    .threshold-row input:focus { outline: none; border-color: var(--color-brand-primary-orange-the-orange); box-shadow: 0 0 0 2px var(--color-brand-primary-orange-glare); }
+
+    /* Empty state for side panel */
+    .sp-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 48px 32px; text-align: center; color: var(--color-neutral-cool-grey); height: 100%; }
+    .sp-empty-icon { font-size: 32px; opacity: 0.5; }
+    .sp-empty-title { font-size: 14px; font-weight: 600; color: var(--color-neutral-black); }
+    .sp-empty-text { font-size: 13px; line-height: 18px; }
+
+    /* Help banner inside canvas */
+    .help-banner { display: flex; align-items: center; gap: 12px; background: var(--color-brand-primary-blue-sky); border: 1px solid #c4ddff; padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 32px; max-width: 720px; width: 100%; font-size: 13px; color: var(--color-brand-primary-blue-the-blue); }
+    .help-banner .ico { width: 24px; height: 24px; border-radius: 50%; background: var(--color-brand-primary-blue-the-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+
+    /* SIDEBAR COLLAPSE */
+    .sidebar { transition: width .2s ease; }
+    .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: var(--color-neutral-cool-grey); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
+    .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: var(--color-neutral-black); }
+    .sidebar-toggle svg { transition: transform .2s; }
+    .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    .sidebar.collapsed { width: 72px; }
+    .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+    .sidebar.collapsed .brand-name { display: none; }
+    .sidebar.collapsed .sidebar-toggle { position: absolute; top: 80px; right: -12px; background: var(--color-neutral-white); border: 1.5px solid var(--color-neutral-lotion); box-shadow: 0 1px 3px rgba(0,0,0,0.06); width: 24px; height: 24px; border-radius: 50%; margin: 0; z-index: 21; }
+    .sidebar.collapsed .sidebar-toggle:hover { background: var(--color-neutral-white); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+    .sidebar.collapsed .nav-label { display: none; }
+    .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
+    .sidebar.collapsed .nav-item.active { padding: 8px 0; }
+    .sidebar.collapsed .nav-badge { display: none; }
+    .sidebar.collapsed ~ .main { margin-left: 72px; }
+    .main { transition: margin-left .2s ease; }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="" />
+    </div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="dashboard.html">
+          <img src="https://www.figma.com/api/mcp/asset/0078dabe-156c-4a53-8ee8-14b88f08edd3" alt="" />
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item" href="invoices.html">
+          <img src="https://www.figma.com/api/mcp/asset/036eeafd-95b9-42ec-8e9e-b11d8ae871e6" alt="" />
+          All Invoice
+          <span class="nav-badge">26</span>
+        </a>
+        <a class="nav-item active" href="autoflow.html">
+          <img src="https://www.figma.com/api/mcp/asset/7ac49f75-1d24-4839-a160-168c688113c5" alt="" />
+          Autoflow
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="#">
+          <img src="https://www.figma.com/api/mcp/asset/78a18923-bc00-41cf-a369-1310d323404e" alt="" />
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<div class="main">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-date">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
+      <nav class="breadcrumb">
+        <a href="autoflow.html">Autoflows</a>
+        <span>›</span>
+        <span class="bc-cur">Invoice approval flow</span>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <div class="health-chip">
+        <img src="https://www.figma.com/api/mcp/asset/7be4afc7-921a-48d2-8e2b-bca5dd6a50fc" alt="" />
+        <span>All systems healthy</span>
+      </div>
+      <div class="avatar">MC</div>
+    </div>
+  </header>
+
+  <!-- Editor toolbar -->
+  <div class="ed-toolbar">
+    <div class="ed-title-block">
+      <input class="ed-title" value="Invoice approval flow" spellcheck="false" />
+      <div class="ed-meta">
+        <span class="saved-dot"></span>
+        <span>Saved 4 minutes ago · 23 runs this week · 95% successful</span>
+      </div>
+    </div>
+    <div class="ed-actions">
+      <button class="btn-outline">▶ Test run</button>
+      <button class="btn-outline">Save draft</button>
+      <button class="btn-brand">Deploy</button>
+    </div>
+  </div>
+
+  <!-- Canvas + side panel -->
+  <div class="ed-area">
+
+    <main class="canvas">
+      <div class="canvas-inner">
+
+        <!-- Help banner -->
+        <div class="help-banner">
+          <div class="ico">i</div>
+          <span>Tap any step to configure its AI permission. <strong>Green = full auto · Amber = AI suggests, you confirm · Grey = always manual.</strong></span>
+        </div>
+
+        <!-- Trigger -->
+        <div class="node trigger" data-node="trigger">
+          <div class="node-hd">
+            <span class="node-type">Trigger</span>
+          </div>
+          <div class="node-title">New invoice received</div>
+          <div class="node-desc">From Amazon Business, NetSuite ERP, or forwarded email.</div>
+        </div>
+
+        <div class="connector"></div>
+
+        <!-- Action: Extract -->
+        <div class="node" data-node="extract" data-perm="auto">
+          <div class="node-hd">
+            <span class="node-type">Action</span>
+          </div>
+          <div class="node-title">Extract invoice data</div>
+          <div class="perm-toggle" data-target="extract">
+            <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+            <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+            <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+          </div>
+          <div class="node-desc">Parse PDF, identify vendor, line items, amounts, dates.</div>
+        </div>
+
+        <div class="connector"></div>
+
+        <!-- Action: Match PO -->
+        <div class="node" data-node="match" data-perm="auto">
+          <div class="node-hd">
+            <span class="node-type">Action</span>
+          </div>
+          <div class="node-title">Match against PO</div>
+          <div class="perm-toggle" data-target="match">
+            <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+            <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+            <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+          </div>
+          <div class="node-desc">Validate quantities, prices, and delivery dates against PO.</div>
+        </div>
+
+        <div class="connector"></div>
+
+        <!-- Condition -->
+        <div class="condition">
+          <button class="cond-pill" data-node="threshold">
+            <span class="cond-icon">◇</span>
+            <span>If amount > $5,000</span>
+          </button>
+        </div>
+
+        <!-- Branch -->
+        <div class="branch">
+          <!-- YES -->
+          <div class="branch-col">
+            <div class="branch-line"></div>
+            <div class="branch-label yes">YES</div>
+            <div class="branch-line"></div>
+            <div class="node" data-node="approve_maya" data-perm="manual">
+              <div class="node-hd">
+                <span class="node-type">Action</span>
+              </div>
+              <div class="node-title">Send to Maya for approval</div>
+              <div class="perm-toggle" data-target="approve_maya">
+                <button class="perm-opt active" data-perm="manual"><span class="pdot"></span>Manual</button>
+                <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+                <button class="perm-opt" data-perm="auto"><span class="pdot"></span>Auto</button>
+              </div>
+              <div class="node-desc">High-value invoices wait for human approval before payment.</div>
+            </div>
+          </div>
+          <!-- NO -->
+          <div class="branch-col">
+            <div class="branch-line"></div>
+            <div class="branch-label no">NO</div>
+            <div class="branch-line"></div>
+            <div class="node" data-node="auto_approve" data-perm="auto">
+              <div class="node-hd">
+                <span class="node-type">Action</span>
+              </div>
+              <div class="node-title">Auto-approve & schedule</div>
+              <div class="perm-toggle" data-target="auto_approve">
+                <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+                <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+                <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+              </div>
+              <div class="node-desc">Approve, schedule payment per terms, update ERP.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Merge back -->
+        <div style="height: 32px; width: 100%; max-width: 760px; position: relative;">
+          <div class="merge-line"><div class="merge-down"></div></div>
+        </div>
+
+        <!-- Final action: Notify -->
+        <div class="node" data-node="notify" data-perm="auto">
+          <div class="node-hd">
+            <span class="node-type">Action</span>
+          </div>
+          <div class="node-title">Notify accounting</div>
+          <div class="perm-toggle" data-target="notify">
+            <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+            <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+            <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+          </div>
+          <div class="node-desc">Send a summary to the accounting Slack channel; update the daily ledger.</div>
+        </div>
+
+        <button class="add-step-btn"><span class="plus">+</span>Add a step</button>
+
+      </div>
+    </main>
+
+    <!-- Side panel -->
+    <aside class="side-panel" id="sidePanel">
+      <div class="sp-hd">
+        <div>
+          <span class="sp-type" id="spType">Action</span>
+          <h2 class="sp-title" id="spTitle">Step details</h2>
+        </div>
+        <button class="sp-close" id="spClose" aria-label="Close">×</button>
+      </div>
+      <div class="sp-body" id="spBody"></div>
+    </aside>
+
+  </div>
+</div>
+
+<script>
+  // ────────────── Node data ──────────────
+  const nodeData = {
+    trigger: {
+      type: 'Trigger',
+      title: 'New invoice received',
+      desc: 'Triggered automatically whenever a new invoice arrives. This is the entry point of your flow — every invoice that comes in will follow the steps below.',
+      sources: ['Amazon Business inbox', 'NetSuite ERP webhook', 'Forwarded email (ap@witness.co)'],
+    },
+    extract: {
+      type: 'Action',
+      title: 'Extract invoice data',
+      desc: 'Witness AI parses the invoice file and pulls out the structured data: vendor, line items, amounts, due dates, and PO references.',
+      aiCanDo: ['Read PDF and email attachments', 'Identify line items via OCR', 'Match vendor name against your directory', 'Detect currency and tax info'],
+      fallback: 'If extraction confidence is below 80% on any field, route to "Send to Maya" for manual review instead of continuing.',
+    },
+    match: {
+      type: 'Action',
+      title: 'Match against PO',
+      desc: 'Match the invoice line items to the corresponding purchase order. Validates quantities, unit prices, and delivery dates.',
+      conditions: ['Quantity match (exact)', 'Unit price within ±2% of PO', 'Delivery date within PO window'],
+      fallback: 'On any mismatch, escalate this case to the human-approval branch regardless of amount.',
+    },
+    threshold: {
+      type: 'Condition',
+      title: 'Amount > $5,000',
+      desc: 'A branching decision based on the invoice total. High-value invoices route to a human reviewer; low-value clean invoices auto-approve.',
+      threshold: true,
+    },
+    approve_maya: {
+      type: 'Action',
+      title: 'Send to Maya for approval',
+      desc: 'Notify Maya in the Approvals queue. She must approve, reject, or request more info before payment is scheduled.',
+      aiCanDo: ['Pre-fill the approval card with extracted data', 'Surface similar past approvals', 'Highlight unusual line items'],
+      fallback: 'If Maya is OOO or has not responded in 4 hours, escalate to her backup approver (set in Settings).',
+    },
+    auto_approve: {
+      type: 'Action',
+      title: 'Auto-approve & schedule payment',
+      desc: 'Mark the invoice as approved, schedule payment per the vendor\'s terms (Net 30 by default), and update NetSuite ERP.',
+      aiCanDo: ['Approve the invoice', 'Schedule payment in your accounts payable system', 'Update NetSuite with status', 'Send a confirmation email to the vendor'],
+      fallback: 'If the ERP write fails, retry 3 times then escalate to Maya with the error details.',
+    },
+    notify: {
+      type: 'Action',
+      title: 'Notify accounting',
+      desc: 'Send a summary of the processed invoice to the accounting Slack channel and update the daily ledger.',
+      aiCanDo: ['Compose a Slack message', 'Update the daily ledger spreadsheet', 'Tag the relevant accounting owner'],
+    },
+  };
+
+  const PERM_LABEL = {
+    manual: 'Always manual',
+    suggest: 'AI suggests, you confirm',
+    auto: 'AI auto, no confirmation',
+  };
+
+  const PERM_WARN = {
+    manual: null,
+    suggest: 'AI will draft this step but wait for your one-tap confirmation before continuing.',
+    auto: 'AI will run this step end-to-end without asking. You\'ll see results in the run history.',
+  };
+
+  // ────────────── Permission toggle ──────────────
+  document.querySelectorAll('.perm-toggle').forEach(toggle => {
+    toggle.querySelectorAll('.perm-opt').forEach(opt => {
+      opt.addEventListener('click', e => {
+        e.stopPropagation();
+        const newPerm = opt.dataset.perm;
+        const node = toggle.closest('.node');
+        toggle.querySelectorAll('.perm-opt').forEach(b => b.classList.remove('active'));
+        opt.classList.add('active');
+        node.classList.remove('perm-manual', 'perm-suggest', 'perm-auto');
+        node.dataset.perm = newPerm;
+        // If this node is currently selected in side panel, refresh it
+        const id = node.dataset.node;
+        const panel = document.getElementById('sidePanel');
+        if (panel.classList.contains('open') && panel.dataset.current === id) {
+          renderPanel(id, newPerm);
+        }
+      });
+    });
+  });
+
+  // ────────────── Side panel ──────────────
+  const panel = document.getElementById('sidePanel');
+  const spType = document.getElementById('spType');
+  const spTitle = document.getElementById('spTitle');
+  const spBody = document.getElementById('spBody');
+  const spClose = document.getElementById('spClose');
+
+  function renderPanel(id, currentPerm) {
+    const data = nodeData[id];
+    if (!data) return;
+    spType.textContent = data.type;
+    spTitle.textContent = data.title;
+
+    let html = '';
+
+    // What this step does
+    html += `
+      <div class="sp-section">
+        <div class="sp-section-label">What this step does</div>
+        <div class="sp-section-text">${data.desc}</div>
+      </div>
+    `;
+
+    // Trigger sources
+    if (data.sources) {
+      html += `
+        <div class="sp-section">
+          <div class="sp-section-label">Sources</div>
+          <ul class="sp-list">
+            ${data.sources.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    // Permission control (skip for trigger and condition)
+    if (data.type === 'Action' && currentPerm) {
+      html += `
+        <div class="sp-section">
+          <div class="sp-section-label">AI permission</div>
+          <div class="sp-perm">
+            <div class="sp-perm-current">
+              <span class="perm-badge ${currentPerm}">${currentPerm}</span>
+              <span style="font-size:13px; color: var(--color-neutral-cool-grey);">${PERM_LABEL[currentPerm]}</span>
+            </div>
+            ${PERM_WARN[currentPerm] ? `<div class="sp-perm-warn">${PERM_WARN[currentPerm]}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    // What AI can do
+    if (data.aiCanDo) {
+      html += `
+        <div class="sp-section">
+          <div class="sp-section-label">When AI handles this, it can</div>
+          <ul class="sp-list">
+            ${data.aiCanDo.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    // Conditions / matching rules
+    if (data.conditions) {
+      html += `
+        <div class="sp-section">
+          <div class="sp-section-label">Match rules</div>
+          <ul class="sp-list cond">
+            ${data.conditions.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    // Threshold node — input
+    if (data.threshold) {
+      html += `
+        <div class="sp-section">
+          <div class="sp-section-label">Threshold</div>
+          <div class="threshold-row">
+            <label for="thresh-amt">Amount &gt;</label>
+            <input id="thresh-amt" type="text" value="$5,000" />
+          </div>
+        </div>
+      `;
+    }
+
+    // Fallback
+    if (data.fallback) {
+      html += `
+        <div class="sp-section">
+          <div class="sp-section-label">If AI is unsure (fallback)</div>
+          <ul class="sp-list warn">
+            <li>${data.fallback}</li>
+          </ul>
+        </div>
+      `;
+    }
+
+    spBody.innerHTML = html;
+    panel.dataset.current = id;
+  }
+
+  function openPanelFor(id) {
+    const node = document.querySelector(`[data-node="${id}"]`);
+    document.querySelectorAll('.node, .cond-pill').forEach(n => n.classList.remove('selected'));
+    if (node) node.classList.add('selected');
+    const currentPerm = node?.dataset.perm;
+    renderPanel(id, currentPerm);
+    panel.classList.add('open');
+  }
+
+  function closePanel() {
+    panel.classList.remove('open');
+    document.querySelectorAll('.node, .cond-pill').forEach(n => n.classList.remove('selected'));
+    panel.dataset.current = '';
+  }
+
+  document.querySelectorAll('[data-node]').forEach(el => {
+    el.addEventListener('click', e => {
+      if (e.target.closest('.perm-toggle')) return;
+      openPanelFor(el.dataset.node);
+    });
+  });
+
+  spClose.addEventListener('click', closePanel);
+
+  // Esc closes panel
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+
+  // Add step button placeholder
+  document.querySelector('.add-step-btn').addEventListener('click', () => {
+    alert('Prototype: this would open the action palette to insert a new step.');
+  });
+</script>
+
+<script>
+  (function(){
+    var sb = document.querySelector('.sidebar');
+    var btn = document.querySelector('.sidebar-toggle');
+    if (!sb || !btn) return;
+    if (localStorage.getItem('witness-sidebar') === 'collapsed') sb.classList.add('collapsed');
+    btn.addEventListener('click', function(){
+      sb.classList.toggle('collapsed');
+      localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
+    });
+  })();
+</script>
+
+</body>
+</html>
