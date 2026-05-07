@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Witness · MCP Cross-Host</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  /* Brand */
+  --color-orange-glare:#FFF5F1; --color-orange-touch:#FFE8DF; --color-orange-peach:#FFB299; --color-orange:#FF5C1B;
+  --color-yellow-beach:#FFFCE9; --color-yellow-sun:#FFEB80; --color-yellow:#FFD000;
+  --color-blue-sky:#E7F4FF; --color-blue:#155DFC;
+  /* Neutral */
+  --color-grey:#F4F4F4; --color-lotion:#E9E9E9; --color-dark-grey:#ADADAD;
+  --color-cool-grey:#45556C; --color-black:#120B0B; --color-white:#FFFFFF;
+  /* Semantic */
+  --color-success-100:#DCFCE7; --color-success-500:#16A34A; --color-success-1000:#15803D;
+  --color-waiting-100:#FDF2D4; --color-waiting-500:#E9B44C; --color-waiting-1000:#B17728;
+  --color-pending-100:#FFE0CA; --color-pending-500:#FF6900; --color-pending-1000:#D95B03;
+  --color-error-100:#FEE2E2; --color-error-500:#DC2626; --color-error-1000:#B91C1C;
+
+  --border:rgba(69,85,108,0.14); --border-md:rgba(69,85,108,0.24);
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+
+  --radius-sm:6px; --radius-md:8px; --radius-lg:10px; --radius-xl:12px; --radius-full:9999px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: var(--font-body); background: var(--color-white); color: #0b0d12; display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+/* ── SIDEBAR (matches dashboard) ── */
+.sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 257px; background: var(--color-grey); display: flex; flex-direction: column; z-index: 20; overflow-y: auto; }
+.sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.brand-logo { width: 32px; height: 32px; background: var(--color-black); border-radius: 8px; display: grid; place-items: center; color: white; font-family: var(--font-display); font-style: italic; font-size: 16px; }
+.brand-name { font-size: 18px; font-weight: 600; color: var(--color-black); letter-spacing: -0.44px; }
+.sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+.nav-group { display: flex; flex-direction: column; gap: 12px; }
+.nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+.nav-items { display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--color-cool-grey); font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; }
+.nav-item:hover { background: rgba(0,0,0,0.04); }
+.nav-item.active { background: white; color: var(--color-black); padding: 8px 12px; }
+.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-badge { margin-left: auto; background: var(--color-black); color: white; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.nav-badge.ai { background: var(--color-pending-500); }
+
+/* ── MAIN ── */
+.main { margin-left: 257px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.topbar { position: sticky; top: 0; z-index: 10; background: white; border-bottom: 1px solid #ededed; display: flex; align-items: center; justify-content: space-between; padding: 23px 24px; }
+.crumbs { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--color-cool-grey); }
+.crumbs a { color: var(--color-cool-grey); text-decoration: none; }
+.crumbs .sep { color: #c8d0db; }
+.crumbs .here { color: var(--color-black); font-weight: 600; }
+.topbar-right { display: flex; align-items: center; gap: 24px; }
+.health-chip { display: flex; align-items: center; gap: 8px; background: var(--color-success-100); border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
+.health-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-success-500); }
+.health-chip span { font-size: 14px; font-weight: 500; color: #00a63e; }
+.avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; color: white; }
+
+/* ── CONTENT ── */
+.content { padding: 52px 58px 80px; display: flex; flex-direction: column; gap: 32px; }
+
+/* PAGE HEADER */
+.page-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.page-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.page-title-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--color-black); display: grid; place-items: center; color: white; font-family: var(--font-display); font-style: italic; font-size: 18px; flex-shrink: 0; }
+h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400; color: var(--color-black); line-height: 1.2; letter-spacing: -0.5px; }
+.page-sub { font-size: 14px; color: var(--color-cool-grey); line-height: 1.5; max-width: 640px; }
+.page-sub b { color: var(--color-black); font-weight: 600; }
+
+/* ── HOST TABS ── */
+.host-tabs { display: flex; gap: 8px; padding: 6px; background: var(--color-grey); border: 1px solid var(--color-lotion); border-radius: 12px; align-self: flex-start; }
+.host-tab { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--color-cool-grey); background: transparent; border: none; cursor: pointer; font-family: var(--font-body); transition: all .15s; }
+.host-tab:hover { color: var(--color-black); }
+.host-tab.active { background: var(--color-white); color: var(--color-black); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.host-tab .host-mark { width: 18px; height: 18px; border-radius: 5px; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: white; }
+.host-tab[data-host="amazon"] .host-mark { background: #232f3e; }
+.host-tab[data-host="amazon"] .host-mark::after { content: ''; width: 8px; height: 2px; background: #ff9900; border-radius: 1px; position: absolute; }
+.host-tab[data-host="sap"] .host-mark { background: var(--color-blue); }
+.host-tab[data-host="walmart"] .host-mark { background: #0071dc; }
+.host-tab[data-host="claude"] .host-mark { background: #cc785c; }
+
+/* ── SCENARIO CONTEXT BAR ── */
+.context-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; background: var(--color-orange-glare); border: 1px solid var(--color-orange-peach); border-radius: 12px; overflow: hidden; }
+.context-block { padding: 16px 20px; border-right: 1px solid rgba(255,178,153,0.5); }
+.context-block:last-child { border-right: none; }
+.context-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; color: var(--color-pending-1000); margin-bottom: 6px; }
+.context-value { font-size: 13px; line-height: 1.5; color: var(--color-black); }
+.context-value b { font-weight: 600; }
+
+/* ── SCENARIO STAGE ── */
+.scenario { display: none; }
+.scenario.active { display: block; }
+.stage { background: var(--color-grey); border: 1px solid var(--color-lotion); border-radius: 14px; padding: 20px; }
+.stage-meta { display: flex; align-items: center; justify-content: space-between; padding: 0 4px 16px; }
+.stage-meta-left { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--color-cool-grey); }
+.stage-pill { font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; background: white; border: 1px solid var(--color-lotion); border-radius: 999px; color: var(--color-cool-grey); }
+.stage-meta-right { font-family: var(--font-mono); font-size: 11px; color: var(--color-dark-grey); }
+
+/* ═══════════════════════════════════════════
+   WITNESS CARD — universal, host-agnostic
+═══════════════════════════════════════════ */
+.witness-card { background: white; border: 1px solid var(--color-lotion); border-radius: 12px; overflow: hidden; font-family: var(--font-body); position: relative; }
+.witness-card .wc-stripe { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--color-orange) 0%, var(--color-yellow) 50%, var(--color-blue) 100%); }
+.wc-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--color-lotion); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.wc-header-left { display: flex; align-items: center; gap: 10px; }
+.wc-mark { width: 28px; height: 28px; background: var(--color-black); color: white; border-radius: 8px; display: grid; place-items: center; font-family: var(--font-display); font-style: italic; font-size: 15px; flex-shrink: 0; }
+.wc-title { font-family: var(--font-display); font-size: 20px; font-weight: 400; color: var(--color-black); letter-spacing: -0.3px; }
+.wc-subtitle { font-size: 12px; color: var(--color-cool-grey); margin-top: 2px; }
+.wc-id { font-family: var(--font-mono); font-size: 11px; color: var(--color-dark-grey); }
+
+.wc-body { padding: 18px 20px; }
+.wc-conclusion { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--color-lotion); }
+.wc-status-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--color-cool-grey); font-weight: 600; margin-bottom: 4px; }
+.wc-status { font-family: var(--font-display); font-size: 22px; font-weight: 400; color: var(--color-black); line-height: 1.2; letter-spacing: -0.3px; }
+.wc-status .accent.hold { color: var(--color-pending-500); font-style: italic; }
+.wc-status .accent.pass { color: var(--color-success-500); font-style: italic; }
+.wc-status .accent.fail { color: var(--color-error-500); font-style: italic; }
+.wc-status-sub { font-size: 12px; color: var(--color-cool-grey); margin-top: 4px; }
+
+.wc-conf { flex-shrink: 0; text-align: right; }
+.wc-conf-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; color: var(--color-cool-grey); margin-bottom: 6px; }
+.wc-conf-bar { display: inline-flex; gap: 4px; padding: 4px 8px; border-radius: 999px; align-items: center; }
+.wc-conf-dots { display: inline-flex; gap: 3px; }
+.wc-conf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-lotion); }
+.wc-conf-dot.filled { background: var(--color-pending-500); }
+.wc-conf.high .wc-conf-bar { background: var(--color-success-100); color: var(--color-success-1000); }
+.wc-conf.high .wc-conf-dot.filled { background: var(--color-success-500); }
+.wc-conf.medium .wc-conf-bar { background: var(--color-pending-100); color: var(--color-pending-1000); }
+.wc-conf.medium .wc-conf-dot.filled { background: var(--color-pending-500); }
+.wc-conf.low .wc-conf-bar { background: var(--color-grey); color: var(--color-cool-grey); }
+.wc-conf.low .wc-conf-dot.filled { background: var(--color-dark-grey); }
+.wc-conf-text { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+
+.wc-checks { display: flex; flex-direction: column; gap: 4px; }
+.wc-check { display: grid; grid-template-columns: 22px 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 8px; transition: background .15s; }
+.wc-check:hover { background: var(--color-grey); }
+.wc-check-icon { width: 20px; height: 20px; border-radius: 999px; display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+.wc-check-icon.pass { background: var(--color-success-100); color: var(--color-success-1000); }
+.wc-check-icon.fail { background: var(--color-error-100); color: var(--color-error-1000); }
+.wc-check-icon.unknown { background: var(--color-waiting-100); color: var(--color-waiting-1000); }
+.wc-check-label { font-size: 13px; font-weight: 500; color: var(--color-black); }
+.wc-check-detail { font-family: var(--font-mono); font-size: 11px; color: var(--color-cool-grey); }
+.wc-check-detail .neg { color: var(--color-error-500); font-weight: 600; }
+.wc-check-detail .pos { color: var(--color-success-500); font-weight: 600; }
+
+.wc-summary { margin-top: 14px; padding: 14px 16px; background: var(--color-orange-glare); border: 1px solid var(--color-orange-touch); border-radius: 10px; font-size: 13px; line-height: 1.55; color: #4a2810; }
+.wc-summary .sum-label { font-family: var(--font-display); font-style: italic; color: var(--color-orange); font-size: 13px; margin-right: 6px; }
+
+.wc-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+.wc-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-family: var(--font-body); font-size: 13px; font-weight: 500; border: 1.5px solid var(--color-lotion); background: white; color: var(--color-black); cursor: pointer; transition: all .15s; }
+.wc-btn:hover { background: var(--color-grey); border-color: var(--border-md); }
+.wc-btn.primary { background: var(--color-black); color: white; border-color: var(--color-black); }
+.wc-btn.primary:hover { background: var(--color-cool-grey); }
+.wc-btn.accent { background: var(--color-orange); color: white; border-color: var(--color-orange); }
+.wc-btn.accent:hover { background: #e54f12; }
+
+.wc-footer { padding: 12px 20px; background: var(--color-grey); border-top: 1px solid var(--color-lotion); font-family: var(--font-mono); font-size: 11px; color: var(--color-cool-grey); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.wc-protocol { display: inline-flex; align-items: center; gap: 6px; }
+.wc-protocol::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-500); }
+
+/* ═══════════════════════════════════════════
+   HOST 1 — AMAZON BUSINESS
+═══════════════════════════════════════════ */
+.host { border-radius: 12px; overflow: hidden; background: white; border: 1px solid var(--color-lotion); }
+
+.host-amazon .ab-bar { background: #131a22; color: white; padding: 10px 18px; display: flex; align-items: center; gap: 14px; font-size: 12.5px; }
+.host-amazon .ab-logo { font-weight: 700; font-size: 16px; letter-spacing: -0.02em; }
+.host-amazon .ab-logo span { color: #ff9900; }
+.host-amazon .ab-tag { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.05em; background: #ff9900; color: #131a22; padding: 2px 5px; border-radius: 2px; font-weight: 600; }
+.host-amazon .ab-search { flex: 1; background: white; border-radius: 4px; padding: 6px 10px; color: #999; font-size: 12px; }
+.host-amazon .ab-nav { font-size: 12px; opacity: 0.9; }
+.host-amazon .ab-subnav { background: #232f3e; color: white; padding: 8px 18px; font-size: 11.5px; display: flex; gap: 18px; }
+.host-amazon .ab-subnav span:not(:last-child) { opacity: 0.85; }
+.host-amazon .ab-content { padding: 22px; display: grid; grid-template-columns: 1fr 380px; gap: 20px; background: #f7f8f8; }
+
+.host-amazon .ab-main { background: white; padding: 20px; border: 1px solid #d5d9d9; border-radius: 8px; }
+.host-amazon .ab-crumb { font-size: 12px; color: #007185; margin-bottom: 8px; }
+.host-amazon .ab-h1 { font-size: 22px; font-weight: 500; color: #0f1111; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+.host-amazon .ab-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 14px; background: #f3f4f5; border-radius: 6px; margin-bottom: 16px; }
+.host-amazon .ab-meta-l { font-size: 10.5px; color: #565959; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; font-weight: 600; }
+.host-amazon .ab-meta-v { font-size: 13px; font-weight: 500; color: #0f1111; }
+.host-amazon .ab-meta-v.amount { font-size: 16px; }
+.host-amazon .ab-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.host-amazon .ab-table th { background: #f3f4f5; padding: 9px 10px; text-align: left; font-weight: 600; color: #565959; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #d5d9d9; }
+.host-amazon .ab-table td { padding: 11px 10px; border-bottom: 1px solid #e7e9ec; color: #0f1111; }
+
+/* Host pill (using design tokens) */
+.host-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.host-pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+.host-pill.blocked { background: var(--color-error-100); color: var(--color-error-1000); }
+.host-pill.blocked .dot { background: var(--color-error-500); }
+.host-pill.pending { background: var(--color-pending-100); color: var(--color-pending-1000); }
+.host-pill.pending .dot { background: var(--color-pending-500); }
+.host-pill.waiting { background: var(--color-waiting-100); color: var(--color-waiting-1000); }
+.host-pill.waiting .dot { background: var(--color-waiting-500); }
+.host-pill.healthy { background: var(--color-success-100); color: var(--color-success-1000); }
+.host-pill.healthy .dot { background: var(--color-success-500); }
+
+.host-amazon .ab-banner { font-size: 12px; line-height: 1.55; color: var(--color-pending-1000); padding: 12px 14px; background: var(--color-pending-100); border-radius: 6px; border-left: 3px solid var(--color-pending-500); margin-top: 14px; }
+.host-amazon .ab-banner b { font-weight: 700; }
+
+/* Side panel (host AI assistant) */
+.host-amazon .ab-side { background: white; border: 1px solid #d5d9d9; border-radius: 8px; display: flex; flex-direction: column; max-height: 760px; }
+.host-amazon .ab-side-h { padding: 14px 16px; border-bottom: 1px solid #d5d9d9; display: flex; align-items: center; gap: 10px; background: linear-gradient(180deg, #fff6e6 0%, #ffffff 100%); }
+.host-amazon .ab-side-icon { width: 24px; height: 24px; background: #ff9900; color: white; border-radius: 6px; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.host-amazon .ab-side-title { font-size: 13.5px; font-weight: 600; color: #0f1111; }
+.host-amazon .ab-side-sub { font-size: 11px; color: #565959; }
+.host-amazon .ab-chat { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+.host-amazon .ab-msg-user { align-self: flex-end; background: #f3f4f5; padding: 10px 14px; border-radius: 14px 14px 4px 14px; max-width: 80%; font-size: 12.5px; color: #0f1111; }
+.host-amazon .ab-msg-ai { font-size: 12.5px; line-height: 1.55; color: #0f1111; }
+.host-amazon .ab-msg-ai .tag { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; color: #565959; font-weight: 600; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; }
+.host-amazon .ab-msg-ai .tag::before { content: ''; width: 14px; height: 14px; background: #ff9900; border-radius: 4px; }
+.host-amazon .ab-input { border-top: 1px solid #d5d9d9; padding: 12px 14px; display: flex; gap: 8px; align-items: center; }
+.host-amazon .ab-input-field { flex: 1; padding: 8px 12px; border: 1px solid #d5d9d9; border-radius: 999px; font-size: 12px; color: #999; background: #f7f8f8; }
+.host-amazon .ab-input-send { width: 30px; height: 30px; background: #ff9900; border-radius: 50%; display: grid; place-items: center; color: white; font-size: 13px; cursor: pointer; }
+
+/* ═══════════════════════════════════════════
+   HOST 2 — SAP
+═══════════════════════════════════════════ */
+.host-sap .sap-bar { background: #0854a0; color: white; padding: 8px 16px; display: flex; align-items: center; gap: 14px; font-size: 12px; }
+.host-sap .sap-logo { font-weight: 700; background: white; color: #0854a0; padding: 3px 8px; border-radius: 2px; font-family: Arial, sans-serif; font-size: 14px; }
+.host-sap .sap-app { font-size: 13px; font-weight: 500; }
+.host-sap .sap-tabs { background: white; padding: 8px 16px; border-bottom: 1px solid #d9d9d9; display: flex; gap: 6px; flex-wrap: wrap; }
+.host-sap .sap-tab { padding: 6px 12px; font-size: 12px; border: 1px solid #d9d9d9; background: white; border-radius: 4px; color: #6a6d70; cursor: pointer; }
+.host-sap .sap-tab.active { background: #0a6ed1; color: white; border-color: #0a6ed1; }
+.host-sap .sap-content { padding: 18px; display: grid; grid-template-columns: 1fr 380px; gap: 18px; background: #f5f6f7; }
+.host-sap .sap-main { background: white; padding: 18px 20px; border: 1px solid #d9d9d9; border-radius: 6px; }
+.host-sap .sap-h1 { font-size: 20px; font-weight: 400; color: #32363a; margin-bottom: 4px; }
+.host-sap .sap-sub { font-size: 12px; color: #6a6d70; margin-bottom: 16px; }
+.host-sap .sap-fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 20px; padding: 14px 0; border-top: 1px solid #d9d9d9; border-bottom: 1px solid #d9d9d9; margin-bottom: 16px; }
+.host-sap .sap-field-l { font-size: 10.5px; color: #6a6d70; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; font-weight: 600; }
+.host-sap .sap-field-v { font-size: 13px; color: #32363a; }
+.host-sap .sap-section-h { font-size: 13px; font-weight: 600; color: #0854a0; margin: 18px 0 10px; padding-bottom: 4px; border-bottom: 2px solid #0a6ed1; display: inline-block; }
+.host-sap .sap-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.host-sap .sap-table th { background: #f0f1f2; padding: 8px 10px; text-align: left; font-weight: 600; color: #6a6d70; font-size: 11px; border-bottom: 1px solid #d9d9d9; }
+.host-sap .sap-table td { padding: 9px 10px; border-bottom: 1px solid #ebebeb; color: #32363a; }
+.host-sap .sap-detail { font-size: 12px; line-height: 1.6; color: #6a6d70; padding: 12px 0; }
+.host-sap .sap-detail b.error { color: var(--color-error-500); font-weight: 700; }
+.host-sap .sap-detail code { font-family: var(--font-mono); background: #f0f1f2; padding: 1px 5px; border-radius: 3px; font-size: 11px; }
+
+.host-sap .sap-side { background: white; border: 1px solid #d9d9d9; border-radius: 6px; padding: 16px; }
+.host-sap .sap-side-h { font-size: 13px; font-weight: 600; color: #32363a; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #d9d9d9; display: flex; align-items: center; gap: 8px; }
+.host-sap .sap-joule-mark { width: 22px; height: 22px; background: linear-gradient(135deg, #0a6ed1, #5b00a3); border-radius: 5px; display: grid; place-items: center; color: white; font-size: 11px; font-weight: 700; }
+.host-sap .sap-side-tag { margin-left: auto; font-size: 10px; color: #6a6d70; font-weight: 400; }
+.host-sap .joule-attr { font-size: 10.5px; color: #6a6d70; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+.host-sap .joule-msg-user { background: #f5f6f7; padding: 10px 12px; border-radius: 6px; font-size: 12.5px; color: #32363a; margin-bottom: 12px; }
+.host-sap .joule-msg-ai { font-size: 12.5px; color: #32363a; line-height: 1.6; margin-bottom: 12px; }
+.host-sap .sap-handoff { margin-top: 12px; padding: 10px 12px; background: var(--color-blue-sky); border-left: 3px solid var(--color-blue); font-size: 11.5px; color: #0854a0; line-height: 1.55; border-radius: 0 4px 4px 0; }
+.host-sap .sap-handoff b { color: #0854a0; }
+.host-sap .sap-handoff code { font-family: var(--font-mono); background: white; padding: 1px 5px; border-radius: 3px; font-size: 11px; }
+
+/* ═══════════════════════════════════════════
+   HOST 3 — WALMART
+═══════════════════════════════════════════ */
+.host-walmart .wm-bar { background: #0071dc; color: white; padding: 12px 20px; display: flex; align-items: center; gap: 14px; }
+.host-walmart .wm-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+.host-walmart .wm-spark { font-size: 18px; color: #ffc220; }
+.host-walmart .wm-biz { font-size: 10px; text-transform: uppercase; background: #ffc220; color: #004f9a; padding: 2px 7px; border-radius: 4px; font-weight: 700; letter-spacing: 0.05em; }
+.host-walmart .wm-content { padding: 22px; display: grid; grid-template-columns: 1fr 380px; gap: 20px; background: #f5f6f8; }
+.host-walmart .wm-main { background: white; border-radius: 10px; padding: 22px; border: 1px solid #e0e0e0; }
+.host-walmart .wm-h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.01em; color: #1a1a1a; }
+.host-walmart .wm-sub { color: #595959; font-size: 13px; margin-bottom: 18px; }
+.host-walmart .wm-receipt { background: #f5f6f8; border-radius: 8px; padding: 16px; font-family: var(--font-mono); font-size: 12px; line-height: 1.7; border: 1px dashed #e0e0e0; }
+.host-walmart .wm-receipt-head { text-align: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #e0e0e0; font-family: var(--font-body); }
+.host-walmart .wm-receipt-head .store { font-weight: 700; font-size: 14px; color: #1a1a1a; }
+.host-walmart .wm-receipt-head .meta { font-size: 11px; color: #595959; margin-top: 2px; }
+.host-walmart .wm-receipt-row { display: flex; justify-content: space-between; }
+.host-walmart .wm-receipt-row.total { font-weight: 700; border-top: 1px dashed #e0e0e0; padding-top: 6px; margin-top: 6px; color: #1a1a1a; }
+.host-walmart .wm-receipt-flag { margin-top: 10px; padding: 8px 10px; background: var(--color-pending-100); border-left: 3px solid var(--color-pending-500); color: var(--color-pending-1000); font-family: var(--font-body); font-size: 12px; font-weight: 500; border-radius: 0 4px 4px 0; }
+
+.host-walmart .wm-side { background: white; border: 1px solid #e0e0e0; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
+.host-walmart .wm-side-h { padding: 14px 18px; background: linear-gradient(135deg, #0071dc 0%, #004f9a 100%); color: white; }
+.host-walmart .wm-side-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.host-walmart .wm-side-sub { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+.host-walmart .wm-chat { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.host-walmart .wm-msg { font-size: 12.5px; line-height: 1.6; color: #1a1a1a; }
+.host-walmart .wm-msg-user { align-self: flex-end; background: #f5f6f8; padding: 10px 14px; border-radius: 14px 14px 4px 14px; max-width: 80%; }
+.host-walmart .wm-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #0071dc; margin-bottom: 5px; }
+
+/* ═══════════════════════════════════════════
+   HOST 4 — CLAUDE
+═══════════════════════════════════════════ */
+.host-claude { background: #faf9f5; }
+.host-claude .cl-shell { display: grid; grid-template-columns: 220px 1fr; min-height: 720px; }
+.host-claude .cl-side { background: #faf9f5; border-right: 1px solid #e8e4dc; padding: 16px 12px; }
+.host-claude .cl-brand { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; margin-bottom: 22px; padding: 4px 6px; color: #2c1d12; }
+.host-claude .cl-brand-mark { width: 22px; height: 22px; background: #cc785c; border-radius: 5px; display: grid; place-items: center; color: white; font-size: 12px; font-weight: 700; }
+.host-claude .cl-nav-section { margin-bottom: 18px; }
+.host-claude .cl-nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: #8a7a6d; padding: 4px 8px; margin-bottom: 4px; font-weight: 600; }
+.host-claude .cl-nav-item { padding: 6px 8px; border-radius: 6px; color: #5a4a3d; cursor: pointer; font-size: 12.5px; }
+.host-claude .cl-nav-item:hover { background: rgba(0,0,0,.04); }
+.host-claude .cl-nav-item.active { background: rgba(204, 120, 92, 0.12); color: #cc785c; font-weight: 500; }
+.host-claude .cl-conn { display: flex; align-items: center; gap: 6px; padding: 5px 8px; font-size: 11.5px; color: #5a4a3d; border-radius: 5px; }
+.host-claude .cl-conn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-500); }
+
+.host-claude .cl-main { padding: 32px 36px 0; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; background: #faf9f5; }
+.host-claude .cl-msg-user { align-self: flex-end; max-width: 75%; background: white; border: 1px solid #e8e4dc; border-radius: 14px 14px 4px 14px; padding: 12px 16px; font-size: 14px; line-height: 1.55; color: #2c1d12; }
+.host-claude .cl-msg-claude { font-size: 14px; line-height: 1.65; color: #2c1d12; max-width: 95%; }
+.host-claude .cl-msg-claude p { margin-bottom: 10px; }
+.host-claude .cl-claude-tag { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #8a7a6d; margin-bottom: 8px; font-weight: 500; }
+.host-claude .cl-claude-tag::before { content: ''; width: 16px; height: 16px; background: #cc785c; border-radius: 5px; }
+.host-claude .cl-tool { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(204, 120, 92, 0.06); border: 1px solid rgba(204, 120, 92, 0.2); border-radius: 8px; font-family: var(--font-mono); font-size: 11px; color: #5a4a3d; }
+.host-claude .cl-tool .arrow { color: #cc785c; }
+.host-claude .cl-tool .server { font-weight: 600; color: #2c1d12; }
+.host-claude .cl-input { margin: 8px 36px 24px; padding: 14px 18px; background: white; border: 1px solid #e8e4dc; border-radius: 14px; display: flex; gap: 10px; align-items: center; color: #8a7a6d; font-size: 13.5px; }
+
+/* ── CAPTION ── */
+.scenario-caption { margin-top: 16px; padding: 18px 22px; background: var(--color-yellow-beach); border: 1px solid var(--color-yellow-sun); border-radius: 12px; }
+.scenario-caption .cap-title { font-family: var(--font-display); font-size: 16px; font-weight: 500; color: var(--color-black); margin-bottom: 10px; letter-spacing: -0.2px; }
+.scenario-caption ul { padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+.scenario-caption li { font-size: 13px; line-height: 1.6; color: #4a3f2a; }
+.scenario-caption li b { color: var(--color-black); font-weight: 600; }
+.scenario-caption code { font-family: var(--font-mono); font-size: 11.5px; background: white; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--color-yellow-sun); color: var(--color-black); }
+
+/* ── small ── */
+.muted { color: var(--color-cool-grey); }
+.flag-tag { display: inline-block; font-size: 10px; background: var(--color-pending-100); color: var(--color-pending-1000); padding: 3px 7px; border-radius: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.suggest-chip { display: inline-block; padding: 5px 12px; background: white; border: 1px solid var(--color-blue); color: var(--color-blue); border-radius: 999px; font-size: 11.5px; cursor: pointer; margin: 2px 4px 2px 0; font-weight: 500; }
+.suggest-chip:hover { background: var(--color-blue-sky); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">W</div>
+    <span class="brand-name">Witness</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="dashboard.html">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.4"/></svg>
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item" href="invoices.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 2h7l3 3v9H3V2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M5 7h6M5 10h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          All Invoice
+          <span class="nav-badge">26</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 2L2 5v4c0 3 2.5 5 6 5s6-2 6-5V5L8 2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Exceptions
+        </a>
+        <a class="nav-item" href="#">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Approvals
+        </a>
+        <a class="nav-item" href="ai-activity.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge ai">24</span>
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Connect</div>
+      <div class="nav-items">
+        <a class="nav-item active" href="cross-host.html">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="4" r="2" stroke="currentColor" stroke-width="1.4"/><circle cx="4" cy="12" r="2" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 4h5M5.5 12h5M4 5.5v5M12 5.5v5" stroke="currentColor" stroke-width="1.4"/></svg>
+          MCP Cross-Host
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v2M8 12.5v2M14.5 8h-2M3.5 8h-2M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4M12.6 12.6l-1.4-1.4M4.8 4.8L3.4 3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="crumbs">
+      <a>Witness</a>
+      <span class="sep">/</span>
+      <a>Connect</a>
+      <span class="sep">/</span>
+      <span class="here">MCP Cross-Host</span>
+    </div>
+    <div class="topbar-right">
+      <div class="health-chip"><span class="dot"></span><span>All systems healthy</span></div>
+      <div class="avatar">MC</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="page-hd">
+      <div>
+        <div class="page-title-row">
+          <div class="page-title-icon">W</div>
+          <h1 class="ptitle">Witness across four hosts</h1>
+        </div>
+        <p class="page-sub">The same Witness MCP server, called from four different agent hosts. Each host has its own attention state, visual language, and operational role — Witness adapts how it shows up while keeping its identity, evidence model, and protocol signature recognizable.</p>
+      </div>
+    </div>
+
+    <!-- HOST TABS -->
+    <div class="host-tabs" role="tablist">
+      <button class="host-tab active" data-host="amazon" data-target="scenario-amazon"><span class="host-mark">A</span>Amazon Business</button>
+      <button class="host-tab" data-host="sap" data-target="scenario-sap"><span class="host-mark">S</span>SAP S/4HANA</button>
+      <button class="host-tab" data-host="walmart" data-target="scenario-walmart"><span class="host-mark">W</span>Walmart Business</button>
+      <button class="host-tab" data-host="claude" data-target="scenario-claude"><span class="host-mark">C</span>Claude</button>
+    </div>
+
+    <!-- ════════ SCENARIO 1: AMAZON BUSINESS ════════ -->
+    <section class="scenario active" id="scenario-amazon">
+
+      <div class="context-bar">
+        <div class="context-block">
+          <div class="context-label">User attention</div>
+          <div class="context-value">Looking at the <b>invoice itself</b> in Amazon Business. They have one half of the truth — what was ordered &amp; delivered through Amazon — but not the ERP-side PO context or warehouse receipt confirmation.</div>
+        </div>
+        <div class="context-block">
+          <div class="context-label">What Witness adds</div>
+          <div class="context-value"><b>Horizontal completion</b> — "you're seeing one side; here's what the other systems are saying about the same line items."</div>
+        </div>
+        <div class="context-block">
+          <div class="context-label">Visual contract</div>
+          <div class="context-value">Witness sits inside Amazon's existing AI Assistant sidebar. The card uses Witness's own brand language — <b>Playfair</b> title, <b>orange-to-blue stripe</b>, <b>black mark</b> — so it's recognizably <em>not Amazon</em>.</div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-meta">
+          <div class="stage-meta-left">
+            <span class="stage-pill">host: amazon-business.com</span>
+            <span class="stage-pill">witness: server mode</span>
+          </div>
+          <div class="stage-meta-right">scenario · 3-way match exception</div>
+        </div>
+
+        <div class="host host-amazon">
+          <div class="ab-bar">
+            <div class="ab-logo">amazon<span>business</span></div>
+            <div class="ab-search">Search products, orders, suppliers…</div>
+            <div class="ab-nav">Orders</div>
+            <div class="ab-nav">Lists</div>
+            <div class="ab-nav">Account</div>
+          </div>
+          <div class="ab-subnav">
+            <span>Invoices</span>
+            <span>Reorder</span>
+            <span>Approvals</span>
+            <span style="opacity:.6;">3-Way Match</span>
+          </div>
+
+          <div class="ab-content">
+            <!-- Main -->
+            <div class="ab-main">
+              <div class="ab-crumb">Invoices › Acme Office Supplies › INV-99281</div>
+              <h2 class="ab-h1">Invoice INV-99281 <span class="host-pill blocked"><span class="dot"></span>Held for review</span></h2>
+
+              <div class="ab-meta">
+                <div><div class="ab-meta-l">Vendor</div><div class="ab-meta-v">Acme Office Supplies</div></div>
+                <div><div class="ab-meta-l">Invoice date</div><div class="ab-meta-v">Apr 24, 2026</div></div>
+                <div><div class="ab-meta-l">Linked PO</div><div class="ab-meta-v">PO-44871 · NetSuite</div></div>
+                <div><div class="ab-meta-l">Total billed</div><div class="ab-meta-v amount">$1,420.00</div></div>
+              </div>
+
+              <table class="ab-table">
+                <thead>
+                  <tr><th>Item</th><th>Ordered</th><th>Billed</th><th>Unit</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>HP 9000 multi-pack ream — 100 units</td>
+                    <td>100</td>
+                    <td>100</td>
+                    <td>$14.20</td>
+                    <td><span class="flag-tag">3-way mismatch</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="ab-banner">
+                <b>Two AP-side discrepancies detected.</b> Amazon Business has surfaced this invoice for review because the linked PO and warehouse receipt do not match what was billed. Open the AI Assistant on the right for a cross-system explanation.
+              </div>
+            </div>
+
+            <!-- Side: AI assistant with embedded Witness -->
+            <div class="ab-side">
+              <div class="ab-side-h">
+                <div class="ab-side-icon">a</div>
+                <div>
+                  <div class="ab-side-title">Amazon Business Assistant</div>
+                  <div class="ab-side-sub">Connected · 3 MCP partners available</div>
+                </div>
+              </div>
+
+              <div class="ab-chat">
+                <div class="ab-msg-user">Why is INV-99281 held?</div>
+
+                <div class="ab-msg-ai">
+                  <div class="tag">Amazon Business Assistant</div>
+                  I can show you the invoice on my side — 100 units of HP 9000 paper at $14.20, billed by Acme on Apr 24. But the hold isn't from us; it came from your AP team because the PO (in NetSuite) and the warehouse receipt don't agree with what's billed. Want me to ask <b>Witness</b> to assemble the cross-system view?
+                </div>
+
+                <div class="ab-msg-user">Yes, ask Witness.</div>
+
+                <!-- ─── WITNESS CARD ─── -->
+                <div class="witness-card">
+                  <div class="wc-stripe"></div>
+                  <div class="wc-header">
+                    <div class="wc-header-left">
+                      <div class="wc-mark">W</div>
+                      <div>
+                        <div class="wc-title">3-Way Match · INV-99281</div>
+                        <div class="wc-subtitle">Sealed evidence · 11 nodes · 4 servers consulted</div>
+                      </div>
+                    </div>
+                    <div class="wc-id">wtn::99281::v1</div>
+                  </div>
+                  <div class="wc-body">
+                    <div class="wc-conclusion">
+                      <div>
+                        <div class="wc-status-label">Recommendation</div>
+                        <div class="wc-status">Recommend <span class="accent hold">hold for review</span></div>
+                        <div class="wc-status-sub">2 of 4 checks failed · investigated across 3 systems</div>
+                      </div>
+                      <div class="wc-conf medium">
+                        <div class="wc-conf-label">Confidence</div>
+                        <div class="wc-conf-bar">
+                          <div class="wc-conf-dots">
+                            <span class="wc-conf-dot filled"></span>
+                            <span class="wc-conf-dot filled"></span>
+                            <span class="wc-conf-dot"></span>
+                          </div>
+                          <span class="wc-conf-text">Medium</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="wc-checks">
+                      <div class="wc-check">
+                        <div class="wc-check-icon pass">✓</div>
+                        <div class="wc-check-label">Vendor identity</div>
+                        <div class="wc-check-detail">3 sources agree</div>
+                      </div>
+                      <div class="wc-check">
+                        <div class="wc-check-icon fail">✗</div>
+                        <div class="wc-check-label">Quantity match</div>
+                        <div class="wc-check-detail"><span class="neg">−4 units short</span></div>
+                      </div>
+                      <div class="wc-check">
+                        <div class="wc-check-icon fail">✗</div>
+                        <div class="wc-check-label">Unit price match</div>
+                        <div class="wc-check-detail"><span class="neg">+$0.20 / +1.43%</span></div>
+                      </div>
+                      <div class="wc-check">
+                        <div class="wc-check-icon pass">✓</div>
+                        <div class="wc-check-label">Tolerance applied</div>
+                        <div class="wc-check-detail">vendor rule ±1%</div>
+                      </div>
+                    </div>
+
+                    <div class="wc-summary">
+                      <span class="sum-label">Witness summary —</span>
+                      Amazon Business confirms 100 units billed; NetSuite PO ordered 100 at $14.00; warehouse received 96; carrier proof matches 96. Likely supplier short-shipped at loading.
+                    </div>
+
+                    <div class="wc-actions">
+                      <button class="wc-btn primary">Open evidence tree</button>
+                      <button class="wc-btn">File marketplace dispute</button>
+                      <button class="wc-btn">Send to AP analyst</button>
+                    </div>
+                  </div>
+                  <div class="wc-footer">
+                    <span class="wc-protocol">via MCP</span>
+                    <span>witness.mcp · sealed 14:23:12 UTC</span>
+                  </div>
+                </div>
+                <!-- ─── END WITNESS CARD ─── -->
+
+                <div class="ab-msg-ai">
+                  <div class="tag">Amazon Business Assistant</div>
+                  I can also <span class="suggest-chip">file a partial-shipment claim</span> on Amazon's side for the 4 short units while AP investigates the $0.20 price gap. Want me to draft that?
+                </div>
+              </div>
+
+              <div class="ab-input">
+                <div class="ab-input-field">Ask Amazon Business…</div>
+                <div class="ab-input-send">↑</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-caption">
+          <div class="cap-title">What this Amazon Business mock is showing</div>
+          <ul>
+            <li>Amazon Business Assistant <b>does not pretend</b> to know what's in NetSuite or the warehouse. It says "I can show you my side… would you like me to ask Witness?" — the honest split of authority.</li>
+            <li>The Witness card sits <b>inside Amazon's chat sidebar</b>. In the user's mental model: "Witness gave the cross-system answer right where I was looking at the invoice."</li>
+            <li>The <code>via MCP</code> footer is small but deliberate — it's the <b>protocol-level signature</b> proving the response really is from Witness, not Amazon Business reskinning a Witness response.</li>
+            <li>Three layers of authorship in the actions: <b>"Open evidence tree"</b> goes to full Witness, <b>"File marketplace dispute"</b> is an Amazon-native action Witness suggests but Amazon executes, <b>"Send to AP analyst"</b> is a human handoff.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ SCENARIO 2: SAP ════════ -->
+    <section class="scenario" id="scenario-sap">
+
+      <div class="context-bar">
+        <div class="context-block">
+          <div class="context-label">User attention</div>
+          <div class="context-value">Procurement specialist or AP analyst working in <b>SAP S/4HANA Fiori</b>, looking at the PO and the GR record. ERP shows quantity received but <b>not</b> the marketplace order details, carrier proof, or vendor history.</div>
+        </div>
+        <div class="context-block">
+          <div class="context-label">What Witness adds</div>
+          <div class="context-value"><b>Outside-the-walls perspective</b> — "your PO and GR are accurate, but the marketplace, carrier, and vendor reputation tell a more complete story."</div>
+        </div>
+        <div class="context-block">
+          <div class="context-label">Visual contract</div>
+          <div class="context-value">Witness is invoked through SAP's <b>Joule</b> sidepanel. The card visibly belongs to Witness, but is positioned as Joule's <em>cited source</em>, not Joule's own answer.</div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-meta">
+          <div class="stage-meta-left">
+            <span class="stage-pill">host: sap.s4hana</span>
+            <span class="stage-pill">witness: server mode</span>
+          </div>
+          <div class="stage-meta-right">scenario · GR variance investigation</div>
+        </div>
+
+        <div class="host host-sap">
+          <div class="sap-bar">
+            <div class="sap-logo">SAP</div>
+            <div class="sap-app">Manage Purchase Order · S/4HANA</div>
+          </div>
+          <div class="sap-tabs">
+            <button class="sap-tab">Overview</button>
+            <button class="sap-tab active">Items</button>
+            <button class="sap-tab">Goods Receipt</button>
+            <button class="sap-tab">Invoice</button>
+            <button class="sap-tab">3-Way Match</button>
+            <button class="sap-tab">History</button>
+          </div>
+
+          <div class="sap-content">
+            <div class="sap-main">
+              <h2 class="sap-h1">Purchase Order 4500044871</h2>
+              <div class="sap-sub">Acme Office Supplies · Created Apr 15, 2026 · Buyer: David Park</div>
+
+              <div class="sap-fields">
+                <div><div class="sap-field-l">Vendor</div><div class="sap-field-v">100782 · Acme Office Supplies</div></div>
+                <div><div class="sap-field-l">Document type</div><div class="sap-field-v">NB · Standard PO</div></div>
+                <div><div class="sap-field-l">Order value</div><div class="sap-field-v">$1,400.00 USD</div></div>
+                <div><div class="sap-field-l">Status</div><div class="sap-field-v"><span class="host-pill pending"><span class="dot"></span>Invoice on hold</span></div></div>
+              </div>
+
+              <div class="sap-section-h">PO Items</div>
+              <table class="sap-table">
+                <thead>
+                  <tr><th>Item</th><th>Material</th><th>Qty PO</th><th>Qty GR</th><th>Qty Inv</th><th>Net Price</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>10</td>
+                    <td>HP-9000-PAPR</td>
+                    <td>100 EA</td>
+                    <td><b>96 EA</b></td>
+                    <td>100 EA</td>
+                    <td>$14.00 / $14.20</td>
+                    <td><span class="host-pill blocked"><span class="dot"></span>Mismatch</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="sap-section-h" style="margin-top:18px;">Match exception detail</div>
+              <div class="sap-detail">
+                Quantity variance against goods receipt: <b class="error">−4 EA</b>. Price variance against PO: <b class="error">+1.43%</b>. Vendor tolerance group <code>ACM01</code> set to ±1% — both axes exceed. Routed to AP analyst queue.
+              </div>
+            </div>
+
+            <!-- Joule + Witness -->
+            <div class="sap-side">
+              <div class="sap-side-h">
+                <div class="sap-joule-mark">J</div>
+                <span>Joule</span>
+                <span class="sap-side-tag">PO assistant</span>
+              </div>
+
+              <div class="joule-attr">You</div>
+              <div class="joule-msg-user">Why are we short 4 units? The PO and invoice both say 100.</div>
+
+              <div class="joule-attr">Joule</div>
+              <div class="joule-msg-ai">
+                The goods receipt was posted at 96 EA, so the variance is on receipt. To check whether this was a short ship or a posting error, I'll consult <b>Witness</b> — it can correlate our GR with the marketplace order, carrier proof, and vendor history.
+              </div>
+
+              <!-- WITNESS CARD -->
+              <div class="witness-card">
+                <div class="wc-stripe"></div>
+                <div class="wc-header">
+                  <div class="wc-header-left">
+                    <div class="wc-mark">W</div>
+                    <div>
+                      <div class="wc-title">3-Way Match · INV-99281</div>
+                      <div class="wc-subtitle">Cross-system reconciliation</div>
+                    </div>
+                  </div>
+                  <div class="wc-id">wtn::99281</div>
+                </div>
+                <div class="wc-body">
+                  <div class="wc-conclusion">
+                    <div>
+                      <div class="wc-status-label">Finding</div>
+                      <div class="wc-status">Likely <span class="accent fail">supplier short-ship</span></div>
+                      <div class="wc-status-sub">corroborated by 2 independent non-SAP sources</div>
+                    </div>
+                    <div class="wc-conf high">
+                      <div class="wc-conf-label">Confidence</div>
+                      <div class="wc-conf-bar">
+                        <div class="wc-conf-dots">
+                          <span class="wc-conf-dot filled"></span>
+                          <span class="wc-conf-dot filled"></span>
+                          <span class="wc-conf-dot filled"></span>
+                        </div>
+                        <span class="wc-conf-text">High</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="wc-checks">
+                    <div class="wc-check">
+                      <div class="wc-check-icon pass">✓</div>
+                      <div class="wc-check-label">Carrier proof of delivery</div>
+                      <div class="wc-check-detail">96 EA scanned at dock</div>
+                    </div>
+                    <div class="wc-check">
+                      <div class="wc-check-icon pass">✓</div>
+                      <div class="wc-check-label">Amazon Business shipment manifest</div>
+                      <div class="wc-check-detail">96 EA loaded</div>
+                    </div>
+                    <div class="wc-check">
+                      <div class="wc-check-icon unknown">?</div>
+                      <div class="wc-check-label">Vendor history</div>
+                      <div class="wc-check-detail">2 prior short-ships in 12mo</div>
+                    </div>
+                  </div>
+
+                  <div class="wc-summary">
+                    <span class="sum-label">Recommended SAP action —</span>
+                    Post a <b>credit memo request</b> for $56.00 (4 EA × $14.00) and reject the 100-EA invoice. Witness can hand the credit-memo packet (with sealed evidence) to your AP analyst for posting in MIRO.
+                  </div>
+
+                  <div class="wc-actions">
+                    <button class="wc-btn accent">Generate credit memo request</button>
+                    <button class="wc-btn">View full evidence tree</button>
+                  </div>
+                </div>
+                <div class="wc-footer">
+                  <span class="wc-protocol">via MCP · 4 servers consulted</span>
+                  <span>sealed 14:23:12 UTC</span>
+                </div>
+              </div>
+
+              <div class="sap-handoff">
+                <b>SAP-side action:</b> If you accept Witness's recommendation, Joule will pre-fill transaction <code>MIRO</code> with the credit-memo line items and attach the Witness record as a sealed reference.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-caption">
+          <div class="cap-title">What this SAP mock is showing</div>
+          <ul>
+            <li><b>Joule does not say "I figured out what happened."</b> Joule routes to Witness because Witness has access to non-SAP sources (carrier, marketplace, vendor history) that Joule doesn't.</li>
+            <li>The Witness card looks identical in structure to the Amazon mock, but the <b>recommendation is SAP-native</b> — "Post a credit memo request" matches SAP's transaction codes (<code>MIRO</code>) and document types. Witness adapts its <b>verbs</b> to the host without giving up its identity.</li>
+            <li>The <b>vendor history</b> check (?) is honest about uncertainty: 2 prior short-ships could indicate a pattern OR be coincidence. Witness flags it for the human to weigh, instead of pretending to know.</li>
+            <li>The handover footnote shows Witness <b>never tries to "do" SAP's job</b> — the actual posting happens in SAP via Joule pre-filling MIRO. Witness is the witness, not the actor.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ SCENARIO 3: WALMART BUSINESS ════════ -->
+    <section class="scenario" id="scenario-walmart">
+
+      <div class="context-bar">
+        <div class="context-block">
+          <div class="context-label">User attention</div>
+          <div class="context-value">Small-business buyer reviewing a <b>Walmart Business receipt</b> on mobile-friendly Walmart Business. They see the receipt totals but no PO context — they're more "shopper" than AP analyst.</div>
+        </div>
+        <div class="context-block">
+          <div class="context-label">What Witness adds</div>
+          <div class="context-value"><b>A fluent translation</b> — turning a complex 3-way mismatch into "you were charged $0.20 more per unit and got 4 fewer than expected" in plain language with one-tap actions.</div>
+        </div>
+        <div class="context-block">
+          <div class="context-label">Visual contract</div>
+          <div class="context-value">The Witness card adapts to a more conversational tone. Same brand stripe and mark, but actions are <b>simpler</b> — designed for someone without ERP access.</div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-meta">
+          <div class="stage-meta-left">
+            <span class="stage-pill">host: business.walmart.com</span>
+            <span class="stage-pill">witness: server mode</span>
+          </div>
+          <div class="stage-meta-right">scenario · receipt review</div>
+        </div>
+
+        <div class="host host-walmart">
+          <div class="wm-bar">
+            <div class="wm-logo">
+              <span class="wm-spark">✦</span> Walmart
+            </div>
+            <span class="wm-biz">Business</span>
+            <span style="margin-left:auto;font-size:12px;opacity:.85;">Orders · Reorder · Lists</span>
+          </div>
+
+          <div class="wm-content">
+            <div class="wm-main">
+              <h2 class="wm-h1">Order receipt · #WMB-99281</h2>
+              <div class="wm-sub">Acme Office Supplies · Delivered Apr 24 · Account holder: M. Chen</div>
+
+              <div class="wm-receipt">
+                <div class="wm-receipt-head">
+                  <div class="store">Walmart Business · Order #WMB-99281</div>
+                  <div class="meta">Delivered Apr 24, 2026 — 14:08</div>
+                </div>
+                <div class="wm-receipt-row"><span>HP 9000 ream × 100</span><span>$1,420.00</span></div>
+                <div class="wm-receipt-row"><span>Subtotal</span><span>$1,420.00</span></div>
+                <div class="wm-receipt-row"><span>Tax</span><span>$0.00</span></div>
+                <div class="wm-receipt-row total"><span>Total</span><span>$1,420.00</span></div>
+                <div class="wm-receipt-flag">⚠ Your AP team flagged this receipt for review — open Spark on the right.</div>
+              </div>
+            </div>
+
+            <!-- Walmart Spark + Witness -->
+            <div class="wm-side">
+              <div class="wm-side-h">
+                <div class="wm-side-title"><span class="wm-spark">✦</span> Spark Assistant</div>
+                <div class="wm-side-sub">Connected to your back-office tools</div>
+              </div>
+
+              <div class="wm-chat">
+                <div class="wm-msg wm-msg-user">Why is this flagged?</div>
+
+                <div class="wm-msg">
+                  <div class="wm-tag">Spark</div>
+                  Looks like there's a mismatch between what Walmart billed, what your warehouse logged, and what your PO said. I'll bring in <b>Witness</b> for the full picture.
+                </div>
+
+                <!-- WITNESS CARD -->
+                <div class="witness-card">
+                  <div class="wc-stripe"></div>
+                  <div class="wc-header">
+                    <div class="wc-header-left">
+                      <div class="wc-mark">W</div>
+                      <div>
+                        <div class="wc-title">What happened to your order</div>
+                        <div class="wc-subtitle">Plain-language explanation</div>
+                      </div>
+                    </div>
+                    <div class="wc-id">wtn::99281</div>
+                  </div>
+                  <div class="wc-body">
+                    <div class="wc-conclusion">
+                      <div>
+                        <div class="wc-status-label">In short</div>
+                        <div class="wc-status">You were billed for <span class="accent fail">4 extra units</span></div>
+                        <div class="wc-status-sub">at a price <span style="color:var(--color-error-500);font-weight:600;">$0.20 higher</span> than your PO</div>
+                      </div>
+                      <div class="wc-conf high">
+                        <div class="wc-conf-label">Sure?</div>
+                        <div class="wc-conf-bar">
+                          <div class="wc-conf-dots">
+                            <span class="wc-conf-dot filled"></span>
+                            <span class="wc-conf-dot filled"></span>
+                            <span class="wc-conf-dot filled"></span>
+                          </div>
+                          <span class="wc-conf-text">High</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="wc-checks">
+                      <div class="wc-check">
+                        <div class="wc-check-icon fail">✗</div>
+                        <div class="wc-check-label">Walmart billed you for 100</div>
+                        <div class="wc-check-detail"><span class="neg">$1,420.00</span></div>
+                      </div>
+                      <div class="wc-check">
+                        <div class="wc-check-icon pass">✓</div>
+                        <div class="wc-check-label">Your warehouse received 96</div>
+                        <div class="wc-check-detail">scanned in</div>
+                      </div>
+                      <div class="wc-check">
+                        <div class="wc-check-icon fail">✗</div>
+                        <div class="wc-check-label">Your PO said $14.00, not $14.20</div>
+                        <div class="wc-check-detail"><span class="neg">+1.43%</span></div>
+                      </div>
+                    </div>
+
+                    <div class="wc-summary">
+                      <span class="sum-label">In one sentence —</span>
+                      You should be refunded <b>$76.80</b> total: $56 for 4 missing units, $20 for the price difference on 100 units.
+                    </div>
+
+                    <div class="wc-actions">
+                      <button class="wc-btn accent">Request $76.80 refund</button>
+                      <button class="wc-btn">Show evidence</button>
+                    </div>
+                  </div>
+                  <div class="wc-footer">
+                    <span class="wc-protocol">via MCP</span>
+                    <span>sealed · 14:23 UTC</span>
+                  </div>
+                </div>
+
+                <div class="wm-msg">
+                  <div class="wm-tag">Spark</div>
+                  Want me to file the refund and email a copy to your bookkeeper?
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-caption">
+          <div class="cap-title">What this Walmart Business mock is showing</div>
+          <ul>
+            <li>The same Witness server is being asked the same question, but the <b>language</b> changed — "You were billed for 4 extra units" instead of "Quantity match: −4 EA". Witness <b>adapts its register</b> to who's reading.</li>
+            <li>Actions collapse from <b>three to two</b>: the small-business buyer doesn't have access to MIRO, evidence trees, or AP queues. Witness offers what they <em>can</em> do.</li>
+            <li>The summary box does the math for them: "$76.80 refund total." This is interpretive work — but Witness is still showing the <b>checks underneath</b> so the conclusion is auditable, not just trusted.</li>
+            <li>Spark (Walmart's assistant) handles the next step ("file the refund, email your bookkeeper") — those are <b>Walmart-native + email-side</b> actions, not Witness's job.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ SCENARIO 4: CLAUDE ════════ -->
+    <section class="scenario" id="scenario-claude">
+
+      <div class="context-bar">
+        <div class="context-block">
+          <div class="context-label">User attention</div>
+          <div class="context-value">Knowledge worker in <b>Claude</b> drafting a vendor-relations email. They need the cross-system facts to write something that's both <em>diplomatic and accurate</em>.</div>
+        </div>
+        <div class="context-block">
+          <div class="context-label">What Witness adds</div>
+          <div class="context-value"><b>Cited evidence Claude can quote from</b> — the email draft references the Witness record, so the recipient can verify the claim without trusting Claude's word.</div>
+        </div>
+        <div class="context-block">
+          <div class="context-label">Visual contract</div>
+          <div class="context-value">Witness shows up as a <b>tool result</b> in Claude's conversation. The card is the same shape but smaller — it's a <em>citation</em>, not the main attraction.</div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="stage-meta">
+          <div class="stage-meta-left">
+            <span class="stage-pill">host: claude.ai</span>
+            <span class="stage-pill">witness: mcp tool</span>
+          </div>
+          <div class="stage-meta-right">scenario · vendor email drafting</div>
+        </div>
+
+        <div class="host host-claude">
+          <div class="cl-shell">
+            <aside class="cl-side">
+              <div class="cl-brand">
+                <div class="cl-brand-mark">C</div>
+                Claude
+              </div>
+              <div class="cl-nav-section">
+                <div class="cl-nav-label">Chats</div>
+                <div class="cl-nav-item active">Acme vendor email</div>
+                <div class="cl-nav-item">Q2 budget review</div>
+                <div class="cl-nav-item">Vendor onboarding</div>
+              </div>
+              <div class="cl-nav-section">
+                <div class="cl-nav-label">Connections</div>
+                <div class="cl-conn"><span class="cl-conn-dot"></span>Witness</div>
+                <div class="cl-conn"><span class="cl-conn-dot"></span>Gmail</div>
+                <div class="cl-conn"><span class="cl-conn-dot"></span>NetSuite</div>
+              </div>
+            </aside>
+
+            <div style="display:flex;flex-direction:column;flex:1;">
+              <div class="cl-main">
+                <div class="cl-msg-user">Help me draft an email to Acme about the short shipment on INV-99281. Use whatever evidence Witness has so the email is precise but not aggressive.</div>
+
+                <div class="cl-msg-claude">
+                  <div class="cl-claude-tag">Claude</div>
+                  <p>I'll pull the cross-system record from Witness first, then draft something diplomatic.</p>
+                  <div class="cl-tool"><span class="arrow">→</span> calling <span class="server">witness.mcp</span> · get_three_way_match("INV-99281")</div>
+                </div>
+
+                <!-- WITNESS CARD as tool result -->
+                <div class="witness-card" style="max-width:560px;">
+                  <div class="wc-stripe"></div>
+                  <div class="wc-header">
+                    <div class="wc-header-left">
+                      <div class="wc-mark">W</div>
+                      <div>
+                        <div class="wc-title">3-Way Match · INV-99281</div>
+                        <div class="wc-subtitle">Tool result · returned to Claude</div>
+                      </div>
+                    </div>
+                    <div class="wc-id">wtn::99281</div>
+                  </div>
+                  <div class="wc-body">
+                    <div class="wc-conclusion">
+                      <div>
+                        <div class="wc-status-label">Finding</div>
+                        <div class="wc-status"><span class="accent fail">Short-ship</span> + price drift</div>
+                        <div class="wc-status-sub">−4 EA, +$0.20/unit · refund due $76.80</div>
+                      </div>
+                      <div class="wc-conf high">
+                        <div class="wc-conf-label">Confidence</div>
+                        <div class="wc-conf-bar">
+                          <div class="wc-conf-dots">
+                            <span class="wc-conf-dot filled"></span>
+                            <span class="wc-conf-dot filled"></span>
+                            <span class="wc-conf-dot filled"></span>
+                          </div>
+                          <span class="wc-conf-text">High</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="wc-checks">
+                      <div class="wc-check">
+                        <div class="wc-check-icon pass">✓</div>
+                        <div class="wc-check-label">Carrier POD: 96 EA</div>
+                        <div class="wc-check-detail">corroborated</div>
+                      </div>
+                      <div class="wc-check">
+                        <div class="wc-check-icon pass">✓</div>
+                        <div class="wc-check-label">Marketplace manifest: 96 EA</div>
+                        <div class="wc-check-detail">corroborated</div>
+                      </div>
+                      <div class="wc-check">
+                        <div class="wc-check-icon unknown">?</div>
+                        <div class="wc-check-label">Vendor history: 2 prior short-ships</div>
+                        <div class="wc-check-detail">12mo lookback</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="wc-footer">
+                    <span class="wc-protocol">via MCP</span>
+                    <span>cite as wtn::99281</span>
+                  </div>
+                </div>
+
+                <div class="cl-msg-claude">
+                  <div class="cl-claude-tag">Claude</div>
+                  <p>Witness confirmed the short-ship through carrier and marketplace records, plus flagged that this is the third short-ship in 12 months. I've drafted a firm-but-friendly email that cites the sealed Witness record so Acme can verify it themselves:</p>
+
+                  <div style="background:white;border:1px solid #e8e4dc;border-radius:10px;padding:18px;margin-top:6px;">
+                    <div style="border-bottom:1px dashed #e8e4dc;padding-bottom:10px;margin-bottom:12px;font-family:var(--font-mono);font-size:11.5px;color:#8a7a6d;line-height:1.7;">
+                      <div><span style="color:#a8988a;">To:</span> ap@acmeoffice.com</div>
+                      <div><span style="color:#a8988a;">Cc:</span> david.park@company.com</div>
+                      <div><span style="color:#a8988a;">Subject:</span> INV-99281 — receipt variance &amp; refund request</div>
+                    </div>
+                    <p style="margin-bottom:10px;">Hi Acme team,</p>
+                    <p style="margin-bottom:10px;">We received order WMB-99281 yesterday and noticed a couple of variances I wanted to flag before processing the invoice.</p>
+                    <div style="background:#faf9f5;border-left:3px solid #cc785c;padding:10px 12px;margin:10px 0;font-size:12.5px;font-family:var(--font-mono);color:#5a4a3d;line-height:1.55;">
+                      Our warehouse logged 96 EA at delivery (carrier POD &amp; marketplace manifest both confirm 96). Invoice was billed for 100 EA at $14.20, vs. our PO at $14.00.
+                    </div>
+                    <p style="margin-bottom:10px;">That works out to a <b>$76.80 refund</b> — $56 for the 4 missing units, $20 for the price difference. I've attached our reconciliation record (ref: <span style="font-family:var(--font-mono);">wtn::99281</span>) so your team can verify our numbers independently.</p>
+                    <p style="margin-bottom:10px;">Could you let me know how you'd like to handle the credit? Happy to take a credit memo against the next order if that's easier.</p>
+                    <p>Thanks, Maya</p>
+                  </div>
+
+                  <p style="margin-top:12px;">The <span style="font-family:var(--font-mono);font-size:13px;">wtn::99281</span> reference is a sealed Witness record — if Acme's team queries it, they'll see the same evidence I used. Want me to send via Gmail or revise the tone?</p>
+                </div>
+              </div>
+
+              <div class="cl-input">Reply to Claude…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scenario-caption">
+          <div class="cap-title">What this Claude mock is showing</div>
+          <ul>
+            <li>Witness shows up as a <b>tool result</b> — smaller, no big "Recommendation" verb. In Claude, the <em>conversation</em> is the surface; Witness is a <em>citation</em>.</li>
+            <li>The visible <code>→ calling witness.mcp</code> trace makes the protocol legible. The user can see Claude reaching out, not pretending to "just know."</li>
+            <li>The <b>email draft itself</b> cites <code>wtn::99281</code>. This is the highest-value Witness pattern: the recipient (Acme) can independently <b>verify the same evidence</b> without trusting Claude or Maya's account of it. The record is the bridge of trust.</li>
+            <li>Claude does the soft-skills work (tone, diplomacy, framing); Witness does the truth-anchored work (what actually happened across systems). Each does what it's good at.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.host-tab');
+  const scenarios = document.querySelectorAll('.scenario');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.getAttribute('data-target');
+      scenarios.forEach(s => s.classList.toggle('active', s.id === target));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
