@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Witness – Vendors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #0b0d12; display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 257px; background: #f4f4f4; display: flex; flex-direction: column; z-index: 20; overflow-y: auto; transition: width .2s ease; }
+    .sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .brand-logo { width: 32px; height: 32px; background: #120b0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .brand-logo img { width: 20px; height: 20px; display: block; object-fit: contain; }
+    .brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
+    .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+    .nav-group { display: flex; flex-direction: column; gap: 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-items { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: #45556c; font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: -0.15px; text-decoration: none; cursor: pointer; }
+    .nav-item:hover { background: rgba(0,0,0,0.04); }
+    .nav-item.active { background: white; color: #120b0b; padding: 8px 12px; }
+    .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .nav-badge { margin-left: auto; background: #120b0b; color: white; font-size: 12px; font-weight: 700; line-height: 16px; padding: 2px 8px; border-radius: 999px; }
+    .nav-badge.ai { background: #ff6900; }
+
+    .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
+    .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
+    .sidebar-toggle svg { transition: transform .2s; }
+    .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    .sidebar.collapsed { width: 72px; }
+    .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+    .sidebar.collapsed .brand-name { display: none; }
+    .sidebar.collapsed .sidebar-toggle { position: absolute; top: 80px; right: -12px; background: #fff; border: 1.5px solid #e9e9e9; box-shadow: 0 1px 3px rgba(0,0,0,0.06); width: 24px; height: 24px; border-radius: 50%; margin: 0; z-index: 21; }
+    .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+    .sidebar.collapsed .nav-label { display: none; }
+    .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
+    .sidebar.collapsed .nav-item.active { padding: 8px 0; }
+    .sidebar.collapsed .nav-badge { display: none; }
+    .sidebar.collapsed ~ .main { margin-left: 72px; }
+    .main { transition: margin-left .2s ease; margin-left: 257px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    /* ─── TOPBAR ─── */
+    .topbar { position: sticky; top: 0; z-index: 10; background: white; border-bottom: 1px solid #ededed; display: flex; align-items: center; justify-content: space-between; padding: 23px 24px; flex-shrink: 0; }
+    .crumbs { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #45556c; letter-spacing: -0.15px; }
+    .crumbs a { color: #45556c; text-decoration: none; cursor: pointer; }
+    .crumbs a:hover { color: #120b0b; }
+    .crumbs .sep { color: #c8d0db; }
+    .crumbs .here { color: #120b0b; font-weight: 600; }
+    .topbar-right { display: flex; align-items: center; gap: 24px; }
+    .health-chip { display: flex; align-items: center; gap: 8px; background: #dcfce7; border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
+    .health-chip .hdot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
+    .health-chip span { font-size: 14px; font-weight: 500; color: #00a63e; letter-spacing: -0.15px; white-space: nowrap; }
+    .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+
+    /* ─── CONTENT ─── */
+    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 52px; }
+
+    /* ─── PAGE HEADING ─── */
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .page-hd-left { display: flex; flex-direction: column; gap: 6px; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+    .page-sub { font-size: 14px; font-weight: 400; color: #45556c; line-height: 20px; letter-spacing: -0.15px; }
+    .hd-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-outline { background: white; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 8px 16px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #0b0d12; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-outline:hover { background: #f4f4f4; }
+    .btn-solid { background: #ff7a3d; border: none; border-radius: 999px; padding: 0 24px; height: 32px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: white; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-solid:hover { background: #ff6826; }
+
+    /* ─── STAT CARDS ─── */
+    .stat-row { display: flex; }
+    .stat-card { background: white; border: 2px solid #e9e9e9; padding: 18px; flex: 1; min-width: 0; }
+    .stat-card:first-child { border-radius: 10px 0 0 10px; }
+    .stat-card:last-child  { border-radius: 0 10px 10px 0; }
+    .stat-card + .stat-card { border-left: none; }
+    .stat-inner { display: flex; flex-direction: column; gap: 16px; }
+    .stat-num { font-size: 32px; font-weight: 600; color: #0f172b; line-height: 32px; letter-spacing: 0.07px; margin-bottom: 8px; }
+    .stat-num.red   { color: #dc2626; }
+    .stat-num.amber { color: #d95b03; }
+    .stat-num.green { color: #16a34a; }
+    .stat-lbl { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; }
+    .stat-sub { font-size: 12px; font-weight: 400; color: #45556c; margin-top: 6px; line-height: 16px; }
+
+    /* ─── SAVED VIEWS ─── */
+    .views-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 16px 18px;
+      background: #fff5f1; border: 1.5px solid #ffe8df; border-radius: 10px;
+    }
+    .views-bar-left  { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .views-label {
+      font-size: 12px; font-weight: 600; color: #45556c;
+      text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; flex-shrink: 0;
+    }
+    .views-scroll { display: flex; align-items: center; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 0; min-width: 0; }
+    .views-scroll::-webkit-scrollbar { display: none; }
+    .view-chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
+      border-radius: 999px; border: 1.5px solid #e9e9e9; background: white;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #0b0d12;
+      cursor: pointer; white-space: nowrap; transition: border-color .15s, background .15s, color .15s;
+    }
+    .view-chip:hover { border-color: #adadad; }
+    .view-chip.active { background: #120b0b; border-color: #120b0b; color: white; }
+    .view-chip .view-spark { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; font-size: 12px; line-height: 1; color: #ff5c1b; }
+    .view-chip.active .view-spark { color: #ffd000; }
+    .view-chip .view-count { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 18px; padding: 0 6px; border-radius: 999px; background: #f4f4f4; color: #45556c; font-size: 11px; font-weight: 700; letter-spacing: 0.2px; }
+    .view-chip.active .view-count { background: rgba(255,255,255,0.18); color: white; }
+    .view-save { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; border: 1.5px dashed #ffb299; background: transparent; color: #d95b03; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s; }
+    .view-save:hover { background: white; border-color: #ff5c1b; }
+
+    /* ─── TOOLBAR ─── */
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .toolbar-left  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .toolbar-right { display: flex; align-items: center; gap: 8px; }
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; display: flex; align-items: center; }
+    .search-icon svg { width: 15px; height: 15px; color: #adadad; }
+    .search-input { width: 340px; padding: 8px 12px 8px 36px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-size: 13px; font-family: 'Inter', sans-serif; color: #0b0d12; outline: none; }
+    .search-input::placeholder { color: #adadad; }
+    .search-input:focus { border-color: #c8c8c8; }
+    .sort-select { padding: 8px 28px 8px 12px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-family: 'Inter', sans-serif; font-size: 13px; color: #0b0d12; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 4l3 3 3-3' stroke='%2345556c' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+
+    /* ─── TABLE ─── */
+    .vendors-wrap { width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid #e9e9e9; }
+    table.vnd { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    table.vnd col.c-vendor { width: 28%; }
+    table.vnd col.c-active { width: 11%; }
+    table.vnd col.c-ontime { width: 11%; }
+    table.vnd col.c-dso { width: 11%; }
+    table.vnd col.c-disp { width: 11%; }
+    table.vnd col.c-vol { width: 13%; }
+    table.vnd col.c-stat { width: 15%; }
+    table.vnd thead tr { background: #f7f7f7; }
+    table.vnd thead th {
+      font-size: 12px; font-weight: 600; color: #0b0d12;
+      text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px;
+      text-align: left; padding: 12px 12px; white-space: nowrap;
+    }
+    table.vnd thead th:first-child { padding-left: 20px; }
+    table.vnd thead th:last-child  { padding-right: 20px; }
+    table.vnd tbody tr { background: white; border-top: 1px solid #f0f0f0; cursor: pointer; transition: background .12s; }
+    table.vnd tbody tr:hover { background: #fafafa; }
+    table.vnd tbody tr.spotlight { background: #fff8f3; }
+    table.vnd tbody tr.spotlight:hover { background: #fff3eb; }
+    table.vnd tbody td { padding: 16px 12px; vertical-align: middle; font-size: 14px; font-weight: 400; color: #0b0d12; line-height: 20px; }
+    table.vnd tbody td:first-child { padding-left: 20px; }
+    table.vnd tbody td:last-child  { padding-right: 20px; }
+
+    .vnd-cell { display: flex; align-items: center; gap: 12px; }
+    .vnd-logo { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 500; color: white; flex-shrink: 0; letter-spacing: -0.5px; }
+    .vnd-logo.global   { background: linear-gradient(135deg, #45556c, #0f172b); }
+    .vnd-logo.bright   { background: linear-gradient(135deg, #16a34a, #15803d); }
+    .vnd-logo.acme     { background: linear-gradient(135deg, #ff9900, #ff5c1b); }
+    .vnd-logo.tech     { background: linear-gradient(135deg, #155dfc, #4c8dff); }
+    .vnd-logo.hudson   { background: linear-gradient(135deg, #b91c1c, #dc2626); }
+    .vnd-logo.coastal  { background: linear-gradient(135deg, #2563eb, #155dfc); }
+    .vnd-logo.apex     { background: linear-gradient(135deg, #d95b03, #ff6900); }
+    .vnd-logo.fast     { background: linear-gradient(135deg, #6b21a8, #4f46e5); }
+    .vnd-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .vnd-name { font-size: 14px; font-weight: 600; color: #0b0d12; line-height: 20px; }
+    .vnd-tag  { font-size: 12px; font-weight: 400; color: #45556c; line-height: 16px; }
+
+    .metric-strong { font-weight: 600; color: #0b0d12; }
+    .metric-amber  { color: #d95b03; font-weight: 600; }
+    .metric-red    { color: #b91c1c; font-weight: 600; }
+    .metric-green  { color: #16a34a; font-weight: 600; }
+
+    /* status pills (same family as platform-card.status-pill but lighter) */
+    .v-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .v-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .v-pill.good  { background: #dcfce7; color: #00a63e; }
+    .v-pill.good  .dot { background: #16a34a; }
+    .v-pill.watch { background: #fff0e0; color: #d95b03; }
+    .v-pill.watch .dot { background: #ff6900; }
+    .v-pill.flag  { background: #fee2e2; color: #b91c1c; }
+    .v-pill.flag  .dot { background: #dc2626; }
+    .v-pill.new   { background: #e7f4ff; color: #155dfc; }
+    .v-pill.new   .dot { background: #155dfc; }
+
+    /* ─── AI INSIGHT INLINE ─── */
+    .insight-card { background: #fff5f0; border: 1px solid #ffb088; border-radius: 10px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px; }
+    .insight-hd { display: flex; align-items: center; gap: 8px; }
+    .insight-spark { color: #ff6900; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+    .insight-body { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .insight-lbl { font-size: 11px; font-weight: 700; color: #ff6900; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; }
+    .insight-txt { font-size: 14px; font-weight: 400; color: #0b0d12; line-height: 20px; letter-spacing: -0.15px; }
+    .insight-txt b { font-weight: 600; }
+    .insight-link { font-size: 13px; font-weight: 500; color: #d95b03; text-decoration: underline; cursor: pointer; white-space: nowrap; margin-left: 12px; flex-shrink: 0; align-self: center; }
+
+    /* ─── VENDOR PROFILE (SPOTLIGHT) ─── */
+    .profile-wrap { display: flex; flex-direction: column; gap: 24px; }
+    .profile-eyebrow-row { display: flex; align-items: center; gap: 8px; }
+    .profile-eyebrow { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; color: #45556c; text-transform: uppercase; letter-spacing: 0.1em; }
+    .profile-eyebrow b { color: #d95b03; font-weight: 700; }
+    .sec-hd-vp { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    h2.stitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+
+    .profile-card { background: white; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .profile-head { padding: 24px 28px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #ededed; flex-wrap: wrap; }
+    .vnd-logo-lg { width: 64px; height: 64px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 500; color: white; flex-shrink: 0; letter-spacing: -0.5px; }
+    .vnd-logo-lg.global { background: linear-gradient(135deg, #45556c, #0f172b); }
+    .ph-info { flex: 1; min-width: 220px; }
+    .ph-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+    .ph-name { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 500; color: #120b0b; letter-spacing: -0.3px; }
+    .ph-id { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #45556c; padding: 2px 8px; background: #f4f4f4; border-radius: 4px; }
+    .ph-tagline { font-size: 13px; color: #45556c; line-height: 1.5; }
+    .ph-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* tabs */
+    .vp-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e9e9e9; padding: 0 28px; background: #fafafa; }
+    .vp-tab { font-size: 13px; font-weight: 500; padding: 14px 14px; border: none; background: transparent; color: #45556c; cursor: pointer; font-family: 'Inter', sans-serif; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .12s; display: inline-flex; align-items: center; gap: 6px; }
+    .vp-tab:hover { color: #120b0b; }
+    .vp-tab.active { color: #120b0b; font-weight: 600; border-bottom-color: #120b0b; }
+    .vp-tab .ct { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: #e9e9e9; color: #45556c; }
+    .vp-tab.active .ct { background: #120b0b; color: white; }
+    .vp-tab .ct.warn { background: #ffe0ca; color: #d95b03; }
+    .vp-tab.active .ct.warn { background: #ff7a3d; color: white; }
+
+    /* tab body */
+    .vp-body { padding: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .vp-body > .span2 { grid-column: 1 / -1; }
+
+    .vp-block { background: white; border: 1px solid #e9e9e9; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+    .vp-block.flat { padding: 0; border: none; }
+    .vp-block-hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .vp-block-title { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; color: #45556c; text-transform: uppercase; letter-spacing: 0.1em; }
+    .vp-block-link { font-size: 12px; font-weight: 500; color: #45556c; text-decoration: underline; cursor: pointer; }
+    .vp-block-link:hover { color: #120b0b; }
+
+    /* identity rows */
+    .id-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f4f4f4; }
+    .id-row:last-child { border-bottom: none; }
+    .id-key { font-size: 12px; color: #45556c; flex-shrink: 0; min-width: 110px; }
+    .id-val { font-size: 13px; color: #0b0d12; text-align: right; font-weight: 500; word-break: break-word; }
+    .id-val .id-edit { font-size: 11px; color: #155dfc; text-decoration: underline; cursor: pointer; margin-left: 6px; }
+
+    /* perf row + bars */
+    .perf-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f4f4f4; }
+    .perf-row:last-child { border-bottom: none; }
+    .perf-lbl { font-size: 13px; color: #0b0d12; font-weight: 500; flex: 1; min-width: 0; }
+    .perf-bar { width: 130px; height: 6px; border-radius: 999px; background: #f4f4f4; overflow: hidden; flex-shrink: 0; }
+    .perf-bar-fill { height: 100%; border-radius: 999px; background: #16a34a; }
+    .perf-bar-fill.warn { background: #ff7a3d; }
+    .perf-bar-fill.flag { background: #dc2626; }
+    .perf-val { font-size: 13px; font-weight: 600; color: #0b0d12; min-width: 56px; text-align: right; flex-shrink: 0; }
+
+    /* recurring flags / memory */
+    .mem-list { display: flex; flex-direction: column; gap: 10px; }
+    .mem-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px; background: #fff5f0; border: 1px solid #ffd9c2; border-radius: 8px; }
+    .mem-item.calm { background: #f7f7f7; border-color: #e9e9e9; }
+    .mem-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff6900; flex-shrink: 0; margin-top: 6px; animation: pls 2.5s ease-in-out infinite; }
+    .mem-item.calm .mem-dot { background: #adadad; animation: none; }
+    @keyframes pls { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .mem-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+    .mem-title { font-size: 13px; font-weight: 600; color: #0b0d12; line-height: 1.4; }
+    .mem-sub { font-size: 12px; color: #45556c; line-height: 1.5; }
+    .mem-link { font-size: 12px; font-weight: 500; color: #d95b03; text-decoration: underline; cursor: pointer; }
+    .mem-item.calm .mem-link { color: #45556c; }
+
+    /* comms thread */
+    .thread { display: flex; flex-direction: column; gap: 14px; }
+    .thread-item { display: flex; gap: 12px; }
+    .thread-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+    .thread-avatar.them { background: linear-gradient(135deg, #45556c, #0f172b); }
+    .thread-avatar.us   { background: #ff6900; }
+    .thread-avatar.ai   { background: linear-gradient(135deg, #6b21a8, #4f46e5); }
+    .thread-body { flex: 1; min-width: 0; }
+    .thread-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .thread-from { font-size: 13px; font-weight: 600; color: #0b0d12; }
+    .thread-when { font-size: 12px; color: #adadad; }
+    .thread-ref  { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; color: #155dfc; background: #e7f4ff; padding: 2px 6px; border-radius: 4px; }
+    .thread-text { font-size: 13px; color: #0b0d12; line-height: 1.55; }
+    .thread-tag  { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: rgba(107,33,168,0.1); color: #6b21a8; }
+
+    /* compliance */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .comp-item { padding: 12px 14px; border-radius: 8px; border: 1px solid #e9e9e9; background: white; display: flex; flex-direction: column; gap: 4px; }
+    .comp-item.ok   { border-color: #b9f5cf; background: #f0fdf4; }
+    .comp-item.warn { border-color: #ffd9c2; background: #fff5f0; }
+    .comp-item.bad  { border-color: #fecaca; background: #fef2f2; }
+    .comp-lbl { font-size: 11px; font-weight: 600; color: #45556c; text-transform: uppercase; letter-spacing: 0.05em; }
+    .comp-val { font-size: 13px; font-weight: 600; color: #0b0d12; }
+    .comp-sub { font-size: 11px; color: #45556c; }
+    .comp-item.ok .comp-lbl   { color: #16a34a; }
+    .comp-item.warn .comp-lbl { color: #d95b03; }
+    .comp-item.bad .comp-lbl  { color: #b91c1c; }
+
+    /* active invoices summary */
+    .ai-row { display: flex; align-items: stretch; }
+    .ai-cell { flex: 1; padding: 14px 16px; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; gap: 4px; }
+    .ai-cell:last-child { border-right: none; }
+    .ai-cell .n { font-size: 22px; font-weight: 600; color: #0f172b; line-height: 1; }
+    .ai-cell .n.red { color: #b91c1c; }
+    .ai-cell .n.amber { color: #d95b03; }
+    .ai-cell .l { font-size: 11px; font-weight: 600; color: #45556c; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ai-cell-link { font-size: 12px; font-weight: 500; color: #155dfc; text-decoration: underline; cursor: pointer; margin-top: 2px; }
+
+    /* witness chat context strip */
+    .chat-context { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: #0f172b; border-radius: 10px; color: white; }
+    .chat-context .spark { color: #ffd000; font-size: 16px; flex-shrink: 0; }
+    .chat-context .text { font-size: 13px; line-height: 1.5; flex: 1; }
+    .chat-context .text b { font-weight: 600; }
+    .chat-context .text .muted { color: #94a5bc; }
+    .chat-context .open-chat { background: white; color: #0f172b; border: none; border-radius: 999px; padding: 6px 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .chat-context .open-chat:hover { background: #f4f4f4; }
+
+    @media (max-width: 980px) {
+      .content { padding: 32px 28px; }
+      .vp-body { grid-template-columns: 1fr; }
+      .ph-actions { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="" />
+    </div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="dashboard-brief.html">
+          <img src="https://www.figma.com/api/mcp/asset/0078dabe-156c-4a53-8ee8-14b88f08edd3" alt="" />
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item" href="invoices.html">
+          <img src="https://www.figma.com/api/mcp/asset/036eeafd-95b9-42ec-8e9e-b11d8ae871e6" alt="" />
+          All Invoice
+          <span class="nav-badge">26</span>
+        </a>
+        <a class="nav-item active" href="vendors.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item" href="autoflow.html">
+          <img src="https://www.figma.com/api/mcp/asset/7ac49f75-1d24-4839-a160-168c688113c5" alt="" />
+          Autoflow
+        </a>
+        <a class="nav-item" href="ai-activity.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge ai">24</span>
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html">
+          <img src="https://www.figma.com/api/mcp/asset/78a18923-bc00-41cf-a369-1310d323404e" alt="" />
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<div class="main">
+
+  <header class="topbar">
+    <div class="crumbs">
+      <a href="dashboard-brief.html">Dashboard</a>
+      <span class="sep">/</span>
+      <span class="here">Vendors</span>
+    </div>
+    <div class="topbar-right">
+      <div class="health-chip">
+        <span class="hdot"></span>
+        <span>All systems healthy</span>
+      </div>
+      <div class="avatar">MC</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- PAGE HEADING -->
+    <div class="page-hd">
+      <div class="page-hd-left">
+        <h1 class="ptitle">Vendors</h1>
+        <p class="page-sub">Your relationship hub · 8 active vendors · last synced 2 min ago from Amazon Business &amp; NetSuite</p>
+      </div>
+      <div class="hd-actions">
+        <button class="btn-outline">↑ Export</button>
+        <button class="btn-solid">+ Add vendor</button>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num">8</div>
+            <div class="stat-lbl">Active Vendors</div>
+            <div class="stat-sub">across 4 categories</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num amber">3</div>
+            <div class="stat-lbl">Needs Attention</div>
+            <div class="stat-sub">recurring issues flagged</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num green">$2.4M</div>
+            <div class="stat-lbl">90-Day Spend</div>
+            <div class="stat-sub">across all vendors</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num red">1</div>
+            <div class="stat-lbl">Compliance Flag</div>
+            <div class="stat-sub">watchlist match · review now</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVED VIEWS -->
+    <div class="views-bar">
+      <div class="views-bar-left">
+        <span class="views-label">Views</span>
+        <div class="views-scroll">
+          <button class="view-chip active">All vendors <span class="view-count">8</span></button>
+          <button class="view-chip"><span class="view-spark">✦</span>Needs attention <span class="view-count">3</span></button>
+          <button class="view-chip"><span class="view-spark">✦</span>Discount opportunities <span class="view-count">2</span></button>
+          <button class="view-chip">New this month <span class="view-count">1</span></button>
+          <button class="view-chip">Compliance flag <span class="view-count">1</span></button>
+          <button class="view-chip">High volume <span class="view-count">3</span></button>
+          <button class="view-save">+ Save current view</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-wrap">
+          <span class="search-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+          <input class="search-input" type="text" placeholder="Search vendors, contacts, terms..." />
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <select class="sort-select">
+          <option>Sort: Monthly volume ↓</option>
+          <option>Sort: On-time rate ↓</option>
+          <option>Sort: Dispute rate ↓</option>
+          <option>Sort: A → Z</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- VENDOR LIST -->
+    <div class="vendors-wrap">
+      <table class="vnd">
+        <colgroup>
+          <col class="c-vendor" />
+          <col class="c-active" />
+          <col class="c-ontime" />
+          <col class="c-dso" />
+          <col class="c-disp" />
+          <col class="c-vol" />
+          <col class="c-stat" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Vendor</th>
+            <th>Active</th>
+            <th>On-time</th>
+            <th>Avg DSO</th>
+            <th>Dispute</th>
+            <th>Monthly Vol.</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="spotlight" data-vendor="global">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo global">GI</div>
+                <div class="vnd-meta">
+                  <span class="vnd-name">Global Industrial</span>
+                  <span class="vnd-tag">VND-0042 · High-vol · Net 30</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="metric-strong">7</span></td>
+            <td><span class="metric-amber">74%</span></td>
+            <td><span class="metric-amber">38d</span></td>
+            <td><span class="metric-red">4 / 90d</span></td>
+            <td><span class="metric-strong">$48.2K</span></td>
+            <td><span class="v-pill watch"><span class="dot"></span>Watch · pattern</span></td>
+          </tr>
+          <tr data-vendor="bright">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo bright">BO</div>
+                <div class="vnd-meta">
+                  <span class="vnd-name">Brightline Office Supply</span>
+                  <span class="vnd-tag">VND-0018 · Office · Net 30</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="metric-strong">5</span></td>
+            <td><span class="metric-green">96%</span></td>
+            <td>22d</td>
+            <td>1 / 90d</td>
+            <td><span class="metric-strong">$12.6K</span></td>
+            <td><span class="v-pill good"><span class="dot"></span>Good standing</span></td>
+          </tr>
+          <tr data-vendor="acme">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo acme">AL</div>
+                <div class="vnd-meta">
+                  <span class="vnd-name">Acme Logistics Co.</span>
+                  <span class="vnd-tag">VND-0027 · Freight · Net 15</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="metric-strong">4</span></td>
+            <td><span class="metric-green">91%</span></td>
+            <td>14d</td>
+            <td>0 / 90d</td>
+            <td><span class="metric-strong">$28.4K</span></td>
+            <td><span class="v-pill good"><span class="dot"></span>Good standing</span></td>
+          </tr>
+          <tr data-vendor="tech">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo tech">TP</div>
+                <div class="vnd-meta">
+                  <span class="vnd-name">TechPro Solutions</span>
+                  <span class="vnd-tag">VND-0033 · IT &amp; SaaS · Net 30</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="metric-strong">3</span></td>
+            <td><span class="metric-green">100%</span></td>
+            <td>18d</td>
+            <td>0 / 90d</td>
+            <td><span class="metric-strong">$22.0K</span></td>
+            <td><span class="v-pill good"><span class="dot"></span>Good standing</span></td>
+          </tr>
+          <tr data-vendor="hudson">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo hudson">HM</div>
+                <div class="vnd-meta">
+                  <span class="vnd-name">Hudson MetalCraft</span>
+                  <span class="vnd-tag">VND-0051 · Manufacturing · Net 60</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="metric-strong">2</span></td>
+            <td><span class="metric-amber">82%</span></td>
+            <td><span class="metric-amber">52d</span></td>
+            <td>2 / 90d</td>
+            <td><span class="metric-strong">$36.8K</span></td>
+            <td><span class="v-pill flag"><span class="dot"></span>Compliance · OFAC</span></td>
+          </tr>
+          <tr data-vendor="coastal">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo coastal">CO</div>
+                <div class="vnd-meta">
+                  <span class="vnd-name">Coastal Office Mart</span>
+                  <span class="vnd-tag">VND-0060 · Office · Net 30</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="metric-strong">2</span></td>
+            <td><span class="metric-green">93%</span></td>
+            <td>26d</td>
+            <td>0 / 90d</td>
+            <td><span class="metric-strong">$4.1K</span></td>
+            <td><span class="v-pill new"><span class="dot"></span>New · 14 days</span></td>
+          </tr>
+          <tr data-vendor="apex">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo apex">AM</div>
+                <div class="vnd-meta">
+                  <span class="vnd-name">Apex Manufacturing</span>
+                  <span class="vnd-tag">VND-0044 · Manufacturing · 2/10 Net 30</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="metric-strong">3</span></td>
+            <td><span class="metric-amber">79%</span></td>
+            <td>31d</td>
+            <td>1 / 90d</td>
+            <td><span class="metric-strong">$18.3K</span></td>
+            <td><span class="v-pill watch"><span class="dot"></span>Discount risk</span></td>
+          </tr>
+          <tr data-vendor="fast">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo fast">FF</div>
+                <div class="vnd-meta">
+                  <span class="vnd-name">FastFlow Shipping</span>
+                  <span class="vnd-tag">VND-0029 · Freight · Net 15</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="metric-strong">0</span></td>
+            <td><span class="metric-green">94%</span></td>
+            <td>17d</td>
+            <td>0 / 90d</td>
+            <td>$6.9K</td>
+            <td><span class="v-pill good"><span class="dot"></span>Good standing</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CROSS-VENDOR AI INSIGHT -->
+    <div class="insight-card">
+      <span class="insight-spark">✦</span>
+      <div class="insight-body">
+        <span class="insight-lbl">Witness AI · cross-vendor pattern</span>
+        <p class="insight-txt"><b>Global Industrial</b> appears in 3 blocked invoices this week — same pattern as last month. A vendor rate-card refresh would likely fix it. <b>Apex Manufacturing</b> has 2 invoices nearing their 2/10 discount window — net savings ~$340 if cleared by Thursday.</p>
+      </div>
+      <a class="insight-link" href="ai-activity.html">Review →</a>
+    </div>
+
+    <!-- VENDOR PROFILE — SPOTLIGHT -->
+    <div class="profile-wrap" id="profile">
+      <div class="sec-hd-vp">
+        <div>
+          <div class="profile-eyebrow-row">
+            <span class="profile-eyebrow">Vendor profile · <b>spotlight</b></span>
+          </div>
+          <h2 class="stitle">What's our relationship with Global Industrial?</h2>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <!-- HEAD -->
+        <div class="profile-head">
+          <div class="vnd-logo-lg global">GI</div>
+          <div class="ph-info">
+            <div class="ph-name-row">
+              <span class="ph-name">Global Industrial</span>
+              <span class="ph-id">VND-0042</span>
+              <span class="v-pill watch"><span class="dot"></span>Watch · pattern</span>
+            </div>
+            <p class="ph-tagline">High-volume MRO supplier · partnered since Mar 2023 · primary buyer Sarah Park · 7 active invoices · 3 flagged this week</p>
+          </div>
+          <div class="ph-actions">
+            <button class="btn-outline">View 7 invoices →</button>
+            <button class="btn-outline">Message vendor</button>
+            <button class="btn-solid">+ Refresh rate card</button>
+          </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="vp-tabs">
+          <button class="vp-tab active" data-tab="overview">Overview</button>
+          <button class="vp-tab" data-tab="payment">Payment terms</button>
+          <button class="vp-tab" data-tab="performance">Performance <span class="ct">90d</span></button>
+          <button class="vp-tab" data-tab="comms">Communications <span class="ct">12</span></button>
+          <button class="vp-tab" data-tab="flags">Recurring flags <span class="ct warn">3</span></button>
+          <button class="vp-tab" data-tab="compliance">Compliance</button>
+        </div>
+
+        <!-- BODY -->
+        <div class="vp-body">
+
+          <!-- Identity & contact -->
+          <div class="vp-block">
+            <div class="vp-block-hd">
+              <span class="vp-block-title">Identity &amp; contact</span>
+              <a class="vp-block-link">Edit</a>
+            </div>
+            <div>
+              <div class="id-row">
+                <span class="id-key">Legal name</span>
+                <span class="id-val">Global Industrial Co., Inc.</span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">Vendor ID</span>
+                <span class="id-val">VND-0042</span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">Category</span>
+                <span class="id-val">MRO · industrial supply</span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">Procurement</span>
+                <span class="id-val">Lena Ortiz<br/><span style="font-weight:400;color:#45556c;font-size:12px;">l.ortiz@globalindustrial.com</span></span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">AR contact</span>
+                <span class="id-val">Marcus Yi<br/><span style="font-weight:400;color:#45556c;font-size:12px;">ar@globalindustrial.com</span></span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">Comms pref</span>
+                <span class="id-val">Email · same-thread<span class="id-edit">change</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment terms (semantic memory P8) -->
+          <div class="vp-block">
+            <div class="vp-block-hd">
+              <span class="vp-block-title">Payment terms <span style="color:#d95b03;">· P8 semantic memory</span></span>
+              <a class="vp-block-link">Edit</a>
+            </div>
+            <div>
+              <div class="id-row">
+                <span class="id-key">Standard terms</span>
+                <span class="id-val">Net 30</span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">Early-pay discount</span>
+                <span class="id-val">2/15 Net 30 <span style="font-weight:400;color:#45556c;font-size:12px;">· avg captured 38%</span></span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">Preferred channel</span>
+                <span class="id-val">ACH (Bill.com) <span style="font-weight:400;color:#45556c;font-size:12px;">· not check</span></span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">Currency</span>
+                <span class="id-val">USD</span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">Tax treatment</span>
+                <span class="id-val">1099-eligible · W-9 on file</span>
+              </div>
+              <div class="id-row">
+                <span class="id-key">Note from Sarah</span>
+                <span class="id-val" style="font-weight:400;color:#45556c;font-style:italic;">"Lena prefers we batch under one PO when possible — she'll re-issue."</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Performance patterns -->
+          <div class="vp-block">
+            <div class="vp-block-hd">
+              <span class="vp-block-title">Performance patterns · 90 days</span>
+              <a class="vp-block-link">View 12-mo trend</a>
+            </div>
+            <div>
+              <div class="perf-row">
+                <span class="perf-lbl">On-time delivery</span>
+                <div class="perf-bar"><div class="perf-bar-fill warn" style="width:74%;"></div></div>
+                <span class="perf-val" style="color:#d95b03;">74%</span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-lbl">3-way match success</span>
+                <div class="perf-bar"><div class="perf-bar-fill" style="width:89%;"></div></div>
+                <span class="perf-val">89%</span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-lbl">Avg days outstanding</span>
+                <div class="perf-bar"><div class="perf-bar-fill warn" style="width:63%;"></div></div>
+                <span class="perf-val" style="color:#d95b03;">38d</span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-lbl">Dispute rate</span>
+                <div class="perf-bar"><div class="perf-bar-fill flag" style="width:18%;"></div></div>
+                <span class="perf-val" style="color:#b91c1c;">4 / 90d</span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-lbl">Avg response (replies)</span>
+                <div class="perf-bar"><div class="perf-bar-fill" style="width:68%;"></div></div>
+                <span class="perf-val">3.2d</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recurring issue flags (M5) -->
+          <div class="vp-block">
+            <div class="vp-block-hd">
+              <span class="vp-block-title">Recurring issue flags <span style="color:#d95b03;">· M5</span></span>
+              <a class="vp-block-link">View pattern history</a>
+            </div>
+            <div class="mem-list">
+              <div class="mem-item">
+                <span class="mem-dot"></span>
+                <div class="mem-body">
+                  <span class="mem-title">PO mismatch — 3 invoices this month</span>
+                  <span class="mem-sub">INV-1062, INV-1092, INV-1101 all show unit-price variance vs PO. Same SKU family (industrial fasteners).</span>
+                  <a class="mem-link">Root cause: rate card outdated since Q1 →</a>
+                </div>
+              </div>
+              <div class="mem-item">
+                <span class="mem-dot"></span>
+                <div class="mem-body">
+                  <span class="mem-title">Late freight quote — 4 of last 6 invoices</span>
+                  <span class="mem-sub">Freight line consistently arrives 2–3 days after invoice header. Witness is auto-pausing match until freight lands.</span>
+                  <a class="mem-link">Suggest split-invoice protocol →</a>
+                </div>
+              </div>
+              <div class="mem-item calm">
+                <span class="mem-dot"></span>
+                <div class="mem-body">
+                  <span class="mem-title">Duplicate invoice attempts — 2 prevented this quarter</span>
+                  <span class="mem-sub">Witness caught INV-0987 resent under INV-1009. Vendor reissues sometimes drop trailing "-R".</span>
+                  <a class="mem-link">View prevention log →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cross-invoice comms thread (C6) -->
+          <div class="vp-block span2">
+            <div class="vp-block-hd">
+              <span class="vp-block-title">Cross-invoice communications <span style="color:#d95b03;">· C6</span></span>
+              <a class="vp-block-link">Open full thread (12)</a>
+            </div>
+            <div class="thread">
+              <div class="thread-item">
+                <div class="thread-avatar them">LO</div>
+                <div class="thread-body">
+                  <div class="thread-meta">
+                    <span class="thread-from">Lena Ortiz · Global Industrial</span>
+                    <span class="thread-when">Today · 9:14 AM</span>
+                    <span class="thread-ref">INV-1062</span>
+                  </div>
+                  <p class="thread-text">Hi Sarah — re: the PO-7704 mismatch, our system pulled the Q1 rate card. New rates are attached, effective Apr 1. Can your team refresh on your side and re-run the match?</p>
+                </div>
+              </div>
+              <div class="thread-item">
+                <div class="thread-avatar ai">✦</div>
+                <div class="thread-body">
+                  <div class="thread-meta">
+                    <span class="thread-from">Witness AI</span>
+                    <span class="thread-when">Today · 9:18 AM</span>
+                    <span class="thread-tag">Draft reply</span>
+                  </div>
+                  <p class="thread-text">Drafted a reply confirming receipt and offering to push the new rate card to NetSuite vendor master. Same pattern as your Mar 14 resolution with Lena. Want me to send it?</p>
+                </div>
+              </div>
+              <div class="thread-item">
+                <div class="thread-avatar us">MC</div>
+                <div class="thread-body">
+                  <div class="thread-meta">
+                    <span class="thread-from">Maya Chen · You</span>
+                    <span class="thread-when">Yesterday · 4:42 PM</span>
+                    <span class="thread-ref">INV-1092</span>
+                  </div>
+                  <p class="thread-text">Lena — can you confirm whether INV-1092's freight is on a separate invoice this time? We're trying to avoid the split-pause pattern.</p>
+                </div>
+              </div>
+              <div class="thread-item">
+                <div class="thread-avatar them">MY</div>
+                <div class="thread-body">
+                  <div class="thread-meta">
+                    <span class="thread-from">Marcus Yi · Global Industrial (AR)</span>
+                    <span class="thread-when">Apr 24 · 11:02 AM</span>
+                    <span class="thread-ref">INV-1048</span>
+                  </div>
+                  <p class="thread-text">Payment received, thanks. Heads up — we're rolling all April invoices into a single statement on the 28th.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Compliance status -->
+          <div class="vp-block">
+            <div class="vp-block-hd">
+              <span class="vp-block-title">Compliance &amp; certifications</span>
+              <a class="vp-block-link">Re-screen now</a>
+            </div>
+            <div class="comp-grid">
+              <div class="comp-item ok">
+                <span class="comp-lbl">OFAC / SDN</span>
+                <span class="comp-val">No match</span>
+                <span class="comp-sub">Last screened Apr 26</span>
+              </div>
+              <div class="comp-item ok">
+                <span class="comp-lbl">W-9 on file</span>
+                <span class="comp-val">Current</span>
+                <span class="comp-sub">Refreshed Jan 2025</span>
+              </div>
+              <div class="comp-item warn">
+                <span class="comp-lbl">COI expiry</span>
+                <span class="comp-val">42 days</span>
+                <span class="comp-sub">Renewal reminder set</span>
+              </div>
+              <div class="comp-item ok">
+                <span class="comp-lbl">ISO 9001</span>
+                <span class="comp-val">Verified</span>
+                <span class="comp-sub">Valid through 2027</span>
+              </div>
+              <div class="comp-item ok">
+                <span class="comp-lbl">SOC 2</span>
+                <span class="comp-val">N/A · physical goods</span>
+                <span class="comp-sub">—</span>
+              </div>
+              <div class="comp-item ok">
+                <span class="comp-lbl">Beneficial owner</span>
+                <span class="comp-val">On file</span>
+                <span class="comp-sub">FinCEN BOI · 2024</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active invoices summary -->
+          <div class="vp-block">
+            <div class="vp-block-hd">
+              <span class="vp-block-title">Active invoices · 7</span>
+              <a class="vp-block-link" onclick="location.href='invoices.html'">Open filtered list →</a>
+            </div>
+            <div class="ai-row" style="border:1px solid #e9e9e9; border-radius:8px; overflow:hidden;">
+              <div class="ai-cell">
+                <span class="n red">3</span>
+                <span class="l">Blocked</span>
+                <a class="ai-cell-link" onclick="location.href='invoices.html'">View →</a>
+              </div>
+              <div class="ai-cell">
+                <span class="n amber">2</span>
+                <span class="l">Pending</span>
+                <a class="ai-cell-link" onclick="location.href='invoices.html'">View →</a>
+              </div>
+              <div class="ai-cell">
+                <span class="n">2</span>
+                <span class="l">Approved</span>
+                <a class="ai-cell-link" onclick="location.href='invoices.html'">View →</a>
+              </div>
+              <div class="ai-cell">
+                <span class="n">$48.2K</span>
+                <span class="l">Total outstanding</span>
+              </div>
+            </div>
+            <div style="font-size:12px; color:#45556c; line-height:1.5; padding-top:4px;">
+              Of the 7 active invoices, 3 share a common pattern: <b>PO rate-card variance</b>. Witness has prepared a single rate-card refresh that would unblock all three at once.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- WITNESS CHAT CONTEXT -->
+      <div class="chat-context">
+        <span class="spark">✦</span>
+        <div class="text">
+          <b>Witness is aware:</b> you're viewing <b>Global Industrial</b>. Ask "what should I do about the rate card?" — I'll use this vendor's full history as context. <span class="muted">Memory: 18 mo · 41 invoices · 12 threads</span>
+        </div>
+        <button class="open-chat">Open chat</button>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Sidebar collapse — same pattern as other pages
+  (function(){
+    var sb = document.querySelector('.sidebar');
+    var btn = document.querySelector('.sidebar-toggle');
+    if (!sb || !btn) return;
+    if (localStorage.getItem('witness-sidebar') === 'collapsed') sb.classList.add('collapsed');
+    btn.addEventListener('click', function(){
+      sb.classList.toggle('collapsed');
+      localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
+    });
+  })();
+
+  // Row click → spotlight that vendor (visual only — content stays on Global Industrial)
+  document.querySelectorAll('table.vnd tbody tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      document.querySelectorAll('table.vnd tbody tr').forEach(r => r.classList.remove('spotlight'));
+      tr.classList.add('spotlight');
+      document.getElementById('profile').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // View chips toggle
+  document.querySelectorAll('.view-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.view-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // Profile tabs (visual switching only — body content stays)
+  document.querySelectorAll('.vp-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.vp-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+</script>
+
+<!-- ═══════════════════════════════════════════
+     WITNESS CHAT PANEL (drop-in, portable)
+     ═══════════════════════════════════════════ -->
+<style>
+  body { padding-right: var(--chat-w, 340px); transition: padding-right .2s ease; }
+  body[data-chat="slim"]  { --chat-w: 56px; }
+  body[data-chat="float"] { --chat-w: 0px; }
+
+  .chat {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: var(--chat-w, 340px);
+    background: #ffffff; border-left: 1px solid #e9e9e9;
+    display: flex; flex-direction: column; overflow: hidden;
+    z-index: 30;
+    transition: width .2s ease, top .2s ease, right .2s ease, bottom .2s ease, border-radius .2s ease, box-shadow .2s ease;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .chat-grip {
+    position: absolute; left: -3px; top: 0; bottom: 0;
+    width: 6px; cursor: col-resize; z-index: 5;
+    transition: background .15s;
+  }
+  .chat-grip:hover, .chat-grip.dragging {
+    background: linear-gradient(90deg, transparent, #ff6900 50%, transparent);
+  }
+  body[data-chat="slim"] .chat-grip,
+  body[data-chat="float"] .chat-grip { display: none; }
+
+  body[data-chat="float"] .chat {
+    top: 72px; right: 24px; bottom: 24px;
+    width: 380px;
+    border: 1px solid rgba(69,85,108,0.24);
+    border-radius: 12px;
+    box-shadow: 0 24px 60px -12px rgba(0,0,0,.22), 0 4px 16px rgba(0,0,0,.06);
+    animation: chatFloatIn .25s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes chatFloatIn { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+
+  body[data-chat="slim"] .chat { align-items: center; cursor: pointer; }
+  body[data-chat="slim"] .chat-head {
+    padding: 16px 0; border-bottom: 1px solid #e9e9e9;
+    width: 100%; justify-content: center;
+    flex-direction: column; gap: 8px;
+  }
+  body[data-chat="slim"] .chat-head > .chat-head-info,
+  body[data-chat="slim"] .chat-head > .chat-tools,
+  body[data-chat="slim"] .chat-body,
+  body[data-chat="slim"] .chat-suggestions,
+  body[data-chat="slim"] .chat-foot { display: none; }
+  body[data-chat="slim"] .chat-status-dot { margin-left: 0; }
+  body[data-chat="slim"] .chat-mark { position: relative; }
+  body[data-chat="slim"] .chat-mark::after {
+    content: ''; position: absolute; top: -2px; right: -2px;
+    width: 8px; height: 8px; border-radius: 50%; background: #ff6900;
+    border: 2px solid #ffffff;
+  }
+  .slim-cta {
+    display: none;
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #adadad;
+    padding: 12px 0;
+  }
+  body[data-chat="slim"] .slim-cta { display: block; }
+
+  .chat-head {
+    padding: 16px 18px; border-bottom: 1px solid #e9e9e9;
+    display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+  }
+  .chat-head-info { display: flex; flex-direction: column; min-width: 0; }
+  .chat-tools { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+  .chat-tool-btn {
+    width: 26px; height: 26px; border-radius: 6px;
+    display: grid; place-items: center; cursor: pointer;
+    border: none; background: transparent; color: #45556c;
+    font-size: 14px; line-height: 1; transition: all .12s;
+  }
+  .chat-tool-btn:hover { background: #f4f4f4; color: #120b0b; }
+  .chat-tool-btn.active { background: #120b0b; color: white; }
+
+  .chat-mark {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: #120b0b; color: white;
+    display: grid; place-items: center;
+    font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px;
+  }
+  .chat-title { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: #120b0b; }
+  .chat-sub { font-size: 11px; color: #adadad; margin-top: 1px; }
+  .chat-status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #16a34a; margin-left: auto;
+    box-shadow: 0 0 0 3px rgba(22,163,74,.15);
+  }
+
+  .chat-body {
+    flex: 1; overflow-y: auto;
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .chat-body .msg { display: flex; flex-direction: column; gap: 4px; max-width: 92%; }
+  .chat-body .msg.agent { align-self: flex-start; }
+  .chat-body .msg.user  { align-self: flex-end; align-items: flex-end; }
+  .chat-body .msg-author {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #adadad;
+  }
+  .chat-body .msg.agent .msg-author { color: #ff6900; }
+  .chat-body .msg-bubble {
+    padding: 12px 16px; border-radius: 10px;
+    font-size: 13px; line-height: 1.5;
+  }
+  .chat-body .msg.agent .msg-bubble {
+    background: #fff5f1; border: 1px solid #ffe8df; color: #120b0b;
+  }
+  .chat-body .msg.user .msg-bubble {
+    background: #120b0b; color: white;
+  }
+  .chat-body .msg-bubble strong { font-weight: 600; }
+  .chat-body .msg-bubble .link { color: #d95b03; text-decoration: underline; cursor: pointer; }
+
+  .chat-suggestions {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 0 18px 12px;
+  }
+  .suggestion-chip {
+    font-size: 11.5px; padding: 5px 12px; border-radius: 9999px;
+    border: 1px solid rgba(69,85,108,0.24); background: #ffffff; color: #45556c;
+    cursor: pointer;
+  }
+  .suggestion-chip:hover { border-color: #120b0b; color: #120b0b; }
+
+  .chat-foot {
+    border-top: 1px solid #e9e9e9;
+    padding: 12px 16px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .chat-foot .dropzone {
+    border: 1.5px dashed rgba(69,85,108,0.24);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 11.5px; color: #adadad;
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; transition: all .15s;
+    background: #f4f4f4;
+  }
+  .chat-foot .dropzone:hover, .chat-foot .dropzone.dragover {
+    border-color: #ff6900; color: #d95b03; background: #fff5f1;
+  }
+  .chat-foot .dropzone::before { content: '⤴'; font-size: 13px; color: #ff6900; }
+  .chat-foot .dropzone strong { color: #120b0b; font-weight: 600; }
+
+  .chat-input-row {
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(69,85,108,0.24); border-radius: 8px;
+    background: #ffffff; padding: 6px 12px;
+  }
+  .chat-input-row:focus-within { border-color: #120b0b; }
+  .chat-input {
+    flex: 1; border: none; outline: none;
+    font-family: 'Inter', sans-serif; font-size: 13px; color: #120b0b;
+    background: transparent; padding: 4px 0;
+  }
+  .chat-input::placeholder { color: #adadad; }
+  .chat .send-btn {
+    border: none; background: #ff6900; color: white;
+    width: 28px; height: 28px; border-radius: 6px;
+    display: grid; place-items: center; cursor: pointer; font-size: 13px;
+  }
+  .chat .send-btn:hover { background: #d95b03; }
+
+  .chat-foot-meta {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #adadad;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .chat-foot-meta::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #16a34a; }
+</style>
+
+<aside class="chat" id="chat">
+  <div class="chat-grip" id="chatGrip" title="Drag to resize"></div>
+  <div class="slim-cta">Chat · Witness</div>
+  <div class="chat-head" onclick="expandFromSlim()">
+    <div class="chat-mark">W</div>
+    <div class="chat-head-info">
+      <div class="chat-title">Witness</div>
+      <div class="chat-sub">Always here · 47 invoices overnight</div>
+    </div>
+    <div class="chat-status-dot" title="Online"></div>
+    <div class="chat-tools" onclick="event.stopPropagation()">
+      <button class="chat-tool-btn" id="btnFloat" title="Float as window">⊞</button>
+      <button class="chat-tool-btn" id="btnSlim"  title="Collapse">—</button>
+    </div>
+  </div>
+
+  <div class="chat-body">
+    <div class="msg agent">
+      <span class="msg-author">Witness · 09:02</span>
+      <div class="msg-bubble">
+        Morning, Maya. Your brief is ready above. The <strong>$47,820 payment batch</strong> is built — I'll wait for your commit before the 2 PM ACH cutoff.
+        Want me to <span class="link">draft a quick reply to Acme</span> for you to edit?
+      </div>
+    </div>
+
+    <div class="msg agent">
+      <span class="msg-author">Witness · 09:03</span>
+      <div class="msg-bubble">
+        Heads up: <strong>D. Lee's stuck approval</strong> escalates at 10 AM unless you decide on it first. The $23,400 invoice has been waiting 3 days.
+      </div>
+    </div>
+
+    <div class="msg user">
+      <span class="msg-author">Maya</span>
+      <div class="msg-bubble">Pull up the BetaCo banking change. I want to verify before lunch.</div>
+    </div>
+
+    <div class="msg agent">
+      <span class="msg-author">Witness · just now</span>
+      <div class="msg-bubble">
+        On it — new bank routing, old vs new account, the email thread where they sent the change, and the callback verification template. <span class="link">Open panel</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-suggestions">
+    <span class="suggestion-chip">Draft Acme reply</span>
+    <span class="suggestion-chip">Show critical path</span>
+    <span class="suggestion-chip">Why was BetaCo held?</span>
+  </div>
+
+  <div class="chat-foot">
+    <label class="dropzone" id="dropzone">
+      Drop a <strong>PDF, image, or forwarded email</strong> here
+      <input type="file" hidden multiple accept=".pdf,.png,.jpg,.jpeg,.eml,.msg" />
+    </label>
+    <div class="chat-input-row">
+      <input class="chat-input" placeholder="Ask Witness anything…" />
+      <button class="send-btn" title="Send">↑</button>
+    </div>
+    <div class="chat-foot-meta">Encrypted · stays in your tenant</div>
+  </div>
+</aside>
+
+<script>
+(function(){
+  var body = document.body;
+  body.setAttribute('data-chat', 'rail');
+  body.style.setProperty('--chat-w', '340px');
+  var MIN_W = 280, MAX_W = 520;
+
+  function setChatMode(mode) {
+    body.setAttribute('data-chat', mode);
+    var slim = document.getElementById('btnSlim');
+    var flt  = document.getElementById('btnFloat');
+    slim.classList.toggle('active', mode === 'slim');
+    flt.classList.toggle('active', mode === 'float');
+    slim.textContent = mode === 'slim' ? '→' : '—';
+    slim.title       = mode === 'slim' ? 'Expand' : 'Collapse';
+    flt.textContent  = mode === 'float' ? '⇲' : '⊞';
+    flt.title        = mode === 'float' ? 'Dock to side' : 'Float as window';
+  }
+  document.getElementById('btnSlim').onclick = function() {
+    setChatMode(body.getAttribute('data-chat') === 'slim' ? 'rail' : 'slim');
+  };
+  document.getElementById('btnFloat').onclick = function() {
+    setChatMode(body.getAttribute('data-chat') === 'float' ? 'rail' : 'float');
+  };
+  window.expandFromSlim = function() {
+    if (body.getAttribute('data-chat') === 'slim') setChatMode('rail');
+  };
+
+  var grip = document.getElementById('chatGrip');
+  grip.addEventListener('mousedown', function(e) {
+    if (body.getAttribute('data-chat') !== 'rail') return;
+    e.preventDefault();
+    var startX = e.clientX;
+    var startW = parseInt(getComputedStyle(body).getPropertyValue('--chat-w'), 10) || 340;
+    grip.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    function onMove(ev) {
+      var delta = startX - ev.clientX;
+      var next = Math.max(MIN_W, Math.min(MAX_W, startW + delta));
+      body.style.setProperty('--chat-w', next + 'px');
+    }
+    function onUp() {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      grip.classList.remove('dragging');
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+
+  var dz = document.getElementById('dropzone');
+  if (dz) {
+    ['dragenter','dragover'].forEach(function(e){ dz.addEventListener(e, function(ev){ ev.preventDefault(); dz.classList.add('dragover'); }); });
+    ['dragleave','drop'  ].forEach(function(e){ dz.addEventListener(e, function(ev){ ev.preventDefault(); dz.classList.remove('dragover'); }); });
+  }
+
+  setChatMode('rail');
+})();
+</script>
+<!-- ═══════════ END WITNESS CHAT PANEL ═══════════ -->
+
+</body>
+</html>

@@ -6,10 +6,10 @@
 <title>Witness · Onboarding</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
 :root {
-  /* ── Witness Design Tokens ── */
+  /* ── Witness Design Tokens (aligned with dashboard) ── */
   --color-brand-primary-orange-glare: #FFF5F1;
   --color-brand-primary-orange-touch: #FFE8DF;
   --color-brand-primary-orange-peach: #FFB299;
@@ -24,37 +24,43 @@
   --color-neutral-dark-grey: #ADADAD;
   --color-neutral-cool-grey: #45556C;
   --color-neutral-black: #120B0B;
+  --color-neutral-ink: #0B0D12;
   --color-neutral-white: #FFFFFF;
   --color-semantic-success-100: #DCFCE7;
   --color-semantic-success-500: #16A34A;
+  --color-semantic-success-700: #00A63E;
   --color-semantic-success-1000: #15803D;
   --color-semantic-waiting-100: #FDF2D4;
   --color-semantic-waiting-500: #E9B44C;
   --color-semantic-waiting-1000: #B17728;
   --color-semantic-pending-100: #FFE0CA;
+  --color-semantic-pending-300: #FFB088;
   --color-semantic-pending-500: #FF6900;
+  --color-semantic-pending-600: #FF7A3D;
   --color-semantic-pending-1000: #D95B03;
   --color-semantic-error-100: #FEE2E2;
   --color-semantic-error-500: #DC2626;
   --color-semantic-error-1000: #B91C1C;
 
-  --spacing-1: 8px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
-  --spacing-5: 18px; --spacing-6: 24px; --spacing-7: 32px; --spacing-8: 40px; --spacing-9: 52px;
+  --spacing-1: 4px; --spacing-2: 8px; --spacing-3: 12px; --spacing-4: 16px;
+  --spacing-5: 20px; --spacing-6: 24px; --spacing-7: 32px; --spacing-8: 40px; --spacing-9: 56px;
 
   --radius-sm: 6px; --radius-md: 8px; --radius-lg: 10px; --radius-xl: 12px; --radius-full: 9999px;
 
-  /* ── Semantic aliases ── */
-  --bg: var(--color-neutral-grey);
+  --bg: var(--color-neutral-white);
+  --bg-sub: var(--color-neutral-grey);
   --surface: var(--color-neutral-white);
   --surface-2: var(--color-brand-primary-orange-glare);
-  --ink: var(--color-neutral-black);
+  --ink: var(--color-neutral-ink);
+  --ink-deep: var(--color-neutral-black);
   --ink-2: var(--color-neutral-cool-grey);
   --ink-3: var(--color-neutral-dark-grey);
-  --border: rgba(69, 85, 108, 0.14);
-  --border-md: rgba(69, 85, 108, 0.24);
+  --border: #EDEDED;
+  --border-md: var(--color-neutral-lotion);
+  --border-strong: rgba(69, 85, 108, 0.24);
   --ai: var(--color-semantic-pending-500);
-  --ai-deep: var(--color-semantic-pending-1000);
   --ai-soft: var(--color-brand-primary-orange-glare);
+  --ai-strong: var(--color-semantic-pending-300);
   --ok: var(--color-semantic-success-500);
   --warn: var(--color-semantic-waiting-500);
   --crit: var(--color-semantic-error-500);
@@ -78,25 +84,27 @@ body {
 /* ── Shell ── */
 .stage { min-height: 100vh; display: flex; flex-direction: column; }
 
-/* ── Topbar ── */
+/* ── Topbar (matches dashboard) ── */
 .topbar {
+  position: sticky; top: 0; z-index: 30;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 var(--spacing-7);
-  height: 60px;
-  position: sticky; top: 0; z-index: 30;
+  padding: 23px 24px;
 }
-.brand { display: flex; align-items: center; gap: var(--spacing-3); }
-.brand-mark {
-  width: 32px; height: 32px; border-radius: var(--radius-md);
-  background: var(--ink); color: var(--surface);
-  display: grid; place-items: center;
-  font-family: var(--font-display); font-style: italic; font-size: 17px; font-weight: 500;
+.brand { display: flex; align-items: center; gap: var(--spacing-2); }
+.brand-logo {
+  width: 32px; height: 32px;
+  background: var(--color-neutral-black);
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
+.brand-logo img { width: 20px; height: 20px; display: block; object-fit: contain; }
 .brand-name {
-  font-family: var(--font-display); font-size: 18px; font-weight: 500;
-  letter-spacing: -0.02em; color: var(--ink);
+  font-size: 18px; font-weight: 600;
+  color: var(--color-neutral-black);
+  letter-spacing: -0.44px;
 }
 
 .progress { display: flex; align-items: center; gap: 6px; }
@@ -106,44 +114,55 @@ body {
   cursor: pointer; transition: all .2s;
 }
 .pdot.done { background: var(--ink-3); }
-.pdot.active { background: var(--ink); width: 36px; }
+.pdot.active { background: var(--color-neutral-black); width: 36px; }
 .progress-meta {
   margin-left: var(--spacing-4);
   font-family: var(--font-mono); font-size: 11px;
   color: var(--ink-3); letter-spacing: 0.08em;
 }
-.topbar-right {
-  display: flex; align-items: center; gap: var(--spacing-3);
+
+.topbar-right { display: flex; align-items: center; gap: var(--spacing-6); }
+.health-chip {
+  display: flex; align-items: center; gap: var(--spacing-2);
+  background: var(--color-semantic-success-100);
+  border-radius: var(--radius-lg);
+  padding: 6px 12px 6px 8px;
+  height: 34px;
+}
+.health-chip .hdot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-semantic-success-500);
+}
+.health-chip span {
+  font-size: 14px; font-weight: 500;
+  color: var(--color-semantic-success-700);
+  letter-spacing: -0.15px; white-space: nowrap;
+}
+.skip-link {
   font-size: 13px; color: var(--ink-2);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--border-strong);
+  padding-bottom: 1px;
 }
-.topbar-right a {
-  color: var(--ink-2); text-decoration: none;
-  border-bottom: 1px dashed var(--border-md); padding-bottom: 1px;
-}
-.topbar-right a:hover { color: var(--ink); }
+.skip-link:hover { color: var(--color-neutral-black); }
 
 /* ── Viewport ── */
 .viewport {
   flex: 1;
   display: flex; justify-content: center;
-  align-items: center;
   align-items: safe center;
-  padding: var(--spacing-7) var(--spacing-7) 140px;
+  padding: 52px 58px 140px;
+  background: var(--bg-sub);
 }
 .screen {
-  width: 100%; max-width: 1080px;
+  width: 100%; max-width: 1100px;
   display: none;
-  animation: fadeIn .35s ease;
 }
 .screen.active { display: block; }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
-/* ── Typography ── */
+/* ── Typography (Playfair 400, dashboard-style) ── */
 .eyebrow {
-  font-family: var(--font-mono); font-size: 10px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.14em;
   color: var(--ai); margin-bottom: var(--spacing-3);
   display: inline-flex; align-items: center; gap: var(--spacing-2);
@@ -157,58 +176,74 @@ body {
 
 h1.h1 {
   font-family: var(--font-display); font-weight: 400;
-  font-size: 48px; line-height: 1.15; letter-spacing: -0.02em;
-  color: var(--ink); margin: 0 0 var(--spacing-4);
-  max-width: 720px;
+  font-size: 40px; line-height: 1.2; letter-spacing: -0.5px;
+  color: var(--color-neutral-black);
+  margin: 0 0 var(--spacing-4);
+  max-width: 760px;
 }
 h1.h1 em { font-style: italic; color: var(--ai); font-weight: 400; }
 
 h2.h2 {
   font-family: var(--font-display); font-weight: 400;
-  font-size: 34px; line-height: 1.2; letter-spacing: -0.02em;
-  color: var(--ink); margin: 0 0 var(--spacing-3);
+  font-size: 32px; line-height: 1.2; letter-spacing: -0.5px;
+  color: var(--color-neutral-black);
+  margin: 0 0 var(--spacing-3);
 }
 h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
 
 .lede {
   font-size: 16px; line-height: 1.55; color: var(--ink-2);
-  max-width: 620px; margin: 0 0 var(--spacing-7);
+  max-width: 640px; margin: 0 0 var(--spacing-7);
 }
 
-/* ── Buttons ── */
+/* ── Buttons (aligned with dashboard btn-open / btn-rev) ── */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px var(--spacing-4); border-radius: var(--radius-md);
+  padding: 8px 14px; border-radius: var(--radius-md);
   font-family: var(--font-body); font-size: 13px; font-weight: 500;
-  border: 1px solid var(--border-md); background: var(--surface); color: var(--ink);
+  border: 1.5px solid var(--color-neutral-lotion);
+  background: var(--surface); color: var(--ink);
   cursor: pointer; transition: all .15s;
+  white-space: nowrap;
 }
-.btn:hover { background: var(--bg); border-color: var(--ink-2); }
-.btn.primary { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.btn:hover { background: var(--color-neutral-grey); }
+.btn.primary {
+  background: var(--color-neutral-black); color: var(--surface);
+  border-color: var(--color-neutral-black);
+}
 .btn.primary:hover { background: var(--ink-2); border-color: var(--ink-2); }
+.btn.ai {
+  background: var(--color-semantic-pending-600);
+  color: var(--color-neutral-black);
+  border: none;
+  border-radius: var(--radius-full);
+  height: 36px; padding: 0 22px;
+  font-weight: 700; font-size: 12px;
+  letter-spacing: 0.02em;
+}
+.btn.ai:hover { background: #FF6826; }
 .btn.ghost { border-color: transparent; background: transparent; }
-.btn.ghost:hover { background: var(--bg); }
-.btn.lg { padding: 12px var(--spacing-6); font-size: 14px; }
-.btn.sm { padding: 5px var(--spacing-3); font-size: 12px; }
+.btn.ghost:hover { background: var(--color-neutral-grey); }
+.btn.lg { padding: 11px 22px; font-size: 14px; }
 
 /* ── Footer nav ── */
 .footer {
   position: fixed; bottom: 0; left: 0; right: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
-  padding: var(--spacing-3) var(--spacing-7);
+  padding: 16px 24px;
   display: flex; justify-content: space-between; align-items: center;
   z-index: 30;
 }
 .footer-meta {
-  font-size: 12px; color: var(--ink-3);
-  font-family: var(--font-mono); letter-spacing: 0.04em;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--ink-3); letter-spacing: 0.04em;
 }
-.footer-meta strong { color: var(--ink); font-weight: 500; }
+.footer-meta strong { color: var(--color-neutral-black); font-weight: 600; }
 
 /* ═══════════════════════════════════════════════
-   SCREEN 1 — Mirror the problem
+   SCREEN 1 — Welcome + value preview
    ═══════════════════════════════════════════════ */
 .hero-1 {
   display: grid;
@@ -216,24 +251,24 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
   gap: var(--spacing-9);
   align-items: center;
 }
-.hero-1 .visual { position: relative; height: 400px; }
+.hero-1 .visual { position: relative; height: 380px; }
 .tab-stack { position: absolute; inset: 0; }
 .fake-tab {
-  position: absolute; width: 230px;
+  position: absolute; width: 220px;
   background: var(--surface);
-  border: 1px solid var(--border-md);
-  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-neutral-lotion);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-3) var(--spacing-4);
   font-size: 12px; color: var(--ink-2);
-  box-shadow: 0 4px 16px rgba(18, 11, 11, 0.06);
+  box-shadow: 0 4px 16px rgba(11, 13, 18, 0.06);
 }
 .fake-tab .tab-host {
   font-family: var(--font-mono); font-size: 10px;
   color: var(--ink-3); margin-bottom: 4px;
-  text-transform: lowercase; letter-spacing: 0.04em;
+  letter-spacing: 0.04em;
 }
 .fake-tab .tab-title {
-  font-weight: 500; color: var(--ink); margin-bottom: 6px;
+  font-weight: 500; color: var(--color-neutral-black); margin-bottom: 6px;
   font-size: 12.5px;
 }
 .fake-tab .tab-line {
@@ -241,32 +276,32 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
   border-radius: 2px; margin: 3px 0;
 }
 .fake-tab .tab-line.short { width: 60%; }
-.fake-tab.t1 { top: 10px;  left: 10px; transform: rotate(-4deg); }
-.fake-tab.t2 { top: 40px;  left: 60px; transform: rotate(2deg);  z-index: 2; }
-.fake-tab.t3 { top: 95px;  left: 30px; transform: rotate(-1deg); z-index: 3; }
-.fake-tab.t4 { top: 165px; left: 90px; transform: rotate(3deg); }
-.fake-tab.t5 { top: 220px; left: 40px; transform: rotate(-3deg); }
+.fake-tab.t1 { top: 0;    left: 0;   transform: rotate(-4deg); }
+.fake-tab.t2 { top: 30px;  left: 50px; transform: rotate(2deg);  z-index: 2; }
+.fake-tab.t3 { top: 85px;  left: 20px; transform: rotate(-1deg); z-index: 3; }
+.fake-tab.t4 { top: 155px; left: 80px; transform: rotate(3deg); }
 
+/* Hub card uses the dashboard's dark AI panel style */
 .hub-card {
-  background: var(--ink);
-  color: var(--surface);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-6);
+  position: absolute; right: 0; top: 70px;
   width: 280px;
-  position: absolute;
-  right: 0; top: 90px;
-  box-shadow: 0 16px 40px rgba(18, 11, 11, 0.18);
+  background: #151313;
+  border: 1px solid rgba(49, 65, 88, 0.5);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  color: var(--surface);
+  box-shadow: 0 16px 40px rgba(11, 13, 18, 0.18);
 }
 .hub-card .hc-label {
-  font-family: var(--font-mono); font-size: 10px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.12em;
   color: rgba(255, 255, 255, 0.55);
   margin-bottom: var(--spacing-2);
 }
 .hub-card .hc-amount {
   font-family: var(--font-display); font-size: 32px;
-  font-weight: 500; margin-bottom: 4px; letter-spacing: -0.02em;
-  line-height: 1;
+  font-weight: 400; margin-bottom: 4px;
+  letter-spacing: -0.5px; line-height: 1;
 }
 .hub-card .hc-meta {
   font-size: 12px; color: rgba(255, 255, 255, 0.6);
@@ -285,610 +320,514 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
 }
 .hub-card .hc-row span:last-child { font-family: var(--font-mono); }
 
-.cta-row {
-  display: flex; gap: var(--spacing-3); align-items: center;
-  margin-top: var(--spacing-6);
-}
-.cta-link {
-  font-size: 13px; color: var(--ink-2);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--border-md); padding-bottom: 1px;
-}
-.cta-link:hover { color: var(--ink); }
-
-/* ═══════════════════════════════════════════════
-   SCREEN 2 — Overnight value
-   ═══════════════════════════════════════════════ */
-.agent-bar-demo {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--ai);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-5) var(--spacing-6);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: var(--spacing-6);
-  align-items: center;
-  margin: var(--spacing-6) 0 var(--spacing-7);
-  position: relative; overflow: hidden;
-}
-.agent-bar-demo::before {
-  content: ''; position: absolute; top: 0; right: 0;
-  width: 240px; height: 100%;
-  background: linear-gradient(135deg, transparent 40%, var(--ai-soft) 100%);
-  pointer-events: none;
-}
-.agent-icon-lg {
-  width: 44px; height: 44px;
-  background: var(--ai); color: var(--surface);
-  border-radius: var(--radius-md);
-  display: grid; place-items: center;
-  font-family: var(--font-display); font-style: italic;
-  font-size: 22px; font-weight: 500;
-  position: relative; z-index: 1;
-}
-.agent-text { font-size: 14px; line-height: 1.55; color: var(--ink); position: relative; z-index: 1; }
-.agent-text .lede-mini {
-  font-family: var(--font-mono); font-size: 10px;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--ai); display: block; margin-bottom: 6px;
-}
-.agent-text strong { font-weight: 600; }
-.agent-stats {
-  display: flex; gap: var(--spacing-6);
-  border-left: 1px solid var(--border);
-  padding-left: var(--spacing-6);
-  position: relative; z-index: 1;
-}
-.agent-stat { text-align: center; }
-.agent-stat .n {
-  display: block; font-family: var(--font-display);
-  font-size: 26px; font-weight: 500; line-height: 1;
-  color: var(--ink); letter-spacing: -0.02em;
-}
-.agent-stat .l {
-  display: block; font-size: 10px;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: var(--ink-3); margin-top: 5px; font-weight: 600;
-}
-
-.benefit-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-4);
+/* Benefit cards — aligned with dashboard stat-card row pattern */
+.benefit-row {
+  display: flex;
+  margin-top: var(--spacing-7);
 }
 .benefit-card {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-6);
+  border: 2px solid var(--color-neutral-lotion);
+  padding: 18px;
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: var(--spacing-4);
 }
+.benefit-card:first-child { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+.benefit-card:last-child  { border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+.benefit-card + .benefit-card { border-left: none; }
 .benefit-icon {
-  width: 36px; height: 36px;
+  width: 32px; height: 32px;
   border-radius: var(--radius-md);
   display: grid; place-items: center;
-  font-size: 16px; font-weight: 600;
-  margin-bottom: var(--spacing-4);
+  font-size: 14px; font-weight: 700;
 }
 .benefit-icon.time  { background: var(--color-semantic-waiting-100); color: var(--color-semantic-waiting-1000); }
 .benefit-icon.money { background: var(--color-semantic-success-100); color: var(--color-semantic-success-1000); }
 .benefit-icon.risk  { background: var(--color-semantic-error-100);   color: var(--color-semantic-error-1000); }
+.benefit-card .stat {
+  font-size: 32px; font-weight: 600;
+  color: var(--ink); line-height: 32px;
+  letter-spacing: 0.07px; margin-bottom: 4px;
+}
 .benefit-card h4 {
-  font-family: var(--font-display); font-weight: 500;
-  font-size: 18px; margin: 0 0 6px;
-  letter-spacing: -0.01em;
+  font-size: 12px; font-weight: 600;
+  color: var(--ink); text-transform: uppercase;
+  letter-spacing: 0.6px; line-height: 16px;
+  margin: 0;
 }
-.benefit-card p {
-  margin: 0; font-size: 13px;
-  color: var(--ink-2); line-height: 1.55;
-}
-
-.next-row {
-  margin-top: var(--spacing-7);
-  display: flex; align-items: center; gap: var(--spacing-4);
-}
-.next-hint {
-  font-family: var(--font-mono); font-size: 11px;
-  color: var(--ink-3); letter-spacing: 0.06em;
+.benefit-card .desc {
+  font-size: 12px; color: var(--ink-2); line-height: 1.5;
+  font-weight: 400;
 }
 
 /* ═══════════════════════════════════════════════
-   SCREEN 3 — Trust contract
+   SCREEN 2 — Connect (three tiers)
    ═══════════════════════════════════════════════ */
-.trust-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  background: var(--surface);
+.tier-group { margin-bottom: var(--spacing-6); }
+.tier-header {
+  display: flex; align-items: baseline; gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
 }
-.trust-cell {
-  padding: var(--spacing-7) var(--spacing-6);
-  border-right: 1px solid var(--border);
+.tier-label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-2);
 }
-.trust-cell:last-child { border-right: none; }
-.trust-num {
-  font-family: var(--font-display); font-style: italic;
-  font-size: 28px; color: var(--ai); font-weight: 400;
-  margin-bottom: var(--spacing-3); line-height: 1;
-}
-.trust-cell h4 {
-  font-family: var(--font-display); font-weight: 500;
-  font-size: 22px; margin: 0 0 var(--spacing-3);
-  letter-spacing: -0.01em;
-}
-.trust-cell p {
-  margin: 0; font-size: 13px;
-  color: var(--ink-2); line-height: 1.6;
-}
+.tier-label.req  { color: var(--ai); }
+.tier-label.rec  { color: var(--color-semantic-waiting-1000); }
+.tier-label.opt  { color: var(--ink-3); }
+.tier-note { font-size: 12px; color: var(--ink-3); }
 
-/* ═══════════════════════════════════════════════
-   SCREEN 4 — Role
-   ═══════════════════════════════════════════════ */
-.role-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-3);
-}
-.role-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-5) var(--spacing-6);
-  cursor: pointer;
-  transition: all .15s;
-  position: relative;
-}
-.role-card:hover { border-color: var(--border-md); }
-.role-card.selected {
-  border-color: var(--ink);
-  background: var(--surface-2);
-  box-shadow: 0 0 0 1px var(--ink);
-}
-.role-card.selected::after {
-  content: '✓';
-  position: absolute; top: 16px; right: 18px;
-  width: 22px; height: 22px;
-  background: var(--ink); color: var(--surface);
-  border-radius: var(--radius-full);
-  display: grid; place-items: center; font-size: 11px;
-}
-.role-icon {
-  width: 38px; height: 38px;
-  border-radius: var(--radius-md);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  display: grid; place-items: center;
-  font-family: var(--font-display); font-style: italic;
-  font-size: 18px; font-weight: 500;
-  color: var(--ink-2); margin-bottom: var(--spacing-4);
-}
-.role-card.selected .role-icon { background: var(--surface); border-color: var(--ink); color: var(--ink); }
-.role-card h4 {
-  font-family: var(--font-display); font-weight: 500;
-  font-size: 18px; margin: 0 0 4px; letter-spacing: -0.01em;
-}
-.role-card p {
-  margin: 0; font-size: 12.5px;
-  color: var(--ink-2); line-height: 1.5;
-}
-
-.field-row {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-3); margin-top: var(--spacing-6);
-}
-.field { display: flex; flex-direction: column; gap: 6px; }
-.field label {
-  font-family: var(--font-mono); font-size: 10px;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: var(--ink-3); font-weight: 600;
-}
-.field input, .field select {
-  padding: 10px 12px;
-  border: 1px solid var(--border-md);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  font-family: var(--font-body); font-size: 13px;
-  color: var(--ink);
-}
-.field input:focus, .field select:focus {
-  outline: none; border-color: var(--ink);
-}
-
-/* ═══════════════════════════════════════════════
-   SCREEN 5 — Connect stack
-   ═══════════════════════════════════════════════ */
-.conn-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-3);
-}
 .conn-card {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border: 1.5px solid var(--color-neutral-lotion);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-4) var(--spacing-5);
   display: grid;
   grid-template-columns: 44px 1fr auto;
   gap: var(--spacing-4);
   align-items: center;
 }
-.conn-card.connected {
-  background: var(--surface-2);
-  border-color: var(--color-brand-primary-orange-peach);
+.conn-card.required {
+  border-color: var(--ai-strong);
+  background: linear-gradient(90deg, var(--ai-soft) 0%, var(--surface) 30%);
 }
-.conn-card.required { border-left: 3px solid var(--ai); }
+.conn-card.recommended { border-left: 3px solid var(--color-brand-primary-yellow); }
+.conn-card.optional   { background: var(--color-neutral-grey); border-color: transparent; }
 
 .conn-logo {
   width: 44px; height: 44px;
   border-radius: var(--radius-md);
   display: grid; place-items: center;
-  font-family: var(--font-display); font-style: italic;
-  font-size: 19px; font-weight: 500;
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 500;
   color: var(--surface);
+  letter-spacing: -0.02em;
 }
 .logo-amazon { background: linear-gradient(135deg, #FF9900, #CC7A00); }
-.logo-erp    { background: linear-gradient(135deg, var(--color-brand-primary-blue), #0a3fb0); }
+.logo-erp    { background: linear-gradient(135deg, var(--color-brand-primary-blue), #0A3FB0); }
 .logo-mail   { background: linear-gradient(135deg, var(--color-brand-primary-orange), #C13B05); }
 .logo-slack  { background: linear-gradient(135deg, #6B3FA0, #4D2870); }
 .logo-cal    { background: linear-gradient(135deg, var(--color-semantic-success-500), var(--color-semantic-success-1000)); }
-.logo-sso    { background: linear-gradient(135deg, var(--ink-2), var(--ink)); }
+.logo-sso    { background: linear-gradient(135deg, var(--ink-2), var(--color-neutral-black)); }
 
 .conn-info h4 {
   font-family: var(--font-display); font-weight: 500;
   font-size: 16px; margin: 0 0 4px;
-  letter-spacing: -0.005em;
-  display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;
+  letter-spacing: -0.01em;
+  color: var(--color-neutral-black);
 }
 .conn-info .conn-unlock {
   font-size: 12.5px; color: var(--ink-2); line-height: 1.45;
 }
-.conn-status {
-  font-family: var(--font-mono); font-size: 10px;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--ink-3);
+.conn-info .conn-unlock strong {
+  color: var(--color-neutral-black); font-weight: 600;
 }
-.conn-status.done { color: var(--ok); }
-.conn-action { padding: 6px var(--spacing-3); font-size: 12px; }
 
-.conn-tag {
-  display: inline-block;
-  font-family: var(--font-mono); font-size: 9px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
-  vertical-align: middle;
+.conn-action { padding: 6px 14px; font-size: 12px; }
+
+.conn-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-3); }
+.conn-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-3); }
+.conn-grid-3 .conn-card {
+  grid-template-columns: 36px 1fr;
+  padding: var(--spacing-3) var(--spacing-4);
 }
-.conn-tag.req { background: var(--color-semantic-pending-100); color: var(--ai); }
-.conn-tag.opt { background: var(--bg); color: var(--ink-3); }
+.conn-grid-3 .conn-card .conn-action { display: none; }
+.conn-grid-3 .conn-logo { width: 36px; height: 36px; font-size: 14px; }
+.conn-grid-3 .conn-info h4 { font-size: 14px; }
+.conn-grid-3 .conn-info .conn-unlock { font-size: 11.5px; }
 
 /* ═══════════════════════════════════════════════
-   SCREEN 6 — Confirm rules
+   SCREEN 3 — Who you are + autonomy
    ═══════════════════════════════════════════════ */
-.agent-callout {
-  background: var(--ai-soft);
-  border: 1px solid var(--color-brand-primary-orange-peach);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-4) var(--spacing-5);
-  display: flex; align-items: center;
-  gap: var(--spacing-4);
-  margin-bottom: var(--spacing-6);
+.section-break {
+  display: flex; align-items: center; gap: var(--spacing-3);
+  margin: var(--spacing-7) 0 var(--spacing-4);
 }
-.agent-callout .agent-mini {
-  width: 30px; height: 30px;
-  background: var(--ai); color: var(--surface);
+.section-break .line { flex: 1; height: 1px; background: var(--color-neutral-lotion); }
+.section-break .label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+
+.role-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-3);
+}
+.role-card {
+  background: var(--surface);
+  border: 1.5px solid var(--color-neutral-lotion);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4) var(--spacing-5);
+  cursor: pointer; transition: all .15s;
+  position: relative;
+  display: flex; gap: var(--spacing-3); align-items: center;
+}
+.role-card:hover { border-color: var(--ink-3); }
+.role-card.selected {
+  border-color: var(--color-neutral-black);
+  background: var(--surface-2);
+  box-shadow: 0 0 0 1px var(--color-neutral-black);
+}
+.role-card.selected::after {
+  content: '✓';
+  position: absolute; top: 14px; right: 16px;
+  width: 20px; height: 20px;
+  background: var(--color-neutral-black); color: var(--surface);
+  border-radius: var(--radius-full);
+  display: grid; place-items: center; font-size: 10px;
+}
+.role-icon {
+  width: 36px; height: 36px;
   border-radius: var(--radius-md);
+  background: var(--color-neutral-grey);
+  border: 1px solid var(--color-neutral-lotion);
   display: grid; place-items: center;
-  font-family: var(--font-display); font-style: italic;
-  font-size: 16px; font-weight: 500;
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 500;
+  color: var(--ink-2);
   flex-shrink: 0;
 }
-.agent-callout .text { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
-.agent-callout .text strong { color: var(--ink); font-weight: 600; }
+.role-card.selected .role-icon {
+  background: var(--surface); border-color: var(--color-neutral-black);
+  color: var(--color-neutral-black);
+}
+.role-card h4 {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 16px; margin: 0 0 2px; letter-spacing: -0.01em;
+  color: var(--color-neutral-black);
+}
+.role-card p {
+  margin: 0; font-size: 12px;
+  color: var(--ink-2); line-height: 1.45;
+}
 
-.rule-list {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+.field-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-3); margin-top: var(--spacing-4);
 }
-.rule-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--spacing-4);
-  padding: var(--spacing-4) var(--spacing-6);
-  border-bottom: 1px solid var(--border);
-  align-items: center;
-}
-.rule-row:last-child { border-bottom: none; }
-.rule-content { display: flex; flex-direction: column; gap: 4px; }
-.rule-label {
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
   font-family: var(--font-mono); font-size: 10px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.12em;
   color: var(--ink-3);
 }
-.rule-text {
-  font-size: 14px; color: var(--ink); line-height: 1.55;
+.field input, .field select {
+  padding: 10px 12px;
+  border: 1.5px solid var(--color-neutral-lotion);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-family: var(--font-body); font-size: 13px;
+  color: var(--ink);
 }
-.rule-text .em-amount {
-  font-family: var(--font-display); font-style: italic;
-  font-weight: 500; color: var(--ai);
+.field input:focus, .field select:focus {
+  outline: none; border-color: var(--color-neutral-black);
 }
-.rule-text .em-name { font-weight: 600; }
 
-.rule-actions { display: flex; gap: 6px; align-items: center; }
-.rule-edit {
-  font-size: 12px; color: var(--ink-2);
-  cursor: pointer;
-  padding: 5px var(--spacing-3);
-  border-radius: var(--radius-sm);
-}
-.rule-edit:hover { color: var(--ink); background: var(--bg); }
-
-.confidence-tag {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
-  padding: 3px var(--spacing-2);
-  border-radius: var(--radius-full);
-  text-transform: uppercase; letter-spacing: 0.06em;
-}
-.confidence-tag::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
-.confidence-tag.high { background: var(--color-semantic-success-100); color: var(--color-semantic-success-1000); }
-.confidence-tag.high::before { background: var(--ok); }
-.confidence-tag.verify { background: var(--color-semantic-waiting-100); color: var(--color-semantic-waiting-1000); }
-.confidence-tag.verify::before { background: var(--warn); }
-
-.add-rule {
-  margin-top: var(--spacing-4);
-  font-size: 13px; color: var(--ink-2); cursor: pointer;
-}
-.add-rule:hover { color: var(--ink); }
-
-/* ═══════════════════════════════════════════════
-   SCREEN 7 — Autonomy dial
-   ═══════════════════════════════════════════════ */
+/* Autonomy list */
 .autonomy-list {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border: 1.5px solid var(--color-neutral-lotion);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 .autonomy-row {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: var(--spacing-6);
-  padding: var(--spacing-5) var(--spacing-6);
-  border-bottom: 1px solid var(--border);
+  grid-template-columns: 1fr 380px;
+  gap: var(--spacing-5);
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-neutral-lotion);
   align-items: center;
 }
 .autonomy-row:last-child { border-bottom: none; }
-.autonomy-row.locked { background: var(--bg); }
+.autonomy-row.locked { background: var(--color-neutral-grey); }
 .autonomy-info h5 {
   font-family: var(--font-display); font-weight: 500;
-  font-size: 16px; margin: 0 0 4px;
-  letter-spacing: -0.005em;
+  font-size: 15px; margin: 0 0 2px;
+  letter-spacing: -0.01em;
+  color: var(--color-neutral-black);
   display: flex; align-items: center; gap: var(--spacing-2);
 }
-.autonomy-info p {
-  font-size: 12.5px; color: var(--ink-2);
-  margin: 0; line-height: 1.5;
-}
+.autonomy-info p { font-size: 12px; color: var(--ink-2); margin: 0; line-height: 1.45; }
 .lock-pill {
   display: inline-flex; align-items: center; gap: 5px;
   font-family: var(--font-mono); font-size: 9px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.12em;
   padding: 2px var(--spacing-2);
-  background: var(--ink); color: var(--surface);
+  background: var(--color-neutral-black); color: var(--surface);
   border-radius: var(--radius-sm);
 }
 
 .seg {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--color-neutral-grey);
+  border: 1px solid var(--color-neutral-lotion);
   border-radius: var(--radius-full);
   padding: 3px;
 }
 .seg-opt {
   text-align: center;
   padding: 7px var(--spacing-2);
-  font-size: 12px; font-weight: 500;
+  font-size: 11.5px; font-weight: 500;
   color: var(--ink-2);
   cursor: pointer;
   border-radius: var(--radius-full);
   transition: all .15s;
+  white-space: nowrap;
 }
-.seg-opt:hover { color: var(--ink); }
+.seg-opt:hover { color: var(--color-neutral-black); }
 .seg-opt.active {
-  background: var(--ink); color: var(--surface);
-  box-shadow: 0 1px 3px rgba(18, 11, 11, 0.12);
+  background: var(--color-neutral-black); color: var(--surface);
+  box-shadow: 0 1px 3px rgba(11, 13, 18, 0.12);
 }
 .seg.locked .seg-opt { cursor: not-allowed; }
 .seg.locked .seg-opt:hover { color: var(--ink-2); }
-.seg.locked .seg-opt.active { background: var(--ai); color: var(--surface); }
-
-.auton-note {
-  margin-top: var(--spacing-5);
-  font-family: var(--font-display); font-style: italic;
-  font-size: 14px; color: var(--ink-2); line-height: 1.55;
+.seg.locked .seg-opt.active {
+  background: transparent;
+  color: var(--color-neutral-black);
+  border: 1.5px solid var(--color-neutral-black);
+  box-shadow: none;
 }
 
+/* AI insight note — uses dashboard insight-card pattern */
+.auton-note {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: var(--spacing-4);
+  background: var(--ai-soft);
+  border: 1px solid var(--ai-strong);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+}
+.auton-note-hd {
+  display: flex; align-items: center; gap: var(--spacing-3);
+}
+.auton-note-hd .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ai);
+}
+.auton-note-lbl {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+  color: var(--ai); text-transform: uppercase; letter-spacing: 0.6px;
+  line-height: 16px;
+}
+.auton-note-txt {
+  font-size: 14px; font-weight: 400; color: var(--color-neutral-black);
+  line-height: 20px; letter-spacing: -0.15px;
+}
+.auton-note-txt strong { font-weight: 600; }
+
 /* ═══════════════════════════════════════════════
-   SCREEN 8 — First run preview
+   SCREEN 4 — First run preview
    ═══════════════════════════════════════════════ */
 .preview-list {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border: 1.5px solid var(--color-neutral-lotion);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 .preview-item {
   display: grid;
   grid-template-columns: 32px 1fr auto;
   gap: var(--spacing-4);
-  padding: var(--spacing-4) var(--spacing-6);
-  border-bottom: 1px solid var(--border);
-  align-items: start;
+  padding: 16px var(--spacing-5);
+  border-bottom: 1px solid var(--color-neutral-lotion);
+  align-items: center;
 }
 .preview-item:last-child { border-bottom: none; }
 .preview-check {
   width: 22px; height: 22px;
-  border-radius: var(--radius-sm);
-  background: var(--ink); color: var(--surface);
+  border: 1.5px solid var(--ai);
+  border-radius: var(--radius-full);
   display: grid; place-items: center;
-  font-size: 11px; font-weight: 600;
-  margin-top: 2px;
+  font-size: 11px; color: var(--ai); font-weight: 700;
 }
 .preview-body h5 {
   font-family: var(--font-display); font-weight: 500;
-  font-size: 15.5px; margin: 0 0 4px;
-  letter-spacing: -0.005em;
+  font-size: 15px; margin: 0 0 4px;
+  letter-spacing: -0.01em;
+  color: var(--color-neutral-black);
 }
-.preview-body .preview-meta {
-  font-size: 12.5px; color: var(--ink-2); line-height: 1.5;
-}
-.preview-body .preview-meta .em { color: var(--ai); font-weight: 500; }
+.preview-meta { font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+.preview-meta .em { color: var(--color-neutral-black); font-weight: 600; }
 .preview-amount {
-  font-family: var(--font-display); font-size: 17px; font-weight: 500;
-  color: var(--ink); text-align: right; letter-spacing: -0.01em;
-  line-height: 1.1;
+  font-size: 16px; font-weight: 600;
+  color: var(--ink);
+  text-align: right;
+  letter-spacing: 0.07px;
 }
 .preview-amount .a-sub {
   display: block;
   font-family: var(--font-mono); font-size: 10px;
-  color: var(--ink-3); margin-top: 4px;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 500; color: var(--ink-3);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-top: 2px;
 }
 
+/* Preview summary uses the dashboard's dark AI panel style */
 .preview-summary {
-  background: var(--surface-2);
-  border: 1px solid var(--color-brand-primary-orange-peach);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-5) var(--spacing-6);
-  margin-top: var(--spacing-4);
-  display: flex; justify-content: space-between; align-items: center;
+  margin-top: var(--spacing-5);
+  background: #151313;
+  border: 1px solid rgba(49, 65, 88, 0.5);
+  border-radius: var(--radius-lg);
+  padding: 22px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--spacing-5);
+  color: var(--surface);
 }
-.preview-summary .sum-text { font-size: 13px; color: var(--ink-2); }
-.preview-summary .sum-text strong {
-  color: var(--ink); font-weight: 600;
+.sum-text { font-size: 14px; line-height: 1.5; }
+.sum-text strong { font-weight: 600; }
+.sum-text .em-amount {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 18px; color: var(--color-brand-primary-yellow-sun);
+  letter-spacing: -0.02em;
 }
-.preview-summary .sum-text .em-amount {
-  font-family: var(--font-display); font-style: italic;
-  color: var(--ai); font-weight: 500;
+.preview-summary .actions { display: flex; gap: var(--spacing-2); align-items: center; }
+.preview-summary .btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--surface);
+  border-color: rgba(255, 255, 255, 0.2);
 }
-.preview-summary .actions { display: flex; gap: var(--spacing-2); }
+.preview-summary .btn:hover { background: rgba(255, 255, 255, 0.14); }
 
 .review-link {
+  margin-top: var(--spacing-5);
+  text-align: center;
   font-size: 13px; color: var(--ink-2);
-  margin-top: var(--spacing-4); text-align: center;
 }
 .review-link a {
-  color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
+  color: var(--color-neutral-black); text-decoration: none;
+  border-bottom: 1px dashed var(--border-strong); padding-bottom: 1px;
+  font-weight: 500;
 }
+.review-link a:hover { color: var(--ai); border-bottom-color: var(--ai); }
 
-/* ═══════════════════════════════════════════════
-   Responsive
-   ═══════════════════════════════════════════════ */
-@media (max-width: 880px) {
-  .hero-1, .role-grid, .conn-grid, .benefit-grid, .trust-grid {
-    grid-template-columns: 1fr;
-  }
-  h1.h1 { font-size: 36px; }
-  h2.h2 { font-size: 28px; }
+@media (max-width: 960px) {
+  .viewport { padding: 32px 24px 140px; }
+  .hero-1 { grid-template-columns: 1fr; }
+  .hero-1 .visual { display: none; }
+  .benefit-row { flex-direction: column; }
+  .benefit-card:first-child { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .benefit-card:last-child  { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+  .benefit-card + .benefit-card { border-left: 2px solid var(--color-neutral-lotion); border-top: none; }
+  .conn-grid-2, .conn-grid-3, .role-grid, .field-row { grid-template-columns: 1fr; }
   .autonomy-row { grid-template-columns: 1fr; }
-  .agent-bar-demo { grid-template-columns: 1fr; gap: var(--spacing-4); }
-  .agent-stats { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: var(--spacing-4); }
+  .preview-summary { flex-direction: column; align-items: flex-start; }
 }
 </style>
 </head>
 <body>
 
 <div class="stage">
+
   <!-- ─────────── Topbar ─────────── -->
-  <div class="topbar">
+  <header class="topbar">
     <div class="brand">
-      <div class="brand-mark">W</div>
+      <div class="brand-logo">
+        <img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="Witness" />
+      </div>
       <span class="brand-name">Witness</span>
     </div>
-    <div class="progress" id="progress">
+
+    <div class="progress">
       <div class="pdot active" data-step="1"></div>
       <div class="pdot" data-step="2"></div>
       <div class="pdot" data-step="3"></div>
       <div class="pdot" data-step="4"></div>
-      <div class="pdot" data-step="5"></div>
-      <div class="pdot" data-step="6"></div>
-      <div class="pdot" data-step="7"></div>
-      <div class="pdot" data-step="8"></div>
-      <div class="progress-meta"><span id="stepNum">01</span> / 08</div>
+      <span class="progress-meta">STEP <span id="stepNum">01</span> / 04</span>
     </div>
+
     <div class="topbar-right">
-      <a href="#">Skip setup</a>
+      <div class="health-chip">
+        <span class="hdot"></span>
+        <span>Setting up your workspace</span>
+      </div>
+      <a class="skip-link" href="#" onclick="finish(); return false;">Skip for now</a>
     </div>
-  </div>
+  </header>
 
   <!-- ─────────── Viewport ─────────── -->
   <div class="viewport">
 
     <!-- ═══════════════════════════════════════════════
-         SCREEN 1 — Mirror the problem
+         SCREEN 1 — Welcome + value preview
          ═══════════════════════════════════════════════ -->
     <div class="screen active" data-screen="1">
+
       <div class="hero-1">
         <div>
-          <div class="eyebrow"><span class="pulse-dot"></span>Welcome to Witness</div>
-          <h1 class="h1">Stop chasing invoices <em>across six tabs.</em></h1>
-          <p class="lede">An AP copilot that lives quietly in the background. It works while you're away, gathers what's stuck, drafts what's needed, and hands you a single hub when you're back.</p>
-          <div class="cta-row">
-            <button class="btn primary lg" onclick="next()">See how it works →</button>
-            <a href="#" class="cta-link">Watch 90-second demo</a>
+          <div class="eyebrow"><span class="pulse-dot"></span> WELCOME</div>
+          <h1 class="h1">Your Monday morning is about to get <em>smaller.</em></h1>
+          <p class="lede">
+            I'm Witness — I work alongside you on accounts payable. I handle the routine
+            while you handle the judgment. You stay in charge of everything that matters.
+          </p>
+
+          <div class="benefit-row">
+            <div class="benefit-card">
+              <div class="benefit-icon time">⏱</div>
+              <div>
+                <div class="stat">~3 hrs</div>
+                <h4>Time saved</h4>
+                <div class="desc">per Monday morning, on average</div>
+              </div>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-icon money">$</div>
+              <div>
+                <div class="stat">$8.2k</div>
+                <h4>Recovered</h4>
+                <div class="desc">discounts captured + duplicates blocked</div>
+              </div>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-icon risk">!</div>
+              <div>
+                <div class="stat">14</div>
+                <h4>Risks caught</h4>
+                <div class="desc">policy + vendor + variance flags</div>
+              </div>
+            </div>
           </div>
         </div>
+
         <div class="visual">
           <div class="tab-stack">
             <div class="fake-tab t1">
-              <div class="tab-host">business.amazon.com</div>
-              <div class="tab-title">Order #2310-7461</div>
-              <div class="tab-line"></div>
-              <div class="tab-line short"></div>
+              <div class="tab-host">amazon-business.com</div>
+              <div class="tab-title">Orders · Pending</div>
+              <div class="tab-line"></div><div class="tab-line short"></div>
             </div>
             <div class="fake-tab t2">
               <div class="tab-host">netsuite.com</div>
-              <div class="tab-title">PO 4471 · receipt</div>
-              <div class="tab-line"></div>
-              <div class="tab-line short"></div>
+              <div class="tab-title">Bills · INV-2245</div>
+              <div class="tab-line"></div><div class="tab-line short"></div>
             </div>
             <div class="fake-tab t3">
-              <div class="tab-host">outlook.com</div>
-              <div class="tab-title">Re: Brightline credit memo</div>
-              <div class="tab-line"></div>
-              <div class="tab-line short"></div>
+              <div class="tab-host">slack.com</div>
+              <div class="tab-title">#ap-approvals</div>
+              <div class="tab-line short"></div><div class="tab-line"></div>
             </div>
             <div class="fake-tab t4">
-              <div class="tab-host">slack.com</div>
-              <div class="tab-title">@J.Park · approval ping</div>
-              <div class="tab-line"></div>
-              <div class="tab-line short"></div>
-            </div>
-            <div class="fake-tab t5">
-              <div class="tab-host">excel · reconciliation.xlsx</div>
-              <div class="tab-title">Sheet 3 · pending</div>
-              <div class="tab-line"></div>
-              <div class="tab-line short"></div>
+              <div class="tab-host">brightline-portal.com</div>
+              <div class="tab-title">Vendor login</div>
+              <div class="tab-line"></div><div class="tab-line short"></div>
             </div>
           </div>
+
           <div class="hub-card">
-            <div class="hc-label">Your Waiting Hub</div>
-            <div class="hc-amount">$105,180</div>
-            <div class="hc-meta">across 24 items · sorted by impact</div>
+            <div class="hc-label">Witness · This morning</div>
+            <div class="hc-amount">24 cases</div>
+            <div class="hc-meta">handled overnight · 3 need your judgment</div>
             <div class="hc-bar">
-              <div style="width: 35%; background: var(--color-semantic-waiting-500);"></div>
-              <div style="width: 28%; background: var(--color-semantic-pending-500);"></div>
-              <div style="width: 22%; background: var(--color-semantic-success-500);"></div>
-              <div style="width: 15%; background: var(--color-brand-primary-blue);"></div>
+              <div style="width:62%; background:#16A34A;"></div>
+              <div style="width:25%; background:#E9B44C;"></div>
+              <div style="width:13%; background:#DC2626;"></div>
             </div>
             <div class="hc-rows">
-              <div class="hc-row"><span>Approver</span><span>$42.6k</span></div>
-              <div class="hc-row"><span>Vendor</span><span>$31.2k</span></div>
-              <div class="hc-row"><span>Receipt</span><span>$18.6k</span></div>
+              <div class="hc-row"><span>Auto-resolved</span><span>21</span></div>
+              <div class="hc-row"><span>Drafted, waiting</span><span>3</span></div>
+              <div class="hc-row"><span>Blocked, you decide</span><span>0</span></div>
             </div>
           </div>
         </div>
@@ -896,355 +835,219 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
     </div>
 
     <!-- ═══════════════════════════════════════════════
-         SCREEN 2 — Overnight value
+         SCREEN 2 — Connect (three tiers)
          ═══════════════════════════════════════════════ -->
     <div class="screen" data-screen="2">
-      <div class="eyebrow muted">What changes</div>
-      <h2 class="h2">Here's what <em>last night</em> could look like.</h2>
-      <p class="lede">Witness works overnight on the parts of your job that don't need a person — chasing vendors, escalating approvals, matching receipts — and stops at the moments that do.</p>
+      <div class="eyebrow muted">STEP 2 OF 4 · CONNECT YOUR STACK</div>
+      <h2 class="h2">Connect what you have — <em>even one is enough.</em></h2>
+      <p class="lede">
+        I work with whatever you've got. Many teams start with just Amazon Business
+        and add more as they go. Each connection unlocks more of what I can do — but
+        nothing is mandatory after the first.
+      </p>
 
-      <div class="agent-bar-demo">
-        <div class="agent-icon-lg">W</div>
-        <div class="agent-text">
-          <span class="lede-mini">Overnight, while you were away</span>
-          I drafted <strong>6 vendor follow-ups</strong>, escalated <strong>2 stalled approvals</strong> to backup approvers, and matched <strong>3 receipts</strong> from Brightline's portal. <strong>4 drafts are ready for your review</strong> before they go out.
+      <!-- TIER 1 — REQUIRED -->
+      <div class="tier-group">
+        <div class="tier-header">
+          <span class="tier-label req">▸ Required to start</span>
+          <span class="tier-note">Your starting point. One connection, full value.</span>
         </div>
-        <div class="agent-stats">
-          <div class="agent-stat"><span class="n">11</span><span class="l">Actions</span></div>
-          <div class="agent-stat"><span class="n">4</span><span class="l">Need review</span></div>
-          <div class="agent-stat"><span class="n">$8.2k</span><span class="l">Recovered</span></div>
+        <div class="conn-card required">
+          <div class="conn-logo logo-amazon">AB</div>
+          <div class="conn-info">
+            <h4>Amazon Business</h4>
+            <div class="conn-unlock">
+              <strong>Unlocks:</strong> invoice parsing · 3-way match · payment scheduling · vendor outreach
+            </div>
+          </div>
+          <button class="btn primary conn-action">Connect</button>
         </div>
       </div>
 
-      <div class="benefit-grid">
-        <div class="benefit-card">
-          <div class="benefit-icon time">⏱</div>
-          <h4>Save your morning</h4>
-          <p>Walk into work with one prioritized list, not 24 stuck threads. No more "where did I leave off?"</p>
+      <!-- TIER 2 — RECOMMENDED -->
+      <div class="tier-group">
+        <div class="tier-header">
+          <span class="tier-label rec">▸ Recommended for full value</span>
+          <span class="tier-note">Two or three more makes Witness much more capable.</span>
         </div>
-        <div class="benefit-card">
-          <div class="benefit-icon money">$</div>
-          <h4>Recover real money</h4>
-          <p>Catch early-payment discounts, duplicate invoices, and over-billings before they slip past the deadline.</p>
-        </div>
-        <div class="benefit-card">
-          <div class="benefit-icon risk">!</div>
-          <h4>Catch silent risk</h4>
-          <p>Mismatched POs, missing receipts, and stalled approvers surface automatically — before audit or finance asks.</p>
+        <div class="conn-grid-2">
+          <div class="conn-card recommended">
+            <div class="conn-logo logo-erp">NS</div>
+            <div class="conn-info">
+              <h4>NetSuite (or your ERP)</h4>
+              <div class="conn-unlock">
+                <strong>Unlocks:</strong> automatic ERP booking · GL coding
+              </div>
+            </div>
+            <button class="btn conn-action">Connect</button>
+          </div>
+          <div class="conn-card recommended">
+            <div class="conn-logo logo-slack">Sl</div>
+            <div class="conn-info">
+              <h4>Slack or Teams</h4>
+              <div class="conn-unlock">
+                <strong>Unlocks:</strong> in-channel approvals · nudges
+              </div>
+            </div>
+            <button class="btn conn-action">Connect</button>
+          </div>
         </div>
       </div>
 
-      <div class="next-row">
-        <button class="btn primary lg" onclick="next()">See how it stays safe →</button>
-        <span class="next-hint">NEXT — HOW YOU STAY IN CONTROL</span>
+      <!-- TIER 3 — OPTIONAL -->
+      <div class="tier-group">
+        <div class="tier-header">
+          <span class="tier-label opt">▸ Optional · add anytime</span>
+          <span class="tier-note">No need to set up now — these wait until you need them.</span>
+        </div>
+        <div class="conn-grid-3">
+          <div class="conn-card optional">
+            <div class="conn-logo logo-mail">@</div>
+            <div class="conn-info">
+              <h4>Email forwarding</h4>
+              <div class="conn-unlock">Drop invoices into your inbox.</div>
+            </div>
+          </div>
+          <div class="conn-card optional">
+            <div class="conn-logo logo-cal">Cl</div>
+            <div class="conn-info">
+              <h4>Calendar</h4>
+              <div class="conn-unlock">Brief delivered before standup.</div>
+            </div>
+          </div>
+          <div class="conn-card optional">
+            <div class="conn-logo logo-sso">id</div>
+            <div class="conn-info">
+              <h4>SSO / Identity</h4>
+              <div class="conn-unlock">Team auth (IT setup).</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════
-         SCREEN 3 — Trust contract
+         SCREEN 3 — Who you are + autonomy
          ═══════════════════════════════════════════════ -->
     <div class="screen" data-screen="3">
-      <div class="eyebrow muted">The contract</div>
-      <h2 class="h2">You're <em>always</em> in control.</h2>
-      <p class="lede">An agent that touches money has to earn its keep. Three rules we never break — you can change everything else.</p>
-
-      <div class="trust-grid">
-        <div class="trust-cell">
-          <div class="trust-num">i.</div>
-          <h4>Transparent</h4>
-          <p>Every action is logged with a plain-English reason. You can see exactly what I did, when, and why — going back as far as you'd like.</p>
-        </div>
-        <div class="trust-cell">
-          <div class="trust-num">ii.</div>
-          <h4>Reversible</h4>
-          <p>Anything I do — every email, every reroute, every flag — can be undone in one click. The undo log lives next to the action.</p>
-        </div>
-        <div class="trust-cell">
-          <div class="trust-num">iii.</div>
-          <h4>Permissioned</h4>
-          <p>I only act inside the rules you set. Sending payments, releasing holds, and high-risk actions always pause for your approval.</p>
-        </div>
-      </div>
-
-      <div class="next-row">
-        <button class="btn primary lg" onclick="next()">Set me up — 3 minutes →</button>
-        <span class="next-hint">NO DATA IS TOUCHED UNTIL YOU SAY SO</span>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════
-         SCREEN 4 — Role
-         ═══════════════════════════════════════════════ -->
-    <div class="screen" data-screen="4">
-      <div class="eyebrow">Step 1 of 5 · Who you are</div>
-      <h2 class="h2">What's your role?</h2>
-      <p class="lede">This shapes what I surface in your hub and how I prioritize. You can change it anytime.</p>
+      <div class="eyebrow muted">STEP 3 OF 4 · YOU + AUTONOMY</div>
+      <h2 class="h2">Who you are, and how <em>cautious to start.</em></h2>
+      <p class="lede">
+        Tell me your role and approval limit so I know what's yours to decide.
+        Pick a starting autonomy — you can adjust any time from the dashboard.
+      </p>
 
       <div class="role-grid">
         <div class="role-card selected" onclick="selectRole(this)">
-          <div class="role-icon">A</div>
-          <h4>AP Specialist / Clerk</h4>
-          <p>Day-to-day invoice processing, vendor follow-up, GL coding, payment scheduling.</p>
+          <div class="role-icon">AP</div>
+          <div>
+            <h4>AP Lead</h4>
+            <p>Manage day-to-day invoice processing and team approvals.</p>
+          </div>
         </div>
         <div class="role-card" onclick="selectRole(this)">
-          <div class="role-icon">P</div>
-          <h4>Procurement Manager</h4>
-          <p>Cross-department buying, vendor selection, PO authorization, policy compliance.</p>
+          <div class="role-icon">Fi</div>
+          <div>
+            <h4>Finance Manager</h4>
+            <p>Oversee AP plus cash flow and reporting.</p>
+          </div>
         </div>
         <div class="role-card" onclick="selectRole(this)">
-          <div class="role-icon">F</div>
-          <h4>Finance / Controller</h4>
-          <p>Approvals, cash-flow oversight, month-end close, exception triage.</p>
+          <div class="role-icon">Co</div>
+          <div>
+            <h4>Compliance Officer</h4>
+            <p>Audit, policy enforcement, exception review.</p>
+          </div>
         </div>
         <div class="role-card" onclick="selectRole(this)">
-          <div class="role-icon">S</div>
-          <h4>Systems / Admin</h4>
-          <p>Setting up Witness for the team, managing connectors, governance, audit.</p>
+          <div class="role-icon">IT</div>
+          <div>
+            <h4>IT / Admin</h4>
+            <p>Set up integrations and team access.</p>
+          </div>
         </div>
       </div>
 
       <div class="field-row">
         <div class="field">
-          <label>Company size</label>
-          <select>
-            <option>1–50 employees</option>
-            <option>51–500 employees</option>
-            <option selected>500–5,000 employees</option>
-            <option>5,000+ employees</option>
-          </select>
+          <label>Your name</label>
+          <input type="text" value="Sarah Chen" />
         </div>
         <div class="field">
-          <label>Primary ERP</label>
-          <select>
-            <option>NetSuite</option>
-            <option selected>SAP</option>
-            <option>Oracle</option>
-            <option>Coupa</option>
-            <option>Microsoft Dynamics</option>
-            <option>Other / not sure</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════
-         SCREEN 5 — Connect stack
-         ═══════════════════════════════════════════════ -->
-    <div class="screen" data-screen="5">
-      <div class="eyebrow">Step 2 of 5 · Connections</div>
-      <h2 class="h2">Connect your tools — <em>each one unlocks more.</em></h2>
-      <p class="lede">Witness reads from these systems to populate your hub. We need two to start; the rest you can connect anytime.</p>
-
-      <div class="conn-grid">
-        <div class="conn-card connected required">
-          <div class="conn-logo logo-amazon">a</div>
-          <div class="conn-info">
-            <h4>Amazon Business <span class="conn-tag req">Required</span></h4>
-            <div class="conn-unlock">Order history, PO references, invoice metadata.</div>
-          </div>
-          <div class="conn-status done">✓ Connected</div>
-        </div>
-
-        <div class="conn-card required">
-          <div class="conn-logo logo-erp">S</div>
-          <div class="conn-info">
-            <h4>SAP / ERP <span class="conn-tag req">Required</span></h4>
-            <div class="conn-unlock">Match receipts to POs, check budget, post journal entries.</div>
-          </div>
-          <button class="btn conn-action">Connect</button>
-        </div>
-
-        <div class="conn-card">
-          <div class="conn-logo logo-mail">@</div>
-          <div class="conn-info">
-            <h4>Email (Outlook / Gmail) <span class="conn-tag opt">Recommended</span></h4>
-            <div class="conn-unlock">Read vendor responses, draft and send follow-ups on your behalf.</div>
-          </div>
-          <button class="btn conn-action">Connect</button>
-        </div>
-
-        <div class="conn-card">
-          <div class="conn-logo logo-slack">#</div>
-          <div class="conn-info">
-            <h4>Slack / Teams <span class="conn-tag opt">Optional</span></h4>
-            <div class="conn-unlock">Ping approvers, send daily briefings to your channel.</div>
-          </div>
-          <button class="btn conn-action">Connect</button>
-        </div>
-
-        <div class="conn-card">
-          <div class="conn-logo logo-cal">⊡</div>
-          <div class="conn-info">
-            <h4>Calendar <span class="conn-tag opt">Optional</span></h4>
-            <div class="conn-unlock">Time overnight runs around your meetings, surface invoices before close.</div>
-          </div>
-          <button class="btn conn-action">Connect</button>
-        </div>
-
-        <div class="conn-card">
-          <div class="conn-logo logo-sso">●</div>
-          <div class="conn-info">
-            <h4>SSO (Okta / Azure AD) <span class="conn-tag opt">Optional</span></h4>
-            <div class="conn-unlock">Org-wide rollout, role mapping, audit logging.</div>
-          </div>
-          <button class="btn conn-action">Connect</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════
-         SCREEN 6 — Confirm rules
-         ═══════════════════════════════════════════════ -->
-    <div class="screen" data-screen="6">
-      <div class="eyebrow">Step 3 of 5 · Your rules</div>
-      <h2 class="h2">I read your <em>last 90 days.</em> Here's what I think your rules are.</h2>
-      <p class="lede">Skim these and edit anything that's wrong. I'll keep learning as you go, but starting from your real history is faster than typing a policy doc.</p>
-
-      <div class="agent-callout">
-        <div class="agent-mini">W</div>
-        <div class="text">
-          Detected from <strong>347 invoices</strong> and <strong>211 approvals</strong>. Confidence is high on the first three; please double-check the last two.
+          <label>Single-invoice approval limit</label>
+          <input type="text" value="$1,000" />
         </div>
       </div>
 
-      <div class="rule-list">
-        <div class="rule-row">
-          <div class="rule-content">
-            <div class="rule-label">Approval threshold</div>
-            <div class="rule-text">Invoices over <span class="em-amount">$5,000</span> route to <span class="em-name">J. Park (Finance Manager)</span>.</div>
-          </div>
-          <div class="rule-actions">
-            <span class="confidence-tag high">High confidence</span>
-            <span class="rule-edit">Edit</span>
-          </div>
-        </div>
-        <div class="rule-row">
-          <div class="rule-content">
-            <div class="rule-label">Backup approver</div>
-            <div class="rule-text"><span class="em-name">Lin Park</span> approves up to <span class="em-amount">$10,000</span> when J. Park is unavailable for 48hrs.</div>
-          </div>
-          <div class="rule-actions">
-            <span class="confidence-tag high">High confidence</span>
-            <span class="rule-edit">Edit</span>
-          </div>
-        </div>
-        <div class="rule-row">
-          <div class="rule-content">
-            <div class="rule-label">Payment terms</div>
-            <div class="rule-text">Default <span class="em-amount">Net 30</span>. Override to <span class="em-amount">Net 15</span> for Brightline Office Supply, Acme Materials.</div>
-          </div>
-          <div class="rule-actions">
-            <span class="confidence-tag high">High confidence</span>
-            <span class="rule-edit">Edit</span>
-          </div>
-        </div>
-        <div class="rule-row">
-          <div class="rule-content">
-            <div class="rule-label">Variance flag</div>
-            <div class="rule-text">Auto-flag invoices that are <span class="em-amount">10%</span> or more over the PO value, OR more than <span class="em-amount">$500</span> over.</div>
-          </div>
-          <div class="rule-actions">
-            <span class="confidence-tag verify">Please verify</span>
-            <span class="rule-edit">Edit</span>
-          </div>
-        </div>
-        <div class="rule-row">
-          <div class="rule-content">
-            <div class="rule-label">Vendor follow-up cadence</div>
-            <div class="rule-text">First nudge after <span class="em-amount">2 days</span>, second after <span class="em-amount">5 days</span>, escalate to manager after <span class="em-amount">10 days</span>.</div>
-          </div>
-          <div class="rule-actions">
-            <span class="confidence-tag verify">Please verify</span>
-            <span class="rule-edit">Edit</span>
-          </div>
-        </div>
+      <div class="section-break">
+        <div class="line"></div>
+        <div class="label">Starting autonomy</div>
+        <div class="line"></div>
       </div>
-
-      <div class="add-rule">+ Add a rule manually</div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════
-         SCREEN 7 — Autonomy dial
-         ═══════════════════════════════════════════════ -->
-    <div class="screen" data-screen="7">
-      <div class="eyebrow">Step 4 of 5 · Autonomy</div>
-      <h2 class="h2">How much should I do <em>on my own?</em></h2>
-      <p class="lede">For each kind of action, choose how much rope to give me. I'll start conservative — you can loosen any of these the moment you trust me.</p>
 
       <div class="autonomy-list">
 
         <div class="autonomy-row">
           <div class="autonomy-info">
-            <h5>Drafting vendor follow-ups</h5>
-            <p>Compose chase emails for missing credit memos, PODs, revised invoices.</p>
+            <h5>Routine matching</h5>
+            <p>3-way match against PO + receipt. Reversible.</p>
           </div>
-          <div class="seg" data-default="auto">
-            <div class="seg-opt" onclick="setSeg(this)">Ask me</div>
-            <div class="seg-opt" onclick="setSeg(this)">Suggest</div>
-            <div class="seg-opt active" onclick="setSeg(this)">Auto-do</div>
+          <div class="seg">
+            <div class="seg-opt" onclick="setSeg(this)">Ask me first</div>
+            <div class="seg-opt" onclick="setSeg(this)">Draft for review</div>
+            <div class="seg-opt active" onclick="setSeg(this)">Handle it</div>
           </div>
         </div>
 
         <div class="autonomy-row">
           <div class="autonomy-info">
-            <h5>Matching receipts to POs</h5>
-            <p>Pull POD/receipt evidence from vendor portals and reconcile against ERP.</p>
+            <h5>Vendor follow-up</h5>
+            <p>Outreach for missing docs, late receipts, disputes.</p>
           </div>
           <div class="seg">
-            <div class="seg-opt" onclick="setSeg(this)">Ask me</div>
-            <div class="seg-opt" onclick="setSeg(this)">Suggest</div>
-            <div class="seg-opt active" onclick="setSeg(this)">Auto-do</div>
-          </div>
-        </div>
-
-        <div class="autonomy-row">
-          <div class="autonomy-info">
-            <h5>Rerouting stalled approvals</h5>
-            <p>Send a stuck approval to the configured backup approver after the SLA elapses.</p>
-          </div>
-          <div class="seg">
-            <div class="seg-opt" onclick="setSeg(this)">Ask me</div>
-            <div class="seg-opt active" onclick="setSeg(this)">Suggest</div>
-            <div class="seg-opt" onclick="setSeg(this)">Auto-do</div>
-          </div>
-        </div>
-
-        <div class="autonomy-row">
-          <div class="autonomy-info">
-            <h5>Flagging variance &amp; mismatches</h5>
-            <p>Surface invoices that exceed PO value, miss line items, or have duplicate IDs.</p>
-          </div>
-          <div class="seg">
-            <div class="seg-opt" onclick="setSeg(this)">Ask me</div>
-            <div class="seg-opt" onclick="setSeg(this)">Suggest</div>
-            <div class="seg-opt active" onclick="setSeg(this)">Auto-do</div>
+            <div class="seg-opt" onclick="setSeg(this)">Ask me first</div>
+            <div class="seg-opt active" onclick="setSeg(this)">Draft for review</div>
+            <div class="seg-opt" onclick="setSeg(this)">Handle it</div>
           </div>
         </div>
 
         <div class="autonomy-row locked">
           <div class="autonomy-info">
-            <h5>Releasing payments <span class="lock-pill">Locked</span></h5>
-            <p>Sending money. Always requires your approval. This setting cannot be loosened.</p>
+            <h5>Releasing payments <span class="lock-pill">🔒 Locked</span></h5>
+            <p>Sending money. Always requires your approval — this cannot be loosened.</p>
           </div>
           <div class="seg locked">
-            <div class="seg-opt active">Ask me</div>
-            <div class="seg-opt">Suggest</div>
-            <div class="seg-opt">Auto-do</div>
+            <div class="seg-opt active">Ask me first</div>
+            <div class="seg-opt">Draft for review</div>
+            <div class="seg-opt">Handle it</div>
           </div>
         </div>
 
       </div>
 
-      <div class="auton-note">"Suggest" means I'll prepare the action and put it in your review queue. "Auto-do" means I'll do it and tell you what I did — every action stays reversible.</div>
+      <div class="auton-note">
+        <div class="auton-note-hd">
+          <span class="dot"></span>
+          <span class="auton-note-lbl">How these work</span>
+        </div>
+        <p class="auton-note-txt">
+          <strong>Ask me first</strong> means I check with you before acting. <strong>Draft for review</strong> means I prepare the
+          action and put it in your queue — you decide. <strong>Handle it</strong> means I act and tell you what
+          I did — every action stays reversible.
+        </p>
+      </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════
-         SCREEN 8 — First run preview
+         SCREEN 4 — First run preview
          ═══════════════════════════════════════════════ -->
-    <div class="screen" data-screen="8">
-      <div class="eyebrow">Step 5 of 5 · Your first run</div>
+    <div class="screen" data-screen="4">
+      <div class="eyebrow muted">STEP 4 OF 4 · YOUR FIRST RUN</div>
       <h2 class="h2">Here's what I'd do <em>right now.</em></h2>
-      <p class="lede">Based on your rules, your connections, and your last 90 days — here's the queue I'd run on first. Approve all, or review one by one before I start.</p>
+      <p class="lede">
+        Based on your rules and connections, here's the queue I'd run on first.
+        Review one by one or start with all of them — every action is reversible.
+      </p>
 
       <div class="preview-list">
 
@@ -1288,7 +1091,7 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
           <div class="preview-check">✓</div>
           <div class="preview-body">
             <h5>Schedule daily briefing for 8:45 AM PT</h5>
-            <div class="preview-meta">Summary of the night's work delivered to your inbox 15 minutes before standup.</div>
+            <div class="preview-meta">Summary of the night's work delivered to your inbox <span class="em">15 minutes before standup.</span></div>
           </div>
           <div class="preview-amount">—<span class="a-sub">recurring</span></div>
         </div>
@@ -1300,13 +1103,13 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
           <strong>5 actions ready</strong> · estimated <span class="em-amount">$8.2k</span> recovered or de-risked · all reversible
         </div>
         <div class="actions">
-          <button class="btn">Review one by one</button>
-          <button class="btn primary" onclick="finish()">Approve all &amp; start →</button>
+          <button class="btn">Review each first</button>
+          <button class="btn ai" onclick="finish()">Start my first day →</button>
         </div>
       </div>
 
       <div class="review-link">
-        Want to wait? <a href="#">Run me in shadow mode</a> — I'll watch and recommend, but won't take any action until you say so.
+        Not ready? <a href="#" onclick="finish(); return false;">Start in watch-only mode</a> — I'll watch and recommend, but won't act until you say so.
       </div>
     </div>
 
@@ -1314,33 +1117,37 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
 
   <!-- ─────────── Footer nav ─────────── -->
   <div class="footer">
-    <button class="btn ghost" id="btnPrev" onclick="prev()">← Back</button>
+    <button class="btn ghost" id="btnPrev" onclick="prev()" style="visibility:hidden">← Back</button>
     <div class="footer-meta">
-      <span id="screenLabel">WELCOME</span> · <strong id="footerStep">STEP 1</strong> OF 8
+      <span id="screenLabel">WELCOME</span> · <strong>STEP <span id="footerStep">1</span></strong> OF 4
     </div>
-    <button class="btn primary" id="btnNext" onclick="next()">Continue →</button>
+    <button class="btn primary lg" id="btnNext" onclick="next()">See how it works →</button>
   </div>
 </div>
 
 <script>
   let current = 1;
-  const total = 8;
+  const total = 4;
 
   const labels = {
     1: 'WELCOME',
-    2: 'WHAT CHANGES',
-    3: 'THE CONTRACT',
-    4: 'YOUR ROLE',
-    5: 'CONNECTIONS',
-    6: 'YOUR RULES',
-    7: 'AUTONOMY',
-    8: 'FIRST RUN'
+    2: 'CONNECT',
+    3: 'YOU + AUTONOMY',
+    4: 'FIRST RUN'
+  };
+
+  const nextButtonCopy = {
+    1: 'See how it works →',
+    2: 'Continue → set up account',
+    3: 'Continue → preview my first run',
+    4: 'Start my first day →'
   };
 
   function go(n) {
     if (n < 1 || n > total) return;
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelector(`[data-screen="${n}"]`).classList.add('active');
+    const target = document.querySelector(`[data-screen="${n}"]`);
+    target.classList.add('active');
 
     document.querySelectorAll('.pdot').forEach((d, i) => {
       d.classList.remove('active', 'done');
@@ -1350,21 +1157,52 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
 
     document.getElementById('stepNum').textContent = String(n).padStart(2, '0');
     document.getElementById('screenLabel').textContent = labels[n];
-    document.getElementById('footerStep').textContent = `STEP ${n}`;
+    document.getElementById('footerStep').textContent = n;
 
     document.getElementById('btnPrev').style.visibility = n === 1 ? 'hidden' : 'visible';
-    const nextBtn = document.getElementById('btnNext');
-    nextBtn.textContent = n === total ? 'Approve all & start →' : 'Continue →';
+    document.getElementById('btnNext').textContent = nextButtonCopy[n];
+    document.getElementById('btnNext').style.display = n === total ? 'none' : 'inline-flex';
 
     current = n;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    runCountUps(target);
+  }
+
+  function runCountUps(scope) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stats = scope.querySelectorAll('.stat, .hc-amount');
+    if (!stats.length) return;
+    stats.forEach((el, i) => {
+      const raw = el.dataset.target || el.textContent.trim();
+      el.dataset.target = raw;
+      const m = raw.match(/^([^0-9.-]*)([\d.]+)([^0-9.]*)$/);
+      if (!m) return;
+      const prefix = m[1], end = parseFloat(m[2]), suffix = m[3];
+      const decimals = (m[2].split('.')[1] || '').length;
+      if (reduced) { el.textContent = raw; return; }
+      el.textContent = prefix + (0).toFixed(decimals) + suffix;
+      const startDelay = 200 + i * 80;
+      setTimeout(() => {
+        const dur = 900, start = performance.now();
+        const tick = (now) => {
+          const t = Math.min(1, (now - start) / dur);
+          const eased = 1 - Math.pow(1 - t, 3);
+          const v = end * eased;
+          el.textContent = prefix + v.toFixed(decimals) + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+          else el.textContent = raw;
+        };
+        requestAnimationFrame(tick);
+      }, startDelay);
+    });
   }
 
   function next() { if (current < total) go(current + 1); }
   function prev() { if (current > 1) go(current - 1); }
 
   function finish() {
-    window.location.href = 'dashboard.html';
+    window.location.href = 'dashboard-brief.html';
   }
 
   document.querySelectorAll('.pdot').forEach(d => {
@@ -1387,6 +1225,8 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
     if (e.key === 'ArrowRight') next();
     if (e.key === 'ArrowLeft') prev();
   });
+
+  setTimeout(() => runCountUps(document.querySelector('.screen.active')), 100);
 </script>
 
 </body>
