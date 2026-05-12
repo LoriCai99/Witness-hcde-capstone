@@ -99,16 +99,18 @@
 
   /* ─────────── Shell: sidebar | main | chat ─────────── */
   .app {
+    --sidebar-w: 257px;
     --chat-w: 340px;
     --chat-min: 280px;
     --chat-max: 520px;
     display: grid;
-    grid-template-columns: 257px 1fr var(--chat-w);
+    grid-template-columns: var(--sidebar-w) 1fr var(--chat-w);
     min-height: 100vh;
     transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1);
   }
   .app[data-chat="slim"]  { --chat-w: 56px; }
   .app[data-chat="float"] { --chat-w: 0px; }
+  .app:has(.sidebar.collapsed) { --sidebar-w: 72px; }
 
   /* ═══════════════════════════════════════════
      SIDEBAR (preserved from original dashboard.html)
@@ -1024,9 +1026,12 @@
   .chat-foot-meta::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--color-semantic-success-500); }
 
   /* Responsive */
-  @media (max-width: 1280px) {
-    .app { grid-template-columns: 220px 1fr 320px; }
+  @media (max-width: 1440px) {
+    .app { --sidebar-w: 220px; }
     .sidebar { width: 220px; }
+    .app:has(.sidebar.collapsed) { --sidebar-w: 72px; }
+    /* Chat default to slim on narrow screens is set by JS, not CSS,
+       so user can still manually expand to rail if desired */
   }
 </style>
 </head>
@@ -1791,8 +1796,8 @@
     });
   })();
 
-  /* Initialize chat state */
-  setChatMode('rail');
+  /* Initialize chat state — slim on narrow screens so main content has room */
+  setChatMode(window.innerWidth < 1440 ? 'slim' : 'rail');
 </script>
 
 </body>

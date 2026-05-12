@@ -1318,7 +1318,7 @@
     ['dragleave','drop'  ].forEach(function(e){ dz.addEventListener(e, function(ev){ ev.preventDefault(); dz.classList.remove('dragover'); }); });
   }
 
-  setChatMode('rail');
+  setChatMode(window.innerWidth < 1440 ? 'slim' : 'rail');
 })();
 </script>
 <!-- ═══════════ END WITNESS CHAT PANEL ═══════════ -->
