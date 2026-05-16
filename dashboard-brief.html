@@ -100,16 +100,13 @@
   /* ─────────── Shell: sidebar | main | chat ─────────── */
   .app {
     --sidebar-w: 257px;
-    --chat-w: 340px;
     --chat-min: 280px;
     --chat-max: 520px;
     display: grid;
-    grid-template-columns: var(--sidebar-w) 1fr var(--chat-w);
+    grid-template-columns: var(--sidebar-w) 1fr var(--chat-w, 340px);
     min-height: 100vh;
     transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1);
   }
-  .app[data-chat="slim"]  { --chat-w: 56px; }
-  .app[data-chat="float"] { --chat-w: 0px; }
   .app:has(.sidebar.collapsed) { --sidebar-w: 72px; }
 
   /* ═══════════════════════════════════════════
@@ -253,7 +250,7 @@
   /* Page */
   .page {
     padding: var(--spacing-7) var(--spacing-7) var(--spacing-9);
-    max-width: 920px;
+    max-width: none;
     margin: 0 auto;
     width: 100%;
   }
@@ -841,189 +838,6 @@
     border-top: 1px solid var(--line);
   }
 
-  /* ═══════════════════════════════════════════
-     CHAT RAIL (preserved from witness-dashboard)
-     ═══════════════════════════════════════════ */
-  .chat {
-    background: var(--surface);
-    border-left: 1px solid var(--line);
-    position: sticky; top: 0; height: 100vh;
-    display: flex; flex-direction: column;
-    overflow: hidden;
-  }
-  .chat-grip {
-    position: absolute; left: -3px; top: 0; bottom: 0;
-    width: 6px; cursor: col-resize; z-index: 5;
-    transition: background .15s;
-  }
-  .chat-grip:hover, .chat-grip.dragging {
-    background: linear-gradient(90deg, transparent, var(--ai) 50%, transparent);
-  }
-  .app[data-chat="slim"] .chat-grip,
-  .app[data-chat="float"] .chat-grip { display: none; }
-
-  .app[data-chat="float"] .chat {
-    position: fixed;
-    top: 72px; right: 24px; bottom: 24px;
-    width: 380px; height: auto;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-xl);
-    box-shadow: 0 24px 60px -12px rgba(0,0,0,.22), 0 4px 16px rgba(0,0,0,.06);
-    z-index: 40;
-    animation: floatIn .25s cubic-bezier(.4,0,.2,1);
-  }
-  @keyframes floatIn { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
-
-  .app[data-chat="slim"] .chat {
-    align-items: center;
-    cursor: pointer;
-  }
-  .app[data-chat="slim"] .chat-head {
-    padding: var(--spacing-4) 0;
-    border-bottom: 1px solid var(--line);
-    width: 100%; justify-content: center;
-    flex-direction: column; gap: var(--spacing-2);
-  }
-  .app[data-chat="slim"] .chat-head > .chat-head-info,
-  .app[data-chat="slim"] .chat-head > .chat-tools,
-  .app[data-chat="slim"] .chat-body,
-  .app[data-chat="slim"] .chat-suggestions,
-  .app[data-chat="slim"] .chat-foot { display: none; }
-  .app[data-chat="slim"] .chat-status-dot { margin-left: 0; }
-  .app[data-chat="slim"] .chat-mark { position: relative; }
-  .app[data-chat="slim"] .chat-mark::after {
-    content: ''; position: absolute; top: -2px; right: -2px;
-    width: 8px; height: 8px; border-radius: 50%; background: var(--ai);
-    border: 2px solid var(--surface);
-  }
-  .slim-cta {
-    display: none;
-    writing-mode: vertical-rl; transform: rotate(180deg);
-    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--ink-mute);
-    padding: var(--spacing-3) 0;
-  }
-  .app[data-chat="slim"] .slim-cta { display: block; }
-
-  .chat-head {
-    padding: var(--spacing-4) var(--spacing-5);
-    border-bottom: 1px solid var(--line);
-    display: flex; align-items: center; gap: var(--spacing-3);
-    flex-shrink: 0;
-  }
-  .chat-head-info { display: flex; flex-direction: column; min-width: 0; }
-  .chat-tools { display: flex; align-items: center; gap: 2px; margin-left: auto; }
-  .chat-tool-btn {
-    width: 26px; height: 26px; border-radius: var(--radius-sm);
-    display: grid; place-items: center; cursor: pointer;
-    border: none; background: transparent; color: var(--ink-soft);
-    font-size: 14px; line-height: 1;
-    transition: all .12s;
-  }
-  .chat-tool-btn:hover { background: var(--bg); color: var(--ink); }
-  .chat-tool-btn.active { background: var(--ink); color: white; }
-
-  .chat-mark {
-    width: 28px; height: 28px; border-radius: var(--radius-sm);
-    background: var(--ink); color: white;
-    display: grid; place-items: center;
-    font-family: var(--font-body); font-weight: 700; font-size: 13px;
-  }
-  .chat-title { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--ink); }
-  .chat-sub { font-size: 11px; color: var(--ink-mute); margin-top: 1px; }
-  .chat-status-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--color-semantic-success-500);
-    margin-left: auto;
-    box-shadow: 0 0 0 3px rgba(22,163,74,.15);
-  }
-
-  .chat-body {
-    flex: 1; overflow-y: auto;
-    padding: var(--spacing-5);
-    display: flex; flex-direction: column; gap: var(--spacing-4);
-  }
-  .msg { display: flex; flex-direction: column; gap: 4px; max-width: 92%; }
-  .msg.agent { align-self: flex-start; }
-  .msg.user  { align-self: flex-end; align-items: flex-end; }
-  .msg-author {
-    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--ink-mute);
-  }
-  .msg.agent .msg-author { color: var(--ai); }
-  .msg-bubble {
-    padding: var(--spacing-3) var(--spacing-4);
-    border-radius: var(--radius-lg);
-    font-size: 13px; line-height: 1.5;
-  }
-  .msg.agent .msg-bubble {
-    background: var(--ai-soft);
-    border: 1px solid var(--color-brand-primary-orange-touch);
-    color: var(--ink);
-  }
-  .msg.user .msg-bubble {
-    background: var(--ink); color: white;
-  }
-  .msg-bubble strong { font-weight: 600; }
-  .msg-bubble .link { color: var(--ai-deep); text-decoration: underline; cursor: pointer; }
-
-  .chat-suggestions {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    padding: 0 var(--spacing-5) var(--spacing-3);
-  }
-  .suggestion-chip {
-    font-size: 11.5px; padding: 5px var(--spacing-3); border-radius: var(--radius-full);
-    border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-soft);
-    cursor: pointer;
-  }
-  .suggestion-chip:hover { border-color: var(--ink); color: var(--ink); }
-
-  .chat-foot {
-    border-top: 1px solid var(--line);
-    padding: var(--spacing-3) var(--spacing-4);
-    display: flex; flex-direction: column; gap: var(--spacing-2);
-  }
-  .dropzone {
-    border: 1.5px dashed var(--line-strong);
-    border-radius: var(--radius-md);
-    padding: 10px var(--spacing-3);
-    font-size: 11.5px; color: var(--ink-mute);
-    display: flex; align-items: center; gap: var(--spacing-2);
-    cursor: pointer; transition: all .15s;
-    background: var(--bg);
-  }
-  .dropzone:hover, .dropzone.dragover {
-    border-color: var(--ai); color: var(--ai-deep);
-    background: var(--ai-soft);
-  }
-  .dropzone::before { content: '⤴'; font-size: 13px; color: var(--ai); }
-  .dropzone strong { color: var(--ink); font-weight: 600; }
-
-  .chat-input-row {
-    display: flex; align-items: center; gap: var(--spacing-2);
-    border: 1px solid var(--line-strong); border-radius: var(--radius-md);
-    background: var(--surface); padding: 6px var(--spacing-3);
-  }
-  .chat-input-row:focus-within { border-color: var(--ink); }
-  .chat-input {
-    flex: 1; border: none; outline: none;
-    font-family: var(--font-body); font-size: 13px; color: var(--ink);
-    background: transparent; padding: 4px 0;
-  }
-  .chat-input::placeholder { color: var(--ink-mute); }
-  .send-btn {
-    border: none; background: var(--ai); color: white;
-    width: 28px; height: 28px; border-radius: var(--radius-sm);
-    display: grid; place-items: center; cursor: pointer; font-size: 13px;
-  }
-  .send-btn:hover { background: var(--ai-deep); }
-
-  .chat-foot-meta {
-    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--ink-mute);
-    display: flex; align-items: center; gap: 6px;
-  }
-  .chat-foot-meta::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--color-semantic-success-500); }
 
   /* Responsive */
   @media (max-width: 1440px) {
@@ -1035,71 +849,63 @@
   }
 </style>
 </head>
-<body>
-<div class="app" data-chat="rail">
+<body data-chat="rail">
+<div class="app">
 
   <!-- ═══════ SIDEBAR (original) ═══════ -->
   <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-logo">
-        <img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="" />
-      </div>
-      <span class="brand-name">Witness</span>
-      <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="" />
     </div>
-    <nav class="sidebar-nav">
-      <div class="nav-group">
-        <div class="nav-label">Main</div>
-        <div class="nav-items">
-          <a class="nav-item active" href="dashboard-brief.html">
-            <img src="https://www.figma.com/api/mcp/asset/0078dabe-156c-4a53-8ee8-14b88f08edd3" alt="" />
-            Dashboard
-          </a>
-        </div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item active" href="dashboard.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Dashboard
+        </a>
       </div>
-      <div class="nav-group">
-        <div class="nav-label">Work</div>
-        <div class="nav-items">
-          <a class="nav-item" href="invoices.html">
-            <img src="https://www.figma.com/api/mcp/asset/036eeafd-95b9-42ec-8e9e-b11d8ae871e6" alt="" />
-            All Invoice
-            <span class="nav-badge">26</span>
-          </a>
-          <a class="nav-item" href="vendors.html">
-            <svg viewBox="0 0 16 16" fill="none">
-              <path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Vendors
-            <span class="nav-badge">8</span>
-          </a>
-          <a class="nav-item" href="autoflow.html">
-            <img src="https://www.figma.com/api/mcp/asset/7ac49f75-1d24-4839-a160-168c688113c5" alt="" />
-            Autoflow
-          </a>
-          <a class="nav-item" href="ai-activity.html">
-            <svg viewBox="0 0 16 16" fill="none">
-              <path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
-            </svg>
-            AI Activity
-            <span class="nav-badge ai">24</span>
-          </a>
-        </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item" href="invoices.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13z M10 1.5V4h3 M5.5 7.5h5 M5.5 10h5 M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Invoice
+          <span class="nav-badge">26</span>
+        </a>
+        <a class="nav-item" href="vendors.html">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item" href="autoflow.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Autoflow
+        </a>
+        <a class="nav-item" href="ai-activity.html">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge ai">24</span>
+        </a>
       </div>
-      <div class="nav-group">
-        <div class="nav-label">Settings</div>
-        <div class="nav-items">
-          <a class="nav-item" href="settings.html">
-            <img src="https://www.figma.com/api/mcp/asset/78a18923-bc00-41cf-a369-1310d323404e" alt="" />
-            Settings
-          </a>
-        </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v2 M8 12.5v2 M14.5 8h-2 M3.5 8h-2 M12.6 3.4l-1.4 1.4 M4.8 11.2l-1.4 1.4 M12.6 12.6l-1.4-1.4 M4.8 4.8L3.4 3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Settings
+        </a>
       </div>
-    </nav>
-  </aside>
+    </div>
+  </nav>
+</aside>
 
   <!-- ═══════ MAIN ═══════ -->
   <main>
@@ -1554,70 +1360,8 @@
     </div>
   </main>
 
-  <!-- ═══════ CHAT RAIL (preserved) ═══════ -->
-  <aside class="chat" id="chat">
-    <div class="chat-grip" id="chatGrip" title="Drag to resize"></div>
-    <div class="slim-cta">Chat · Witness</div>
-    <div class="chat-head" onclick="expandFromSlim()">
-      <div class="chat-mark">W</div>
-      <div class="chat-head-info">
-        <div class="chat-title">Witness</div>
-        <div class="chat-sub">Always here · 47 invoices overnight</div>
-      </div>
-      <div class="chat-status-dot" title="Online"></div>
-      <div class="chat-tools" onclick="event.stopPropagation()">
-        <button class="chat-tool-btn" id="btnFloat"  title="Float as window">⊞</button>
-        <button class="chat-tool-btn" id="btnSlim"   title="Collapse">—</button>
-      </div>
-    </div>
-
-    <div class="chat-body">
-      <div class="msg agent">
-        <span class="msg-author">Witness · 09:02</span>
-        <div class="msg-bubble">
-          Morning, Maya. Your brief is ready above. The <strong>$47,820 payment batch</strong> is built — I'll wait for your commit before the 2 PM ACH cutoff.
-          Want me to <span class="link">draft a quick reply to Acme</span> for you to edit?
-        </div>
-      </div>
-
-      <div class="msg agent">
-        <span class="msg-author">Witness · 09:03</span>
-        <div class="msg-bubble">
-          Heads up: <strong>D. Lee's stuck approval</strong> escalates at 10 AM unless you decide on it first. The $23,400 invoice has been waiting 3 days.
-        </div>
-      </div>
-
-      <div class="msg user">
-        <span class="msg-author">Maya</span>
-        <div class="msg-bubble">Pull up the BetaCo banking change. I want to verify before lunch.</div>
-      </div>
-
-      <div class="msg agent">
-        <span class="msg-author">Witness · just now</span>
-        <div class="msg-bubble">
-          On it — new bank routing, old vs new account, the email thread where they sent the change, and the callback verification template. <span class="link">Open panel</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="chat-suggestions">
-      <span class="suggestion-chip">Draft Acme reply</span>
-      <span class="suggestion-chip">Show critical path</span>
-      <span class="suggestion-chip">Why was BetaCo held?</span>
-    </div>
-
-    <div class="chat-foot">
-      <label class="dropzone" id="dropzone">
-        Drop a <strong>PDF, image, or forwarded email</strong> here
-        <input type="file" hidden multiple accept=".pdf,.png,.jpg,.jpeg,.eml,.msg" />
-      </label>
-      <div class="chat-input-row">
-        <input class="chat-input" placeholder="Ask Witness anything…" />
-        <button class="send-btn" title="Send">↑</button>
-      </div>
-      <div class="chat-foot-meta">Encrypted · stays in your tenant</div>
-    </div>
-  </aside>
+  <!-- ═══════ Witness chat panel (shared — see witness-chat-panel.{css,js}) ═══════ -->
+  <aside class="chat" id="chat"></aside>
 
 </div>
 
@@ -1721,68 +1465,6 @@
   }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closePop(); });
 
-  /* ── Chat panel state: rail | slim | float ─────────────────────── */
-  const app = document.querySelector('.app');
-  function setChatMode(mode) {
-    app.setAttribute('data-chat', mode);
-    document.getElementById('btnSlim').classList.toggle('active', mode === 'slim');
-    document.getElementById('btnFloat').classList.toggle('active', mode === 'float');
-    document.getElementById('btnSlim').textContent  = mode === 'slim'  ? '→' : '—';
-    document.getElementById('btnSlim').title        = mode === 'slim'  ? 'Expand' : 'Collapse';
-    document.getElementById('btnFloat').textContent = mode === 'float' ? '⇲' : '⊞';
-    document.getElementById('btnFloat').title       = mode === 'float' ? 'Dock to side' : 'Float as window';
-  }
-  document.getElementById('btnSlim').onclick = () => {
-    const cur = app.getAttribute('data-chat');
-    setChatMode(cur === 'slim' ? 'rail' : 'slim');
-  };
-  document.getElementById('btnFloat').onclick = () => {
-    const cur = app.getAttribute('data-chat');
-    setChatMode(cur === 'float' ? 'rail' : 'float');
-  };
-  function expandFromSlim() {
-    if (app.getAttribute('data-chat') === 'slim') setChatMode('rail');
-  }
-
-  /* ── Drag-to-resize chat width (rail mode) ─────────────────────── */
-  const grip = document.getElementById('chatGrip');
-  grip.addEventListener('mousedown', e => {
-    if (app.getAttribute('data-chat') === 'slim') return;
-    e.preventDefault();
-    const startX = e.clientX;
-    const startW = parseInt(getComputedStyle(app).getPropertyValue('--chat-w'), 10) || 340;
-    grip.classList.add('dragging');
-    document.body.style.cursor = 'col-resize';
-    document.body.style.userSelect = 'none';
-
-    function onMove(ev) {
-      const delta = startX - ev.clientX;
-      const min = parseInt(getComputedStyle(app).getPropertyValue('--chat-min'), 10) || 280;
-      const max = parseInt(getComputedStyle(app).getPropertyValue('--chat-max'), 10) || 520;
-      const next = Math.max(min, Math.min(max, startW + delta));
-      app.style.setProperty('--chat-w', next + 'px');
-    }
-    function onUp() {
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-      grip.classList.remove('dragging');
-    }
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-  });
-
-  /* ── Dropzone styling ─────────────────────────────────────────── */
-  const dz = document.getElementById('dropzone');
-  if (dz) {
-    ['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => {
-      ev.preventDefault(); dz.classList.add('dragover');
-    }));
-    ['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => {
-      ev.preventDefault(); dz.classList.remove('dragover');
-    }));
-  }
 
   /* ── Sidebar collapse (preserved) ─────────────────────────────── */
   (function(){
@@ -1796,9 +1478,9 @@
     });
   })();
 
-  /* Initialize chat state — slim on narrow screens so main content has room */
-  setChatMode(window.innerWidth < 1440 ? 'slim' : 'rail');
 </script>
 
+<link rel="stylesheet" href="witness-chat-panel.css">
+<script src="witness-chat-panel.js"></script>
 </body>
 </html>

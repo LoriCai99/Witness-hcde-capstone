@@ -716,7 +716,7 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
 }
 </style>
 </head>
-<body>
+<body data-chat="rail">
 
 <div class="stage">
 
@@ -1202,7 +1202,7 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
   function prev() { if (current > 1) go(current - 1); }
 
   function finish() {
-    window.location.href = 'dashboard-brief.html';
+    window.location.href = 'dashboard.html';
   }
 
   document.querySelectorAll('.pdot').forEach(d => {
@@ -1229,5 +1229,7 @@ h2.h2 em { font-style: italic; color: var(--ai); font-weight: 400; }
   setTimeout(() => runCountUps(document.querySelector('.screen.active')), 100);
 </script>
 
+<link rel="stylesheet" href="witness-chat-panel.css">
+<script src="witness-chat-panel.js"></script>
 </body>
 </html>

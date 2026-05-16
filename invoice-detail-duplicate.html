@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Witness – INV-1048</title>
+  <title>Witness – INV-1027</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,20 +34,42 @@
     /* ─── MAIN ─── */
     .main { height: 100%; overflow-y: auto; overflow-x: auto; min-width: 0; display: flex; flex-direction: column; }
 
-    /* ─── TOPBAR — verbatim from all-invoices ─── */
-    .topbar { position: sticky; top: 0; z-index: 10; background: white; border-bottom: 1px solid #ededed; display: flex; align-items: center; justify-content: space-between; padding: 23px 24px; flex-shrink: 0; }
-    .topbar-left { display: flex; align-items: center; gap: 16px; }
-    .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
-    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #adadad; }
-    .breadcrumb a { color: #45556c; text-decoration: none; cursor: pointer; font-weight: 500; }
-    .breadcrumb a:hover { color: #0b0d12; }
-    .bc-sep { opacity: 0.4; font-size: 16px; }
-    .bc-cur { color: #0b0d12; font-weight: 600; }
-    .topbar-right { display: flex; align-items: center; gap: 24px; }
-    .health-chip { display: flex; align-items: center; gap: 8px; background: #dcfce7; border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
-    .health-dot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
-    .health-chip span { font-size: 14px; font-weight: 500; color: #00a63e; letter-spacing: -0.15px; white-space: nowrap; }
-    .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+    /* ─── TOPBAR — unified Witness AI theme (black + orange accent) ─── */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      height: 56px; flex-shrink: 0;
+      background: #120b0b;
+      border-bottom: 2px solid #ff6900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      color: white;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,0.45); }
+    .breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; cursor: pointer; font-weight: 500; }
+    .breadcrumb a:hover { color: white; }
+    .bc-sep { opacity: 0.5; font-size: 14px; }
+    .bc-cur { color: white; font-weight: 600; }
+    .health-chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); }
+    .health-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.22); }
+    .health-chip span { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.75); letter-spacing: -0.1px; white-space: nowrap; }
+    .avatar { width: 28px; height: 28px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #120b0b; }
+    /* Primary CTA in topbar */
+    .tb-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 34px; padding: 0 16px;
+      border-radius: 8px;
+      background: #ff6900; border: none;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600; letter-spacing: -0.1px;
+      cursor: pointer; white-space: nowrap;
+      transition: background .15s;
+      position: relative;
+    }
+    .tb-cta:hover { background: #d95b03; }
+    .tb-cta .arrow { font-size: 13px; opacity: 0.9; }
 
     /* ─── CONTENT AREA ─── */
     .content { padding: 32px 40px 52px; display: flex; flex-direction: column; gap: 24px; flex: 1; }
@@ -385,7 +407,8 @@
 
     /* Dry-run tooltip */
     .dry-run { position: absolute; top: calc(100% + 8px); right: 0; background: #120b0b; color: #f0ede8; border-radius: 10px; padding: 14px 16px; width: 268px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transform: translateY(-4px); transition: all 0.18s; z-index: 50; text-align: left; }
-    .btn-solid-dark:hover .dry-run { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .btn-solid-dark:hover .dry-run,
+    .tb-cta:hover .dry-run { opacity: 1; pointer-events: auto; transform: translateY(0); }
     .dr-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(240,237,232,0.4); margin-bottom: 10px; }
     .dr-list { display: flex; flex-direction: column; gap: 6px; }
     .dr-item { display: flex; gap: 7px; font-size: 11px; color: rgba(240,237,232,0.75); line-height: 1.4; }
@@ -481,34 +504,28 @@
 
   <header class="topbar">
     <div class="topbar-left">
-      <div class="topbar-date">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
       <nav class="breadcrumb">
-        <span>›</span>
-        <a href="invoices.html">All Invoices</a>
+        <a href="dashboard.html">Dashboard</a>
         <span class="bc-sep">›</span>
-        <span class="bc-cur">INV-1048</span>
+        <span class="bc-cur">INV-1027</span>
       </nav>
     </div>
     <div class="topbar-right">
+      <button class="tb-cta">
+        ✦ Confirm hold &amp; notify Praxis <span class="arrow">→</span>
+        <div class="dry-run">
+          <div class="dr-label">If you proceed, Witness will:</div>
+          <div class="dr-list">
+            <div class="dr-item"><span class="dr-num">1.</span><span>Confirm hold on <strong style="color:#f0ede8">INV-1027</strong> · reason "duplicate of INV-1024"</span></div>
+            <div class="dr-item"><span class="dr-num">2.</span><span>Email <strong style="color:#f0ede8">Praxis Logistics</strong> to retract or reissue</span></div>
+            <div class="dr-item"><span class="dr-num">3.</span><span>Mark <strong style="color:#f0ede8">PO-7718</strong> as fully invoiced — block future re-bills</span></div>
+          </div>
+          <div class="dr-foot">All actions are reversible · You'll review each before sending</div>
+        </div>
+      </button>
       <div class="health-chip">
         <div class="health-dot"></div>
         <span>All systems healthy</span>
-      </div>
-      <button class="btn-outline">✦ Ask Witness</button>
-      <button class="btn-outline">Share</button>
-      <div style="position:relative">
-        <button class="btn-solid-dark">
-          Take action ▾
-          <div class="dry-run">
-            <div class="dr-label">If you proceed, Witness will:</div>
-            <div class="dr-list">
-              <div class="dr-item"><span class="dr-num">1.</span><span>Send credit memo request to <strong style="color:#f0ede8">Brightline</strong> ($280, 2 units)</span></div>
-              <div class="dr-item"><span class="dr-num">2.</span><span>Nudge <strong style="color:#f0ede8">J. Park</strong> with attached GRN evidence</span></div>
-              <div class="dr-item"><span class="dr-num">3.</span><span>Flag $42 freight variance for your review</span></div>
-            </div>
-            <div class="dr-foot">All actions are reversible · You'll review each before sending</div>
-          </div>
-        </button>
       </div>
       <div class="avatar">MC</div>
     </div>
@@ -518,20 +535,20 @@
 
     <!-- ─── PAGE HEADING ─── -->
     <div style="display:flex;flex-direction:column;gap:10px">
-      <a href="#" style="align-self:flex-start;font-size:13px;font-weight:500;color:#45556c;text-decoration:none;display:flex;align-items:center;gap:4px;">← All Invoices</a>
+      <a href="dashboard.html" style="align-self:flex-start;font-size:13px;font-weight:500;color:#45556c;text-decoration:none;display:flex;align-items:center;gap:4px;">← Dashboard</a>
       <div class="page-hd">
         <div class="page-hd-left">
-          <h1 class="ptitle">INV-1048 &nbsp;—&nbsp; Brightline Office Supply</h1>
-          <div class="page-sub">3-way match exception &nbsp;·&nbsp; PO-7721 &nbsp;·&nbsp; Amazon Business &nbsp;·&nbsp; Due Apr 30, 2025</div>
+          <h1 class="ptitle">INV-1027 &nbsp;—&nbsp; Praxis Logistics</h1>
+          <div class="page-sub">Duplicate auto-held &nbsp;·&nbsp; PO-7718 &nbsp;·&nbsp; ERP &nbsp;·&nbsp; Detected Apr 28 · 2:14 AM</div>
         </div>
         <div class="hd-actions">
           <div style="position:relative;display:inline-block;" class="approve-wrap">
             <button style="background:#f4f4f4;border:1.5px solid #e9e9e9;border-radius:999px;padding:0 20px;height:32px;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:#adadad;cursor:not-allowed;white-space:nowrap;display:flex;align-items:center;gap:6px;" disabled>
-              Approve payment
+              Release for payment
             </button>
             <div class="approve-tooltip">
-              <strong>Cannot approve yet</strong><br>2 match blockers must be resolved before payment can be approved.<br><br>
-              <span style="color:#adadad;">1. Quantity mismatch — credit memo pending<br>2. GRN short-receipt needs vendor confirmation</span>
+              <strong>Witness has held this</strong><br>Same PO and total were already paid as INV-1024 on Apr 26. Releasing payment now would pay Praxis twice for the same shipment.<br><br>
+              <span style="color:#adadad;">Override requires AP-lead sign-off and a written reason.</span>
             </div>
           </div>
         </div>
@@ -543,41 +560,41 @@
       <div class="stat-card">
         <div class="stat-inner">
           <div class="stat-lbl">Billed amount</div>
-          <div class="stat-num">$8,420</div>
-          <div class="stat-sub">As invoiced · 12 units</div>
+          <div class="stat-num">$890.40</div>
+          <div class="stat-sub">INV-1027 · 1 line (freight)</div>
         </div>
       </div>
       <div class="stat-card" style="background:#f0fdf4;border-color:#bbf7d0;">
         <div class="stat-inner">
-          <div class="stat-lbl" style="color:#15803d;">Corrected payable</div>
-          <div class="stat-num green">$7,016</div>
-          <div class="stat-sub">10 units × $701.67 · after credit memo</div>
+          <div class="stat-lbl" style="color:#15803d;">Already paid</div>
+          <div class="stat-num green">$890.40</div>
+          <div class="stat-sub">INV-1024 · ACH · Apr 26</div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-inner">
-          <div class="stat-lbl">Qty mismatch</div>
-          <div class="stat-num red">−$280</div>
-          <div class="stat-sub">2 units billed, not received</div>
+          <div class="stat-lbl">Duplicate exposure</div>
+          <div class="stat-num red">−$890.40</div>
+          <div class="stat-sub">If released in error</div>
         </div>
       </div>
       <div class="stat-card">
         <div class="stat-inner">
-          <div class="stat-lbl">Freight variance</div>
-          <div class="stat-num amber">$42</div>
-          <div class="stat-sub">Not in PO · needs review</div>
+          <div class="stat-lbl">Vendor pattern</div>
+          <div class="stat-num amber">2 / 12 mo</div>
+          <div class="stat-sub">Praxis · $1,640 recovered prior</div>
         </div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" style="background:#f0fdf4;border-color:#bbf7d0;">
         <div class="stat-inner">
-          <div class="stat-lbl">Discount at risk</div>
-          <div class="stat-num amber">−$140</div>
-          <div class="stat-sub">2% of $7,016 · expires Apr 30</div>
+          <div class="stat-lbl" style="color:#15803d;">Net exposure</div>
+          <div class="stat-num green">$0.00</div>
+          <div class="stat-sub">Held before payment · safe</div>
         </div>
       </div>
     </div>
     <div style="font-size:11px;color:#adadad;margin-top:-16px;padding-left:2px;">
-      Net exposure if unresolved by Apr 30: <strong style="color:#dc2626;">−$420.32</strong> &nbsp;=&nbsp; $280 overbilling + $140 discount lost + $42 freight &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How is this calculated?</span>
+      Witness auto-held this at <strong style="color:#0b0d12;">2:14 AM</strong> — payment will not go out unless you override. Confirm the hold or release to AP queue. &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How was this detected?</span>
     </div>
 
     <!-- ─── AI INSIGHT BANNER ─── -->
@@ -587,7 +604,7 @@
         Witness AI
       </div>
       <div class="ai-insight-txt">
-        <strong>2 match exceptions detected.</strong> Quantity: PO ordered 12 units, GRN-2043 confirms 10 received (2 damaged in transit), invoice bills 12 — corrected payable is <strong>$7,016.70</strong>. Freight $42 has no PO backing — check contract tolerance before disputing. Early payment discount (2% = $140.33) expires Apr 30. Approval from J. Park is a downstream consequence of the match block, not a separate blocker.
+        <strong>Duplicate detected and auto-held.</strong> INV-1024 ($890.40) was already paid Apr 26 via ACH for the same PO-7718 and shipment SHP-2241. INV-1027 arrived at 2:13 AM with identical vendor, total, and PO; I flagged it 1 minute later and removed it from the AP queue. No payment will go out. The cleanest action is to ask Praxis to retract the re-bill — vendor confirmed both prior dupes within 24h.
       </div>
     </div>
 
@@ -602,88 +619,82 @@
           <div class="field-list">
             <div class="field-row">
               <span class="field-label">Status</span>
-              <span class="field-val"><span class="badge blocked"><span class="bdot"></span>Blocked</span></span>
+              <span class="field-val"><span class="badge approved" style="background:#dcfce7;color:#15803d;"><span class="bdot"></span>Duplicate held</span></span>
             </div>
-            <div class="field-row"><span class="field-label">Invoice #</span><span class="field-val">INV-1048</span></div>
-            <div class="field-row"><span class="field-label">PO reference</span><span class="field-val">PO-7721</span></div>
-            <div class="field-row"><span class="field-label">GRN reference</span><span class="field-val">GRN-2043</span></div>
-            <div class="field-row"><span class="field-label">Invoice date</span><span class="field-val">Apr 24, 2025</span></div>
-            <div class="field-row"><span class="field-label">Payment due &amp; discount expires</span><span class="field-val red">Apr 30 · 2 days</span></div>
-            <div class="field-row"><span class="field-label">Vendor</span><span class="field-val">Brightline Office</span></div>
-            <div class="field-row"><span class="field-label">Source</span><span class="field-val"><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></span></div>
-            <div class="field-row"><span class="field-label">Requester</span><span class="field-val">Nina Lee</span></div>
+            <div class="field-row"><span class="field-label">Invoice #</span><span class="field-val">INV-1027</span></div>
+            <div class="field-row"><span class="field-label">PO reference</span><span class="field-val">PO-7718</span></div>
+            <div class="field-row"><span class="field-label">Shipment</span><span class="field-val">SHP-2241</span></div>
+            <div class="field-row"><span class="field-label">Prior paid invoice</span><span class="field-val">INV-1024 · Apr 26</span></div>
+            <div class="field-row"><span class="field-label">Invoice date</span><span class="field-val">Apr 27, 2025</span></div>
+            <div class="field-row"><span class="field-label">Received</span><span class="field-val">Apr 28 · 2:13 AM</span></div>
+            <div class="field-row"><span class="field-label">Held since</span><span class="field-val">Apr 28 · 2:14 AM</span></div>
+            <div class="field-row"><span class="field-label">Vendor</span><span class="field-val">Praxis Logistics</span></div>
+            <div class="field-row"><span class="field-label">Source</span><span class="field-val"><span class="src-chip src-erp"><span class="src-dot"></span>ERP · vendor portal</span></span></div>
+            <div class="field-row"><span class="field-label">Priority</span><span class="field-val">P3 · low</span></div>
             <div class="field-row">
-              <span class="field-label">Approver</span>
+              <span class="field-label">Reviewer</span>
               <span class="field-val">
                 <div class="field-avatar">
-                  <div class="fa-circle">JP</div>
-                  J. Park
+                  <div class="fa-circle" style="background:#155dfc">MC</div>
+                  M. Chen
                 </div>
               </span>
             </div>
-            <div class="field-row"><span class="field-label">Department</span><span class="field-val">Facilities</span></div>
+            <div class="field-row"><span class="field-label">Department</span><span class="field-val">Logistics</span></div>
           </div>
         </div>
 
         <div class="lcol-section">
           <div class="section-title">
-            3-way match blockers
-            <span class="section-title-badge">2</span>
+            Duplicate evidence
+            <span class="section-title-badge" style="background:#16a34a;">1</span>
           </div>
-          <div style="font-size:10px;color:#adadad;margin-bottom:8px;margin-top:-6px;">These must be resolved before approval can proceed</div>
+          <div style="font-size:10px;color:#adadad;margin-bottom:8px;margin-top:-6px;">Why Witness held this — review before confirming or releasing</div>
           <div class="blocker-list">
             <div class="blocker-item">
-              <div class="blocker-ico">⚠</div>
+              <div class="blocker-ico">🚨</div>
               <div class="blocker-body">
-                <div class="blocker-title">Quantity mismatch</div>
-                <div class="blocker-desc">PO: 12 units · GRN: 10 received · Invoice: 12 billed. Verify whether 2 units are in transit or never shipped before issuing credit memo.</div>
-                <div class="blocker-impact">Overbilling: −$280.00 · Corrected payable: $7,016.70</div>
-              </div>
-            </div>
-            <div class="blocker-item" style="background:#fdf2d4;border-color:rgba(233,180,76,0.3);">
-              <div class="blocker-ico">🚚</div>
-              <div class="blocker-body">
-                <div class="blocker-title" style="color:#b17728;">Freight variance — needs review</div>
-                <div class="blocker-desc">$42 freight on invoice line 11 has no PO backing. Check vendor contract for freight tolerance before disputing.</div>
-                <div class="blocker-impact" style="color:#b17728;">If outside tolerance: +$42.00 to dispute</div>
+                <div class="blocker-title">Matches INV-1024 (paid Apr 26) on 6 of 7 signals</div>
+                <div class="blocker-desc" style="margin-bottom:6px;">PO-7718 · Shipment SHP-2241 · Vendor Praxis · Total $890.40 · Tax $73.40 · Bill-to address — all identical. Only the invoice number and submission timestamp differ.</div>
+                <div class="blocker-impact">Impact if released: −$890.40 paid twice for the same shipment</div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="lcol-section" style="background:#f7f7f7;border-radius:0;">
-          <div class="section-title" style="color:#45556c;">Approval workflow</div>
-          <div style="font-size:11px;color:#adadad;margin-bottom:8px;margin-top:-6px;">Separate from 3-way match · unblocks after match resolves</div>
+          <div class="section-title" style="color:#45556c;">Auto-hold status</div>
+          <div style="font-size:11px;color:#adadad;margin-bottom:8px;margin-top:-6px;">Held by Witness · no approval routed · safe until you act</div>
           <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:white;border:1px solid #e9e9e9;border-radius:10px;">
-            <div class="fa-circle" style="width:28px;height:28px;font-size:10px;background:#e9b44c;flex-shrink:0;">JP</div>
+            <div class="fa-circle" style="width:28px;height:28px;font-size:10px;background:#ff6900;flex-shrink:0;">✦</div>
             <div style="flex:1">
-              <div style="font-size:12px;font-weight:600;color:#0b0d12;">J. Park</div>
-              <div style="font-size:11px;color:#adadad;">Director of Finance · waiting 3 days</div>
+              <div style="font-size:12px;font-weight:600;color:#0b0d12;">Witness AI</div>
+              <div style="font-size:11px;color:#adadad;">Auto-held 1 min after intake · 98% confidence</div>
             </div>
-            <span class="badge waiting" style="font-size:10px;"><span class="bdot"></span>Pending</span>
+            <span class="badge approved" style="font-size:10px;background:#dcfce7;color:#15803d;"><span class="bdot" style="background:#16a34a;"></span>Held</span>
           </div>
-          <div style="font-size:11px;color:#dc2626;margin-top:8px;">Escalation to Controller in 2 days if no response</div>
+          <div style="font-size:11px;color:#45556c;margin-top:8px;">Auto-archive in 7 days if no override — vendor will receive a polite retract request.</div>
         </div>
 
         <div class="lcol-section">
           <div class="section-title">✦ Recommended next steps</div>
           <div class="next-steps">
             <button class="btn-step-primary">
-              Confirm GRN with vendor — 2 units
-              <span class="auto-pill">STEP 1</span>
-            </button>
-            <button class="btn-step-primary" style="background:#45556c;">
-              Request credit memo $280
+              Confirm hold &amp; notify Praxis to retract
               <span class="auto-pill">AUTO</span>
             </button>
             <button class="btn-step-secondary btn-step-ai">
               <div class="step-ico" style="background:#dcfce7;border-color:rgba(22,163,74,0.3)">✦</div>
-              Nudge J. Park — discount expires Apr 30
+              Ask vendor: re-bill or genuine reissue?
               <span class="auto-pill-green">AUTO</span>
             </button>
             <button class="btn-step-secondary">
               <div class="step-ico">📎</div>
-              Review freight vs. vendor contract
+              Open INV-1024 side-by-side
+            </button>
+            <button class="btn-step-secondary" style="border-color:rgba(220,38,38,0.35);color:#b91c1c;">
+              <div class="step-ico" style="background:#fee2e2;border-color:rgba(220,38,38,0.25);color:#dc2626;">⚠</div>
+              Override hold — release for payment
             </button>
             <button class="btn-add-note">+ Add case note</button>
           </div>
@@ -695,15 +706,15 @@
       <div class="center-col">
         <div class="center-tabs">
           <button class="ctab active" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
-          <button class="ctab" data-tab="match" onclick="switchTab(this)">Match summary</button>
+          <button class="ctab" data-tab="match" onclick="switchTab(this)">Duplicate comparison</button>
           <button class="ctab" data-tab="financial" onclick="switchTab(this)">Financial impact</button>
-          <button class="ctab" data-tab="comments" onclick="switchTab(this)">Comments (3)</button>
+          <button class="ctab" data-tab="comments" onclick="switchTab(this)">Comments (2)</button>
         </div>
 
         <!-- ─── TAB 1: Timeline ─── -->
         <div class="tab-panel active" id="tab-timeline" style="flex-direction:column;">
           <div class="tl-header">
-            <div class="tl-header-title">PO to Payment Journey</div>
+            <div class="tl-header-title">PO-7718 Journey — fully invoiced, second bill arrived</div>
             <button class="tl-collapse-btn" onclick="collapseAll()">Collapse all ↑</button>
           </div>
           <div class="timeline">
@@ -716,63 +727,105 @@
                   <div>
                     <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
                     <div class="tl-step-name">PO created</div>
-                    <div class="tl-step-desc">PO-7721 created for 12 units of Monitor Arm Pro. Budget approved by Nina Lee.</div>
-                  </div>
-                  <div class="tl-step-right">
-                    <span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span>
-                    <div class="tl-time">Apr 15 · 9:12 AM</div>
-                  </div>
-                </div>
-                <div class="tl-expanded">
-                  <div class="te-inner">
-                    <div class="te-row"><span class="te-k">PO amount</span><span class="te-v ok">$8,420.00 approved</span></div>
-                    <div class="te-row"><span class="te-k">Units</span><span class="te-v">12 × Monitor Arm Pro</span></div>
-                    <div class="te-row"><span class="te-k">Approved by</span><span class="te-v">Nina Lee · Facilities</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tl-step tl-done">
-              <div class="tl-line"></div>
-              <div class="tl-dot done">✓</div>
-              <div class="tl-content" onclick="toggleStep(this)">
-                <div class="tl-main-row">
-                  <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">Order delivered — partial</div>
-                    <div class="tl-step-desc">10 of 12 units delivered. Nina Lee signed GRN-2043 for 10 units only. 2 units noted as damaged at warehouse by driver.</div>
-                  </div>
-                  <div class="tl-step-right">
-                    <span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span>
-                    <div class="tl-time">Apr 23 · 2:41 PM</div>
-                  </div>
-                </div>
-                <div class="tl-expanded">
-                  <div class="te-inner">
-                    <div class="te-row"><span class="te-k">GRN number</span><span class="te-v">GRN-2043</span></div>
-                    <div class="te-row"><span class="te-k">Qty received</span><span class="te-v warn">10 of 12 ordered</span></div>
-                    <div class="te-row"><span class="te-k">Short receipt reason</span><span class="te-v">2 units damaged in transit — left at warehouse</span></div>
-                    <div class="te-row"><span class="te-k">Signed by</span><span class="te-v">Nina Lee · Facilities</span></div>
-                    <div class="te-row"><span class="te-k">Next step</span><span class="te-v warn">Confirm with Brightline: in transit or never shipped?</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tl-step tl-done">
-              <div class="tl-line"></div>
-              <div class="tl-dot done">✓</div>
-              <div class="tl-content" onclick="toggleStep(this)">
-                <div class="tl-main-row">
-                  <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">Invoice received</div>
-                    <div class="tl-step-desc">Invoice INV-1048 received for $8,420.00 (12 units billed).</div>
+                    <div class="tl-step-desc">PO-7718 created for freight on shipment SHP-2241 — Praxis Logistics. One line, lump-sum $817 + tax.</div>
                   </div>
                   <div class="tl-step-right">
                     <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
-                    <div class="tl-time">Apr 24 · 9:05 AM</div>
+                    <div class="tl-time">Apr 18 · 11:04 AM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">PO amount</span><span class="te-v ok">$890.40 approved</span></div>
+                    <div class="te-row"><span class="te-k">Scope</span><span class="te-v">Freight · SHP-2241 (1 shipment)</span></div>
+                    <div class="te-row"><span class="te-k">Approved by</span><span class="te-v">N. Lee · Logistics</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                    <div class="tl-step-name">Shipment delivered</div>
+                    <div class="tl-step-desc">SHP-2241 delivered to SF DC. GRN-2118 logged. Freight service fully rendered.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
+                    <div class="tl-time">Apr 22 · 4:18 PM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">GRN number</span><span class="te-v">GRN-2118</span></div>
+                    <div class="te-row"><span class="te-k">Status</span><span class="te-v ok">Complete · no exceptions</span></div>
+                    <div class="te-row"><span class="te-k">Signed by</span><span class="te-v">N. Lee · Logistics</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                    <div class="tl-step-name">INV-1024 received &amp; matched</div>
+                    <div class="tl-step-desc">First invoice from Praxis. 3-way match against PO-7718 + GRN-2118 passed cleanly.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
+                    <div class="tl-time">Apr 24 · 10:22 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">$</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Paid</span></div>
+                    <div class="tl-step-name" style="color:#15803d;">INV-1024 PAID</div>
+                    <div class="tl-step-desc">$890.40 paid to Praxis via ACH. Vendor confirmed receipt same day. PO-7718 marked fully invoiced.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>ACH</span>
+                    <div class="tl-time">Apr 26 · 9:00 AM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">Method</span><span class="te-v">ACH · bank on file (verified Mar 2025)</span></div>
+                    <div class="te-row"><span class="te-k">Amount</span><span class="te-v ok">$890.40</span></div>
+                    <div class="te-row"><span class="te-k">Vendor ack</span><span class="te-v ok">Receipt confirmed · Apr 26 · 11:42 AM</span></div>
+                    <div class="te-row"><span class="te-k">PO status</span><span class="te-v ok">PO-7718 fully invoiced — closed</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Received</span></div>
+                    <div class="tl-step-name">INV-1027 arrived — second invoice on same PO</div>
+                    <div class="tl-step-desc">Vendor portal upload from Praxis. Same PO, same shipment, same total. 2 days after INV-1024 was paid.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>Vendor portal</span>
+                    <div class="tl-time">Apr 28 · 2:13 AM</div>
                   </div>
                 </div>
               </div>
@@ -785,79 +838,41 @@
                 <div class="tl-main-row">
                   <div>
                     <div class="tl-tags">
-                      <span class="tl-tag tt-issues">2 issues</span>
+                      <span class="tl-tag tt-issues">Held</span>
                       <span class="tl-tag tt-ai">✦ Witness AI</span>
                     </div>
-                    <div class="tl-step-name warn">3-way match exception</div>
-                    <div class="tl-step-desc">Quantity mismatch and freight variance detected automatically.</div>
+                    <div class="tl-step-name warn">Auto-held as duplicate</div>
+                    <div class="tl-step-desc">Witness removed INV-1027 from the AP queue 1 minute after intake. No payment routed.</div>
                     <div class="tl-ai-annotation">
                       <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected</div>
-                      <strong>Qty mismatch:</strong> PO ordered 12, GRN-2043 shows 10 received, invoice bills 12 — potential overbilling of $280. Corrected payable: $7,016.70. Also found $42 freight on invoice line 11 with no PO backing — check vendor contract before disputing.
+                      <strong>6 of 7 signals match INV-1024:</strong> same PO-7718, same shipment SHP-2241, same vendor Praxis, same total $890.40, same tax $73.40, same bill-to. Only the invoice number and submission channel differ. PO-7718 is already marked fully invoiced.
                     </div>
                   </div>
                   <div class="tl-step-right">
                     <span class="src-chip src-witness"><span class="src-dot"></span>Witness AI</span>
-                    <div class="tl-time">Apr 24 · 9:06 AM</div>
+                    <div class="tl-time">Apr 28 · 2:14 AM</div>
                   </div>
                 </div>
                 <div class="tl-expanded open">
                   <div class="te-inner">
-                    <div class="te-row"><span class="te-k">PO qty</span><span class="te-v">12 units ordered</span></div>
-                    <div class="te-row"><span class="te-k">GRN qty (GRN-2043)</span><span class="te-v warn">10 units received · signed Nina Lee</span></div>
-                    <div class="te-row"><span class="te-k">Invoice qty</span><span class="te-v crit">12 billed — mismatch</span></div>
-                    <div class="te-row"><span class="te-k">Corrected payable</span><span class="te-v ok">$7,016.70 (10 × $701.67)</span></div>
-                    <div class="te-row"><span class="te-k">Freight charge</span><span class="te-v warn">$42 · not in PO · check contract tolerance</span></div>
-                    <div class="te-row"><span class="te-k">Ran in</span><span class="te-v">0.6s</span></div>
+                    <div class="te-row"><span class="te-k">PO reference</span><span class="te-v warn">PO-7718 · already fully invoiced (INV-1024)</span></div>
+                    <div class="te-row"><span class="te-k">Shipment ref</span><span class="te-v warn">SHP-2241 · GRN-2118 already closed</span></div>
+                    <div class="te-row"><span class="te-k">Total match</span><span class="te-v warn">$890.40 to the cent</span></div>
+                    <div class="te-row"><span class="te-k">Days since INV-1024 paid</span><span class="te-v warn">2 days</span></div>
+                    <div class="te-row"><span class="te-k">Action taken</span><span class="te-v ok">Removed from AP queue · payment not routed</span></div>
+                    <div class="te-row"><span class="te-k">Ran in</span><span class="te-v">0.3s</span></div>
                     <div class="te-conf">
                       <span class="te-conf-label">Confidence</span>
-                      <div class="te-conf-bar"><div class="te-conf-fill" style="width:96%"></div></div>
-                      <span class="te-conf-val">96%</span>
+                      <div class="te-conf-bar"><div class="te-conf-fill" style="width:98%"></div></div>
+                      <span class="te-conf-val">98%</span>
                     </div>
                     <div class="te-sources">
                       <span class="te-src-label">Sources</span>
-                      <span class="te-src-chip">PO-7721.pdf · L4</span>
-                      <span class="te-src-chip">GRN-2043.pdf · L7</span>
-                      <span class="te-src-chip">INV-1048.pdf · L3,L11</span>
+                      <span class="te-src-chip">INV-1024.pdf · all lines</span>
+                      <span class="te-src-chip">INV-1027.pdf · all lines</span>
+                      <span class="te-src-chip">PO-7718.pdf</span>
+                      <span class="te-src-chip">Payment ledger · Apr 26</span>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tl-step tl-done">
-              <div class="tl-line"></div>
-              <div class="tl-dot done">✓</div>
-              <div class="tl-content" onclick="toggleStep(this)">
-                <div class="tl-main-row">
-                  <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">Approval requested</div>
-                    <div class="tl-step-desc">Approval requested from J. Park, Director of Finance.</div>
-                  </div>
-                  <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>Approval</span>
-                    <div class="tl-time">Apr 24 · 9:10 AM</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tl-step tl-blocked">
-              <div class="tl-line"></div>
-              <div class="tl-dot blocked">✕</div>
-              <div class="tl-content" onclick="toggleStep(this)">
-                <div class="tl-main-row">
-                  <div>
-                    <div class="tl-tags"><span class="tl-tag tt-waiting">Approval workflow · 3 days</span></div>
-                    <div class="tl-step-name blocked">Awaiting approval — J. Park</div>
-                    <div class="tl-step-desc">Approval workflow triggered after 3-way match exception. J. Park has not responded since Apr 25. This is downstream of the match — approval cannot complete until mismatch is resolved.</div>
-                    <div class="tl-action-needed">
-                      <strong>Discount risk:</strong> Early payment discount (2% of $7,016.70 = $140.33) expires Apr 30 in 2 days. Witness can nudge J. Park or reroute to backup approver K. Ito.
-                    </div>
-                  </div>
-                  <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>Approval</span>
-                    <div class="tl-time">Apr 25 · 9:12 AM</div>
                   </div>
                 </div>
               </div>
@@ -868,12 +883,12 @@
               <div class="tl-content">
                 <div class="tl-main-row">
                   <div>
-                    <div class="tl-tags"><span class="tl-tag tt-future">Projected</span></div>
-                    <div class="tl-step-name muted">Payment blocked</div>
-                    <div class="tl-step-desc">On hold until mismatches and approval are resolved.</div>
+                    <div class="tl-tags"><span class="tl-tag tt-future">Awaiting you</span></div>
+                    <div class="tl-step-name muted">Confirm hold &amp; notify vendor</div>
+                    <div class="tl-step-desc">One click confirms the hold and sends Praxis a polite retract request. Auto-archive in 7 days if no action.</div>
                   </div>
                   <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
+                    <span class="src-chip src-erp"><span class="src-dot"></span>Action</span>
                     <div class="tl-time">— pending —</div>
                   </div>
                 </div>
@@ -883,11 +898,11 @@
           </div><!-- /timeline -->
         </div><!-- /tab-timeline -->
 
-        <!-- ─── TAB 2: Match summary ─── -->
+        <!-- ─── TAB 2: Duplicate comparison ─── -->
         <div class="tab-panel" id="tab-match">
           <div class="ms-header">
-            <div class="ms-header-title">3-Way Match Results</div>
-            <span class="ms-badge">2 exceptions</span>
+            <div class="ms-header-title">INV-1024 (paid) vs INV-1027 (held)</div>
+            <span class="ms-badge">Likely duplicate · 98%</span>
           </div>
           <div class="ms-body">
 
@@ -895,96 +910,78 @@
             <div class="ms-ai-note">
               <div style="flex-shrink:0;font-size:14px">✦</div>
               <div class="ai-insight-txt">
-                <strong>Witness matched PO-7721 · GRN-2043 · INV-1048.</strong> Quantity exception: vendor invoiced 12 units, GRN confirms only 10 received. Corrected payable is <strong>$7,016.70</strong>. Verify whether 2 units are in transit before requesting credit memo. Freight $42 has no PO backing — check contract tolerance before disputing.
+                <strong>Witness compared INV-1024 against INV-1027.</strong> 6 of 7 signals are identical. The only differences are the invoice number itself and the submission channel — Praxis uploaded INV-1027 via the vendor portal at 2:13 AM, 2 days after INV-1024 was paid via email. PO-7718 is already fully invoiced. <strong>Most likely explanation:</strong> Praxis's billing system re-emitted the invoice when the portal sync caught up. Vendor confirmed both prior dupes within 24h.
               </div>
             </div>
 
-            <!-- GRN — first class document -->
+            <!-- Field comparison — the main card -->
+            <div class="ms-card" style="border-color:#dc2626;">
+              <div class="ms-card-head" style="background:#fee2e2;">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">📋</span> Field-by-field comparison
+                </div>
+                <span class="ms-card-status ms-status-mismatch">Likely duplicate</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Field</th><th>INV-1024 · paid</th><th>INV-1027 · held</th><th>Match</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Vendor</td><td>Praxis Logistics</td><td>Praxis Logistics</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">PO reference</td><td>PO-7718</td><td>PO-7718</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Shipment ref</td><td>SHP-2241</td><td>SHP-2241</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Total</td><td>$890.40</td><td>$890.40</td><td class="ok">✓ to the cent</td></tr>
+                  <tr><td class="label">Tax</td><td>$73.40</td><td>$73.40</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Bill-to address</td><td>SF DC · Dock 3</td><td>SF DC · Dock 3</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Invoice number</td><td>INV-1024</td><td class="warn">INV-1027</td><td class="warn">⚠ differs</td></tr>
+                  <tr><td class="label">Submission channel</td><td>Email · AP inbox</td><td class="warn">Vendor portal upload</td><td class="warn">⚠ differs</td></tr>
+                  <tr><td class="label">Payment status</td><td class="ok">Paid · Apr 26 · ACH</td><td class="crit">⏳ Held by Witness</td><td>—</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-conf-row" style="background:#fee2e2;border-top-color:rgba(220,38,38,0.2);">
+                <span class="ms-conf-label" style="color:#b91c1c;font-weight:600;">If released in error:</span>
+                <span class="ms-conf-val" style="color:#dc2626;font-size:14px;">−$890.40 paid twice for the same shipment</span>
+              </div>
+            </div>
+
+            <!-- Why might be legitimate -->
             <div class="ms-card" style="border-color:#e9b44c;">
               <div class="ms-card-head" style="background:#fdf2d4;">
                 <div class="ms-card-title">
-                  <span style="font-size:15px">📋</span> Goods Receipt Note (GRN-2043) — key document
+                  <span style="font-size:15px">⚖</span> The 2% — why this could still be legitimate
                 </div>
-                <span class="ms-card-status ms-status-warn">Partial receipt</span>
+                <span class="ms-card-status ms-status-warn">Worth a check</span>
               </div>
               <table class="ms-table">
-                <thead><tr><th>Field</th><th>Value</th><th>Note</th></tr></thead>
+                <thead><tr><th>Signal that differs</th><th>What it could mean</th></tr></thead>
                 <tbody>
-                  <tr><td class="label">GRN number</td><td>GRN-2043</td><td>—</td></tr>
-                  <tr><td class="label">Date received</td><td>Apr 23, 2025</td><td>2:41 PM</td></tr>
-                  <tr><td class="label">Qty received</td><td class="warn">10 of 12</td><td class="warn">2 units short · damaged in transit</td></tr>
-                  <tr><td class="label">Signed by</td><td>Nina Lee</td><td>Facilities dept.</td></tr>
-                  <tr><td class="label">Short receipt type</td><td class="warn">Damaged delivery</td><td>Driver confirmed · not signed for</td></tr>
-                  <tr><td class="label">Outstanding units</td><td class="crit">2 units</td><td class="crit">Confirm with Brightline: in transit or no further delivery?</td></tr>
+                  <tr><td class="label">Different invoice number (INV-1027 ≠ INV-1024)</td><td>A fraudulent re-bill would typically reuse the original number. A new number suggests Praxis's billing system genuinely issued a second document.</td></tr>
+                  <tr><td class="label">Different submission channel (portal, not email)</td><td>Praxis may have onboarded a new portal sync that re-emitted the open invoice. Could be a process artifact, not a re-bill.</td></tr>
+                  <tr><td class="label">2 days between invoices</td><td>Could be a corrected reissue (e.g., changed remit-to bank). Worth one message to confirm.</td></tr>
                 </tbody>
               </table>
               <div class="ms-conf-row" style="background:#fdf2d4;">
-                <span class="ms-conf-label">GRN is an auditable legal document — any amendment requires signatory and timestamp</span>
+                <span class="ms-conf-label" style="color:#b17728;">→ One message to Praxis resolves this in &lt; 1 day. AP-side script is pre-drafted.</span>
               </div>
             </div>
 
-            <!-- Quantity check -->
+            <!-- Vendor history -->
             <div class="ms-card">
               <div class="ms-card-head">
                 <div class="ms-card-title">
-                  <span style="font-size:15px">📦</span> Quantity check — PO vs GRN vs Invoice
+                  <span style="font-size:15px">📊</span> Praxis Logistics — 12-month pattern
                 </div>
-                <span class="ms-card-status ms-status-mismatch">Mismatch ✕</span>
+                <span class="ms-card-status ms-status-match">Vendor responds quickly</span>
               </div>
               <table class="ms-table">
-                <thead><tr><th>Document</th><th>Qty</th><th>Unit price</th><th>Line total</th><th>Status</th></tr></thead>
+                <thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead>
                 <tbody>
-                  <tr><td class="label">Purchase Order (PO-7721)</td><td>12</td><td>$701.67</td><td>$8,420.00</td><td class="ok">✓ Reference</td></tr>
-                  <tr><td class="label">Goods Receipt (GRN-2043)</td><td class="warn">10</td><td>—</td><td class="ok">$7,016.70</td><td class="warn">⚠ 2 units short</td></tr>
-                  <tr><td class="label">Invoice (INV-1048)</td><td class="crit">12</td><td>$701.67</td><td class="crit">$8,420.00</td><td class="crit">✕ Overbilled</td></tr>
+                  <tr><td class="label">Invoices submitted (12 mo)</td><td>62</td><td>Across all POs</td></tr>
+                  <tr><td class="label">Duplicates flagged by Witness</td><td class="warn">2</td><td>Both confirmed by vendor</td></tr>
+                  <tr><td class="label">$ recovered prior</td><td class="ok">$1,640.00</td><td>Both retractions received within 24h</td></tr>
+                  <tr><td class="label">Avg vendor response</td><td class="ok">14h</td><td>From hold to retract confirmation</td></tr>
                 </tbody>
               </table>
               <div class="ms-conf-row" style="background:#f0fdf4;border-top-color:#bbf7d0;">
-                <span class="ms-conf-label" style="color:#15803d;font-weight:600;">Corrected invoice amount:</span>
-                <span class="ms-conf-val" style="color:#16a34a;font-size:14px;">$7,016.70 &nbsp;(10 × $701.67)</span>
-              </div>
-              <div class="ms-conf-row">
-                <span class="ms-conf-label">Overbilling</span>
-                <span class="ms-conf-val" style="color:#dc2626;">−$280.00 to recover via credit memo</span>
-              </div>
-            </div>
-
-            <!-- Price check -->
-            <div class="ms-card">
-              <div class="ms-card-head">
-                <div class="ms-card-title">
-                  <span style="font-size:15px">💲</span> Unit price check
-                </div>
-                <span class="ms-card-status ms-status-match">Match ✓</span>
-              </div>
-              <table class="ms-table">
-                <thead><tr><th>Item</th><th>PO unit price</th><th>Invoice unit price</th><th>Variance</th></tr></thead>
-                <tbody>
-                  <tr><td class="label">Monitor Arm Pro</td><td>$701.67</td><td>$701.67</td><td class="ok">$0.00 — exact match</td></tr>
-                </tbody>
-              </table>
-              <div class="ms-conf-row">
-                <span class="ms-conf-label">Unit price correct — dispute is quantity only, not pricing</span>
-                <span class="ms-conf-val" style="color:#16a34a;">Clean ✓</span>
-              </div>
-            </div>
-
-            <!-- Freight — reframed -->
-            <div class="ms-card">
-              <div class="ms-card-head">
-                <div class="ms-card-title">
-                  <span style="font-size:15px">🚚</span> Freight &amp; additional charges
-                </div>
-                <span class="ms-card-status ms-status-warn">Check contract</span>
-              </div>
-              <table class="ms-table">
-                <thead><tr><th>Charge</th><th>In PO?</th><th>Amount</th><th>Next step</th></tr></thead>
-                <tbody>
-                  <tr><td class="label">Standard freight (invoice line 11)</td><td class="warn">Not in PO</td><td>$42.00</td><td class="warn">Check if within vendor contract freight tolerance</td></tr>
-                </tbody>
-              </table>
-              <div class="ms-conf-row" style="background:#fdf2d4;">
-                <span class="ms-conf-label" style="color:#b17728;">Do not dispute until contract terms confirmed — many agreements include ±3–5% or fixed freight allowance</span>
+                <span class="ms-conf-label" style="color:#15803d;">Both prior Praxis dupes were billing-system errors — no dispute, no escalation</span>
               </div>
             </div>
 
@@ -994,14 +991,15 @@
                 <div class="ms-card-title">
                   <span style="font-size:15px">📄</span> Source documents
                 </div>
-                <span style="font-size:11px;color:#adadad;">Apr 24 · 9:06 AM · 96% confidence · 0.6s</span>
+                <span style="font-size:11px;color:#adadad;">Apr 28 · 2:14 AM · 98% confidence · 0.3s</span>
               </div>
               <table class="ms-table">
                 <thead><tr><th>Document</th><th>Source</th><th>Key fields extracted</th></tr></thead>
                 <tbody>
-                  <tr><td class="label">PO-7721.pdf</td><td><span class="src-chip src-amazon" style="font-size:10px"><span class="src-dot"></span>Amazon Business</span></td><td>Qty (12), unit price ($701.67), vendor, date, line items</td></tr>
-                  <tr><td class="label">GRN-2043.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>Qty received (10), short reason, signatory (Nina Lee), date</td></tr>
-                  <tr><td class="label">INV-1048.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>Qty billed (12), unit price, freight ($42 L11), due date</td></tr>
+                  <tr><td class="label">INV-1024.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>Email · AP inbox</span></td><td>Vendor, PO, shipment, total $890.40, tax, bill-to</td></tr>
+                  <tr><td class="label">INV-1027.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>Vendor portal</span></td><td>Vendor, PO, shipment, total $890.40, tax, bill-to</td></tr>
+                  <tr><td class="label">PO-7718.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>Approved $890.40, scope SHP-2241, status: fully invoiced</td></tr>
+                  <tr><td class="label">Payment ledger</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>ACH Apr 26 · $890.40 · Praxis · vendor ack same day</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1013,98 +1011,98 @@
         <div class="tab-panel" id="tab-financial">
           <div class="fi-header">
             <div class="fi-header-title">Financial Impact</div>
-            <span class="badge blocked"><span class="bdot"></span>High priority</span>
+            <span class="badge approved" style="background:#dcfce7;color:#15803d;"><span class="bdot" style="background:#16a34a;"></span>Caught pre-payment</span>
           </div>
           <div class="fi-body">
 
-            <!-- Summary strip — corrected numbers -->
+            <!-- Summary strip -->
             <div class="fi-summary-strip">
               <div class="fi-sum-cell">
-                <div class="fi-sum-label">Invoiced (vendor claim)</div>
-                <div class="fi-sum-val">$8,420.00</div>
-                <div class="fi-sum-sub">12 units × $701.67</div>
+                <div class="fi-sum-label">Vendor claim (INV-1027)</div>
+                <div class="fi-sum-val">$890.40</div>
+                <div class="fi-sum-sub">Second bill on PO-7718</div>
               </div>
               <div class="fi-sum-cell" style="background:#f0fdf4;">
-                <div class="fi-sum-label" style="color:#15803d;">Corrected payable</div>
-                <div class="fi-sum-val green">$7,016.70</div>
-                <div class="fi-sum-sub">10 units × $701.67 · after credit memo</div>
-              </div>
-              <div class="fi-sum-cell">
-                <div class="fi-sum-label">Freight (unresolved)</div>
-                <div class="fi-sum-val amber">$42.00</div>
-                <div class="fi-sum-sub">Pending contract check</div>
+                <div class="fi-sum-label" style="color:#15803d;">Already paid (INV-1024)</div>
+                <div class="fi-sum-val green">$890.40</div>
+                <div class="fi-sum-sub">ACH · Apr 26 · vendor ack'd</div>
               </div>
               <div class="fi-sum-cell" style="background:#fef2f2;">
-                <div class="fi-sum-label" style="color:#b91c1c;">Max exposure</div>
-                <div class="fi-sum-val red">−$422.33</div>
-                <div class="fi-sum-sub">If unresolved by Apr 30</div>
+                <div class="fi-sum-label" style="color:#b91c1c;">Exposure if released</div>
+                <div class="fi-sum-val red">−$890.40</div>
+                <div class="fi-sum-sub">Would pay Praxis twice</div>
+              </div>
+              <div class="fi-sum-cell" style="background:#f0fdf4;">
+                <div class="fi-sum-label" style="color:#15803d;">Net exposure now</div>
+                <div class="fi-sum-val green">$0.00</div>
+                <div class="fi-sum-sub">Held before AP queue</div>
               </div>
             </div>
 
-            <!-- Breakdown — correct math -->
+            <!-- Breakdown -->
             <div class="fi-breakdown">
               <div class="fi-breakdown-head">
-                <span class="fi-breakdown-title">Variance breakdown</span>
+                <span class="fi-breakdown-title">What's at stake</span>
               </div>
               <div class="fi-row">
-                <div class="fi-row-label"><span class="fi-row-ico">📦</span> Quantity overbilling — 2 units not received (2 × $701.67)</div>
-                <div class="fi-row-val red">−$280.00 <span style="font-size:10px;color:#adadad;font-weight:400;">to claim back</span></div>
+                <div class="fi-row-label"><span class="fi-row-ico">💸</span> Duplicate payment risk — if INV-1027 routed through AP without flag</div>
+                <div class="fi-row-val red">−$890.40 <span style="font-size:10px;color:#adadad;font-weight:400;">prevented</span></div>
               </div>
               <div class="fi-row">
-                <div class="fi-row-label"><span class="fi-row-ico">🚚</span> Freight charge — no PO backing (pending contract check)</div>
-                <div class="fi-row-val amber">$42.00 <span style="font-size:10px;color:#adadad;font-weight:400;">may be valid</span></div>
+                <div class="fi-row-label"><span class="fi-row-ico">⏱</span> Recovery cost — if paid then clawed back (AP labor + vendor goodwill)</div>
+                <div class="fi-row-val amber">~$120 <span style="font-size:10px;color:#adadad;font-weight:400;">avoided</span></div>
               </div>
               <div class="fi-row">
-                <div class="fi-row-label"><span class="fi-row-ico">⏰</span> Early payment discount — 2% of corrected payable $7,016.70</div>
-                <div class="fi-row-val red">−$140.33 <span style="font-size:10px;color:#adadad;font-weight:400;">expires Apr 30</span></div>
+                <div class="fi-row-label"><span class="fi-row-ico">✓</span> PO-7718 status — already closed and fully invoiced</div>
+                <div class="fi-row-val green">$890.40 paid · clean</div>
               </div>
               <div class="fi-row">
-                <div class="fi-row-label"><span class="fi-row-ico">✓</span> Unit price variance</div>
-                <div class="fi-row-val green">$0.00 — exact match</div>
+                <div class="fi-row-label"><span class="fi-row-ico">✓</span> Witness intervention time</div>
+                <div class="fi-row-val green">1 min after intake · 0 AP labor</div>
               </div>
-              <div class="fi-total-row">
-                <div class="fi-total-label">Maximum exposure if fully unresolved by Apr 30</div>
-                <div class="fi-total-val">−$422.33 <span style="font-size:11px;font-weight:400;color:#b91c1c;">(= $280 + $140.33 + $42 freight if valid)</span></div>
+              <div class="fi-total-row" style="background:#dcfce7;border-top-color:rgba(22,163,74,0.2);">
+                <div class="fi-total-label" style="color:#15803d;">Loss prevented by auto-hold</div>
+                <div class="fi-total-val" style="color:#16a34a;">$890.40 <span style="font-size:11px;font-weight:400;color:#45556c;">+ recovery cost avoided</span></div>
               </div>
             </div>
 
-            <!-- Scenarios — mutually exclusive, correct math -->
+            <!-- Scenarios -->
             <div class="fi-scenario">
-              <div class="fi-scenario-head">Resolution scenarios — what you actually pay</div>
+              <div class="fi-scenario-head">Resolution scenarios — what happens next</div>
 
               <div class="fi-scenario-row" style="background:#f0fdf4;">
                 <div class="scenario-dot" style="background:#16a34a"></div>
                 <div style="flex:1">
-                  <div class="fi-scenario-label">✦ Best case: Resolve today + approve freight</div>
-                  <div class="fi-scenario-desc">Confirm GRN short receipt with Brightline, get $280 credit memo, approve $42 freight, pay $7,058.70 by Apr 30 to capture 2% discount ($140.33 saved).</div>
+                  <div class="fi-scenario-label">✦ Most likely: confirm hold, vendor retracts</div>
+                  <div class="fi-scenario-desc">One message to Praxis confirming PO-7718 was already paid via INV-1024. Vendor retracts INV-1027 from portal within 24h (matches prior 2 cases). Case closes, no payment leaves.</div>
                 </div>
                 <div class="fi-scenario-outcome">
-                  <div class="val green">Pay $6,876.37</div>
-                  <div class="sub">$7,016.70 − $140.33 discount</div>
+                  <div class="val green">Pay $0.00</div>
+                  <div class="sub">Already paid $890.40 via INV-1024</div>
                 </div>
               </div>
 
               <div class="fi-scenario-row">
                 <div class="scenario-dot" style="background:#b17728"></div>
                 <div style="flex:1">
-                  <div class="fi-scenario-label">Resolve mismatch, miss discount window</div>
-                  <div class="fi-scenario-desc">Credit memo obtained, freight approved, but approval comes after Apr 30. Pay full corrected amount with freight included.</div>
+                  <div class="fi-scenario-label">Vendor claims legitimate reissue</div>
+                  <div class="fi-scenario-desc">Praxis says INV-1027 replaces INV-1024 (e.g., wrong remit-to bank on first version). Need to verify INV-1024 funds returned before paying INV-1027 — would be a swap, not a double-pay.</div>
                 </div>
                 <div class="fi-scenario-outcome">
-                  <div class="val" style="color:#b17728;">Pay $7,058.70</div>
-                  <div class="sub">$140.33 discount lost</div>
+                  <div class="val" style="color:#b17728;">Pay $890.40</div>
+                  <div class="sub">Only after INV-1024 reversal confirmed</div>
                 </div>
               </div>
 
               <div class="fi-scenario-row">
                 <div class="scenario-dot" style="background:#dc2626"></div>
                 <div style="flex:1">
-                  <div class="fi-scenario-label">Dispute freight, miss discount, no credit memo</div>
-                  <div class="fi-scenario-desc">Pay full invoice $8,420 without credit memo. Freight dispute open. Discount window missed. Overpayment risk of $280 + possible vendor dispute.</div>
+                  <div class="fi-scenario-label">Hold overridden without check</div>
+                  <div class="fi-scenario-desc">Someone clicks "Release for payment" without verifying. ACH runs the next cycle. Praxis is paid $890.40 twice for SHP-2241 — recovery via vendor refund or next-invoice offset, with AP labor cost.</div>
                 </div>
                 <div class="fi-scenario-outcome">
-                  <div class="val red">Pay $8,420.00</div>
-                  <div class="sub">$280 overpaid + $140 lost</div>
+                  <div class="val red">Pay $1,780.80</div>
+                  <div class="sub">−$890.40 to recover</div>
                 </div>
               </div>
 
@@ -1117,21 +1115,21 @@
         <div class="tab-panel" id="tab-comments" style="flex-direction:column;">
           <div class="cm-header">
             <div class="cm-header-title">Case comments</div>
-            <span style="font-size:12px;color:#adadad">3 comments</span>
+            <span style="font-size:12px;color:#adadad">2 comments</span>
           </div>
           <div class="cm-body">
 
-            <!-- Comment 1: AI -->
+            <!-- Comment 1: AI auto-detection -->
             <div class="comment-item">
               <div class="cm-av" style="background:#ff6900;font-size:11px">✦</div>
               <div class="cm-bubble">
                 <div class="cm-meta">
                   <span class="cm-author">Witness AI</span>
                   <span class="cm-role">Automated detection</span>
-                  <span class="cm-time">Apr 24 · 9:06 AM</span>
+                  <span class="cm-time">Apr 28 · 2:14 AM</span>
                 </div>
                 <div class="cm-text ai">
-                  Two exceptions detected on INV-1048. <strong>Quantity mismatch:</strong> Invoice bills 12 units; only 10 received per GRN-2043. <strong>Freight variance:</strong> $42 charge on invoice line 11 has no corresponding PO line. Recommended action: request credit memo for $280 and flag freight for approver review.
+                  Held INV-1027 as a likely duplicate of <strong>INV-1024</strong> (paid Apr 26 via ACH). 6 of 7 signals match — PO-7718, shipment SHP-2241, total $890.40, tax, vendor, bill-to. Only the invoice number and submission channel differ. PO-7718 is already marked fully invoiced. <strong>Action taken:</strong> removed from AP queue; no payment routed. Awaiting your confirmation to notify Praxis.
                 </div>
                 <div class="cm-actions">
                   <button class="cm-action-btn">Reply</button>
@@ -1142,42 +1140,25 @@
 
             <div class="cm-divider">
               <div class="cm-divider-line"></div>
-              <span>Apr 25</span>
+              <span>Apr 28</span>
               <div class="cm-divider-line"></div>
             </div>
 
-            <!-- Comment 2: User -->
+            <!-- Comment 2: AI pattern note -->
             <div class="comment-item">
-              <div class="cm-av" style="background:#45556c">NL</div>
+              <div class="cm-av" style="background:#ff6900;font-size:11px">✦</div>
               <div class="cm-bubble">
                 <div class="cm-meta">
-                  <span class="cm-author">Nina Lee</span>
-                  <span class="cm-role">Requester · Facilities</span>
-                  <span class="cm-time">Apr 25 · 10:14 AM</span>
+                  <span class="cm-author">Witness AI</span>
+                  <span class="cm-role">Pattern note</span>
+                  <span class="cm-time">Apr 28 · 2:15 AM</span>
                 </div>
-                <div class="cm-text">
-                  Confirmed — driver said 2 boxes were damaged on delivery and left at the warehouse. I signed for 10 only. Brightline should issue the credit. Can someone loop in their account rep?
+                <div class="cm-text ai">
+                  This is the 3rd duplicate from Praxis Logistics in 12 months. In the prior 2 cases (Aug 2024, Jan 2025), the vendor confirmed billing-system re-emission within 24h and retracted. No disputes, no escalation. Avg recovery: $820. <strong>Suggested:</strong> confirm hold and send the pre-drafted retract request — same script that worked the last two times.
                 </div>
                 <div class="cm-actions">
                   <button class="cm-action-btn">Reply</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Comment 3: Finance -->
-            <div class="comment-item">
-              <div class="cm-av" style="background:#155dfc">MC</div>
-              <div class="cm-bubble">
-                <div class="cm-meta">
-                  <span class="cm-author">M. Chen</span>
-                  <span class="cm-role">AP Analyst · Finance</span>
-                  <span class="cm-time">Apr 25 · 11:02 AM</span>
-                </div>
-                <div class="cm-text">
-                  Escalating to J. Park for sign-off on the partial payment approach. We need approval to hold the difference ($322) while credit memo is processed. Discount deadline is Apr 30 so please respond ASAP.
-                </div>
-                <div class="cm-actions">
-                  <button class="cm-action-btn">Reply</button>
+                  <button class="cm-action-btn">View prior cases (2)</button>
                 </div>
               </div>
             </div>
@@ -1195,61 +1176,63 @@
       <!-- RIGHT: AI context -->
       <div class="right-col">
 
-        <!-- Match triangle — enlarged and corrected -->
+        <!-- Duplicate snapshot — INV-1024 / PO / INV-1027 -->
         <div>
-          <div class="rs-title">3-way match snapshot <span class="rs-link">View full</span></div>
-          <div class="rs-meta">Apr 24, 2025 · 9:06 AM · 96% confidence</div>
+          <div class="rs-title">Duplicate snapshot <span class="rs-link">View full</span></div>
+          <div class="rs-meta">Apr 28, 2025 · 2:14 AM · 98% confidence</div>
 
           <svg viewBox="0 0 240 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
             <!-- edges -->
-            <line x1="48" y1="60" x2="120" y2="190" stroke="#e9e9e9" stroke-width="2" fill="none"/>
-            <line x1="48" y1="60" x2="192" y2="60" stroke="#e9e9e9" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
-            <line x1="120" y1="190" x2="192" y2="60" stroke="#dc2626" stroke-width="2.5" fill="none"/>
+            <line x1="120" y1="40" x2="48" y2="170" stroke="#16a34a" stroke-width="2" fill="none"/>
+            <line x1="120" y1="40" x2="192" y2="170" stroke="#e9e9e9" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+            <line x1="48" y1="170" x2="192" y2="170" stroke="#dc2626" stroke-width="2.5" fill="none" stroke-dasharray="6 3"/>
             <!-- edge labels -->
-            <rect x="55" y="117" width="50" height="18" rx="3" fill="white" stroke="#e9e9e9" stroke-width="1"/>
-            <text x="80" y="130" font-family="Inter" font-size="10" font-weight="600" fill="#45556c" text-anchor="middle">−2 units</text>
-            <rect x="96" y="50" width="48" height="18" rx="3" fill="white" stroke="#e9e9e9" stroke-width="1"/>
-            <text x="120" y="63" font-family="Inter" font-size="10" font-weight="600" fill="#b17728" text-anchor="middle">$42 frt?</text>
-            <rect x="140" y="117" width="62" height="18" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
-            <text x="171" y="130" font-family="Inter" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">+$280 ◆</text>
+            <rect x="40" y="97" width="62" height="18" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+            <text x="71" y="110" font-family="Inter" font-size="10" font-weight="700" fill="#15803d" text-anchor="middle">paid Apr 26</text>
+            <rect x="138" y="97" width="68" height="18" rx="3" fill="white" stroke="#e9e9e9" stroke-width="1"/>
+            <text x="172" y="110" font-family="Inter" font-size="10" font-weight="600" fill="#b17728" text-anchor="middle">2nd bill · held</text>
+            <rect x="80" y="186" width="80" height="18" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+            <text x="120" y="199" font-family="Inter" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">+$890.40 ◆</text>
             <!-- nodes -->
-            <circle cx="48" cy="60" r="28" fill="white" stroke="#e9e9e9" stroke-width="1.5"/>
-            <text x="48" y="55" font-family="Inter" font-size="11" font-weight="700" fill="#0b0d12" text-anchor="middle">PO</text>
-            <text x="48" y="69" font-family="Inter" font-size="9" fill="#adadad" text-anchor="middle">12 units</text>
-            <circle cx="192" cy="60" r="28" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
-            <text x="192" y="55" font-family="Inter" font-size="11" font-weight="700" fill="#dc2626" text-anchor="middle">Invoice</text>
-            <text x="192" y="69" font-family="Inter" font-size="9" fill="#dc2626" text-anchor="middle">12 billed</text>
-            <circle cx="120" cy="190" r="28" fill="white" stroke="#e9e9e9" stroke-width="1.5"/>
-            <text x="120" y="185" font-family="Inter" font-size="11" font-weight="700" fill="#0b0d12" text-anchor="middle">GRN</text>
-            <text x="120" y="199" font-family="Inter" font-size="9" fill="#adadad" text-anchor="middle">10 rcvd</text>
+            <circle cx="120" cy="40" r="28" fill="white" stroke="#e9e9e9" stroke-width="1.5"/>
+            <text x="120" y="36" font-family="Inter" font-size="10" font-weight="700" fill="#0b0d12" text-anchor="middle">PO-7718</text>
+            <text x="120" y="50" font-family="Inter" font-size="8" fill="#adadad" text-anchor="middle">fully invoiced</text>
+            <circle cx="48" cy="170" r="30" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+            <text x="48" y="166" font-family="Inter" font-size="10" font-weight="700" fill="#15803d" text-anchor="middle">INV-1024</text>
+            <text x="48" y="180" font-family="Inter" font-size="8" fill="#15803d" text-anchor="middle">paid · ACH</text>
+            <circle cx="192" cy="170" r="30" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+            <text x="192" y="166" font-family="Inter" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">INV-1027</text>
+            <text x="192" y="180" font-family="Inter" font-size="8" fill="#dc2626" text-anchor="middle">held</text>
           </svg>
 
           <div class="mt-legend">
-            <div class="mt-leg"><div class="mt-leg-dot" style="background:#dc2626"></div><div>◆ Primary — Invoice bills 12, GRN shows 10. Corrected payable: $7,016.70</div></div>
-            <div class="mt-leg"><div class="mt-leg-dot" style="background:#c8c8c8"></div><div>PO vs GRN — 2 units short (damaged in transit)</div></div>
-            <div class="mt-leg"><div class="mt-leg-dot" style="background:#b17728"></div><div>Freight $42 — check contract tolerance before disputing</div></div>
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:#dc2626"></div><div>◆ Primary — INV-1027 mirrors INV-1024. Risk: $890.40 paid twice if released.</div></div>
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:#16a34a"></div><div>INV-1024 closed PO-7718 cleanly on Apr 26 (ACH, vendor ack'd).</div></div>
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:#c8c8c8"></div><div>PO-7718 has no remaining scope — second invoice has no business basis.</div></div>
           </div>
         </div>
 
-        <!-- Approval status -->
+        <!-- Auto-hold status -->
         <div>
-          <div class="rs-title" style="margin-bottom:10px">Approval status</div>
+          <div class="rs-title" style="margin-bottom:10px">Auto-hold status</div>
           <div class="as-card">
             <div class="as-person">
-              <div class="as-av" style="background:#e9b44c">JP</div>
+              <div class="as-av" style="background:#ff6900">✦</div>
               <div>
-                <div class="as-name">J. Park</div>
-                <div class="as-role">Director of Finance</div>
+                <div class="as-name">Witness AI</div>
+                <div class="as-role">Auto-held · 98% confidence</div>
               </div>
               <div class="as-status">
-                <span class="badge waiting"><span class="bdot"></span>Pending</span>
+                <span class="badge approved" style="background:#dcfce7;color:#15803d;"><span class="bdot" style="background:#16a34a;"></span>Held</span>
               </div>
             </div>
-            <div class="as-field-row"><span class="as-field-label">Requested on</span><span class="as-field-val">Apr 24 · 9:10 AM</span></div>
-            <div class="as-field-row"><span class="as-field-label">Waiting</span><span class="as-field-val red">3 days</span></div>
-            <div class="as-field-row"><span class="as-field-label">Escalation rule</span><span class="as-field-val">After 5 days → Controller</span></div>
+            <div class="as-field-row"><span class="as-field-label">Detected</span><span class="as-field-val">Apr 28 · 2:14 AM</span></div>
+            <div class="as-field-row"><span class="as-field-label">Latency from intake</span><span class="as-field-val">1 min</span></div>
+            <div class="as-field-row"><span class="as-field-label">Routed to AP queue</span><span class="as-field-val">No · removed</span></div>
+            <div class="as-field-row"><span class="as-field-label">Reviewer</span><span class="as-field-val">M. Chen · AP Analyst</span></div>
+            <div class="as-field-row"><span class="as-field-label">Auto-archive in</span><span class="as-field-val">7 days if no override</span></div>
           </div>
-          <a class="view-chain">View approval chain →</a>
+          <a class="view-chain">View prior Praxis dupes (2) →</a>
         </div>
 
       </div><!-- /right-col -->
