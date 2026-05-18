@@ -416,6 +416,105 @@
     .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
     .sidebar.collapsed .nav-item.active { padding: 8px 0; }
     .sidebar.collapsed .nav-badge { display: none; }
+
+    /* ═══════════ REVISION: single-panel main + restructured AI blocks + folded timeline ═══════════ */
+
+    /* Single-panel main content (replaces .three-col grid) */
+    .main-panel { background: white; border: 2px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+
+    /* Restructured AI insight banner — structured key-fact grid (replaces paragraph) */
+    .ai-insight-banner.structured { flex-direction: column; align-items: stretch; gap: 0; padding: 14px 16px; }
+    .ai-banner-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .ai-banner-meta { font-size: 11px; color: #45556c; }
+    .ai-banner-meta strong { color: #0b0d12; font-weight: 600; }
+    .ai-key-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 12px; }
+    .ai-key-cell { background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 10px 12px; }
+    .ai-key-label { font-size: 10px; font-weight: 700; color: #d95b03; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .ai-key-val { font-size: 14px; font-weight: 600; color: #0b0d12; line-height: 1.3; }
+    .ai-key-val.red { color: #dc2626; }
+    .ai-key-val.amber { color: #b17728; }
+    .ai-key-val.green { color: #16a34a; }
+    .ai-key-sub { font-size: 11px; color: #45556c; margin-top: 3px; line-height: 1.35; }
+    .ai-banner-foot { font-size: 11px; color: #45556c; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ffd5b8; line-height: 1.5; }
+    .ai-banner-foot strong { color: #0b0d12; }
+
+    /* Restructured AI annotation inside timeline (compact key-fact strip, not paragraph) */
+    .ai-fact-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 6px; margin-top: 6px; }
+    .ai-fact { background: white; border: 1px solid #ffd5b8; border-radius: 6px; padding: 6px 8px; }
+    .ai-fact-k { font-size: 9px; font-weight: 700; color: #d95b03; text-transform: uppercase; letter-spacing: 0.4px; }
+    .ai-fact-v { font-size: 12px; font-weight: 600; color: #0b0d12; margin-top: 2px; line-height: 1.3; }
+    .ai-fact-v.red { color: #dc2626; }
+    .ai-fact-v.amber { color: #b17728; }
+    .ai-fact-v.green { color: #16a34a; }
+
+    /* Restructured ms-ai-note (match summary tab) */
+    .ms-ai-note.structured { flex-direction: column; align-items: stretch; gap: 0; }
+    .ms-ai-note .ai-key-grid { margin-top: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+
+    /* Timeline — folded (completed phase) state: neutral gray, minimal */
+    .tl-step.tl-folded { padding-bottom: 8px; }
+    .tl-step.tl-folded .tl-dot { width: 16px; height: 16px; background: #e9e9e9; color: #9f9fa6; font-size: 9px; border: none; margin-left: 3px; }
+    .tl-step.tl-folded .tl-dot.done { background: #e9e9e9; color: #9f9fa6; }
+    .tl-step.tl-folded .tl-line { background: #f0f0f0; left: 10px; top: 16px; }
+    .tl-step.tl-folded .tl-tags { display: none; }
+    .tl-step.tl-folded .tl-step-desc { display: none; }
+    .tl-step.tl-folded .tl-ai-annotation { display: none; }
+    .tl-step.tl-folded .tl-action-needed { display: none; }
+    .tl-step.tl-folded .tl-expanded { display: none !important; }
+    .tl-step.tl-folded .tl-step-name { font-size: 12px; font-weight: 500; color: #9f9fa6; margin-bottom: 0; }
+    .tl-step.tl-folded .tl-step-right .src-chip { display: none; }
+    .tl-step.tl-folded .tl-time { color: #c8c8c8; font-size: 10px; margin-top: 0; }
+    .tl-step.tl-folded .tl-content { cursor: pointer; }
+    .tl-step.tl-folded:hover .tl-step-name { color: #45556c; }
+    .tl-step.tl-folded:hover .tl-dot { background: #c8c8c8; color: white; }
+
+    /* Phase header separators inside timeline */
+    .tl-phase { display: flex; align-items: center; gap: 8px; margin: 4px 0 12px; }
+    .tl-phase-line { flex: 1; height: 1px; background: #f0f0f0; }
+    .tl-phase-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #adadad; }
+    .tl-phase-label.active { color: #ff6900; }
+    .tl-phase-label.blocked { color: #dc2626; }
+
+    /* Inline next-steps actions inside the blocked/active timeline step */
+    .tl-inline-actions { margin-top: 12px; padding: 12px; background: #fafafa; border: 1px solid #e9e9e9; border-radius: 8px; }
+    .tl-inline-actions-head { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #0b0d12; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .tl-inline-actions .next-steps { gap: 6px; }
+
+    /* AI banner — 3-way match flow (replaces $-duplicating key-grid) */
+    .match-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px; align-items: stretch; margin-top: 12px; }
+    .mf-doc { background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 10px 12px; }
+    .mf-doc.warn { border-color: #e9b44c; background: #fef9eb; }
+    .mf-doc.crit { border-color: #dc2626; background: #fef2f2; }
+    .mf-doc-label { font-size: 10px; font-weight: 700; color: #d95b03; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .mf-doc.warn .mf-doc-label { color: #b17728; }
+    .mf-doc.crit .mf-doc-label { color: #b91c1c; }
+    .mf-doc-val { font-size: 16px; font-weight: 700; color: #0b0d12; line-height: 1.2; }
+    .mf-doc-val.amber { color: #b17728; }
+    .mf-doc-val.red { color: #dc2626; }
+    .mf-doc-sub { font-size: 10px; color: #45556c; margin-top: 4px; line-height: 1.3; }
+    .mf-arrow { font-size: 20px; color: #ffb088; align-self: center; font-weight: 700; }
+
+    /* AI banner — signal comparison (for duplicate page) */
+    .signal-compare { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-top: 12px; }
+    .sc-col { background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 10px 12px; }
+    .sc-head { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .sc-head.ok { color: #15803d; }
+    .sc-head.warn { color: #b17728; }
+    .sc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 12px; }
+    .sc-col:has(.sc-head.warn) .sc-list { grid-template-columns: 1fr; }
+    .sc-item { font-size: 12px; color: #0b0d12; padding-left: 14px; position: relative; line-height: 1.5; }
+    .sc-item::before { content: "✓"; position: absolute; left: 0; color: #16a34a; font-weight: 700; font-size: 11px; }
+    .sc-item.warn { color: #b17728; }
+    .sc-item.warn::before { content: "⚠"; color: #b17728; font-size: 10px; }
+
+    @media (max-width: 760px) {
+      .match-flow { grid-template-columns: 1fr; }
+      .mf-arrow { transform: rotate(90deg); justify-self: center; }
+      .signal-compare { grid-template-columns: 1fr; }
+      .sc-list { grid-template-columns: 1fr; }
+    }
+
+    /* Hide the obsolete left/right column declarations — kept harmless */
   </style>
 </head>
 <body data-chat="rail">
@@ -580,119 +679,45 @@
       Net exposure if unresolved by Apr 30: <strong style="color:#dc2626;">−$420.32</strong> &nbsp;=&nbsp; $280 overbilling + $140 discount lost + $42 freight &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How is this calculated?</span>
     </div>
 
-    <!-- ─── AI INSIGHT BANNER ─── -->
-    <div class="ai-insight-banner">
-      <div class="ai-insight-badge">
-        <div class="ai-badge-dot"></div>
-        Witness AI
+    <!-- ─── AI INSIGHT BANNER — 3-way match flow (evidence, not $ amounts) ─── -->
+    <div class="ai-insight-banner structured">
+      <div class="ai-banner-head">
+        <div class="ai-insight-badge">
+          <div class="ai-badge-dot"></div>
+          Witness AI
+        </div>
+        <span class="ai-banner-meta"><strong>2 match exceptions detected</strong> · matched 3 documents in 0.6s · 96% confidence</span>
       </div>
-      <div class="ai-insight-txt">
-        <strong>2 match exceptions detected.</strong> Quantity: PO ordered 12 units, GRN-2043 confirms 10 received (2 damaged in transit), invoice bills 12 — corrected payable is <strong>$7,016.70</strong>. Freight $42 has no PO backing — check contract tolerance before disputing. Early payment discount (2% = $140.33) expires Apr 30. Approval from J. Park is a downstream consequence of the match block, not a separate blocker.
+      <div class="match-flow">
+        <div class="mf-doc">
+          <div class="mf-doc-label">PO-7721</div>
+          <div class="mf-doc-val">12 ordered</div>
+          <div class="mf-doc-sub">Apr 15 · Nina Lee</div>
+        </div>
+        <div class="mf-arrow">→</div>
+        <div class="mf-doc warn">
+          <div class="mf-doc-label">GRN-2043</div>
+          <div class="mf-doc-val amber">10 received</div>
+          <div class="mf-doc-sub">Apr 23 · 2 damaged in transit</div>
+        </div>
+        <div class="mf-arrow">→</div>
+        <div class="mf-doc crit">
+          <div class="mf-doc-label">INV-1048</div>
+          <div class="mf-doc-val red">12 billed ✕</div>
+          <div class="mf-doc-sub">Apr 24 · overbills by 2 units</div>
+        </div>
+      </div>
+      <div class="ai-banner-foot">
+        <strong>Why:</strong> Driver left 2 damaged units at the warehouse; Nina signed for 10. Invoice billed all 12 anyway. Freight on line 11 has no PO backing.<br>
+        <strong>Recommended:</strong> Request credit memo for the 2 short units — this unblocks J. Park's approval automatically.
       </div>
     </div>
 
-    <!-- ─── THREE COLUMN ─── -->
-    <div class="three-col">
+    <!-- ─── MAIN PANEL (full-width, was three-col) ─── -->
+    <div class="main-panel">
 
-      <!-- LEFT: Case summary -->
-      <div class="left-col">
-
-        <div class="lcol-section">
-          <div class="section-title">Case summary</div>
-          <div class="field-list">
-            <div class="field-row">
-              <span class="field-label">Status</span>
-              <span class="field-val"><span class="badge blocked"><span class="bdot"></span>Blocked</span></span>
-            </div>
-            <div class="field-row"><span class="field-label">Invoice #</span><span class="field-val">INV-1048</span></div>
-            <div class="field-row"><span class="field-label">PO reference</span><span class="field-val">PO-7721</span></div>
-            <div class="field-row"><span class="field-label">GRN reference</span><span class="field-val">GRN-2043</span></div>
-            <div class="field-row"><span class="field-label">Invoice date</span><span class="field-val">Apr 24, 2025</span></div>
-            <div class="field-row"><span class="field-label">Payment due &amp; discount expires</span><span class="field-val red">Apr 30 · 2 days</span></div>
-            <div class="field-row"><span class="field-label">Vendor</span><span class="field-val">Brightline Office</span></div>
-            <div class="field-row"><span class="field-label">Source</span><span class="field-val"><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></span></div>
-            <div class="field-row"><span class="field-label">Requester</span><span class="field-val">Nina Lee</span></div>
-            <div class="field-row">
-              <span class="field-label">Approver</span>
-              <span class="field-val">
-                <div class="field-avatar">
-                  <div class="fa-circle">JP</div>
-                  J. Park
-                </div>
-              </span>
-            </div>
-            <div class="field-row"><span class="field-label">Department</span><span class="field-val">Facilities</span></div>
-          </div>
-        </div>
-
-        <div class="lcol-section">
-          <div class="section-title">
-            3-way match blockers
-            <span class="section-title-badge">2</span>
-          </div>
-          <div style="font-size:10px;color:#adadad;margin-bottom:8px;margin-top:-6px;">These must be resolved before approval can proceed</div>
-          <div class="blocker-list">
-            <div class="blocker-item">
-              <div class="blocker-ico">⚠</div>
-              <div class="blocker-body">
-                <div class="blocker-title">Quantity mismatch</div>
-                <div class="blocker-desc">PO: 12 units · GRN: 10 received · Invoice: 12 billed. Verify whether 2 units are in transit or never shipped before issuing credit memo.</div>
-                <div class="blocker-impact">Overbilling: −$280.00 · Corrected payable: $7,016.70</div>
-              </div>
-            </div>
-            <div class="blocker-item" style="background:#fdf2d4;border-color:rgba(233,180,76,0.3);">
-              <div class="blocker-ico">🚚</div>
-              <div class="blocker-body">
-                <div class="blocker-title" style="color:#b17728;">Freight variance — needs review</div>
-                <div class="blocker-desc">$42 freight on invoice line 11 has no PO backing. Check vendor contract for freight tolerance before disputing.</div>
-                <div class="blocker-impact" style="color:#b17728;">If outside tolerance: +$42.00 to dispute</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="lcol-section" style="background:#f7f7f7;border-radius:0;">
-          <div class="section-title" style="color:#45556c;">Approval workflow</div>
-          <div style="font-size:11px;color:#adadad;margin-bottom:8px;margin-top:-6px;">Separate from 3-way match · unblocks after match resolves</div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:white;border:1px solid #e9e9e9;border-radius:10px;">
-            <div class="fa-circle" style="width:28px;height:28px;font-size:10px;background:#e9b44c;flex-shrink:0;">JP</div>
-            <div style="flex:1">
-              <div style="font-size:12px;font-weight:600;color:#0b0d12;">J. Park</div>
-              <div style="font-size:11px;color:#adadad;">Director of Finance · waiting 3 days</div>
-            </div>
-            <span class="badge waiting" style="font-size:10px;"><span class="bdot"></span>Pending</span>
-          </div>
-          <div style="font-size:11px;color:#dc2626;margin-top:8px;">Escalation to Controller in 2 days if no response</div>
-        </div>
-
-        <div class="lcol-section">
-          <div class="section-title">✦ Recommended next steps</div>
-          <div class="next-steps">
-            <button class="btn-step-primary">
-              Confirm GRN with vendor — 2 units
-              <span class="auto-pill">STEP 1</span>
-            </button>
-            <button class="btn-step-primary" style="background:#45556c;">
-              Request credit memo $280
-              <span class="auto-pill">AUTO</span>
-            </button>
-            <button class="btn-step-secondary btn-step-ai">
-              <div class="step-ico" style="background:#dcfce7;border-color:rgba(22,163,74,0.3)">✦</div>
-              Nudge J. Park — discount expires Apr 30
-              <span class="auto-pill-green">AUTO</span>
-            </button>
-            <button class="btn-step-secondary">
-              <div class="step-ico">📎</div>
-              Review freight vs. vendor contract
-            </button>
-            <button class="btn-add-note">+ Add case note</button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- CENTER: Tabbed panels -->
-      <div class="center-col">
+      <!-- Tabbed panels — full width -->
+      <div class="center-col" style="border-right:none;">
         <div class="center-tabs">
           <button class="ctab active" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
           <button class="ctab" data-tab="match" onclick="switchTab(this)">Match summary</button>
@@ -708,74 +733,62 @@
           </div>
           <div class="timeline">
 
-            <div class="tl-step tl-done">
+            <!-- Phase: Procurement — fully complete, folded -->
+            <div class="tl-phase">
+              <span class="tl-phase-label">Procurement complete</span>
+              <span class="tl-phase-line"></span>
+              <span style="font-size:10px;color:#c8c8c8;">3 steps · Apr 15 → Apr 24</span>
+            </div>
+
+            <div class="tl-step tl-done tl-folded">
               <div class="tl-line"></div>
               <div class="tl-dot done">✓</div>
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
                   <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">PO created</div>
-                    <div class="tl-step-desc">PO-7721 created for 12 units of Monitor Arm Pro. Budget approved by Nina Lee.</div>
+                    <div class="tl-step-name">PO created · 12 units of Monitor Arm Pro</div>
                   </div>
                   <div class="tl-step-right">
-                    <span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span>
-                    <div class="tl-time">Apr 15 · 9:12 AM</div>
-                  </div>
-                </div>
-                <div class="tl-expanded">
-                  <div class="te-inner">
-                    <div class="te-row"><span class="te-k">PO amount</span><span class="te-v ok">$8,420.00 approved</span></div>
-                    <div class="te-row"><span class="te-k">Units</span><span class="te-v">12 × Monitor Arm Pro</span></div>
-                    <div class="te-row"><span class="te-k">Approved by</span><span class="te-v">Nina Lee · Facilities</span></div>
+                    <div class="tl-time">Apr 15</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="tl-step tl-done">
+            <div class="tl-step tl-done tl-folded">
               <div class="tl-line"></div>
               <div class="tl-dot done">✓</div>
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
                   <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">Order delivered — partial</div>
-                    <div class="tl-step-desc">10 of 12 units delivered. Nina Lee signed GRN-2043 for 10 units only. 2 units noted as damaged at warehouse by driver.</div>
+                    <div class="tl-step-name">Order delivered — partial (10 of 12, 2 damaged)</div>
                   </div>
                   <div class="tl-step-right">
-                    <span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span>
-                    <div class="tl-time">Apr 23 · 2:41 PM</div>
-                  </div>
-                </div>
-                <div class="tl-expanded">
-                  <div class="te-inner">
-                    <div class="te-row"><span class="te-k">GRN number</span><span class="te-v">GRN-2043</span></div>
-                    <div class="te-row"><span class="te-k">Qty received</span><span class="te-v warn">10 of 12 ordered</span></div>
-                    <div class="te-row"><span class="te-k">Short receipt reason</span><span class="te-v">2 units damaged in transit — left at warehouse</span></div>
-                    <div class="te-row"><span class="te-k">Signed by</span><span class="te-v">Nina Lee · Facilities</span></div>
-                    <div class="te-row"><span class="te-k">Next step</span><span class="te-v warn">Confirm with Brightline: in transit or never shipped?</span></div>
+                    <div class="tl-time">Apr 23</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="tl-step tl-done">
+            <div class="tl-step tl-done tl-folded">
               <div class="tl-line"></div>
               <div class="tl-dot done">✓</div>
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
                   <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">Invoice received</div>
-                    <div class="tl-step-desc">Invoice INV-1048 received for $8,420.00 (12 units billed).</div>
+                    <div class="tl-step-name">Invoice received · INV-1048 for $8,420</div>
                   </div>
                   <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
-                    <div class="tl-time">Apr 24 · 9:05 AM</div>
+                    <div class="tl-time">Apr 24</div>
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- Phase: AI detection — active, expanded -->
+            <div class="tl-phase">
+              <span class="tl-phase-label active">✦ Witness AI · Active step</span>
+              <span class="tl-phase-line"></span>
             </div>
 
             <div class="tl-step">
@@ -788,11 +801,27 @@
                       <span class="tl-tag tt-issues">2 issues</span>
                       <span class="tl-tag tt-ai">✦ Witness AI</span>
                     </div>
-                    <div class="tl-step-name warn">3-way match exception</div>
-                    <div class="tl-step-desc">Quantity mismatch and freight variance detected automatically.</div>
+                    <div class="tl-step-name warn">3-way match exception detected</div>
                     <div class="tl-ai-annotation">
-                      <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected</div>
-                      <strong>Qty mismatch:</strong> PO ordered 12, GRN-2043 shows 10 received, invoice bills 12 — potential overbilling of $280. Corrected payable: $7,016.70. Also found $42 freight on invoice line 11 with no PO backing — check vendor contract before disputing.
+                      <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected — 2 exceptions on INV-1048</div>
+                      <div class="ai-fact-strip">
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">PO qty</div>
+                          <div class="ai-fact-v">12 ordered</div>
+                        </div>
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">GRN qty</div>
+                          <div class="ai-fact-v amber">10 received</div>
+                        </div>
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">Invoice qty</div>
+                          <div class="ai-fact-v red">12 billed ✕</div>
+                        </div>
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">Freight</div>
+                          <div class="ai-fact-v amber">$42 no PO</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="tl-step-right">
@@ -824,19 +853,22 @@
               </div>
             </div>
 
-            <div class="tl-step tl-done">
+            <!-- Phase: Awaiting action — blocked, expanded with inline next steps -->
+            <div class="tl-phase">
+              <span class="tl-phase-label blocked">✕ Blocked — awaiting your action</span>
+              <span class="tl-phase-line"></span>
+            </div>
+
+            <div class="tl-step tl-done tl-folded">
               <div class="tl-line"></div>
               <div class="tl-dot done">✓</div>
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
                   <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">Approval requested</div>
-                    <div class="tl-step-desc">Approval requested from J. Park, Director of Finance.</div>
+                    <div class="tl-step-name">Approval requested · routed to J. Park</div>
                   </div>
                   <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>Approval</span>
-                    <div class="tl-time">Apr 24 · 9:10 AM</div>
+                    <div class="tl-time">Apr 24</div>
                   </div>
                 </div>
               </div>
@@ -848,11 +880,33 @@
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
                   <div>
-                    <div class="tl-tags"><span class="tl-tag tt-waiting">Approval workflow · 3 days</span></div>
+                    <div class="tl-tags"><span class="tl-tag tt-waiting">Waiting 3 days</span></div>
                     <div class="tl-step-name blocked">Awaiting approval — J. Park</div>
-                    <div class="tl-step-desc">Approval workflow triggered after 3-way match exception. J. Park has not responded since Apr 25. This is downstream of the match — approval cannot complete until mismatch is resolved.</div>
+                    <div class="tl-step-desc">Downstream of the match exception — approval can't complete until the quantity mismatch resolves. J. Park has not responded since Apr 25.</div>
                     <div class="tl-action-needed">
-                      <strong>Discount risk:</strong> Early payment discount (2% of $7,016.70 = $140.33) expires Apr 30 in 2 days. Witness can nudge J. Park or reroute to backup approver K. Ito.
+                      <strong>Discount window closes Apr 30 — 2 days.</strong> Resolving the credit memo now keeps $140.33 in-pocket. Witness can nudge J. Park or reroute to backup approver K. Ito.
+                    </div>
+                    <div class="tl-inline-actions">
+                      <div class="tl-inline-actions-head">✦ Recommended next steps</div>
+                      <div class="next-steps">
+                        <button class="btn-step-primary">
+                          Confirm GRN with vendor — 2 units
+                          <span class="auto-pill">STEP 1</span>
+                        </button>
+                        <button class="btn-step-primary" style="background:#45556c;">
+                          Request credit memo $280
+                          <span class="auto-pill">AUTO</span>
+                        </button>
+                        <button class="btn-step-secondary btn-step-ai">
+                          <div class="step-ico" style="background:#dcfce7;border-color:rgba(22,163,74,0.3)">✦</div>
+                          Nudge J. Park — discount expires Apr 30
+                          <span class="auto-pill-green">AUTO</span>
+                        </button>
+                        <button class="btn-step-secondary">
+                          <div class="step-ico">📎</div>
+                          Review freight vs. vendor contract
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div class="tl-step-right">
@@ -869,11 +923,10 @@
                 <div class="tl-main-row">
                   <div>
                     <div class="tl-tags"><span class="tl-tag tt-future">Projected</span></div>
-                    <div class="tl-step-name muted">Payment blocked</div>
-                    <div class="tl-step-desc">On hold until mismatches and approval are resolved.</div>
+                    <div class="tl-step-name muted">Payment release</div>
+                    <div class="tl-step-desc">Unblocks once credit memo lands and J. Park signs off.</div>
                   </div>
                   <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
                     <div class="tl-time">— pending —</div>
                   </div>
                 </div>
@@ -891,11 +944,36 @@
           </div>
           <div class="ms-body">
 
-            <!-- AI summary -->
-            <div class="ms-ai-note">
-              <div style="flex-shrink:0;font-size:14px">✦</div>
-              <div class="ai-insight-txt">
-                <strong>Witness matched PO-7721 · GRN-2043 · INV-1048.</strong> Quantity exception: vendor invoiced 12 units, GRN confirms only 10 received. Corrected payable is <strong>$7,016.70</strong>. Verify whether 2 units are in transit before requesting credit memo. Freight $42 has no PO backing — check contract tolerance before disputing.
+            <!-- AI summary — structured key-fact grid -->
+            <div class="ms-ai-note structured">
+              <div class="ai-banner-head">
+                <div class="ai-insight-badge"><div class="ai-badge-dot"></div>Witness AI</div>
+                <span class="ai-banner-meta">Matched <strong>PO-7721 · GRN-2043 · INV-1048</strong> · 96% confidence · 0.6s</span>
+              </div>
+              <div class="ai-key-grid">
+                <div class="ai-key-cell">
+                  <div class="ai-key-label">PO</div>
+                  <div class="ai-key-val">12 units · $8,420</div>
+                  <div class="ai-key-sub">Reference document</div>
+                </div>
+                <div class="ai-key-cell">
+                  <div class="ai-key-label">GRN-2043</div>
+                  <div class="ai-key-val amber">10 received</div>
+                  <div class="ai-key-sub">2 damaged in transit</div>
+                </div>
+                <div class="ai-key-cell">
+                  <div class="ai-key-label">Invoice</div>
+                  <div class="ai-key-val red">12 billed ✕</div>
+                  <div class="ai-key-sub">Overbills by 2 units</div>
+                </div>
+                <div class="ai-key-cell" style="background:#f0fdf4;border-color:#bbf7d0;">
+                  <div class="ai-key-label" style="color:#15803d;">✓ Corrected payable</div>
+                  <div class="ai-key-val green">$7,016.70</div>
+                  <div class="ai-key-sub">10 × $701.67 after credit memo</div>
+                </div>
+              </div>
+              <div class="ai-banner-foot">
+                <strong>Next:</strong> verify 2 units are not in transit before requesting credit memo. Freight $42 has no PO backing — check vendor contract tolerance before disputing.
               </div>
             </div>
 
@@ -1192,69 +1270,7 @@
 
       </div><!-- /center-col -->
 
-      <!-- RIGHT: AI context -->
-      <div class="right-col">
-
-        <!-- Match triangle — enlarged and corrected -->
-        <div>
-          <div class="rs-title">3-way match snapshot <span class="rs-link">View full</span></div>
-          <div class="rs-meta">Apr 24, 2025 · 9:06 AM · 96% confidence</div>
-
-          <svg viewBox="0 0 240 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-            <!-- edges -->
-            <line x1="48" y1="60" x2="120" y2="190" stroke="#e9e9e9" stroke-width="2" fill="none"/>
-            <line x1="48" y1="60" x2="192" y2="60" stroke="#e9e9e9" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
-            <line x1="120" y1="190" x2="192" y2="60" stroke="#dc2626" stroke-width="2.5" fill="none"/>
-            <!-- edge labels -->
-            <rect x="55" y="117" width="50" height="18" rx="3" fill="white" stroke="#e9e9e9" stroke-width="1"/>
-            <text x="80" y="130" font-family="Inter" font-size="10" font-weight="600" fill="#45556c" text-anchor="middle">−2 units</text>
-            <rect x="96" y="50" width="48" height="18" rx="3" fill="white" stroke="#e9e9e9" stroke-width="1"/>
-            <text x="120" y="63" font-family="Inter" font-size="10" font-weight="600" fill="#b17728" text-anchor="middle">$42 frt?</text>
-            <rect x="140" y="117" width="62" height="18" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
-            <text x="171" y="130" font-family="Inter" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">+$280 ◆</text>
-            <!-- nodes -->
-            <circle cx="48" cy="60" r="28" fill="white" stroke="#e9e9e9" stroke-width="1.5"/>
-            <text x="48" y="55" font-family="Inter" font-size="11" font-weight="700" fill="#0b0d12" text-anchor="middle">PO</text>
-            <text x="48" y="69" font-family="Inter" font-size="9" fill="#adadad" text-anchor="middle">12 units</text>
-            <circle cx="192" cy="60" r="28" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
-            <text x="192" y="55" font-family="Inter" font-size="11" font-weight="700" fill="#dc2626" text-anchor="middle">Invoice</text>
-            <text x="192" y="69" font-family="Inter" font-size="9" fill="#dc2626" text-anchor="middle">12 billed</text>
-            <circle cx="120" cy="190" r="28" fill="white" stroke="#e9e9e9" stroke-width="1.5"/>
-            <text x="120" y="185" font-family="Inter" font-size="11" font-weight="700" fill="#0b0d12" text-anchor="middle">GRN</text>
-            <text x="120" y="199" font-family="Inter" font-size="9" fill="#adadad" text-anchor="middle">10 rcvd</text>
-          </svg>
-
-          <div class="mt-legend">
-            <div class="mt-leg"><div class="mt-leg-dot" style="background:#dc2626"></div><div>◆ Primary — Invoice bills 12, GRN shows 10. Corrected payable: $7,016.70</div></div>
-            <div class="mt-leg"><div class="mt-leg-dot" style="background:#c8c8c8"></div><div>PO vs GRN — 2 units short (damaged in transit)</div></div>
-            <div class="mt-leg"><div class="mt-leg-dot" style="background:#b17728"></div><div>Freight $42 — check contract tolerance before disputing</div></div>
-          </div>
-        </div>
-
-        <!-- Approval status -->
-        <div>
-          <div class="rs-title" style="margin-bottom:10px">Approval status</div>
-          <div class="as-card">
-            <div class="as-person">
-              <div class="as-av" style="background:#e9b44c">JP</div>
-              <div>
-                <div class="as-name">J. Park</div>
-                <div class="as-role">Director of Finance</div>
-              </div>
-              <div class="as-status">
-                <span class="badge waiting"><span class="bdot"></span>Pending</span>
-              </div>
-            </div>
-            <div class="as-field-row"><span class="as-field-label">Requested on</span><span class="as-field-val">Apr 24 · 9:10 AM</span></div>
-            <div class="as-field-row"><span class="as-field-label">Waiting</span><span class="as-field-val red">3 days</span></div>
-            <div class="as-field-row"><span class="as-field-label">Escalation rule</span><span class="as-field-val">After 5 days → Controller</span></div>
-          </div>
-          <a class="view-chain">View approval chain →</a>
-        </div>
-
-      </div><!-- /right-col -->
-
-    </div><!-- /three-col -->
+    </div><!-- /main-panel -->
 
   </main>
 </div><!-- /main -->

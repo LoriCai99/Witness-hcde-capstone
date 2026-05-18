@@ -439,6 +439,93 @@
     .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
     .sidebar.collapsed .nav-item.active { padding: 8px 0; }
     .sidebar.collapsed .nav-badge { display: none; }
+
+    /* ═══════════ REVISION: single-panel main + restructured AI blocks + folded timeline ═══════════ */
+    .main-panel { background: white; border: 2px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .ai-insight-banner.structured { flex-direction: column; align-items: stretch; gap: 0; padding: 14px 16px; }
+    .ai-banner-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .ai-banner-meta { font-size: 11px; color: #45556c; }
+    .ai-banner-meta strong { color: #0b0d12; font-weight: 600; }
+    .ai-key-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 12px; }
+    .ai-key-cell { background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 10px 12px; }
+    .ai-key-label { font-size: 10px; font-weight: 700; color: #d95b03; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .ai-key-val { font-size: 14px; font-weight: 600; color: #0b0d12; line-height: 1.3; }
+    .ai-key-val.red { color: #dc2626; }
+    .ai-key-val.amber { color: #b17728; }
+    .ai-key-val.green { color: #16a34a; }
+    .ai-key-sub { font-size: 11px; color: #45556c; margin-top: 3px; line-height: 1.35; }
+    .ai-banner-foot { font-size: 11px; color: #45556c; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ffd5b8; line-height: 1.5; }
+    .ai-banner-foot strong { color: #0b0d12; }
+    .ai-fact-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 6px; margin-top: 6px; }
+    .ai-fact { background: white; border: 1px solid #ffd5b8; border-radius: 6px; padding: 6px 8px; }
+    .ai-fact-k { font-size: 9px; font-weight: 700; color: #d95b03; text-transform: uppercase; letter-spacing: 0.4px; }
+    .ai-fact-v { font-size: 12px; font-weight: 600; color: #0b0d12; margin-top: 2px; line-height: 1.3; }
+    .ai-fact-v.red { color: #dc2626; }
+    .ai-fact-v.amber { color: #b17728; }
+    .ai-fact-v.green { color: #16a34a; }
+    .ms-ai-note.structured { flex-direction: column; align-items: stretch; gap: 0; }
+    .ms-ai-note .ai-key-grid { margin-top: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .tl-step.tl-folded { padding-bottom: 8px; }
+    .tl-step.tl-folded .tl-dot { width: 16px; height: 16px; background: #e9e9e9; color: #9f9fa6; font-size: 9px; border: none; margin-left: 3px; }
+    .tl-step.tl-folded .tl-dot.done { background: #e9e9e9; color: #9f9fa6; }
+    .tl-step.tl-folded .tl-line { background: #f0f0f0; left: 10px; top: 16px; }
+    .tl-step.tl-folded .tl-tags { display: none; }
+    .tl-step.tl-folded .tl-step-desc { display: none; }
+    .tl-step.tl-folded .tl-ai-annotation { display: none; }
+    .tl-step.tl-folded .tl-action-needed { display: none; }
+    .tl-step.tl-folded .tl-expanded { display: none !important; }
+    .tl-step.tl-folded .tl-step-name { font-size: 12px; font-weight: 500; color: #9f9fa6; margin-bottom: 0; }
+    .tl-step.tl-folded .tl-step-right .src-chip { display: none; }
+    .tl-step.tl-folded .tl-time { color: #c8c8c8; font-size: 10px; margin-top: 0; }
+    .tl-step.tl-folded .tl-content { cursor: pointer; }
+    .tl-step.tl-folded:hover .tl-step-name { color: #45556c; }
+    .tl-step.tl-folded:hover .tl-dot { background: #c8c8c8; color: white; }
+    .tl-phase { display: flex; align-items: center; gap: 8px; margin: 4px 0 12px; }
+    .tl-phase-line { flex: 1; height: 1px; background: #f0f0f0; }
+    .tl-phase-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #adadad; }
+    .tl-phase-label.active { color: #ff6900; }
+    .tl-phase-label.blocked { color: #dc2626; }
+    .tl-phase-label.green { color: #16a34a; }
+    .tl-inline-actions { margin-top: 12px; padding: 12px; background: #fafafa; border: 1px solid #e9e9e9; border-radius: 8px; }
+    .tl-inline-actions-head { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #0b0d12; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .tl-inline-actions .next-steps { gap: 6px; }
+
+    /* AI banner — 3-way match flow */
+    .match-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px; align-items: stretch; margin-top: 12px; }
+    .mf-doc { background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 10px 12px; }
+    .mf-doc.warn { border-color: #e9b44c; background: #fef9eb; }
+    .mf-doc.crit { border-color: #dc2626; background: #fef2f2; }
+    .mf-doc.ok { border-color: #16a34a; background: #f0fdf4; }
+    .mf-doc-label { font-size: 10px; font-weight: 700; color: #d95b03; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .mf-doc.warn .mf-doc-label { color: #b17728; }
+    .mf-doc.crit .mf-doc-label { color: #b91c1c; }
+    .mf-doc.ok .mf-doc-label { color: #15803d; }
+    .mf-doc-val { font-size: 16px; font-weight: 700; color: #0b0d12; line-height: 1.2; }
+    .mf-doc-val.amber { color: #b17728; }
+    .mf-doc-val.red { color: #dc2626; }
+    .mf-doc-val.green { color: #16a34a; }
+    .mf-doc-sub { font-size: 10px; color: #45556c; margin-top: 4px; line-height: 1.3; }
+    .mf-arrow { font-size: 20px; color: #ffb088; align-self: center; font-weight: 700; }
+
+    /* AI banner — signal comparison */
+    .signal-compare { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-top: 12px; }
+    .sc-col { background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 10px 12px; }
+    .sc-head { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .sc-head.ok { color: #15803d; }
+    .sc-head.warn { color: #b17728; }
+    .sc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 12px; }
+    .sc-col:has(.sc-head.warn) .sc-list { grid-template-columns: 1fr; }
+    .sc-item { font-size: 12px; color: #0b0d12; padding-left: 14px; position: relative; line-height: 1.5; }
+    .sc-item::before { content: "✓"; position: absolute; left: 0; color: #16a34a; font-weight: 700; font-size: 11px; }
+    .sc-item.warn { color: #b17728; }
+    .sc-item.warn::before { content: "⚠"; color: #b17728; font-size: 10px; }
+
+    @media (max-width: 760px) {
+      .match-flow { grid-template-columns: 1fr; }
+      .mf-arrow { transform: rotate(90deg); justify-self: center; }
+      .signal-compare { grid-template-columns: 1fr; }
+      .sc-list { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body data-chat="rail">
@@ -597,113 +684,46 @@
       Witness auto-held this at <strong style="color:#0b0d12;">2:14 AM</strong> — payment will not go out unless you override. Confirm the hold or release to AP queue. &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How was this detected?</span>
     </div>
 
-    <!-- ─── AI INSIGHT BANNER ─── -->
-    <div class="ai-insight-banner">
-      <div class="ai-insight-badge">
-        <div class="ai-badge-dot"></div>
-        Witness AI
+    <!-- ─── AI INSIGHT BANNER — signal evidence (not $ amounts) ─── -->
+    <div class="ai-insight-banner structured">
+      <div class="ai-banner-head">
+        <div class="ai-insight-badge">
+          <div class="ai-badge-dot"></div>
+          Witness AI
+        </div>
+        <span class="ai-banner-meta"><strong>Matched 6 of 7 fingerprint fields against INV-1024</strong> · auto-held 1 min after intake · 98% confidence</span>
       </div>
-      <div class="ai-insight-txt">
-        <strong>Duplicate detected and auto-held.</strong> INV-1024 ($890.40) was already paid Apr 26 via ACH for the same PO-7718 and shipment SHP-2241. INV-1027 arrived at 2:13 AM with identical vendor, total, and PO; I flagged it 1 minute later and removed it from the AP queue. No payment will go out. The cleanest action is to ask Praxis to retract the re-bill — vendor confirmed both prior dupes within 24h.
+      <div class="signal-compare">
+        <div class="sc-col">
+          <div class="sc-head ok">✓ Identical fields — 6</div>
+          <div class="sc-list">
+            <div class="sc-item">PO reference</div>
+            <div class="sc-item">Vendor</div>
+            <div class="sc-item">Shipment ref</div>
+            <div class="sc-item">Tax amount</div>
+            <div class="sc-item">Total amount</div>
+            <div class="sc-item">Bill-to address</div>
+          </div>
+        </div>
+        <div class="sc-col" style="background:#fef9eb;border-color:#e9b44c;">
+          <div class="sc-head warn">⚠ Differing fields — 2</div>
+          <div class="sc-list">
+            <div class="sc-item warn">Invoice number</div>
+            <div class="sc-item warn">Submission channel</div>
+          </div>
+        </div>
+      </div>
+      <div class="ai-banner-foot">
+        <strong>Why this read:</strong> a fraudulent re-bill would reuse the invoice number — a fresh one suggests Praxis's billing system re-emitted when the portal sync caught up.<br>
+        <strong>Recommended:</strong> ask Praxis to retract — both prior Praxis duplicates confirmed within 24h. PO-7718 is already marked fully invoiced.
       </div>
     </div>
 
-    <!-- ─── THREE COLUMN ─── -->
-    <div class="three-col">
+    <!-- ─── MAIN PANEL (full-width, was three-col) ─── -->
+    <div class="main-panel">
 
-      <!-- LEFT: Case summary -->
-      <div class="left-col">
-
-        <div class="lcol-section">
-          <div class="section-title">Case summary</div>
-          <div class="field-list">
-            <div class="field-row">
-              <span class="field-label">Status</span>
-              <span class="field-val"><span class="badge approved" style="background:#dcfce7;color:#15803d;"><span class="bdot"></span>Duplicate held</span></span>
-            </div>
-            <div class="field-row"><span class="field-label">Invoice #</span><span class="field-val">INV-1027</span></div>
-            <div class="field-row"><span class="field-label">PO reference</span><span class="field-val">PO-7718</span></div>
-            <div class="field-row"><span class="field-label">Shipment</span><span class="field-val">SHP-2241</span></div>
-            <div class="field-row"><span class="field-label">Prior paid invoice</span><span class="field-val">INV-1024 · Apr 26</span></div>
-            <div class="field-row"><span class="field-label">Invoice date</span><span class="field-val">Apr 27, 2025</span></div>
-            <div class="field-row"><span class="field-label">Received</span><span class="field-val">Apr 28 · 2:13 AM</span></div>
-            <div class="field-row"><span class="field-label">Held since</span><span class="field-val">Apr 28 · 2:14 AM</span></div>
-            <div class="field-row"><span class="field-label">Vendor</span><span class="field-val">Praxis Logistics</span></div>
-            <div class="field-row"><span class="field-label">Source</span><span class="field-val"><span class="src-chip src-erp"><span class="src-dot"></span>ERP · vendor portal</span></span></div>
-            <div class="field-row"><span class="field-label">Priority</span><span class="field-val">P3 · low</span></div>
-            <div class="field-row">
-              <span class="field-label">Reviewer</span>
-              <span class="field-val">
-                <div class="field-avatar">
-                  <div class="fa-circle" style="background:#155dfc">MC</div>
-                  M. Chen
-                </div>
-              </span>
-            </div>
-            <div class="field-row"><span class="field-label">Department</span><span class="field-val">Logistics</span></div>
-          </div>
-        </div>
-
-        <div class="lcol-section">
-          <div class="section-title">
-            Duplicate evidence
-            <span class="section-title-badge" style="background:#16a34a;">1</span>
-          </div>
-          <div style="font-size:10px;color:#adadad;margin-bottom:8px;margin-top:-6px;">Why Witness held this — review before confirming or releasing</div>
-          <div class="blocker-list">
-            <div class="blocker-item">
-              <div class="blocker-ico">🚨</div>
-              <div class="blocker-body">
-                <div class="blocker-title">Matches INV-1024 (paid Apr 26) on 6 of 7 signals</div>
-                <div class="blocker-desc" style="margin-bottom:6px;">PO-7718 · Shipment SHP-2241 · Vendor Praxis · Total $890.40 · Tax $73.40 · Bill-to address — all identical. Only the invoice number and submission timestamp differ.</div>
-                <div class="blocker-impact">Impact if released: −$890.40 paid twice for the same shipment</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="lcol-section" style="background:#f7f7f7;border-radius:0;">
-          <div class="section-title" style="color:#45556c;">Auto-hold status</div>
-          <div style="font-size:11px;color:#adadad;margin-bottom:8px;margin-top:-6px;">Held by Witness · no approval routed · safe until you act</div>
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:white;border:1px solid #e9e9e9;border-radius:10px;">
-            <div class="fa-circle" style="width:28px;height:28px;font-size:10px;background:#ff6900;flex-shrink:0;">✦</div>
-            <div style="flex:1">
-              <div style="font-size:12px;font-weight:600;color:#0b0d12;">Witness AI</div>
-              <div style="font-size:11px;color:#adadad;">Auto-held 1 min after intake · 98% confidence</div>
-            </div>
-            <span class="badge approved" style="font-size:10px;background:#dcfce7;color:#15803d;"><span class="bdot" style="background:#16a34a;"></span>Held</span>
-          </div>
-          <div style="font-size:11px;color:#45556c;margin-top:8px;">Auto-archive in 7 days if no override — vendor will receive a polite retract request.</div>
-        </div>
-
-        <div class="lcol-section">
-          <div class="section-title">✦ Recommended next steps</div>
-          <div class="next-steps">
-            <button class="btn-step-primary">
-              Confirm hold &amp; notify Praxis to retract
-              <span class="auto-pill">AUTO</span>
-            </button>
-            <button class="btn-step-secondary btn-step-ai">
-              <div class="step-ico" style="background:#dcfce7;border-color:rgba(22,163,74,0.3)">✦</div>
-              Ask vendor: re-bill or genuine reissue?
-              <span class="auto-pill-green">AUTO</span>
-            </button>
-            <button class="btn-step-secondary">
-              <div class="step-ico">📎</div>
-              Open INV-1024 side-by-side
-            </button>
-            <button class="btn-step-secondary" style="border-color:rgba(220,38,38,0.35);color:#b91c1c;">
-              <div class="step-ico" style="background:#fee2e2;border-color:rgba(220,38,38,0.25);color:#dc2626;">⚠</div>
-              Override hold — release for payment
-            </button>
-            <button class="btn-add-note">+ Add case note</button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- CENTER: Tabbed panels -->
-      <div class="center-col">
+      <!-- Tabbed panels — full width -->
+      <div class="center-col" style="border-right:none;">
         <div class="center-tabs">
           <button class="ctab active" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
           <button class="ctab" data-tab="match" onclick="switchTab(this)">Duplicate comparison</button>
@@ -719,116 +739,78 @@
           </div>
           <div class="timeline">
 
-            <div class="tl-step tl-done">
+            <!-- Phase: Procurement & first invoice — complete, folded -->
+            <div class="tl-phase">
+              <span class="tl-phase-label green">Procurement complete · INV-1024 paid</span>
+              <span class="tl-phase-line"></span>
+              <span style="font-size:10px;color:#c8c8c8;">4 steps · Apr 18 → Apr 26</span>
+            </div>
+
+            <div class="tl-step tl-done tl-folded">
               <div class="tl-line"></div>
               <div class="tl-dot done">✓</div>
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
-                  <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">PO created</div>
-                    <div class="tl-step-desc">PO-7718 created for freight on shipment SHP-2241 — Praxis Logistics. One line, lump-sum $817 + tax.</div>
-                  </div>
-                  <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
-                    <div class="tl-time">Apr 18 · 11:04 AM</div>
-                  </div>
-                </div>
-                <div class="tl-expanded">
-                  <div class="te-inner">
-                    <div class="te-row"><span class="te-k">PO amount</span><span class="te-v ok">$890.40 approved</span></div>
-                    <div class="te-row"><span class="te-k">Scope</span><span class="te-v">Freight · SHP-2241 (1 shipment)</span></div>
-                    <div class="te-row"><span class="te-k">Approved by</span><span class="te-v">N. Lee · Logistics</span></div>
-                  </div>
+                  <div><div class="tl-step-name">PO created · PO-7718 freight on SHP-2241</div></div>
+                  <div class="tl-step-right"><div class="tl-time">Apr 18</div></div>
                 </div>
               </div>
             </div>
 
-            <div class="tl-step tl-done">
+            <div class="tl-step tl-done tl-folded">
               <div class="tl-line"></div>
               <div class="tl-dot done">✓</div>
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
-                  <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">Shipment delivered</div>
-                    <div class="tl-step-desc">SHP-2241 delivered to SF DC. GRN-2118 logged. Freight service fully rendered.</div>
-                  </div>
-                  <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
-                    <div class="tl-time">Apr 22 · 4:18 PM</div>
-                  </div>
-                </div>
-                <div class="tl-expanded">
-                  <div class="te-inner">
-                    <div class="te-row"><span class="te-k">GRN number</span><span class="te-v">GRN-2118</span></div>
-                    <div class="te-row"><span class="te-k">Status</span><span class="te-v ok">Complete · no exceptions</span></div>
-                    <div class="te-row"><span class="te-k">Signed by</span><span class="te-v">N. Lee · Logistics</span></div>
-                  </div>
+                  <div><div class="tl-step-name">Shipment delivered · GRN-2118 logged</div></div>
+                  <div class="tl-step-right"><div class="tl-time">Apr 22</div></div>
                 </div>
               </div>
             </div>
 
-            <div class="tl-step tl-done">
+            <div class="tl-step tl-done tl-folded">
               <div class="tl-line"></div>
               <div class="tl-dot done">✓</div>
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
-                  <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
-                    <div class="tl-step-name">INV-1024 received &amp; matched</div>
-                    <div class="tl-step-desc">First invoice from Praxis. 3-way match against PO-7718 + GRN-2118 passed cleanly.</div>
-                  </div>
-                  <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
-                    <div class="tl-time">Apr 24 · 10:22 AM</div>
-                  </div>
+                  <div><div class="tl-step-name">INV-1024 received &amp; matched cleanly</div></div>
+                  <div class="tl-step-right"><div class="tl-time">Apr 24</div></div>
                 </div>
               </div>
             </div>
 
-            <div class="tl-step tl-done">
+            <div class="tl-step tl-done tl-folded">
               <div class="tl-line"></div>
               <div class="tl-dot done">$</div>
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
-                  <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Paid</span></div>
-                    <div class="tl-step-name" style="color:#15803d;">INV-1024 PAID</div>
-                    <div class="tl-step-desc">$890.40 paid to Praxis via ACH. Vendor confirmed receipt same day. PO-7718 marked fully invoiced.</div>
-                  </div>
-                  <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>ACH</span>
-                    <div class="tl-time">Apr 26 · 9:00 AM</div>
-                  </div>
-                </div>
-                <div class="tl-expanded">
-                  <div class="te-inner">
-                    <div class="te-row"><span class="te-k">Method</span><span class="te-v">ACH · bank on file (verified Mar 2025)</span></div>
-                    <div class="te-row"><span class="te-k">Amount</span><span class="te-v ok">$890.40</span></div>
-                    <div class="te-row"><span class="te-k">Vendor ack</span><span class="te-v ok">Receipt confirmed · Apr 26 · 11:42 AM</span></div>
-                    <div class="te-row"><span class="te-k">PO status</span><span class="te-v ok">PO-7718 fully invoiced — closed</span></div>
-                  </div>
+                  <div><div class="tl-step-name" style="color:#15803d;">INV-1024 PAID · $890.40 via ACH · PO closed</div></div>
+                  <div class="tl-step-right"><div class="tl-time">Apr 26</div></div>
                 </div>
               </div>
             </div>
 
-            <div class="tl-step tl-done">
+            <!-- Phase: Second invoice arrived — folded -->
+            <div class="tl-phase">
+              <span class="tl-phase-label">Second invoice arrived</span>
+              <span class="tl-phase-line"></span>
+            </div>
+
+            <div class="tl-step tl-done tl-folded">
               <div class="tl-line"></div>
               <div class="tl-dot done">✓</div>
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
-                  <div>
-                    <div class="tl-tags"><span class="tl-tag tt-done">Received</span></div>
-                    <div class="tl-step-name">INV-1027 arrived — second invoice on same PO</div>
-                    <div class="tl-step-desc">Vendor portal upload from Praxis. Same PO, same shipment, same total. 2 days after INV-1024 was paid.</div>
-                  </div>
-                  <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>Vendor portal</span>
-                    <div class="tl-time">Apr 28 · 2:13 AM</div>
-                  </div>
+                  <div><div class="tl-step-name">INV-1027 arrived · vendor portal · same PO &amp; total</div></div>
+                  <div class="tl-step-right"><div class="tl-time">Apr 28 · 2:13 AM</div></div>
                 </div>
               </div>
+            </div>
+
+            <!-- Phase: AI auto-held — active, expanded -->
+            <div class="tl-phase">
+              <span class="tl-phase-label active">✦ Witness AI · Active step</span>
+              <span class="tl-phase-line"></span>
             </div>
 
             <div class="tl-step">
@@ -841,11 +823,27 @@
                       <span class="tl-tag tt-issues">Held</span>
                       <span class="tl-tag tt-ai">✦ Witness AI</span>
                     </div>
-                    <div class="tl-step-name warn">Auto-held as duplicate</div>
-                    <div class="tl-step-desc">Witness removed INV-1027 from the AP queue 1 minute after intake. No payment routed.</div>
+                    <div class="tl-step-name warn">Auto-held as duplicate · 1 min after intake</div>
                     <div class="tl-ai-annotation">
-                      <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected</div>
-                      <strong>6 of 7 signals match INV-1024:</strong> same PO-7718, same shipment SHP-2241, same vendor Praxis, same total $890.40, same tax $73.40, same bill-to. Only the invoice number and submission channel differ. PO-7718 is already marked fully invoiced.
+                      <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected — 6 of 7 signals match INV-1024</div>
+                      <div class="ai-fact-strip">
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">PO</div>
+                          <div class="ai-fact-v amber">PO-7718 ≡</div>
+                        </div>
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">Shipment</div>
+                          <div class="ai-fact-v amber">SHP-2241 ≡</div>
+                        </div>
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">Total</div>
+                          <div class="ai-fact-v amber">$890.40 ≡</div>
+                        </div>
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">Action taken</div>
+                          <div class="ai-fact-v green">Removed from AP</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="tl-step-right">
@@ -878,17 +876,44 @@
               </div>
             </div>
 
+            <!-- Phase: Awaiting your action -->
+            <div class="tl-phase">
+              <span class="tl-phase-label blocked">Awaiting your decision</span>
+              <span class="tl-phase-line"></span>
+            </div>
+
             <div class="tl-step">
-              <div class="tl-dot future">○</div>
+              <div class="tl-dot future" style="background:#fff5f0;border-color:#ffb088;color:#ff6900;">→</div>
               <div class="tl-content">
                 <div class="tl-main-row">
                   <div>
-                    <div class="tl-tags"><span class="tl-tag tt-future">Awaiting you</span></div>
-                    <div class="tl-step-name muted">Confirm hold &amp; notify vendor</div>
+                    <div class="tl-tags"><span class="tl-tag tt-waiting">Awaiting you</span></div>
+                    <div class="tl-step-name">Confirm hold &amp; notify vendor</div>
                     <div class="tl-step-desc">One click confirms the hold and sends Praxis a polite retract request. Auto-archive in 7 days if no action.</div>
+                    <div class="tl-inline-actions">
+                      <div class="tl-inline-actions-head">✦ Recommended next steps</div>
+                      <div class="next-steps">
+                        <button class="btn-step-primary">
+                          Confirm hold &amp; notify Praxis to retract
+                          <span class="auto-pill">AUTO</span>
+                        </button>
+                        <button class="btn-step-secondary btn-step-ai">
+                          <div class="step-ico" style="background:#dcfce7;border-color:rgba(22,163,74,0.3)">✦</div>
+                          Ask vendor: re-bill or genuine reissue?
+                          <span class="auto-pill-green">AUTO</span>
+                        </button>
+                        <button class="btn-step-secondary">
+                          <div class="step-ico">📎</div>
+                          Open INV-1024 side-by-side
+                        </button>
+                        <button class="btn-step-secondary" style="border-color:rgba(220,38,38,0.35);color:#b91c1c;">
+                          <div class="step-ico" style="background:#fee2e2;border-color:rgba(220,38,38,0.25);color:#dc2626;">⚠</div>
+                          Override hold — release for payment
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   <div class="tl-step-right">
-                    <span class="src-chip src-erp"><span class="src-dot"></span>Action</span>
                     <div class="tl-time">— pending —</div>
                   </div>
                 </div>
@@ -906,11 +931,36 @@
           </div>
           <div class="ms-body">
 
-            <!-- AI summary -->
-            <div class="ms-ai-note">
-              <div style="flex-shrink:0;font-size:14px">✦</div>
-              <div class="ai-insight-txt">
-                <strong>Witness compared INV-1024 against INV-1027.</strong> 6 of 7 signals are identical. The only differences are the invoice number itself and the submission channel — Praxis uploaded INV-1027 via the vendor portal at 2:13 AM, 2 days after INV-1024 was paid via email. PO-7718 is already fully invoiced. <strong>Most likely explanation:</strong> Praxis's billing system re-emitted the invoice when the portal sync caught up. Vendor confirmed both prior dupes within 24h.
+            <!-- AI summary — structured key-fact grid -->
+            <div class="ms-ai-note structured">
+              <div class="ai-banner-head">
+                <div class="ai-insight-badge"><div class="ai-badge-dot"></div>Witness AI</div>
+                <span class="ai-banner-meta">Compared <strong>INV-1024 vs INV-1027</strong> · 98% confidence · 0.3s</span>
+              </div>
+              <div class="ai-key-grid">
+                <div class="ai-key-cell">
+                  <div class="ai-key-label">Signals identical</div>
+                  <div class="ai-key-val amber">6 of 7</div>
+                  <div class="ai-key-sub">PO · shipment · total · tax · vendor · bill-to</div>
+                </div>
+                <div class="ai-key-cell">
+                  <div class="ai-key-label">Differences</div>
+                  <div class="ai-key-val">2 fields only</div>
+                  <div class="ai-key-sub">Invoice # + submission channel</div>
+                </div>
+                <div class="ai-key-cell" style="background:#f0fdf4;border-color:#bbf7d0;">
+                  <div class="ai-key-label" style="color:#15803d;">PO-7718 status</div>
+                  <div class="ai-key-val green">Fully invoiced</div>
+                  <div class="ai-key-sub">Closed by INV-1024 on Apr 26</div>
+                </div>
+                <div class="ai-key-cell">
+                  <div class="ai-key-label">Vendor pattern</div>
+                  <div class="ai-key-val">2 prior dupes</div>
+                  <div class="ai-key-sub">Both retracted within 24h</div>
+                </div>
+              </div>
+              <div class="ai-banner-foot">
+                <strong>Most likely:</strong> Praxis's billing system re-emitted the invoice when the portal sync caught up — INV-1027 arrived 2 days after INV-1024 was paid via email. One message resolves this.
               </div>
             </div>
 
@@ -1173,71 +1223,7 @@
 
       </div><!-- /center-col -->
 
-      <!-- RIGHT: AI context -->
-      <div class="right-col">
-
-        <!-- Duplicate snapshot — INV-1024 / PO / INV-1027 -->
-        <div>
-          <div class="rs-title">Duplicate snapshot <span class="rs-link">View full</span></div>
-          <div class="rs-meta">Apr 28, 2025 · 2:14 AM · 98% confidence</div>
-
-          <svg viewBox="0 0 240 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-            <!-- edges -->
-            <line x1="120" y1="40" x2="48" y2="170" stroke="#16a34a" stroke-width="2" fill="none"/>
-            <line x1="120" y1="40" x2="192" y2="170" stroke="#e9e9e9" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
-            <line x1="48" y1="170" x2="192" y2="170" stroke="#dc2626" stroke-width="2.5" fill="none" stroke-dasharray="6 3"/>
-            <!-- edge labels -->
-            <rect x="40" y="97" width="62" height="18" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
-            <text x="71" y="110" font-family="Inter" font-size="10" font-weight="700" fill="#15803d" text-anchor="middle">paid Apr 26</text>
-            <rect x="138" y="97" width="68" height="18" rx="3" fill="white" stroke="#e9e9e9" stroke-width="1"/>
-            <text x="172" y="110" font-family="Inter" font-size="10" font-weight="600" fill="#b17728" text-anchor="middle">2nd bill · held</text>
-            <rect x="80" y="186" width="80" height="18" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
-            <text x="120" y="199" font-family="Inter" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">+$890.40 ◆</text>
-            <!-- nodes -->
-            <circle cx="120" cy="40" r="28" fill="white" stroke="#e9e9e9" stroke-width="1.5"/>
-            <text x="120" y="36" font-family="Inter" font-size="10" font-weight="700" fill="#0b0d12" text-anchor="middle">PO-7718</text>
-            <text x="120" y="50" font-family="Inter" font-size="8" fill="#adadad" text-anchor="middle">fully invoiced</text>
-            <circle cx="48" cy="170" r="30" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
-            <text x="48" y="166" font-family="Inter" font-size="10" font-weight="700" fill="#15803d" text-anchor="middle">INV-1024</text>
-            <text x="48" y="180" font-family="Inter" font-size="8" fill="#15803d" text-anchor="middle">paid · ACH</text>
-            <circle cx="192" cy="170" r="30" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
-            <text x="192" y="166" font-family="Inter" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">INV-1027</text>
-            <text x="192" y="180" font-family="Inter" font-size="8" fill="#dc2626" text-anchor="middle">held</text>
-          </svg>
-
-          <div class="mt-legend">
-            <div class="mt-leg"><div class="mt-leg-dot" style="background:#dc2626"></div><div>◆ Primary — INV-1027 mirrors INV-1024. Risk: $890.40 paid twice if released.</div></div>
-            <div class="mt-leg"><div class="mt-leg-dot" style="background:#16a34a"></div><div>INV-1024 closed PO-7718 cleanly on Apr 26 (ACH, vendor ack'd).</div></div>
-            <div class="mt-leg"><div class="mt-leg-dot" style="background:#c8c8c8"></div><div>PO-7718 has no remaining scope — second invoice has no business basis.</div></div>
-          </div>
-        </div>
-
-        <!-- Auto-hold status -->
-        <div>
-          <div class="rs-title" style="margin-bottom:10px">Auto-hold status</div>
-          <div class="as-card">
-            <div class="as-person">
-              <div class="as-av" style="background:#ff6900">✦</div>
-              <div>
-                <div class="as-name">Witness AI</div>
-                <div class="as-role">Auto-held · 98% confidence</div>
-              </div>
-              <div class="as-status">
-                <span class="badge approved" style="background:#dcfce7;color:#15803d;"><span class="bdot" style="background:#16a34a;"></span>Held</span>
-              </div>
-            </div>
-            <div class="as-field-row"><span class="as-field-label">Detected</span><span class="as-field-val">Apr 28 · 2:14 AM</span></div>
-            <div class="as-field-row"><span class="as-field-label">Latency from intake</span><span class="as-field-val">1 min</span></div>
-            <div class="as-field-row"><span class="as-field-label">Routed to AP queue</span><span class="as-field-val">No · removed</span></div>
-            <div class="as-field-row"><span class="as-field-label">Reviewer</span><span class="as-field-val">M. Chen · AP Analyst</span></div>
-            <div class="as-field-row"><span class="as-field-label">Auto-archive in</span><span class="as-field-val">7 days if no override</span></div>
-          </div>
-          <a class="view-chain">View prior Praxis dupes (2) →</a>
-        </div>
-
-      </div><!-- /right-col -->
-
-    </div><!-- /three-col -->
+    </div><!-- /main-panel -->
 
   </main>
 </div><!-- /main -->
