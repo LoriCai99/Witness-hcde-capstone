@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Witness – INV-1048</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', sans-serif; background: #eeeef0; color: #0b0d12; overflow: hidden; --sidebar-w: 258px; --chat-w: 340px; }
+    body:has(.sidebar.collapsed) { --sidebar-w: 72px; }
+    .app-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--chat-w); transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1); }
+
+
+    /* ─── SIDEBAR — verbatim from all-invoices ─── */
+    .sidebar { position: relative; height: 100%; background: #eeeef0; display: flex; flex-direction: column; z-index: 20; overflow-y: auto; }
+    .sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .brand-logo { width: 32px; height: 32px; background: #120b0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .brand-logo img { width: 20px; height: 20px; display: block; object-fit: contain; }
+    .brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
+    .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+    .nav-group { display: flex; flex-direction: column; gap: 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-items { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: #45556c; font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: -0.15px; text-decoration: none; cursor: pointer; }
+    .nav-item:hover { background: rgba(0,0,0,0.04); }
+    .nav-item.active { background: white; color: #120b0b; padding: 8px 12px; }
+    .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
+    .nav-badge { margin-left: auto; background: #120b0b; color: white; font-size: 12px; font-weight: 700; line-height: 16px; padding: 2px 8px; border-radius: 999px; }
+    .nav-badge.ai { background: #ff6900; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* ─── MAIN ─── */
+    .main { height: 100%; overflow-y: auto; overflow-x: auto; min-width: 0; display: flex; flex-direction: column; }
+
+    /* ─── TOPBAR — verbatim from all-invoices ─── */
+    .topbar { position: sticky; top: 0; z-index: 10; background: white; border-bottom: 1px solid #ededed; display: flex; align-items: center; justify-content: space-between; padding: 23px 24px; flex-shrink: 0; }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #adadad; }
+    .breadcrumb a { color: #45556c; text-decoration: none; cursor: pointer; font-weight: 500; }
+    .breadcrumb a:hover { color: #0b0d12; }
+    .bc-sep { opacity: 0.4; font-size: 16px; }
+    .bc-cur { color: #0b0d12; font-weight: 600; }
+    .topbar-right { display: flex; align-items: center; gap: 24px; }
+    .health-chip { display: flex; align-items: center; gap: 8px; background: #dcfce7; border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
+    .health-dot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
+    .health-chip span { font-size: 14px; font-weight: 500; color: #00a63e; letter-spacing: -0.15px; white-space: nowrap; }
+    .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+
+    /* ─── CONTENT AREA ─── */
+    .content { padding: 32px 40px 52px; display: flex; flex-direction: column; gap: 24px; flex: 1; }
+
+    /* ─── INVOICE HEADER SECTION ─── */
+    .inv-header-card {
+      background: white;
+      border: 2px solid #e9e9e9;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .inv-header-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .inv-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .inv-breadcrumb-trail { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #adadad; margin-bottom: 4px; }
+    .inv-breadcrumb-trail span { color: #45556c; }
+    .inv-title-row { display: flex; align-items: center; gap: 10px; }
+    .inv-number { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 400; color: #120b0b; line-height: 1.2; }
+    .inv-meta-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #45556c; flex-wrap: wrap; }
+    .inv-meta-sep { color: #adadad; }
+
+    .inv-header-right { text-align: right; }
+    .inv-amount-label { font-size: 11px; font-weight: 600; color: #adadad; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+    .inv-amount { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 400; color: #120b0b; line-height: 1.1; }
+    .inv-due { font-size: 12px; color: #dc2626; font-weight: 500; margin-top: 4px; }
+
+    /* Financial impact strip */
+    .fin-strip { display: flex; }
+    .fin-cell { flex: 1; padding: 14px 20px; border-right: 1px solid #f0f0f0; }
+    .fin-cell:last-child { border-right: none; }
+    .fin-label { font-size: 11px; font-weight: 600; color: #adadad; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; margin-bottom: 6px; }
+    .fin-val { font-size: 18px; font-weight: 600; color: #0b0d12; line-height: 1.2; }
+    .fin-val.red   { color: #dc2626; }
+    .fin-val.amber { color: #e9b44c; }
+    .fin-val.green { color: #16a34a; }
+    .fin-sub { font-size: 11px; color: #adadad; margin-top: 3px; line-height: 14px; }
+
+    /* Badges — verbatim from all-invoices */
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .badge.blocked  { background: #fee2e2; color: #b91c1c; }
+    .badge.pending  { background: #fff0e0; color: #d95b03; }
+    .badge.waiting  { background: #fdf2d4; color: #b17728; }
+    .badge.approved { background: #dcfce7; color: #15803d; }
+    .bdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge.blocked  .bdot { background: #dc2626; }
+    .badge.pending  .bdot { background: #ff6900; }
+    .badge.waiting  .bdot { background: #e9b44c; }
+    .badge.approved .bdot { background: #16a34a; }
+
+    /* Source chips */
+    .src-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .src-amazon { background: #e7f4ff; color: #155dfc; }
+    .src-erp    { background: #f4f4f4; color: #45556c; }
+    .src-witness { background: #fff5f0; color: #ff6900; border: 1px solid #ffb088; }
+    .src-dot    { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .src-amazon .src-dot { background: #155dfc; }
+    .src-erp    .src-dot { background: #45556c; }
+    .src-witness .src-dot { background: #ff6900; }
+
+    /* ─── STAT CARDS ROW — same strip style as all-invoices ─── */
+    .stat-row { display: flex; }
+    .stat-card { background: white; border: 2px solid #e9e9e9; padding: 18px; flex: 1; min-width: 0; }
+    .stat-card:first-child { border-radius: 10px 0 0 10px; }
+    .stat-card:last-child  { border-radius: 0 10px 10px 0; }
+    .stat-card + .stat-card { border-left: none; }
+    .stat-inner { display: flex; flex-direction: column; gap: 6px; }
+    .stat-num { font-size: 28px; font-weight: 600; color: #0f172b; line-height: 1; }
+    .stat-num.red   { color: #dc2626; }
+    .stat-num.amber { color: #e9b44c; }
+    .stat-num.green { color: #16a34a; }
+    .stat-lbl { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; }
+    .stat-sub { font-size: 11px; font-weight: 400; color: #45556c; line-height: 14px; }
+
+    /* ─── THREE COLUMN LAYOUT ─── */
+    .three-col { display: grid; grid-template-columns: 260px 1fr 264px; gap: 0; background: white; border: 2px solid #e9e9e9; border-radius: 10px; overflow: hidden; min-height: 560px; }
+
+    /* ─── LEFT COLUMN ─── */
+    .left-col { border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; overflow-y: auto; }
+    .lcol-section { padding: 16px 18px; border-bottom: 1px solid #f0f0f0; }
+    .lcol-section:last-child { border-bottom: none; flex: 1; }
+    .section-title { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .section-title-badge { width: 16px; height: 16px; border-radius: 50%; background: #dc2626; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+
+    .field-list { display: flex; flex-direction: column; }
+    .field-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #f7f7f7; font-size: 13px; gap: 8px; }
+    .field-row:last-child { border-bottom: none; }
+    .field-label { color: #45556c; flex-shrink: 0; font-weight: 400; }
+    .field-val { color: #0b0d12; font-weight: 500; text-align: right; }
+    .field-val.red { color: #dc2626; }
+    .field-val.amber { color: #b17728; }
+    .field-avatar { display: flex; align-items: center; gap: 5px; }
+    .fa-circle { width: 18px; height: 18px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; background: #e9b44c; }
+
+    /* Blocker cards */
+    .blocker-list { display: flex; flex-direction: column; gap: 8px; }
+    .blocker-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #fee2e2; border: 1px solid rgba(220,38,38,0.2); border-radius: 10px; }
+    .blocker-ico { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .blocker-body { flex: 1; }
+    .blocker-title { font-size: 12px; font-weight: 600; color: #b91c1c; }
+    .blocker-desc { font-size: 11px; color: #45556c; margin-top: 2px; line-height: 1.4; }
+    .blocker-impact { font-size: 10px; color: #dc2626; font-weight: 600; margin-top: 5px; padding-top: 5px; border-top: 1px dashed rgba(220,38,38,0.25); font-variant-numeric: tabular-nums; }
+
+    /* Next steps */
+    .next-steps { display: flex; flex-direction: column; gap: 6px; }
+    .btn-step-primary { width: 100%; padding: 10px 14px; border-radius: 8px; border: none; background: #120b0b; color: white; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px; transition: background 0.15s; }
+    .btn-step-primary:hover { background: #45556c; }
+    .btn-step-secondary { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid #e9e9e9; background: white; color: #45556c; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.12s; }
+    .btn-step-secondary:hover { background: #f4f4f4; color: #0b0d12; border-color: #c8c8c8; }
+    .btn-step-ai { border-color: rgba(22,163,74,0.3); color: #15803d; background: #dcfce7; }
+    .btn-step-ai:hover { background: rgba(22,163,74,0.14); }
+    .step-ico { width: 20px; height: 20px; border-radius: 6px; background: #f4f4f4; border: 1px solid #e9e9e9; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+    .auto-pill { margin-left: auto; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.15); color: white; }
+    .auto-pill-green { margin-left: auto; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #dcfce7; color: #15803d; border: 1px solid rgba(22,163,74,0.3); }
+    .btn-add-note { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px dashed #e9e9e9; background: transparent; color: #adadad; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px; transition: all 0.12s; }
+    .btn-add-note:hover { border-color: #adadad; color: #45556c; }
+
+    /* ─── CENTER COLUMN ─── */
+    .center-col { display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #f0f0f0; }
+    .center-tabs { display: flex; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+    .ctab { flex: 1; text-align: center; padding: 11px 8px; font-size: 12px; font-weight: 500; color: #45556c; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.12s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Inter', sans-serif; }
+    .ctab:hover { color: #0b0d12; background: #f0f0f0; }
+    .ctab.active { color: #0b0d12; border-bottom-color: #120b0b; background: white; font-weight: 600; }
+    .tl-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; }
+    .tl-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .tl-collapse-btn { font-size: 11px; color: #adadad; cursor: pointer; border: none; background: none; font-family: 'Inter', sans-serif; }
+    .timeline { flex: 1; overflow-y: auto; padding: 20px; }
+
+    /* ─── TAB PANELS ─── */
+    .tab-panel { display: none; flex: 1; overflow-y: auto; flex-direction: column; }
+    .tab-panel.active { display: flex; }
+
+    /* Match summary panel */
+    .ms-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .ms-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .ms-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #fee2e2; color: #b91c1c; }
+    .ms-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .ms-card { border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .ms-card-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; }
+    .ms-card-title { font-size: 13px; font-weight: 600; color: #0b0d12; display: flex; align-items: center; gap: 8px; }
+    .ms-card-status { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; }
+    .ms-status-match { background: #dcfce7; color: #15803d; }
+    .ms-status-mismatch { background: #fee2e2; color: #b91c1c; }
+    .ms-status-warn { background: #fdf2d4; color: #b17728; }
+    .ms-table { width: 100%; border-collapse: collapse; }
+    .ms-table th { font-size: 11px; font-weight: 600; color: #adadad; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 14px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+    .ms-table td { font-size: 13px; padding: 9px 14px; border-bottom: 1px solid #f7f7f7; color: #0b0d12; }
+    .ms-table tr:last-child td { border-bottom: none; }
+    .ms-table td.label { color: #45556c; font-weight: 400; }
+    .ms-table td.ok   { color: #16a34a; font-weight: 600; }
+    .ms-table td.warn { color: #b17728; font-weight: 600; }
+    .ms-table td.crit { color: #dc2626; font-weight: 600; }
+    .ms-ai-note { background: #fff5f0; border: 1px solid #ffb088; border-radius: 10px; padding: 12px 14px; display: flex; gap: 10px; }
+    .ms-conf-row { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid #f0f0f0; background: #fafafa; }
+    .ms-conf-label { font-size: 11px; color: #adadad; }
+    .ms-conf-bar { width: 80px; height: 4px; background: #e9e9e9; border-radius: 999px; overflow: hidden; }
+    .ms-conf-fill { height: 100%; background: #16a34a; border-radius: 999px; }
+    .ms-conf-val { font-size: 11px; font-weight: 600; color: #0b0d12; margin-left: auto; }
+
+    /* Financial impact panel */
+    .fi-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .fi-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .fi-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .fi-summary-strip { display: flex; border: 2px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .fi-sum-cell { flex: 1; padding: 14px 16px; border-right: 1px solid #f0f0f0; }
+    .fi-sum-cell:last-child { border-right: none; }
+    .fi-sum-label { font-size: 11px; font-weight: 600; color: #adadad; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .fi-sum-val { font-size: 22px; font-weight: 600; color: #0b0d12; }
+    .fi-sum-val.red { color: #dc2626; }
+    .fi-sum-val.amber { color: #b17728; }
+    .fi-sum-sub { font-size: 11px; color: #adadad; margin-top: 3px; }
+    .fi-breakdown { border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .fi-breakdown-head { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; }
+    .fi-breakdown-title { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.5px; }
+    .fi-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid #f7f7f7; font-size: 13px; }
+    .fi-row:last-child { border-bottom: none; }
+    .fi-row-label { color: #45556c; display: flex; align-items: center; gap: 6px; }
+    .fi-row-ico { font-size: 12px; }
+    .fi-row-val { font-weight: 600; }
+    .fi-row-val.red { color: #dc2626; }
+    .fi-row-val.amber { color: #b17728; }
+    .fi-row-val.green { color: #16a34a; }
+    .fi-row-val.muted { color: #adadad; }
+    .fi-total-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #fee2e2; border-top: 1px solid rgba(220,38,38,0.2); }
+    .fi-total-label { font-size: 13px; font-weight: 700; color: #b91c1c; }
+    .fi-total-val { font-size: 18px; font-weight: 700; color: #dc2626; }
+    .fi-scenario { border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .fi-scenario-head { padding: 11px 14px; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.5px; }
+    .fi-scenario-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #f7f7f7; }
+    .fi-scenario-row:last-child { border-bottom: none; }
+    .fi-scenario-label { font-size: 12px; font-weight: 600; color: #0b0d12; margin-bottom: 2px; }
+    .fi-scenario-desc { font-size: 11px; color: #45556c; line-height: 1.4; }
+    .fi-scenario-outcome { text-align: right; flex-shrink: 0; }
+    .fi-scenario-outcome .val { font-size: 14px; font-weight: 700; }
+    .fi-scenario-outcome .val.green { color: #16a34a; }
+    .fi-scenario-outcome .val.red { color: #dc2626; }
+    .fi-scenario-outcome .sub { font-size: 10px; color: #adadad; margin-top: 2px; }
+    .scenario-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+
+    /* Comments panel */
+    .cm-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .cm-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .cm-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; flex: 1; overflow-y: auto; }
+    .cm-compose { border-top: 1px solid #f0f0f0; padding: 14px 20px; display: flex; gap: 10px; align-items: flex-start; flex-shrink: 0; }
+    .cm-compose-av { width: 28px; height: 28px; border-radius: 50%; background: #0f172b; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cm-compose-input { flex: 1; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: 'Inter', sans-serif; color: #0b0d12; outline: none; resize: none; line-height: 1.5; }
+    .cm-compose-input:focus { border-color: #adadad; }
+    .cm-compose-input::placeholder { color: #adadad; }
+    .cm-send { padding: 8px 14px; background: #120b0b; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; align-self: flex-end; }
+    .cm-send:hover { background: #45556c; }
+    .comment-item { display: flex; gap: 10px; }
+    .cm-av { width: 28px; height: 28px; border-radius: 50%; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cm-bubble { flex: 1; }
+    .cm-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+    .cm-author { font-size: 12px; font-weight: 600; color: #0b0d12; }
+    .cm-role { font-size: 11px; color: #adadad; }
+    .cm-time { font-size: 11px; color: #adadad; margin-left: auto; }
+    .cm-text { font-size: 13px; color: #45556c; line-height: 1.6; background: #f7f7f7; border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px 12px; }
+    .cm-text.ai { background: #fff5f0; border-color: #ffb088; }
+    .cm-actions { display: flex; gap: 10px; margin-top: 5px; }
+    .cm-action-btn { font-size: 11px; color: #adadad; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; padding: 0; }
+    .cm-action-btn:hover { color: #45556c; }
+    .cm-divider { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #adadad; }
+    .cm-divider-line { flex: 1; height: 1px; background: #f0f0f0; }
+
+    .tl-step { display: grid; grid-template-columns: 22px 1fr; gap: 12px; position: relative; padding-bottom: 20px; }
+    .tl-step:last-child { padding-bottom: 0; }
+    .tl-line { position: absolute; left: 10px; top: 22px; width: 2px; bottom: 0; background: #f0f0f0; }
+    .tl-step.tl-done .tl-line { background: rgba(22,163,74,0.25); }
+    .tl-step.tl-blocked .tl-line { background-image: repeating-linear-gradient(to bottom, rgba(220,38,38,0.3) 0, rgba(220,38,38,0.3) 4px, transparent 4px, transparent 8px); }
+    .tl-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; z-index: 1; position: relative; }
+    .tl-dot.done    { background: #16a34a; color: white; }
+    .tl-dot.ai      { background: #ff6900; color: white; font-size: 11px; }
+    .tl-dot.blocked { background: #dc2626; color: white; }
+    .tl-dot.future  { background: #e9e9e9; color: #adadad; border: 2px dashed #c8c8c8; }
+    .tl-content { cursor: pointer; }
+    .tl-main-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .tl-step-name { font-size: 13px; font-weight: 600; color: #0b0d12; margin-bottom: 2px; }
+    .tl-step-name.warn    { color: #b17728; }
+    .tl-step-name.blocked { color: #dc2626; }
+    .tl-step-name.muted   { color: #adadad; }
+    .tl-step-desc { font-size: 12px; color: #45556c; margin-bottom: 6px; line-height: 1.5; }
+    .tl-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px; }
+    .tl-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; }
+    .tt-done    { background: #dcfce7; color: #15803d; }
+    .tt-issues  { background: #fee2e2; color: #b91c1c; }
+    .tt-ai      { background: #fff5f0; color: #ff6900; }
+    .tt-waiting { background: #fdf2d4; color: #b17728; }
+    .tt-future  { background: #f4f4f4; color: #adadad; }
+    .tl-step-right { text-align: right; flex-shrink: 0; }
+    .tl-time { font-size: 10px; color: #adadad; font-variant-numeric: tabular-nums; margin-top: 3px; }
+
+    /* AI annotation — matches all-invoices ai-insight-row style */
+    .tl-ai-annotation { margin-top: 8px; padding: 10px 12px; background: #fff5f0; border-left: 2px solid #ffb299; border-radius: 0 8px 8px 0; font-size: 12px; color: #45556c; line-height: 1.5; }
+    .ai-ann-head { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #ff6900; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .ai-pulse { width: 5px; height: 5px; border-radius: 50%; background: #ff6900; animation: pls 2s infinite; }
+    @keyframes pls { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .tl-action-needed { margin-top: 8px; padding: 10px 12px; background: #fee2e2; border: 1px solid rgba(220,38,38,0.2); border-radius: 8px; font-size: 12px; color: #45556c; line-height: 1.5; }
+    .tl-action-needed strong { color: #dc2626; }
+
+    .tl-expanded { display: none; margin-top: 10px; }
+    .tl-expanded.open { display: block; }
+    .te-inner { background: #f7f7f7; border: 1px solid #e9e9e9; border-radius: 10px; padding: 12px; }
+    .te-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f0f0f0; font-size: 11.5px; }
+    .te-row:last-child { border-bottom: none; }
+    .te-k { color: #adadad; }
+    .te-v { color: #0b0d12; font-weight: 500; }
+    .te-v.ok   { color: #16a34a; }
+    .te-v.warn { color: #b17728; }
+    .te-v.crit { color: #dc2626; }
+    .te-conf { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
+    .te-conf-bar { flex: 1; height: 4px; background: #e9e9e9; border-radius: 999px; overflow: hidden; max-width: 80px; }
+    .te-conf-fill { height: 100%; background: #16a34a; border-radius: 999px; }
+    .te-conf-label { font-size: 10px; color: #adadad; }
+    .te-conf-val { font-size: 10px; font-weight: 600; color: #0b0d12; }
+    .te-sources { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; padding-top: 6px; border-top: 1px solid #f0f0f0; align-items: center; }
+    .te-src-label { font-size: 10px; color: #adadad; }
+    .te-src-chip { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 6px; background: white; color: #45556c; border: 1px solid #e9e9e9; cursor: pointer; }
+    .te-src-chip:hover { border-color: #adadad; }
+
+    /* ─── RIGHT COLUMN ─── */
+    .right-col { overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 20px; }
+    .rs-title { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .rs-link { font-size: 11px; font-weight: 500; color: #ff6900; text-transform: none; letter-spacing: 0; cursor: pointer; text-decoration: underline; }
+    .rs-meta { font-size: 11px; color: #adadad; margin-bottom: 12px; }
+
+    /* Match triangle */
+    .match-triangle svg { width: 100%; height: auto; }
+    .mt-legend { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .mt-leg { display: flex; align-items: flex-start; gap: 6px; font-size: 10px; color: #45556c; line-height: 1.4; }
+    .mt-leg-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+
+    /* Approval card */
+    .as-card { background: #f7f7f7; border: 1px solid #e9e9e9; border-radius: 10px; padding: 14px; }
+    .as-person { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+    .as-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+    .as-name { font-size: 13px; font-weight: 600; color: #0b0d12; }
+    .as-role { font-size: 11px; color: #adadad; }
+    .as-status { margin-left: auto; }
+    .as-field-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 4px 0; }
+    .as-field-label { color: #adadad; }
+    .as-field-val { color: #0b0d12; font-weight: 500; }
+    .as-field-val.red { color: #dc2626; }
+    .view-chain { display: block; margin-top: 8px; font-size: 11px; color: #ff6900; cursor: pointer; text-decoration: underline; }
+
+    /* AI insight banner — matching all-invoices */
+    .ai-insight-banner {
+      background: #fff5f0;
+      border: 1px solid #ffb088;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .ai-insight-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: white; color: #ff6900;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 999px; border: 1px solid #ffb088;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .ai-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #ff6900; animation: pls 2s infinite; }
+    .ai-insight-txt { font-size: 12px; color: #45556c; line-height: 1.5; }
+    .ai-insight-txt strong { color: #0b0d12; }
+
+    /* Topbar action buttons */
+    .btn-outline { background: white; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 7px 16px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #0b0d12; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-outline:hover { background: #f4f4f4; }
+    .btn-solid { background: #ff7a3d; border: none; border-radius: 999px; padding: 0 20px; height: 32px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: white; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-solid:hover { background: #ff6826; }
+    .btn-solid-dark { background: #120b0b; border: none; border-radius: 8px; padding: 0 16px; height: 32px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: white; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; position: relative; }
+    .btn-solid-dark:hover { background: #45556c; }
+
+    /* Dry-run tooltip */
+    .dry-run { position: absolute; top: calc(100% + 8px); right: 0; background: #120b0b; color: #f0ede8; border-radius: 10px; padding: 14px 16px; width: 268px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transform: translateY(-4px); transition: all 0.18s; z-index: 50; text-align: left; }
+    .btn-solid-dark:hover .dry-run { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .dr-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(240,237,232,0.4); margin-bottom: 10px; }
+    .dr-list { display: flex; flex-direction: column; gap: 6px; }
+    .dr-item { display: flex; gap: 7px; font-size: 11px; color: rgba(240,237,232,0.75); line-height: 1.4; }
+    .dr-num { color: #16a34a; font-size: 9px; font-weight: 700; flex-shrink: 0; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .dr-foot { font-size: 10px; color: rgba(240,237,232,0.4); margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+    /* Page heading row */
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; }
+    .page-hd-left { display: flex; flex-direction: column; gap: 4px; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+    .page-sub { font-size: 14px; font-weight: 400; color: #45556c; line-height: 20px; letter-spacing: -0.15px; }
+    .hd-actions { display: flex; align-items: center; gap: 8px; }
+    .approve-tooltip { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: #120b0b; color: #f0ede8; border-radius: 10px; padding: 12px 14px; width: 240px; font-size: 11px; line-height: 1.6; z-index: 50; text-align: left; }
+    .approve-wrap:hover .approve-tooltip { display: block; }
+
+    /* SIDEBAR COLLAPSE */
+    .sidebar { transition: width .2s ease; }
+    .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
+    .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
+    .sidebar-toggle svg { transition: transform .2s; }
+    .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+    .sidebar.collapsed .brand-name { display: none; }
+    .sidebar.collapsed .sidebar-toggle { position: absolute; top: 80px; right: -12px; background: #fff; border: 1.5px solid #e9e9e9; box-shadow: 0 1px 3px rgba(0,0,0,0.06); width: 24px; height: 24px; border-radius: 50%; margin: 0; z-index: 21; }
+    .sidebar.collapsed .sidebar-toggle:hover { background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+    .sidebar.collapsed .nav-label { display: none; }
+    .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
+    .sidebar.collapsed .nav-item.active { padding: 8px 0; }
+    .sidebar.collapsed .nav-badge { display: none; }
+  </style>
+</head>
+<body data-chat="rail">
+
+<!-- ─── SIDEBAR ─── -->
+<div class="app-grid">
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="" />
+    </div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="dashboard.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item active" href="invoices.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13z M10 1.5V4h3 M5.5 7.5h5 M5.5 10h5 M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Invoice
+          <span class="nav-badge">26</span>
+        </a>
+        <a class="nav-item" href="vendors.html">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item" href="autoflow.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Autoflow
+        </a>
+        <a class="nav-item" href="ai-activity.html">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge ai">24</span>
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v2 M8 12.5v2 M14.5 8h-2 M3.5 8h-2 M12.6 3.4l-1.4 1.4 M4.8 11.2l-1.4 1.4 M12.6 12.6l-1.4-1.4 M4.8 4.8L3.4 3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-date">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
+      <nav class="breadcrumb">
+        <span>›</span>
+        <a href="invoices.html">All Invoices</a>
+        <span class="bc-sep">›</span>
+        <span class="bc-cur">INV-1048</span>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <div class="health-chip">
+        <div class="health-dot"></div>
+        <span>All systems healthy</span>
+      </div>
+      <button class="btn-outline">✦ Ask Witness</button>
+      <button class="btn-outline">Share</button>
+      <div style="position:relative">
+        <button class="btn-solid-dark">
+          Take action ▾
+          <div class="dry-run">
+            <div class="dr-label">If you proceed, Witness will:</div>
+            <div class="dr-list">
+              <div class="dr-item"><span class="dr-num">1.</span><span>Send credit memo request to <strong style="color:#f0ede8">Brightline</strong> ($280, 2 units)</span></div>
+              <div class="dr-item"><span class="dr-num">2.</span><span>Nudge <strong style="color:#f0ede8">J. Park</strong> with attached GRN evidence</span></div>
+              <div class="dr-item"><span class="dr-num">3.</span><span>Flag $42 freight variance for your review</span></div>
+            </div>
+            <div class="dr-foot">All actions are reversible · You'll review each before sending</div>
+          </div>
+        </button>
+      </div>
+      <div class="avatar">MC</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- ─── PAGE HEADING ─── -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a href="#" style="align-self:flex-start;font-size:13px;font-weight:500;color:#45556c;text-decoration:none;display:flex;align-items:center;gap:4px;">← All Invoices</a>
+      <div class="page-hd">
+        <div class="page-hd-left">
+          <h1 class="ptitle">INV-1048 &nbsp;—&nbsp; Brightline Office Supply</h1>
+          <div class="page-sub">3-way match exception &nbsp;·&nbsp; PO-7721 &nbsp;·&nbsp; Amazon Business &nbsp;·&nbsp; Due Apr 30, 2025</div>
+        </div>
+        <div class="hd-actions">
+          <div style="position:relative;display:inline-block;" class="approve-wrap">
+            <button style="background:#f4f4f4;border:1.5px solid #e9e9e9;border-radius:999px;padding:0 20px;height:32px;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:#adadad;cursor:not-allowed;white-space:nowrap;display:flex;align-items:center;gap:6px;" disabled>
+              Approve payment
+            </button>
+            <div class="approve-tooltip">
+              <strong>Cannot approve yet</strong><br>2 match blockers must be resolved before payment can be approved.<br><br>
+              <span style="color:#adadad;">1. Quantity mismatch — credit memo pending<br>2. GRN short-receipt needs vendor confirmation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── STAT STRIP ─── -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div class="stat-lbl">Billed amount</div>
+          <div class="stat-num">$8,420</div>
+          <div class="stat-sub">As invoiced · 12 units</div>
+        </div>
+      </div>
+      <div class="stat-card" style="background:#f0fdf4;border-color:#bbf7d0;">
+        <div class="stat-inner">
+          <div class="stat-lbl" style="color:#15803d;">Corrected payable</div>
+          <div class="stat-num green">$7,016</div>
+          <div class="stat-sub">10 units × $701.67 · after credit memo</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div class="stat-lbl">Qty mismatch</div>
+          <div class="stat-num red">−$280</div>
+          <div class="stat-sub">2 units billed, not received</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div class="stat-lbl">Freight variance</div>
+          <div class="stat-num amber">$42</div>
+          <div class="stat-sub">Not in PO · needs review</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div class="stat-lbl">Discount at risk</div>
+          <div class="stat-num amber">−$140</div>
+          <div class="stat-sub">2% of $7,016 · expires Apr 30</div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#adadad;margin-top:-16px;padding-left:2px;">
+      Net exposure if unresolved by Apr 30: <strong style="color:#dc2626;">−$420.32</strong> &nbsp;=&nbsp; $280 overbilling + $140 discount lost + $42 freight &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How is this calculated?</span>
+    </div>
+
+    <!-- ─── AI INSIGHT BANNER ─── -->
+    <div class="ai-insight-banner">
+      <div class="ai-insight-badge">
+        <div class="ai-badge-dot"></div>
+        Witness AI
+      </div>
+      <div class="ai-insight-txt">
+        <strong>2 match exceptions detected.</strong> Quantity: PO ordered 12 units, GRN-2043 confirms 10 received (2 damaged in transit), invoice bills 12 — corrected payable is <strong>$7,016.70</strong>. Freight $42 has no PO backing — check contract tolerance before disputing. Early payment discount (2% = $140.33) expires Apr 30. Approval from J. Park is a downstream consequence of the match block, not a separate blocker.
+      </div>
+    </div>
+
+    <!-- ─── THREE COLUMN ─── -->
+    <div class="three-col">
+
+      <!-- LEFT: Case summary -->
+      <div class="left-col">
+
+        <div class="lcol-section">
+          <div class="section-title">Case summary</div>
+          <div class="field-list">
+            <div class="field-row">
+              <span class="field-label">Status</span>
+              <span class="field-val"><span class="badge blocked"><span class="bdot"></span>Blocked</span></span>
+            </div>
+            <div class="field-row"><span class="field-label">Invoice #</span><span class="field-val">INV-1048</span></div>
+            <div class="field-row"><span class="field-label">PO reference</span><span class="field-val">PO-7721</span></div>
+            <div class="field-row"><span class="field-label">GRN reference</span><span class="field-val">GRN-2043</span></div>
+            <div class="field-row"><span class="field-label">Invoice date</span><span class="field-val">Apr 24, 2025</span></div>
+            <div class="field-row"><span class="field-label">Payment due &amp; discount expires</span><span class="field-val red">Apr 30 · 2 days</span></div>
+            <div class="field-row"><span class="field-label">Vendor</span><span class="field-val">Brightline Office</span></div>
+            <div class="field-row"><span class="field-label">Source</span><span class="field-val"><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></span></div>
+            <div class="field-row"><span class="field-label">Requester</span><span class="field-val">Nina Lee</span></div>
+            <div class="field-row">
+              <span class="field-label">Approver</span>
+              <span class="field-val">
+                <div class="field-avatar">
+                  <div class="fa-circle">JP</div>
+                  J. Park
+                </div>
+              </span>
+            </div>
+            <div class="field-row"><span class="field-label">Department</span><span class="field-val">Facilities</span></div>
+          </div>
+        </div>
+
+        <div class="lcol-section">
+          <div class="section-title">
+            3-way match blockers
+            <span class="section-title-badge">2</span>
+          </div>
+          <div style="font-size:10px;color:#adadad;margin-bottom:8px;margin-top:-6px;">These must be resolved before approval can proceed</div>
+          <div class="blocker-list">
+            <div class="blocker-item">
+              <div class="blocker-ico">⚠</div>
+              <div class="blocker-body">
+                <div class="blocker-title">Quantity mismatch</div>
+                <div class="blocker-desc">PO: 12 units · GRN: 10 received · Invoice: 12 billed. Verify whether 2 units are in transit or never shipped before issuing credit memo.</div>
+                <div class="blocker-impact">Overbilling: −$280.00 · Corrected payable: $7,016.70</div>
+              </div>
+            </div>
+            <div class="blocker-item" style="background:#fdf2d4;border-color:rgba(233,180,76,0.3);">
+              <div class="blocker-ico">🚚</div>
+              <div class="blocker-body">
+                <div class="blocker-title" style="color:#b17728;">Freight variance — needs review</div>
+                <div class="blocker-desc">$42 freight on invoice line 11 has no PO backing. Check vendor contract for freight tolerance before disputing.</div>
+                <div class="blocker-impact" style="color:#b17728;">If outside tolerance: +$42.00 to dispute</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lcol-section" style="background:#f7f7f7;border-radius:0;">
+          <div class="section-title" style="color:#45556c;">Approval workflow</div>
+          <div style="font-size:11px;color:#adadad;margin-bottom:8px;margin-top:-6px;">Separate from 3-way match · unblocks after match resolves</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:white;border:1px solid #e9e9e9;border-radius:10px;">
+            <div class="fa-circle" style="width:28px;height:28px;font-size:10px;background:#e9b44c;flex-shrink:0;">JP</div>
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:600;color:#0b0d12;">J. Park</div>
+              <div style="font-size:11px;color:#adadad;">Director of Finance · waiting 3 days</div>
+            </div>
+            <span class="badge waiting" style="font-size:10px;"><span class="bdot"></span>Pending</span>
+          </div>
+          <div style="font-size:11px;color:#dc2626;margin-top:8px;">Escalation to Controller in 2 days if no response</div>
+        </div>
+
+        <div class="lcol-section">
+          <div class="section-title">✦ Recommended next steps</div>
+          <div class="next-steps">
+            <button class="btn-step-primary">
+              Confirm GRN with vendor — 2 units
+              <span class="auto-pill">STEP 1</span>
+            </button>
+            <button class="btn-step-primary" style="background:#45556c;">
+              Request credit memo $280
+              <span class="auto-pill">AUTO</span>
+            </button>
+            <button class="btn-step-secondary btn-step-ai">
+              <div class="step-ico" style="background:#dcfce7;border-color:rgba(22,163,74,0.3)">✦</div>
+              Nudge J. Park — discount expires Apr 30
+              <span class="auto-pill-green">AUTO</span>
+            </button>
+            <button class="btn-step-secondary">
+              <div class="step-ico">📎</div>
+              Review freight vs. vendor contract
+            </button>
+            <button class="btn-add-note">+ Add case note</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CENTER: Tabbed panels -->
+      <div class="center-col">
+        <div class="center-tabs">
+          <button class="ctab active" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
+          <button class="ctab" data-tab="match" onclick="switchTab(this)">Match summary</button>
+          <button class="ctab" data-tab="financial" onclick="switchTab(this)">Financial impact</button>
+          <button class="ctab" data-tab="comments" onclick="switchTab(this)">Comments (3)</button>
+        </div>
+
+        <!-- ─── TAB 1: Timeline ─── -->
+        <div class="tab-panel active" id="tab-timeline" style="flex-direction:column;">
+          <div class="tl-header">
+            <div class="tl-header-title">PO to Payment Journey</div>
+            <button class="tl-collapse-btn" onclick="collapseAll()">Collapse all ↑</button>
+          </div>
+          <div class="timeline">
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                    <div class="tl-step-name">PO created</div>
+                    <div class="tl-step-desc">PO-7721 created for 12 units of Monitor Arm Pro. Budget approved by Nina Lee.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span>
+                    <div class="tl-time">Apr 15 · 9:12 AM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">PO amount</span><span class="te-v ok">$8,420.00 approved</span></div>
+                    <div class="te-row"><span class="te-k">Units</span><span class="te-v">12 × Monitor Arm Pro</span></div>
+                    <div class="te-row"><span class="te-k">Approved by</span><span class="te-v">Nina Lee · Facilities</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                    <div class="tl-step-name">Order delivered — partial</div>
+                    <div class="tl-step-desc">10 of 12 units delivered. Nina Lee signed GRN-2043 for 10 units only. 2 units noted as damaged at warehouse by driver.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span>
+                    <div class="tl-time">Apr 23 · 2:41 PM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">GRN number</span><span class="te-v">GRN-2043</span></div>
+                    <div class="te-row"><span class="te-k">Qty received</span><span class="te-v warn">10 of 12 ordered</span></div>
+                    <div class="te-row"><span class="te-k">Short receipt reason</span><span class="te-v">2 units damaged in transit — left at warehouse</span></div>
+                    <div class="te-row"><span class="te-k">Signed by</span><span class="te-v">Nina Lee · Facilities</span></div>
+                    <div class="te-row"><span class="te-k">Next step</span><span class="te-v warn">Confirm with Brightline: in transit or never shipped?</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                    <div class="tl-step-name">Invoice received</div>
+                    <div class="tl-step-desc">Invoice INV-1048 received for $8,420.00 (12 units billed).</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
+                    <div class="tl-time">Apr 24 · 9:05 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step">
+              <div class="tl-line"></div>
+              <div class="tl-dot ai">✦</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags">
+                      <span class="tl-tag tt-issues">2 issues</span>
+                      <span class="tl-tag tt-ai">✦ Witness AI</span>
+                    </div>
+                    <div class="tl-step-name warn">3-way match exception</div>
+                    <div class="tl-step-desc">Quantity mismatch and freight variance detected automatically.</div>
+                    <div class="tl-ai-annotation">
+                      <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected</div>
+                      <strong>Qty mismatch:</strong> PO ordered 12, GRN-2043 shows 10 received, invoice bills 12 — potential overbilling of $280. Corrected payable: $7,016.70. Also found $42 freight on invoice line 11 with no PO backing — check vendor contract before disputing.
+                    </div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-witness"><span class="src-dot"></span>Witness AI</span>
+                    <div class="tl-time">Apr 24 · 9:06 AM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded open">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">PO qty</span><span class="te-v">12 units ordered</span></div>
+                    <div class="te-row"><span class="te-k">GRN qty (GRN-2043)</span><span class="te-v warn">10 units received · signed Nina Lee</span></div>
+                    <div class="te-row"><span class="te-k">Invoice qty</span><span class="te-v crit">12 billed — mismatch</span></div>
+                    <div class="te-row"><span class="te-k">Corrected payable</span><span class="te-v ok">$7,016.70 (10 × $701.67)</span></div>
+                    <div class="te-row"><span class="te-k">Freight charge</span><span class="te-v warn">$42 · not in PO · check contract tolerance</span></div>
+                    <div class="te-row"><span class="te-k">Ran in</span><span class="te-v">0.6s</span></div>
+                    <div class="te-conf">
+                      <span class="te-conf-label">Confidence</span>
+                      <div class="te-conf-bar"><div class="te-conf-fill" style="width:96%"></div></div>
+                      <span class="te-conf-val">96%</span>
+                    </div>
+                    <div class="te-sources">
+                      <span class="te-src-label">Sources</span>
+                      <span class="te-src-chip">PO-7721.pdf · L4</span>
+                      <span class="te-src-chip">GRN-2043.pdf · L7</span>
+                      <span class="te-src-chip">INV-1048.pdf · L3,L11</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                    <div class="tl-step-name">Approval requested</div>
+                    <div class="tl-step-desc">Approval requested from J. Park, Director of Finance.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>Approval</span>
+                    <div class="tl-time">Apr 24 · 9:10 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-blocked">
+              <div class="tl-line"></div>
+              <div class="tl-dot blocked">✕</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-waiting">Approval workflow · 3 days</span></div>
+                    <div class="tl-step-name blocked">Awaiting approval — J. Park</div>
+                    <div class="tl-step-desc">Approval workflow triggered after 3-way match exception. J. Park has not responded since Apr 25. This is downstream of the match — approval cannot complete until mismatch is resolved.</div>
+                    <div class="tl-action-needed">
+                      <strong>Discount risk:</strong> Early payment discount (2% of $7,016.70 = $140.33) expires Apr 30 in 2 days. Witness can nudge J. Park or reroute to backup approver K. Ito.
+                    </div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>Approval</span>
+                    <div class="tl-time">Apr 25 · 9:12 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step">
+              <div class="tl-dot future">○</div>
+              <div class="tl-content">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-future">Projected</span></div>
+                    <div class="tl-step-name muted">Payment blocked</div>
+                    <div class="tl-step-desc">On hold until mismatches and approval are resolved.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
+                    <div class="tl-time">— pending —</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /timeline -->
+        </div><!-- /tab-timeline -->
+
+        <!-- ─── TAB 2: Match summary ─── -->
+        <div class="tab-panel" id="tab-match">
+          <div class="ms-header">
+            <div class="ms-header-title">3-Way Match Results</div>
+            <span class="ms-badge">2 exceptions</span>
+          </div>
+          <div class="ms-body">
+
+            <!-- AI summary -->
+            <div class="ms-ai-note">
+              <div style="flex-shrink:0;font-size:14px">✦</div>
+              <div class="ai-insight-txt">
+                <strong>Witness matched PO-7721 · GRN-2043 · INV-1048.</strong> Quantity exception: vendor invoiced 12 units, GRN confirms only 10 received. Corrected payable is <strong>$7,016.70</strong>. Verify whether 2 units are in transit before requesting credit memo. Freight $42 has no PO backing — check contract tolerance before disputing.
+              </div>
+            </div>
+
+            <!-- GRN — first class document -->
+            <div class="ms-card" style="border-color:#e9b44c;">
+              <div class="ms-card-head" style="background:#fdf2d4;">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">📋</span> Goods Receipt Note (GRN-2043) — key document
+                </div>
+                <span class="ms-card-status ms-status-warn">Partial receipt</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Field</th><th>Value</th><th>Note</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">GRN number</td><td>GRN-2043</td><td>—</td></tr>
+                  <tr><td class="label">Date received</td><td>Apr 23, 2025</td><td>2:41 PM</td></tr>
+                  <tr><td class="label">Qty received</td><td class="warn">10 of 12</td><td class="warn">2 units short · damaged in transit</td></tr>
+                  <tr><td class="label">Signed by</td><td>Nina Lee</td><td>Facilities dept.</td></tr>
+                  <tr><td class="label">Short receipt type</td><td class="warn">Damaged delivery</td><td>Driver confirmed · not signed for</td></tr>
+                  <tr><td class="label">Outstanding units</td><td class="crit">2 units</td><td class="crit">Confirm with Brightline: in transit or no further delivery?</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-conf-row" style="background:#fdf2d4;">
+                <span class="ms-conf-label">GRN is an auditable legal document — any amendment requires signatory and timestamp</span>
+              </div>
+            </div>
+
+            <!-- Quantity check -->
+            <div class="ms-card">
+              <div class="ms-card-head">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">📦</span> Quantity check — PO vs GRN vs Invoice
+                </div>
+                <span class="ms-card-status ms-status-mismatch">Mismatch ✕</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Document</th><th>Qty</th><th>Unit price</th><th>Line total</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Purchase Order (PO-7721)</td><td>12</td><td>$701.67</td><td>$8,420.00</td><td class="ok">✓ Reference</td></tr>
+                  <tr><td class="label">Goods Receipt (GRN-2043)</td><td class="warn">10</td><td>—</td><td class="ok">$7,016.70</td><td class="warn">⚠ 2 units short</td></tr>
+                  <tr><td class="label">Invoice (INV-1048)</td><td class="crit">12</td><td>$701.67</td><td class="crit">$8,420.00</td><td class="crit">✕ Overbilled</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-conf-row" style="background:#f0fdf4;border-top-color:#bbf7d0;">
+                <span class="ms-conf-label" style="color:#15803d;font-weight:600;">Corrected invoice amount:</span>
+                <span class="ms-conf-val" style="color:#16a34a;font-size:14px;">$7,016.70 &nbsp;(10 × $701.67)</span>
+              </div>
+              <div class="ms-conf-row">
+                <span class="ms-conf-label">Overbilling</span>
+                <span class="ms-conf-val" style="color:#dc2626;">−$280.00 to recover via credit memo</span>
+              </div>
+            </div>
+
+            <!-- Price check -->
+            <div class="ms-card">
+              <div class="ms-card-head">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">💲</span> Unit price check
+                </div>
+                <span class="ms-card-status ms-status-match">Match ✓</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Item</th><th>PO unit price</th><th>Invoice unit price</th><th>Variance</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Monitor Arm Pro</td><td>$701.67</td><td>$701.67</td><td class="ok">$0.00 — exact match</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-conf-row">
+                <span class="ms-conf-label">Unit price correct — dispute is quantity only, not pricing</span>
+                <span class="ms-conf-val" style="color:#16a34a;">Clean ✓</span>
+              </div>
+            </div>
+
+            <!-- Freight — reframed -->
+            <div class="ms-card">
+              <div class="ms-card-head">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">🚚</span> Freight &amp; additional charges
+                </div>
+                <span class="ms-card-status ms-status-warn">Check contract</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Charge</th><th>In PO?</th><th>Amount</th><th>Next step</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Standard freight (invoice line 11)</td><td class="warn">Not in PO</td><td>$42.00</td><td class="warn">Check if within vendor contract freight tolerance</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-conf-row" style="background:#fdf2d4;">
+                <span class="ms-conf-label" style="color:#b17728;">Do not dispute until contract terms confirmed — many agreements include ±3–5% or fixed freight allowance</span>
+              </div>
+            </div>
+
+            <!-- Source documents -->
+            <div class="ms-card">
+              <div class="ms-card-head">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">📄</span> Source documents
+                </div>
+                <span style="font-size:11px;color:#adadad;">Apr 24 · 9:06 AM · 96% confidence · 0.6s</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Document</th><th>Source</th><th>Key fields extracted</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">PO-7721.pdf</td><td><span class="src-chip src-amazon" style="font-size:10px"><span class="src-dot"></span>Amazon Business</span></td><td>Qty (12), unit price ($701.67), vendor, date, line items</td></tr>
+                  <tr><td class="label">GRN-2043.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>Qty received (10), short reason, signatory (Nina Lee), date</td></tr>
+                  <tr><td class="label">INV-1048.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>Qty billed (12), unit price, freight ($42 L11), due date</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div><!-- /tab-match -->
+
+        <!-- ─── TAB 3: Financial impact ─── -->
+        <div class="tab-panel" id="tab-financial">
+          <div class="fi-header">
+            <div class="fi-header-title">Financial Impact</div>
+            <span class="badge blocked"><span class="bdot"></span>High priority</span>
+          </div>
+          <div class="fi-body">
+
+            <!-- Summary strip — corrected numbers -->
+            <div class="fi-summary-strip">
+              <div class="fi-sum-cell">
+                <div class="fi-sum-label">Invoiced (vendor claim)</div>
+                <div class="fi-sum-val">$8,420.00</div>
+                <div class="fi-sum-sub">12 units × $701.67</div>
+              </div>
+              <div class="fi-sum-cell" style="background:#f0fdf4;">
+                <div class="fi-sum-label" style="color:#15803d;">Corrected payable</div>
+                <div class="fi-sum-val green">$7,016.70</div>
+                <div class="fi-sum-sub">10 units × $701.67 · after credit memo</div>
+              </div>
+              <div class="fi-sum-cell">
+                <div class="fi-sum-label">Freight (unresolved)</div>
+                <div class="fi-sum-val amber">$42.00</div>
+                <div class="fi-sum-sub">Pending contract check</div>
+              </div>
+              <div class="fi-sum-cell" style="background:#fef2f2;">
+                <div class="fi-sum-label" style="color:#b91c1c;">Max exposure</div>
+                <div class="fi-sum-val red">−$422.33</div>
+                <div class="fi-sum-sub">If unresolved by Apr 30</div>
+              </div>
+            </div>
+
+            <!-- Breakdown — correct math -->
+            <div class="fi-breakdown">
+              <div class="fi-breakdown-head">
+                <span class="fi-breakdown-title">Variance breakdown</span>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">📦</span> Quantity overbilling — 2 units not received (2 × $701.67)</div>
+                <div class="fi-row-val red">−$280.00 <span style="font-size:10px;color:#adadad;font-weight:400;">to claim back</span></div>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">🚚</span> Freight charge — no PO backing (pending contract check)</div>
+                <div class="fi-row-val amber">$42.00 <span style="font-size:10px;color:#adadad;font-weight:400;">may be valid</span></div>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">⏰</span> Early payment discount — 2% of corrected payable $7,016.70</div>
+                <div class="fi-row-val red">−$140.33 <span style="font-size:10px;color:#adadad;font-weight:400;">expires Apr 30</span></div>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">✓</span> Unit price variance</div>
+                <div class="fi-row-val green">$0.00 — exact match</div>
+              </div>
+              <div class="fi-total-row">
+                <div class="fi-total-label">Maximum exposure if fully unresolved by Apr 30</div>
+                <div class="fi-total-val">−$422.33 <span style="font-size:11px;font-weight:400;color:#b91c1c;">(= $280 + $140.33 + $42 freight if valid)</span></div>
+              </div>
+            </div>
+
+            <!-- Scenarios — mutually exclusive, correct math -->
+            <div class="fi-scenario">
+              <div class="fi-scenario-head">Resolution scenarios — what you actually pay</div>
+
+              <div class="fi-scenario-row" style="background:#f0fdf4;">
+                <div class="scenario-dot" style="background:#16a34a"></div>
+                <div style="flex:1">
+                  <div class="fi-scenario-label">✦ Best case: Resolve today + approve freight</div>
+                  <div class="fi-scenario-desc">Confirm GRN short receipt with Brightline, get $280 credit memo, approve $42 freight, pay $7,058.70 by Apr 30 to capture 2% discount ($140.33 saved).</div>
+                </div>
+                <div class="fi-scenario-outcome">
+                  <div class="val green">Pay $6,876.37</div>
+                  <div class="sub">$7,016.70 − $140.33 discount</div>
+                </div>
+              </div>
+
+              <div class="fi-scenario-row">
+                <div class="scenario-dot" style="background:#b17728"></div>
+                <div style="flex:1">
+                  <div class="fi-scenario-label">Resolve mismatch, miss discount window</div>
+                  <div class="fi-scenario-desc">Credit memo obtained, freight approved, but approval comes after Apr 30. Pay full corrected amount with freight included.</div>
+                </div>
+                <div class="fi-scenario-outcome">
+                  <div class="val" style="color:#b17728;">Pay $7,058.70</div>
+                  <div class="sub">$140.33 discount lost</div>
+                </div>
+              </div>
+
+              <div class="fi-scenario-row">
+                <div class="scenario-dot" style="background:#dc2626"></div>
+                <div style="flex:1">
+                  <div class="fi-scenario-label">Dispute freight, miss discount, no credit memo</div>
+                  <div class="fi-scenario-desc">Pay full invoice $8,420 without credit memo. Freight dispute open. Discount window missed. Overpayment risk of $280 + possible vendor dispute.</div>
+                </div>
+                <div class="fi-scenario-outcome">
+                  <div class="val red">Pay $8,420.00</div>
+                  <div class="sub">$280 overpaid + $140 lost</div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div><!-- /tab-financial -->
+
+        <!-- ─── TAB 4: Comments ─── -->
+        <div class="tab-panel" id="tab-comments" style="flex-direction:column;">
+          <div class="cm-header">
+            <div class="cm-header-title">Case comments</div>
+            <span style="font-size:12px;color:#adadad">3 comments</span>
+          </div>
+          <div class="cm-body">
+
+            <!-- Comment 1: AI -->
+            <div class="comment-item">
+              <div class="cm-av" style="background:#ff6900;font-size:11px">✦</div>
+              <div class="cm-bubble">
+                <div class="cm-meta">
+                  <span class="cm-author">Witness AI</span>
+                  <span class="cm-role">Automated detection</span>
+                  <span class="cm-time">Apr 24 · 9:06 AM</span>
+                </div>
+                <div class="cm-text ai">
+                  Two exceptions detected on INV-1048. <strong>Quantity mismatch:</strong> Invoice bills 12 units; only 10 received per GRN-2043. <strong>Freight variance:</strong> $42 charge on invoice line 11 has no corresponding PO line. Recommended action: request credit memo for $280 and flag freight for approver review.
+                </div>
+                <div class="cm-actions">
+                  <button class="cm-action-btn">Reply</button>
+                  <button class="cm-action-btn">View sources</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="cm-divider">
+              <div class="cm-divider-line"></div>
+              <span>Apr 25</span>
+              <div class="cm-divider-line"></div>
+            </div>
+
+            <!-- Comment 2: User -->
+            <div class="comment-item">
+              <div class="cm-av" style="background:#45556c">NL</div>
+              <div class="cm-bubble">
+                <div class="cm-meta">
+                  <span class="cm-author">Nina Lee</span>
+                  <span class="cm-role">Requester · Facilities</span>
+                  <span class="cm-time">Apr 25 · 10:14 AM</span>
+                </div>
+                <div class="cm-text">
+                  Confirmed — driver said 2 boxes were damaged on delivery and left at the warehouse. I signed for 10 only. Brightline should issue the credit. Can someone loop in their account rep?
+                </div>
+                <div class="cm-actions">
+                  <button class="cm-action-btn">Reply</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comment 3: Finance -->
+            <div class="comment-item">
+              <div class="cm-av" style="background:#155dfc">MC</div>
+              <div class="cm-bubble">
+                <div class="cm-meta">
+                  <span class="cm-author">M. Chen</span>
+                  <span class="cm-role">AP Analyst · Finance</span>
+                  <span class="cm-time">Apr 25 · 11:02 AM</span>
+                </div>
+                <div class="cm-text">
+                  Escalating to J. Park for sign-off on the partial payment approach. We need approval to hold the difference ($322) while credit memo is processed. Discount deadline is Apr 30 so please respond ASAP.
+                </div>
+                <div class="cm-actions">
+                  <button class="cm-action-btn">Reply</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="cm-compose">
+            <div class="cm-compose-av">MC</div>
+            <textarea class="cm-compose-input" rows="2" placeholder="Add a comment or note…"></textarea>
+            <button class="cm-send">Send</button>
+          </div>
+        </div><!-- /tab-comments -->
+
+      </div><!-- /center-col -->
+
+      <!-- RIGHT: AI context -->
+      <div class="right-col">
+
+        <!-- Match triangle — enlarged and corrected -->
+        <div>
+          <div class="rs-title">3-way match snapshot <span class="rs-link">View full</span></div>
+          <div class="rs-meta">Apr 24, 2025 · 9:06 AM · 96% confidence</div>
+
+          <svg viewBox="0 0 240 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+            <!-- edges -->
+            <line x1="48" y1="60" x2="120" y2="190" stroke="#e9e9e9" stroke-width="2" fill="none"/>
+            <line x1="48" y1="60" x2="192" y2="60" stroke="#e9e9e9" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+            <line x1="120" y1="190" x2="192" y2="60" stroke="#dc2626" stroke-width="2.5" fill="none"/>
+            <!-- edge labels -->
+            <rect x="55" y="117" width="50" height="18" rx="3" fill="white" stroke="#e9e9e9" stroke-width="1"/>
+            <text x="80" y="130" font-family="Inter" font-size="10" font-weight="600" fill="#45556c" text-anchor="middle">−2 units</text>
+            <rect x="96" y="50" width="48" height="18" rx="3" fill="white" stroke="#e9e9e9" stroke-width="1"/>
+            <text x="120" y="63" font-family="Inter" font-size="10" font-weight="600" fill="#b17728" text-anchor="middle">$42 frt?</text>
+            <rect x="140" y="117" width="62" height="18" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+            <text x="171" y="130" font-family="Inter" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">+$280 ◆</text>
+            <!-- nodes -->
+            <circle cx="48" cy="60" r="28" fill="white" stroke="#e9e9e9" stroke-width="1.5"/>
+            <text x="48" y="55" font-family="Inter" font-size="11" font-weight="700" fill="#0b0d12" text-anchor="middle">PO</text>
+            <text x="48" y="69" font-family="Inter" font-size="9" fill="#adadad" text-anchor="middle">12 units</text>
+            <circle cx="192" cy="60" r="28" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+            <text x="192" y="55" font-family="Inter" font-size="11" font-weight="700" fill="#dc2626" text-anchor="middle">Invoice</text>
+            <text x="192" y="69" font-family="Inter" font-size="9" fill="#dc2626" text-anchor="middle">12 billed</text>
+            <circle cx="120" cy="190" r="28" fill="white" stroke="#e9e9e9" stroke-width="1.5"/>
+            <text x="120" y="185" font-family="Inter" font-size="11" font-weight="700" fill="#0b0d12" text-anchor="middle">GRN</text>
+            <text x="120" y="199" font-family="Inter" font-size="9" fill="#adadad" text-anchor="middle">10 rcvd</text>
+          </svg>
+
+          <div class="mt-legend">
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:#dc2626"></div><div>◆ Primary — Invoice bills 12, GRN shows 10. Corrected payable: $7,016.70</div></div>
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:#c8c8c8"></div><div>PO vs GRN — 2 units short (damaged in transit)</div></div>
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:#b17728"></div><div>Freight $42 — check contract tolerance before disputing</div></div>
+          </div>
+        </div>
+
+        <!-- Approval status -->
+        <div>
+          <div class="rs-title" style="margin-bottom:10px">Approval status</div>
+          <div class="as-card">
+            <div class="as-person">
+              <div class="as-av" style="background:#e9b44c">JP</div>
+              <div>
+                <div class="as-name">J. Park</div>
+                <div class="as-role">Director of Finance</div>
+              </div>
+              <div class="as-status">
+                <span class="badge waiting"><span class="bdot"></span>Pending</span>
+              </div>
+            </div>
+            <div class="as-field-row"><span class="as-field-label">Requested on</span><span class="as-field-val">Apr 24 · 9:10 AM</span></div>
+            <div class="as-field-row"><span class="as-field-label">Waiting</span><span class="as-field-val red">3 days</span></div>
+            <div class="as-field-row"><span class="as-field-label">Escalation rule</span><span class="as-field-val">After 5 days → Controller</span></div>
+          </div>
+          <a class="view-chain">View approval chain →</a>
+        </div>
+
+      </div><!-- /right-col -->
+
+    </div><!-- /three-col -->
+
+  </main>
+</div><!-- /main -->
+
+<script>
+  function toggleStep(el) {
+    const expanded = el.querySelector('.tl-expanded');
+    if (expanded) expanded.classList.toggle('open');
+  }
+
+  function switchTab(btn) {
+    // Update tab buttons
+    document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    // Show matching panel
+    const target = btn.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + target).classList.add('active');
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.tl-expanded.open').forEach(e => e.classList.remove('open'));
+  }
+</script>
+<script>
+  (function(){
+    var sb = document.querySelector('.sidebar');
+    var btn = document.querySelector('.sidebar-toggle');
+    if (!sb || !btn) return;
+    if (localStorage.getItem('witness-sidebar') === 'collapsed') sb.classList.add('collapsed');
+    btn.addEventListener('click', function(){
+      sb.classList.toggle('collapsed');
+      localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
+    });
+  })();
+</script>
+
+<!-- ═══════════ Witness chat panel (shared — see witness-chat-panel.{css,js}) ═══════════ -->
+<aside class="chat" id="chat"></aside>
+</div><!-- /.app-grid -->
+
+<link rel="stylesheet" href="witness-chat-panel.css">
+<script src="witness-chat-panel.js"></script>
+</body>
+</html>

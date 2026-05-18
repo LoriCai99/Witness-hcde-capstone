@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Witness – INV-1027</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', sans-serif; background: #eeeef0; color: #0b0d12; overflow: hidden; --sidebar-w: 258px; --chat-w: 340px; }
+    body:has(.sidebar.collapsed) { --sidebar-w: 72px; }
+    .app-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--chat-w); transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1); }
+
+
+    /* ─── SIDEBAR — verbatim from all-invoices ─── */
+    .sidebar { position: relative; height: 100%; background: #eeeef0; display: flex; flex-direction: column; z-index: 20; overflow-y: auto; }
+    .sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .brand-logo { width: 32px; height: 32px; background: #120b0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .brand-logo img { width: 20px; height: 20px; display: block; object-fit: contain; }
+    .brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
+    .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+    .nav-group { display: flex; flex-direction: column; gap: 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-items { display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: #45556c; font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: -0.15px; text-decoration: none; cursor: pointer; }
+    .nav-item:hover { background: rgba(0,0,0,0.04); }
+    .nav-item.active { background: white; color: #120b0b; padding: 8px 12px; }
+    .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
+    .nav-badge { margin-left: auto; background: #120b0b; color: white; font-size: 12px; font-weight: 700; line-height: 16px; padding: 2px 8px; border-radius: 999px; }
+    .nav-badge.ai { background: #ff6900; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* ─── MAIN ─── */
+    .main { height: 100%; overflow-y: auto; overflow-x: auto; min-width: 0; display: flex; flex-direction: column; }
+
+    /* ─── TOPBAR — unified Witness AI theme (black + orange accent) ─── */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      height: 56px; flex-shrink: 0;
+      background: #120b0b;
+      border-bottom: 2px solid #ff6900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      color: white;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,0.45); }
+    .breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; cursor: pointer; font-weight: 500; }
+    .breadcrumb a:hover { color: white; }
+    .bc-sep { opacity: 0.5; font-size: 14px; }
+    .bc-cur { color: white; font-weight: 600; }
+    .health-chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); }
+    .health-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.22); }
+    .health-chip span { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.75); letter-spacing: -0.1px; white-space: nowrap; }
+    .avatar { width: 28px; height: 28px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #120b0b; }
+    /* Primary CTA in topbar */
+    .tb-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 34px; padding: 0 16px;
+      border-radius: 8px;
+      background: #ff6900; border: none;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600; letter-spacing: -0.1px;
+      cursor: pointer; white-space: nowrap;
+      transition: background .15s;
+      position: relative;
+    }
+    .tb-cta:hover { background: #d95b03; }
+    .tb-cta .arrow { font-size: 13px; opacity: 0.9; }
+
+    /* ─── CONTENT AREA ─── */
+    .content { padding: 32px 40px 52px; display: flex; flex-direction: column; gap: 24px; flex: 1; }
+
+    /* ─── INVOICE HEADER SECTION ─── */
+    .inv-header-card {
+      background: white;
+      border: 2px solid #e9e9e9;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .inv-header-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .inv-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .inv-breadcrumb-trail { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #adadad; margin-bottom: 4px; }
+    .inv-breadcrumb-trail span { color: #45556c; }
+    .inv-title-row { display: flex; align-items: center; gap: 10px; }
+    .inv-number { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 400; color: #120b0b; line-height: 1.2; }
+    .inv-meta-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #45556c; flex-wrap: wrap; }
+    .inv-meta-sep { color: #adadad; }
+
+    .inv-header-right { text-align: right; }
+    .inv-amount-label { font-size: 11px; font-weight: 600; color: #adadad; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+    .inv-amount { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 400; color: #120b0b; line-height: 1.1; }
+    .inv-due { font-size: 12px; color: #dc2626; font-weight: 500; margin-top: 4px; }
+
+    /* Financial impact strip */
+    .fin-strip { display: flex; }
+    .fin-cell { flex: 1; padding: 14px 20px; border-right: 1px solid #f0f0f0; }
+    .fin-cell:last-child { border-right: none; }
+    .fin-label { font-size: 11px; font-weight: 600; color: #adadad; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; margin-bottom: 6px; }
+    .fin-val { font-size: 18px; font-weight: 600; color: #0b0d12; line-height: 1.2; }
+    .fin-val.red   { color: #dc2626; }
+    .fin-val.amber { color: #e9b44c; }
+    .fin-val.green { color: #16a34a; }
+    .fin-sub { font-size: 11px; color: #adadad; margin-top: 3px; line-height: 14px; }
+
+    /* Badges — verbatim from all-invoices */
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .badge.blocked  { background: #fee2e2; color: #b91c1c; }
+    .badge.pending  { background: #fff0e0; color: #d95b03; }
+    .badge.waiting  { background: #fdf2d4; color: #b17728; }
+    .badge.approved { background: #dcfce7; color: #15803d; }
+    .bdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge.blocked  .bdot { background: #dc2626; }
+    .badge.pending  .bdot { background: #ff6900; }
+    .badge.waiting  .bdot { background: #e9b44c; }
+    .badge.approved .bdot { background: #16a34a; }
+
+    /* Source chips */
+    .src-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .src-amazon { background: #e7f4ff; color: #155dfc; }
+    .src-erp    { background: #f4f4f4; color: #45556c; }
+    .src-witness { background: #fff5f0; color: #ff6900; border: 1px solid #ffb088; }
+    .src-dot    { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .src-amazon .src-dot { background: #155dfc; }
+    .src-erp    .src-dot { background: #45556c; }
+    .src-witness .src-dot { background: #ff6900; }
+
+    /* ─── STAT CARDS ROW — same strip style as all-invoices ─── */
+    .stat-row { display: flex; }
+    .stat-card { background: white; border: 2px solid #e9e9e9; padding: 18px; flex: 1; min-width: 0; }
+    .stat-card:first-child { border-radius: 10px 0 0 10px; }
+    .stat-card:last-child  { border-radius: 0 10px 10px 0; }
+    .stat-card + .stat-card { border-left: none; }
+    .stat-inner { display: flex; flex-direction: column; gap: 6px; }
+    .stat-num { font-size: 28px; font-weight: 600; color: #0f172b; line-height: 1; }
+    .stat-num.red   { color: #dc2626; }
+    .stat-num.amber { color: #e9b44c; }
+    .stat-num.green { color: #16a34a; }
+    .stat-lbl { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; }
+    .stat-sub { font-size: 11px; font-weight: 400; color: #45556c; line-height: 14px; }
+
+    /* ─── THREE COLUMN LAYOUT ─── */
+    .three-col { display: grid; grid-template-columns: 260px 1fr 264px; gap: 0; background: white; border: 2px solid #e9e9e9; border-radius: 10px; overflow: hidden; min-height: 560px; }
+
+    /* ─── LEFT COLUMN ─── */
+    .left-col { border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; overflow-y: auto; }
+    .lcol-section { padding: 16px 18px; border-bottom: 1px solid #f0f0f0; }
+    .lcol-section:last-child { border-bottom: none; flex: 1; }
+    .section-title { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .section-title-badge { width: 16px; height: 16px; border-radius: 50%; background: #dc2626; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+
+    .field-list { display: flex; flex-direction: column; }
+    .field-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #f7f7f7; font-size: 13px; gap: 8px; }
+    .field-row:last-child { border-bottom: none; }
+    .field-label { color: #45556c; flex-shrink: 0; font-weight: 400; }
+    .field-val { color: #0b0d12; font-weight: 500; text-align: right; }
+    .field-val.red { color: #dc2626; }
+    .field-val.amber { color: #b17728; }
+    .field-avatar { display: flex; align-items: center; gap: 5px; }
+    .fa-circle { width: 18px; height: 18px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; background: #e9b44c; }
+
+    /* Blocker cards */
+    .blocker-list { display: flex; flex-direction: column; gap: 8px; }
+    .blocker-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #fee2e2; border: 1px solid rgba(220,38,38,0.2); border-radius: 10px; }
+    .blocker-ico { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .blocker-body { flex: 1; }
+    .blocker-title { font-size: 12px; font-weight: 600; color: #b91c1c; }
+    .blocker-desc { font-size: 11px; color: #45556c; margin-top: 2px; line-height: 1.4; }
+    .blocker-impact { font-size: 10px; color: #dc2626; font-weight: 600; margin-top: 5px; padding-top: 5px; border-top: 1px dashed rgba(220,38,38,0.25); font-variant-numeric: tabular-nums; }
+
+    /* Next steps */
+    .next-steps { display: flex; flex-direction: column; gap: 6px; }
+    .btn-step-primary { width: 100%; padding: 10px 14px; border-radius: 8px; border: none; background: #120b0b; color: white; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px; transition: background 0.15s; }
+    .btn-step-primary:hover { background: #45556c; }
+    .btn-step-secondary { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid #e9e9e9; background: white; color: #45556c; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.12s; }
+    .btn-step-secondary:hover { background: #f4f4f4; color: #0b0d12; border-color: #c8c8c8; }
+    .btn-step-ai { border-color: rgba(22,163,74,0.3); color: #15803d; background: #dcfce7; }
+    .btn-step-ai:hover { background: rgba(22,163,74,0.14); }
+    .step-ico { width: 20px; height: 20px; border-radius: 6px; background: #f4f4f4; border: 1px solid #e9e9e9; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+    .auto-pill { margin-left: auto; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.15); color: white; }
+    .auto-pill-green { margin-left: auto; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #dcfce7; color: #15803d; border: 1px solid rgba(22,163,74,0.3); }
+    .btn-add-note { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px dashed #e9e9e9; background: transparent; color: #adadad; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px; transition: all 0.12s; }
+    .btn-add-note:hover { border-color: #adadad; color: #45556c; }
+
+    /* ─── CENTER COLUMN ─── */
+    .center-col { display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #f0f0f0; }
+    .center-tabs { display: flex; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+    .ctab { flex: 1; text-align: center; padding: 11px 8px; font-size: 12px; font-weight: 500; color: #45556c; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.12s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Inter', sans-serif; }
+    .ctab:hover { color: #0b0d12; background: #f0f0f0; }
+    .ctab.active { color: #0b0d12; border-bottom-color: #120b0b; background: white; font-weight: 600; }
+    .tl-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; }
+    .tl-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .tl-collapse-btn { font-size: 11px; color: #adadad; cursor: pointer; border: none; background: none; font-family: 'Inter', sans-serif; }
+    .timeline { flex: 1; overflow-y: auto; padding: 20px; }
+
+    /* ─── TAB PANELS ─── */
+    .tab-panel { display: none; flex: 1; overflow-y: auto; flex-direction: column; }
+    .tab-panel.active { display: flex; }
+
+    /* Match summary panel */
+    .ms-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .ms-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .ms-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #fee2e2; color: #b91c1c; }
+    .ms-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .ms-card { border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .ms-card-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; }
+    .ms-card-title { font-size: 13px; font-weight: 600; color: #0b0d12; display: flex; align-items: center; gap: 8px; }
+    .ms-card-status { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; }
+    .ms-status-match { background: #dcfce7; color: #15803d; }
+    .ms-status-mismatch { background: #fee2e2; color: #b91c1c; }
+    .ms-status-warn { background: #fdf2d4; color: #b17728; }
+    .ms-table { width: 100%; border-collapse: collapse; }
+    .ms-table th { font-size: 11px; font-weight: 600; color: #adadad; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 14px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+    .ms-table td { font-size: 13px; padding: 9px 14px; border-bottom: 1px solid #f7f7f7; color: #0b0d12; }
+    .ms-table tr:last-child td { border-bottom: none; }
+    .ms-table td.label { color: #45556c; font-weight: 400; }
+    .ms-table td.ok   { color: #16a34a; font-weight: 600; }
+    .ms-table td.warn { color: #b17728; font-weight: 600; }
+    .ms-table td.crit { color: #dc2626; font-weight: 600; }
+    .ms-ai-note { background: #fff5f0; border: 1px solid #ffb088; border-radius: 10px; padding: 12px 14px; display: flex; gap: 10px; }
+    .ms-conf-row { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid #f0f0f0; background: #fafafa; }
+    .ms-conf-label { font-size: 11px; color: #adadad; }
+    .ms-conf-bar { width: 80px; height: 4px; background: #e9e9e9; border-radius: 999px; overflow: hidden; }
+    .ms-conf-fill { height: 100%; background: #16a34a; border-radius: 999px; }
+    .ms-conf-val { font-size: 11px; font-weight: 600; color: #0b0d12; margin-left: auto; }
+
+    /* Financial impact panel */
+    .fi-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .fi-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .fi-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .fi-summary-strip { display: flex; border: 2px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .fi-sum-cell { flex: 1; padding: 14px 16px; border-right: 1px solid #f0f0f0; }
+    .fi-sum-cell:last-child { border-right: none; }
+    .fi-sum-label { font-size: 11px; font-weight: 600; color: #adadad; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .fi-sum-val { font-size: 22px; font-weight: 600; color: #0b0d12; }
+    .fi-sum-val.red { color: #dc2626; }
+    .fi-sum-val.amber { color: #b17728; }
+    .fi-sum-sub { font-size: 11px; color: #adadad; margin-top: 3px; }
+    .fi-breakdown { border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .fi-breakdown-head { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; }
+    .fi-breakdown-title { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.5px; }
+    .fi-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid #f7f7f7; font-size: 13px; }
+    .fi-row:last-child { border-bottom: none; }
+    .fi-row-label { color: #45556c; display: flex; align-items: center; gap: 6px; }
+    .fi-row-ico { font-size: 12px; }
+    .fi-row-val { font-weight: 600; }
+    .fi-row-val.red { color: #dc2626; }
+    .fi-row-val.amber { color: #b17728; }
+    .fi-row-val.green { color: #16a34a; }
+    .fi-row-val.muted { color: #adadad; }
+    .fi-total-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #fee2e2; border-top: 1px solid rgba(220,38,38,0.2); }
+    .fi-total-label { font-size: 13px; font-weight: 700; color: #b91c1c; }
+    .fi-total-val { font-size: 18px; font-weight: 700; color: #dc2626; }
+    .fi-scenario { border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .fi-scenario-head { padding: 11px 14px; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.5px; }
+    .fi-scenario-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-bottom: 1px solid #f7f7f7; }
+    .fi-scenario-row:last-child { border-bottom: none; }
+    .fi-scenario-label { font-size: 12px; font-weight: 600; color: #0b0d12; margin-bottom: 2px; }
+    .fi-scenario-desc { font-size: 11px; color: #45556c; line-height: 1.4; }
+    .fi-scenario-outcome { text-align: right; flex-shrink: 0; }
+    .fi-scenario-outcome .val { font-size: 14px; font-weight: 700; }
+    .fi-scenario-outcome .val.green { color: #16a34a; }
+    .fi-scenario-outcome .val.red { color: #dc2626; }
+    .fi-scenario-outcome .sub { font-size: 10px; color: #adadad; margin-top: 2px; }
+    .scenario-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+
+    /* Comments panel */
+    .cm-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .cm-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .cm-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; flex: 1; overflow-y: auto; }
+    .cm-compose { border-top: 1px solid #f0f0f0; padding: 14px 20px; display: flex; gap: 10px; align-items: flex-start; flex-shrink: 0; }
+    .cm-compose-av { width: 28px; height: 28px; border-radius: 50%; background: #0f172b; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cm-compose-input { flex: 1; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: 'Inter', sans-serif; color: #0b0d12; outline: none; resize: none; line-height: 1.5; }
+    .cm-compose-input:focus { border-color: #adadad; }
+    .cm-compose-input::placeholder { color: #adadad; }
+    .cm-send { padding: 8px 14px; background: #120b0b; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; align-self: flex-end; }
+    .cm-send:hover { background: #45556c; }
+    .comment-item { display: flex; gap: 10px; }
+    .cm-av { width: 28px; height: 28px; border-radius: 50%; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cm-bubble { flex: 1; }
+    .cm-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+    .cm-author { font-size: 12px; font-weight: 600; color: #0b0d12; }
+    .cm-role { font-size: 11px; color: #adadad; }
+    .cm-time { font-size: 11px; color: #adadad; margin-left: auto; }
+    .cm-text { font-size: 13px; color: #45556c; line-height: 1.6; background: #f7f7f7; border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px 12px; }
+    .cm-text.ai { background: #fff5f0; border-color: #ffb088; }
+    .cm-actions { display: flex; gap: 10px; margin-top: 5px; }
+    .cm-action-btn { font-size: 11px; color: #adadad; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; padding: 0; }
+    .cm-action-btn:hover { color: #45556c; }
+    .cm-divider { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #adadad; }
+    .cm-divider-line { flex: 1; height: 1px; background: #f0f0f0; }
+
+    .tl-step { display: grid; grid-template-columns: 22px 1fr; gap: 12px; position: relative; padding-bottom: 20px; }
+    .tl-step:last-child { padding-bottom: 0; }
+    .tl-line { position: absolute; left: 10px; top: 22px; width: 2px; bottom: 0; background: #f0f0f0; }
+    .tl-step.tl-done .tl-line { background: rgba(22,163,74,0.25); }
+    .tl-step.tl-blocked .tl-line { background-image: repeating-linear-gradient(to bottom, rgba(220,38,38,0.3) 0, rgba(220,38,38,0.3) 4px, transparent 4px, transparent 8px); }
+    .tl-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; z-index: 1; position: relative; }
+    .tl-dot.done    { background: #16a34a; color: white; }
+    .tl-dot.ai      { background: #ff6900; color: white; font-size: 11px; }
+    .tl-dot.blocked { background: #dc2626; color: white; }
+    .tl-dot.future  { background: #e9e9e9; color: #adadad; border: 2px dashed #c8c8c8; }
+    .tl-content { cursor: pointer; }
+    .tl-main-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .tl-step-name { font-size: 13px; font-weight: 600; color: #0b0d12; margin-bottom: 2px; }
+    .tl-step-name.warn    { color: #b17728; }
+    .tl-step-name.blocked { color: #dc2626; }
+    .tl-step-name.muted   { color: #adadad; }
+    .tl-step-desc { font-size: 12px; color: #45556c; margin-bottom: 6px; line-height: 1.5; }
+    .tl-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px; }
+    .tl-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; }
+    .tt-done    { background: #dcfce7; color: #15803d; }
+    .tt-issues  { background: #fee2e2; color: #b91c1c; }
+    .tt-ai      { background: #fff5f0; color: #ff6900; }
+    .tt-waiting { background: #fdf2d4; color: #b17728; }
+    .tt-future  { background: #f4f4f4; color: #adadad; }
+    .tl-step-right { text-align: right; flex-shrink: 0; }
+    .tl-time { font-size: 10px; color: #adadad; font-variant-numeric: tabular-nums; margin-top: 3px; }
+
+    /* AI annotation — matches all-invoices ai-insight-row style */
+    .tl-ai-annotation { margin-top: 8px; padding: 10px 12px; background: #fff5f0; border-left: 2px solid #ffb299; border-radius: 0 8px 8px 0; font-size: 12px; color: #45556c; line-height: 1.5; }
+    .ai-ann-head { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: #ff6900; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .ai-pulse { width: 5px; height: 5px; border-radius: 50%; background: #ff6900; animation: pls 2s infinite; }
+    @keyframes pls { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .tl-action-needed { margin-top: 8px; padding: 10px 12px; background: #fee2e2; border: 1px solid rgba(220,38,38,0.2); border-radius: 8px; font-size: 12px; color: #45556c; line-height: 1.5; }
+    .tl-action-needed strong { color: #dc2626; }
+
+    .tl-expanded { display: none; margin-top: 10px; }
+    .tl-expanded.open { display: block; }
+    .te-inner { background: #f7f7f7; border: 1px solid #e9e9e9; border-radius: 10px; padding: 12px; }
+    .te-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f0f0f0; font-size: 11.5px; }
+    .te-row:last-child { border-bottom: none; }
+    .te-k { color: #adadad; }
+    .te-v { color: #0b0d12; font-weight: 500; }
+    .te-v.ok   { color: #16a34a; }
+    .te-v.warn { color: #b17728; }
+    .te-v.crit { color: #dc2626; }
+    .te-conf { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
+    .te-conf-bar { flex: 1; height: 4px; background: #e9e9e9; border-radius: 999px; overflow: hidden; max-width: 80px; }
+    .te-conf-fill { height: 100%; background: #16a34a; border-radius: 999px; }
+    .te-conf-label { font-size: 10px; color: #adadad; }
+    .te-conf-val { font-size: 10px; font-weight: 600; color: #0b0d12; }
+    .te-sources { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; padding-top: 6px; border-top: 1px solid #f0f0f0; align-items: center; }
+    .te-src-label { font-size: 10px; color: #adadad; }
+    .te-src-chip { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 6px; background: white; color: #45556c; border: 1px solid #e9e9e9; cursor: pointer; }
+    .te-src-chip:hover { border-color: #adadad; }
+
+    /* ─── RIGHT COLUMN ─── */
+    .right-col { overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 20px; }
+    .rs-title { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .rs-link { font-size: 11px; font-weight: 500; color: #ff6900; text-transform: none; letter-spacing: 0; cursor: pointer; text-decoration: underline; }
+    .rs-meta { font-size: 11px; color: #adadad; margin-bottom: 12px; }
+
+    /* Match triangle */
+    .match-triangle svg { width: 100%; height: auto; }
+    .mt-legend { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .mt-leg { display: flex; align-items: flex-start; gap: 6px; font-size: 10px; color: #45556c; line-height: 1.4; }
+    .mt-leg-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+
+    /* Approval card */
+    .as-card { background: #f7f7f7; border: 1px solid #e9e9e9; border-radius: 10px; padding: 14px; }
+    .as-person { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+    .as-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+    .as-name { font-size: 13px; font-weight: 600; color: #0b0d12; }
+    .as-role { font-size: 11px; color: #adadad; }
+    .as-status { margin-left: auto; }
+    .as-field-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 4px 0; }
+    .as-field-label { color: #adadad; }
+    .as-field-val { color: #0b0d12; font-weight: 500; }
+    .as-field-val.red { color: #dc2626; }
+    .view-chain { display: block; margin-top: 8px; font-size: 11px; color: #ff6900; cursor: pointer; text-decoration: underline; }
+
+    /* AI insight banner — matching all-invoices */
+    .ai-insight-banner {
+      background: #fff5f0;
+      border: 1px solid #ffb088;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .ai-insight-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: white; color: #ff6900;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 999px; border: 1px solid #ffb088;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .ai-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #ff6900; animation: pls 2s infinite; }
+    .ai-insight-txt { font-size: 12px; color: #45556c; line-height: 1.5; }
+    .ai-insight-txt strong { color: #0b0d12; }
+
+    /* Topbar action buttons */
+    .btn-outline { background: white; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 7px 16px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #0b0d12; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-outline:hover { background: #f4f4f4; }
+    .btn-solid { background: #ff7a3d; border: none; border-radius: 999px; padding: 0 20px; height: 32px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: white; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-solid:hover { background: #ff6826; }
+    .btn-solid-dark { background: #120b0b; border: none; border-radius: 8px; padding: 0 16px; height: 32px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: white; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; position: relative; }
+    .btn-solid-dark:hover { background: #45556c; }
+
+    /* Dry-run tooltip */
+    .dry-run { position: absolute; top: calc(100% + 8px); right: 0; background: #120b0b; color: #f0ede8; border-radius: 10px; padding: 14px 16px; width: 268px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transform: translateY(-4px); transition: all 0.18s; z-index: 50; text-align: left; }
+    .btn-solid-dark:hover .dry-run,
+    .tb-cta:hover .dry-run { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .dr-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(240,237,232,0.4); margin-bottom: 10px; }
+    .dr-list { display: flex; flex-direction: column; gap: 6px; }
+    .dr-item { display: flex; gap: 7px; font-size: 11px; color: rgba(240,237,232,0.75); line-height: 1.4; }
+    .dr-num { color: #16a34a; font-size: 9px; font-weight: 700; flex-shrink: 0; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .dr-foot { font-size: 10px; color: rgba(240,237,232,0.4); margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+    /* Page heading row */
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; }
+    .page-hd-left { display: flex; flex-direction: column; gap: 4px; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+    .page-sub { font-size: 14px; font-weight: 400; color: #45556c; line-height: 20px; letter-spacing: -0.15px; }
+    .hd-actions { display: flex; align-items: center; gap: 8px; }
+    .approve-tooltip { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: #120b0b; color: #f0ede8; border-radius: 10px; padding: 12px 14px; width: 240px; font-size: 11px; line-height: 1.6; z-index: 50; text-align: left; }
+    .approve-wrap:hover .approve-tooltip { display: block; }
+
+    /* SIDEBAR COLLAPSE */
+    .sidebar { transition: width .2s ease; }
+    .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
+    .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
+    .sidebar-toggle svg { transition: transform .2s; }
+    .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+    .sidebar.collapsed .brand-name { display: none; }
+    .sidebar.collapsed .sidebar-toggle { position: absolute; top: 80px; right: -12px; background: #fff; border: 1.5px solid #e9e9e9; box-shadow: 0 1px 3px rgba(0,0,0,0.06); width: 24px; height: 24px; border-radius: 50%; margin: 0; z-index: 21; }
+    .sidebar.collapsed .sidebar-toggle:hover { background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+    .sidebar.collapsed .nav-label { display: none; }
+    .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
+    .sidebar.collapsed .nav-item.active { padding: 8px 0; }
+    .sidebar.collapsed .nav-badge { display: none; }
+  </style>
+</head>
+<body data-chat="rail">
+
+<!-- ─── SIDEBAR ─── -->
+<div class="app-grid">
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="" />
+    </div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="dashboard.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item active" href="invoices.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13z M10 1.5V4h3 M5.5 7.5h5 M5.5 10h5 M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Invoice
+          <span class="nav-badge">26</span>
+        </a>
+        <a class="nav-item" href="vendors.html">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item" href="autoflow.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Autoflow
+        </a>
+        <a class="nav-item" href="ai-activity.html">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge ai">24</span>
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v2 M8 12.5v2 M14.5 8h-2 M3.5 8h-2 M12.6 3.4l-1.4 1.4 M4.8 11.2l-1.4 1.4 M12.6 12.6l-1.4-1.4 M4.8 4.8L3.4 3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <nav class="breadcrumb">
+        <a href="dashboard.html">Dashboard</a>
+        <span class="bc-sep">›</span>
+        <span class="bc-cur">INV-1027</span>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-cta">
+        ✦ Confirm hold &amp; notify Praxis <span class="arrow">→</span>
+        <div class="dry-run">
+          <div class="dr-label">If you proceed, Witness will:</div>
+          <div class="dr-list">
+            <div class="dr-item"><span class="dr-num">1.</span><span>Confirm hold on <strong style="color:#f0ede8">INV-1027</strong> · reason "duplicate of INV-1024"</span></div>
+            <div class="dr-item"><span class="dr-num">2.</span><span>Email <strong style="color:#f0ede8">Praxis Logistics</strong> to retract or reissue</span></div>
+            <div class="dr-item"><span class="dr-num">3.</span><span>Mark <strong style="color:#f0ede8">PO-7718</strong> as fully invoiced — block future re-bills</span></div>
+          </div>
+          <div class="dr-foot">All actions are reversible · You'll review each before sending</div>
+        </div>
+      </button>
+      <div class="health-chip">
+        <div class="health-dot"></div>
+        <span>All systems healthy</span>
+      </div>
+      <div class="avatar">MC</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- ─── PAGE HEADING ─── -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a href="dashboard.html" style="align-self:flex-start;font-size:13px;font-weight:500;color:#45556c;text-decoration:none;display:flex;align-items:center;gap:4px;">← Dashboard</a>
+      <div class="page-hd">
+        <div class="page-hd-left">
+          <h1 class="ptitle">INV-1027 &nbsp;—&nbsp; Praxis Logistics</h1>
+          <div class="page-sub">Duplicate auto-held &nbsp;·&nbsp; PO-7718 &nbsp;·&nbsp; ERP &nbsp;·&nbsp; Detected Apr 28 · 2:14 AM</div>
+        </div>
+        <div class="hd-actions">
+          <div style="position:relative;display:inline-block;" class="approve-wrap">
+            <button style="background:#f4f4f4;border:1.5px solid #e9e9e9;border-radius:999px;padding:0 20px;height:32px;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:#adadad;cursor:not-allowed;white-space:nowrap;display:flex;align-items:center;gap:6px;" disabled>
+              Release for payment
+            </button>
+            <div class="approve-tooltip">
+              <strong>Witness has held this</strong><br>Same PO and total were already paid as INV-1024 on Apr 26. Releasing payment now would pay Praxis twice for the same shipment.<br><br>
+              <span style="color:#adadad;">Override requires AP-lead sign-off and a written reason.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── STAT STRIP ─── -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div class="stat-lbl">Billed amount</div>
+          <div class="stat-num">$890.40</div>
+          <div class="stat-sub">INV-1027 · 1 line (freight)</div>
+        </div>
+      </div>
+      <div class="stat-card" style="background:#f0fdf4;border-color:#bbf7d0;">
+        <div class="stat-inner">
+          <div class="stat-lbl" style="color:#15803d;">Already paid</div>
+          <div class="stat-num green">$890.40</div>
+          <div class="stat-sub">INV-1024 · ACH · Apr 26</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div class="stat-lbl">Duplicate exposure</div>
+          <div class="stat-num red">−$890.40</div>
+          <div class="stat-sub">If released in error</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div class="stat-lbl">Vendor pattern</div>
+          <div class="stat-num amber">2 / 12 mo</div>
+          <div class="stat-sub">Praxis · $1,640 recovered prior</div>
+        </div>
+      </div>
+      <div class="stat-card" style="background:#f0fdf4;border-color:#bbf7d0;">
+        <div class="stat-inner">
+          <div class="stat-lbl" style="color:#15803d;">Net exposure</div>
+          <div class="stat-num green">$0.00</div>
+          <div class="stat-sub">Held before payment · safe</div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#adadad;margin-top:-16px;padding-left:2px;">
+      Witness auto-held this at <strong style="color:#0b0d12;">2:14 AM</strong> — payment will not go out unless you override. Confirm the hold or release to AP queue. &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How was this detected?</span>
+    </div>
+
+    <!-- ─── AI INSIGHT BANNER ─── -->
+    <div class="ai-insight-banner">
+      <div class="ai-insight-badge">
+        <div class="ai-badge-dot"></div>
+        Witness AI
+      </div>
+      <div class="ai-insight-txt">
+        <strong>Duplicate detected and auto-held.</strong> INV-1024 ($890.40) was already paid Apr 26 via ACH for the same PO-7718 and shipment SHP-2241. INV-1027 arrived at 2:13 AM with identical vendor, total, and PO; I flagged it 1 minute later and removed it from the AP queue. No payment will go out. The cleanest action is to ask Praxis to retract the re-bill — vendor confirmed both prior dupes within 24h.
+      </div>
+    </div>
+
+    <!-- ─── THREE COLUMN ─── -->
+    <div class="three-col">
+
+      <!-- LEFT: Case summary -->
+      <div class="left-col">
+
+        <div class="lcol-section">
+          <div class="section-title">Case summary</div>
+          <div class="field-list">
+            <div class="field-row">
+              <span class="field-label">Status</span>
+              <span class="field-val"><span class="badge approved" style="background:#dcfce7;color:#15803d;"><span class="bdot"></span>Duplicate held</span></span>
+            </div>
+            <div class="field-row"><span class="field-label">Invoice #</span><span class="field-val">INV-1027</span></div>
+            <div class="field-row"><span class="field-label">PO reference</span><span class="field-val">PO-7718</span></div>
+            <div class="field-row"><span class="field-label">Shipment</span><span class="field-val">SHP-2241</span></div>
+            <div class="field-row"><span class="field-label">Prior paid invoice</span><span class="field-val">INV-1024 · Apr 26</span></div>
+            <div class="field-row"><span class="field-label">Invoice date</span><span class="field-val">Apr 27, 2025</span></div>
+            <div class="field-row"><span class="field-label">Received</span><span class="field-val">Apr 28 · 2:13 AM</span></div>
+            <div class="field-row"><span class="field-label">Held since</span><span class="field-val">Apr 28 · 2:14 AM</span></div>
+            <div class="field-row"><span class="field-label">Vendor</span><span class="field-val">Praxis Logistics</span></div>
+            <div class="field-row"><span class="field-label">Source</span><span class="field-val"><span class="src-chip src-erp"><span class="src-dot"></span>ERP · vendor portal</span></span></div>
+            <div class="field-row"><span class="field-label">Priority</span><span class="field-val">P3 · low</span></div>
+            <div class="field-row">
+              <span class="field-label">Reviewer</span>
+              <span class="field-val">
+                <div class="field-avatar">
+                  <div class="fa-circle" style="background:#155dfc">MC</div>
+                  M. Chen
+                </div>
+              </span>
+            </div>
+            <div class="field-row"><span class="field-label">Department</span><span class="field-val">Logistics</span></div>
+          </div>
+        </div>
+
+        <div class="lcol-section">
+          <div class="section-title">
+            Duplicate evidence
+            <span class="section-title-badge" style="background:#16a34a;">1</span>
+          </div>
+          <div style="font-size:10px;color:#adadad;margin-bottom:8px;margin-top:-6px;">Why Witness held this — review before confirming or releasing</div>
+          <div class="blocker-list">
+            <div class="blocker-item">
+              <div class="blocker-ico">🚨</div>
+              <div class="blocker-body">
+                <div class="blocker-title">Matches INV-1024 (paid Apr 26) on 6 of 7 signals</div>
+                <div class="blocker-desc" style="margin-bottom:6px;">PO-7718 · Shipment SHP-2241 · Vendor Praxis · Total $890.40 · Tax $73.40 · Bill-to address — all identical. Only the invoice number and submission timestamp differ.</div>
+                <div class="blocker-impact">Impact if released: −$890.40 paid twice for the same shipment</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lcol-section" style="background:#f7f7f7;border-radius:0;">
+          <div class="section-title" style="color:#45556c;">Auto-hold status</div>
+          <div style="font-size:11px;color:#adadad;margin-bottom:8px;margin-top:-6px;">Held by Witness · no approval routed · safe until you act</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:white;border:1px solid #e9e9e9;border-radius:10px;">
+            <div class="fa-circle" style="width:28px;height:28px;font-size:10px;background:#ff6900;flex-shrink:0;">✦</div>
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:600;color:#0b0d12;">Witness AI</div>
+              <div style="font-size:11px;color:#adadad;">Auto-held 1 min after intake · 98% confidence</div>
+            </div>
+            <span class="badge approved" style="font-size:10px;background:#dcfce7;color:#15803d;"><span class="bdot" style="background:#16a34a;"></span>Held</span>
+          </div>
+          <div style="font-size:11px;color:#45556c;margin-top:8px;">Auto-archive in 7 days if no override — vendor will receive a polite retract request.</div>
+        </div>
+
+        <div class="lcol-section">
+          <div class="section-title">✦ Recommended next steps</div>
+          <div class="next-steps">
+            <button class="btn-step-primary">
+              Confirm hold &amp; notify Praxis to retract
+              <span class="auto-pill">AUTO</span>
+            </button>
+            <button class="btn-step-secondary btn-step-ai">
+              <div class="step-ico" style="background:#dcfce7;border-color:rgba(22,163,74,0.3)">✦</div>
+              Ask vendor: re-bill or genuine reissue?
+              <span class="auto-pill-green">AUTO</span>
+            </button>
+            <button class="btn-step-secondary">
+              <div class="step-ico">📎</div>
+              Open INV-1024 side-by-side
+            </button>
+            <button class="btn-step-secondary" style="border-color:rgba(220,38,38,0.35);color:#b91c1c;">
+              <div class="step-ico" style="background:#fee2e2;border-color:rgba(220,38,38,0.25);color:#dc2626;">⚠</div>
+              Override hold — release for payment
+            </button>
+            <button class="btn-add-note">+ Add case note</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CENTER: Tabbed panels -->
+      <div class="center-col">
+        <div class="center-tabs">
+          <button class="ctab active" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
+          <button class="ctab" data-tab="match" onclick="switchTab(this)">Duplicate comparison</button>
+          <button class="ctab" data-tab="financial" onclick="switchTab(this)">Financial impact</button>
+          <button class="ctab" data-tab="comments" onclick="switchTab(this)">Comments (2)</button>
+        </div>
+
+        <!-- ─── TAB 1: Timeline ─── -->
+        <div class="tab-panel active" id="tab-timeline" style="flex-direction:column;">
+          <div class="tl-header">
+            <div class="tl-header-title">PO-7718 Journey — fully invoiced, second bill arrived</div>
+            <button class="tl-collapse-btn" onclick="collapseAll()">Collapse all ↑</button>
+          </div>
+          <div class="timeline">
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                    <div class="tl-step-name">PO created</div>
+                    <div class="tl-step-desc">PO-7718 created for freight on shipment SHP-2241 — Praxis Logistics. One line, lump-sum $817 + tax.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
+                    <div class="tl-time">Apr 18 · 11:04 AM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">PO amount</span><span class="te-v ok">$890.40 approved</span></div>
+                    <div class="te-row"><span class="te-k">Scope</span><span class="te-v">Freight · SHP-2241 (1 shipment)</span></div>
+                    <div class="te-row"><span class="te-k">Approved by</span><span class="te-v">N. Lee · Logistics</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                    <div class="tl-step-name">Shipment delivered</div>
+                    <div class="tl-step-desc">SHP-2241 delivered to SF DC. GRN-2118 logged. Freight service fully rendered.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
+                    <div class="tl-time">Apr 22 · 4:18 PM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">GRN number</span><span class="te-v">GRN-2118</span></div>
+                    <div class="te-row"><span class="te-k">Status</span><span class="te-v ok">Complete · no exceptions</span></div>
+                    <div class="te-row"><span class="te-k">Signed by</span><span class="te-v">N. Lee · Logistics</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Done</span></div>
+                    <div class="tl-step-name">INV-1024 received &amp; matched</div>
+                    <div class="tl-step-desc">First invoice from Praxis. 3-way match against PO-7718 + GRN-2118 passed cleanly.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>ERP</span>
+                    <div class="tl-time">Apr 24 · 10:22 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">$</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Paid</span></div>
+                    <div class="tl-step-name" style="color:#15803d;">INV-1024 PAID</div>
+                    <div class="tl-step-desc">$890.40 paid to Praxis via ACH. Vendor confirmed receipt same day. PO-7718 marked fully invoiced.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>ACH</span>
+                    <div class="tl-time">Apr 26 · 9:00 AM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">Method</span><span class="te-v">ACH · bank on file (verified Mar 2025)</span></div>
+                    <div class="te-row"><span class="te-k">Amount</span><span class="te-v ok">$890.40</span></div>
+                    <div class="te-row"><span class="te-k">Vendor ack</span><span class="te-v ok">Receipt confirmed · Apr 26 · 11:42 AM</span></div>
+                    <div class="te-row"><span class="te-k">PO status</span><span class="te-v ok">PO-7718 fully invoiced — closed</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-done">Received</span></div>
+                    <div class="tl-step-name">INV-1027 arrived — second invoice on same PO</div>
+                    <div class="tl-step-desc">Vendor portal upload from Praxis. Same PO, same shipment, same total. 2 days after INV-1024 was paid.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>Vendor portal</span>
+                    <div class="tl-time">Apr 28 · 2:13 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step">
+              <div class="tl-line"></div>
+              <div class="tl-dot ai">✦</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags">
+                      <span class="tl-tag tt-issues">Held</span>
+                      <span class="tl-tag tt-ai">✦ Witness AI</span>
+                    </div>
+                    <div class="tl-step-name warn">Auto-held as duplicate</div>
+                    <div class="tl-step-desc">Witness removed INV-1027 from the AP queue 1 minute after intake. No payment routed.</div>
+                    <div class="tl-ai-annotation">
+                      <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected</div>
+                      <strong>6 of 7 signals match INV-1024:</strong> same PO-7718, same shipment SHP-2241, same vendor Praxis, same total $890.40, same tax $73.40, same bill-to. Only the invoice number and submission channel differ. PO-7718 is already marked fully invoiced.
+                    </div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-witness"><span class="src-dot"></span>Witness AI</span>
+                    <div class="tl-time">Apr 28 · 2:14 AM</div>
+                  </div>
+                </div>
+                <div class="tl-expanded open">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">PO reference</span><span class="te-v warn">PO-7718 · already fully invoiced (INV-1024)</span></div>
+                    <div class="te-row"><span class="te-k">Shipment ref</span><span class="te-v warn">SHP-2241 · GRN-2118 already closed</span></div>
+                    <div class="te-row"><span class="te-k">Total match</span><span class="te-v warn">$890.40 to the cent</span></div>
+                    <div class="te-row"><span class="te-k">Days since INV-1024 paid</span><span class="te-v warn">2 days</span></div>
+                    <div class="te-row"><span class="te-k">Action taken</span><span class="te-v ok">Removed from AP queue · payment not routed</span></div>
+                    <div class="te-row"><span class="te-k">Ran in</span><span class="te-v">0.3s</span></div>
+                    <div class="te-conf">
+                      <span class="te-conf-label">Confidence</span>
+                      <div class="te-conf-bar"><div class="te-conf-fill" style="width:98%"></div></div>
+                      <span class="te-conf-val">98%</span>
+                    </div>
+                    <div class="te-sources">
+                      <span class="te-src-label">Sources</span>
+                      <span class="te-src-chip">INV-1024.pdf · all lines</span>
+                      <span class="te-src-chip">INV-1027.pdf · all lines</span>
+                      <span class="te-src-chip">PO-7718.pdf</span>
+                      <span class="te-src-chip">Payment ledger · Apr 26</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step">
+              <div class="tl-dot future">○</div>
+              <div class="tl-content">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-future">Awaiting you</span></div>
+                    <div class="tl-step-name muted">Confirm hold &amp; notify vendor</div>
+                    <div class="tl-step-desc">One click confirms the hold and sends Praxis a polite retract request. Auto-archive in 7 days if no action.</div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-erp"><span class="src-dot"></span>Action</span>
+                    <div class="tl-time">— pending —</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /timeline -->
+        </div><!-- /tab-timeline -->
+
+        <!-- ─── TAB 2: Duplicate comparison ─── -->
+        <div class="tab-panel" id="tab-match">
+          <div class="ms-header">
+            <div class="ms-header-title">INV-1024 (paid) vs INV-1027 (held)</div>
+            <span class="ms-badge">Likely duplicate · 98%</span>
+          </div>
+          <div class="ms-body">
+
+            <!-- AI summary -->
+            <div class="ms-ai-note">
+              <div style="flex-shrink:0;font-size:14px">✦</div>
+              <div class="ai-insight-txt">
+                <strong>Witness compared INV-1024 against INV-1027.</strong> 6 of 7 signals are identical. The only differences are the invoice number itself and the submission channel — Praxis uploaded INV-1027 via the vendor portal at 2:13 AM, 2 days after INV-1024 was paid via email. PO-7718 is already fully invoiced. <strong>Most likely explanation:</strong> Praxis's billing system re-emitted the invoice when the portal sync caught up. Vendor confirmed both prior dupes within 24h.
+              </div>
+            </div>
+
+            <!-- Field comparison — the main card -->
+            <div class="ms-card" style="border-color:#dc2626;">
+              <div class="ms-card-head" style="background:#fee2e2;">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">📋</span> Field-by-field comparison
+                </div>
+                <span class="ms-card-status ms-status-mismatch">Likely duplicate</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Field</th><th>INV-1024 · paid</th><th>INV-1027 · held</th><th>Match</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Vendor</td><td>Praxis Logistics</td><td>Praxis Logistics</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">PO reference</td><td>PO-7718</td><td>PO-7718</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Shipment ref</td><td>SHP-2241</td><td>SHP-2241</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Total</td><td>$890.40</td><td>$890.40</td><td class="ok">✓ to the cent</td></tr>
+                  <tr><td class="label">Tax</td><td>$73.40</td><td>$73.40</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Bill-to address</td><td>SF DC · Dock 3</td><td>SF DC · Dock 3</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Invoice number</td><td>INV-1024</td><td class="warn">INV-1027</td><td class="warn">⚠ differs</td></tr>
+                  <tr><td class="label">Submission channel</td><td>Email · AP inbox</td><td class="warn">Vendor portal upload</td><td class="warn">⚠ differs</td></tr>
+                  <tr><td class="label">Payment status</td><td class="ok">Paid · Apr 26 · ACH</td><td class="crit">⏳ Held by Witness</td><td>—</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-conf-row" style="background:#fee2e2;border-top-color:rgba(220,38,38,0.2);">
+                <span class="ms-conf-label" style="color:#b91c1c;font-weight:600;">If released in error:</span>
+                <span class="ms-conf-val" style="color:#dc2626;font-size:14px;">−$890.40 paid twice for the same shipment</span>
+              </div>
+            </div>
+
+            <!-- Why might be legitimate -->
+            <div class="ms-card" style="border-color:#e9b44c;">
+              <div class="ms-card-head" style="background:#fdf2d4;">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">⚖</span> The 2% — why this could still be legitimate
+                </div>
+                <span class="ms-card-status ms-status-warn">Worth a check</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Signal that differs</th><th>What it could mean</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Different invoice number (INV-1027 ≠ INV-1024)</td><td>A fraudulent re-bill would typically reuse the original number. A new number suggests Praxis's billing system genuinely issued a second document.</td></tr>
+                  <tr><td class="label">Different submission channel (portal, not email)</td><td>Praxis may have onboarded a new portal sync that re-emitted the open invoice. Could be a process artifact, not a re-bill.</td></tr>
+                  <tr><td class="label">2 days between invoices</td><td>Could be a corrected reissue (e.g., changed remit-to bank). Worth one message to confirm.</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-conf-row" style="background:#fdf2d4;">
+                <span class="ms-conf-label" style="color:#b17728;">→ One message to Praxis resolves this in &lt; 1 day. AP-side script is pre-drafted.</span>
+              </div>
+            </div>
+
+            <!-- Vendor history -->
+            <div class="ms-card">
+              <div class="ms-card-head">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">📊</span> Praxis Logistics — 12-month pattern
+                </div>
+                <span class="ms-card-status ms-status-match">Vendor responds quickly</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Invoices submitted (12 mo)</td><td>62</td><td>Across all POs</td></tr>
+                  <tr><td class="label">Duplicates flagged by Witness</td><td class="warn">2</td><td>Both confirmed by vendor</td></tr>
+                  <tr><td class="label">$ recovered prior</td><td class="ok">$1,640.00</td><td>Both retractions received within 24h</td></tr>
+                  <tr><td class="label">Avg vendor response</td><td class="ok">14h</td><td>From hold to retract confirmation</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-conf-row" style="background:#f0fdf4;border-top-color:#bbf7d0;">
+                <span class="ms-conf-label" style="color:#15803d;">Both prior Praxis dupes were billing-system errors — no dispute, no escalation</span>
+              </div>
+            </div>
+
+            <!-- Source documents -->
+            <div class="ms-card">
+              <div class="ms-card-head">
+                <div class="ms-card-title">
+                  <span style="font-size:15px">📄</span> Source documents
+                </div>
+                <span style="font-size:11px;color:#adadad;">Apr 28 · 2:14 AM · 98% confidence · 0.3s</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Document</th><th>Source</th><th>Key fields extracted</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">INV-1024.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>Email · AP inbox</span></td><td>Vendor, PO, shipment, total $890.40, tax, bill-to</td></tr>
+                  <tr><td class="label">INV-1027.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>Vendor portal</span></td><td>Vendor, PO, shipment, total $890.40, tax, bill-to</td></tr>
+                  <tr><td class="label">PO-7718.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>Approved $890.40, scope SHP-2241, status: fully invoiced</td></tr>
+                  <tr><td class="label">Payment ledger</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>ACH Apr 26 · $890.40 · Praxis · vendor ack same day</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div><!-- /tab-match -->
+
+        <!-- ─── TAB 3: Financial impact ─── -->
+        <div class="tab-panel" id="tab-financial">
+          <div class="fi-header">
+            <div class="fi-header-title">Financial Impact</div>
+            <span class="badge approved" style="background:#dcfce7;color:#15803d;"><span class="bdot" style="background:#16a34a;"></span>Caught pre-payment</span>
+          </div>
+          <div class="fi-body">
+
+            <!-- Summary strip -->
+            <div class="fi-summary-strip">
+              <div class="fi-sum-cell">
+                <div class="fi-sum-label">Vendor claim (INV-1027)</div>
+                <div class="fi-sum-val">$890.40</div>
+                <div class="fi-sum-sub">Second bill on PO-7718</div>
+              </div>
+              <div class="fi-sum-cell" style="background:#f0fdf4;">
+                <div class="fi-sum-label" style="color:#15803d;">Already paid (INV-1024)</div>
+                <div class="fi-sum-val green">$890.40</div>
+                <div class="fi-sum-sub">ACH · Apr 26 · vendor ack'd</div>
+              </div>
+              <div class="fi-sum-cell" style="background:#fef2f2;">
+                <div class="fi-sum-label" style="color:#b91c1c;">Exposure if released</div>
+                <div class="fi-sum-val red">−$890.40</div>
+                <div class="fi-sum-sub">Would pay Praxis twice</div>
+              </div>
+              <div class="fi-sum-cell" style="background:#f0fdf4;">
+                <div class="fi-sum-label" style="color:#15803d;">Net exposure now</div>
+                <div class="fi-sum-val green">$0.00</div>
+                <div class="fi-sum-sub">Held before AP queue</div>
+              </div>
+            </div>
+
+            <!-- Breakdown -->
+            <div class="fi-breakdown">
+              <div class="fi-breakdown-head">
+                <span class="fi-breakdown-title">What's at stake</span>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">💸</span> Duplicate payment risk — if INV-1027 routed through AP without flag</div>
+                <div class="fi-row-val red">−$890.40 <span style="font-size:10px;color:#adadad;font-weight:400;">prevented</span></div>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">⏱</span> Recovery cost — if paid then clawed back (AP labor + vendor goodwill)</div>
+                <div class="fi-row-val amber">~$120 <span style="font-size:10px;color:#adadad;font-weight:400;">avoided</span></div>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">✓</span> PO-7718 status — already closed and fully invoiced</div>
+                <div class="fi-row-val green">$890.40 paid · clean</div>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">✓</span> Witness intervention time</div>
+                <div class="fi-row-val green">1 min after intake · 0 AP labor</div>
+              </div>
+              <div class="fi-total-row" style="background:#dcfce7;border-top-color:rgba(22,163,74,0.2);">
+                <div class="fi-total-label" style="color:#15803d;">Loss prevented by auto-hold</div>
+                <div class="fi-total-val" style="color:#16a34a;">$890.40 <span style="font-size:11px;font-weight:400;color:#45556c;">+ recovery cost avoided</span></div>
+              </div>
+            </div>
+
+            <!-- Scenarios -->
+            <div class="fi-scenario">
+              <div class="fi-scenario-head">Resolution scenarios — what happens next</div>
+
+              <div class="fi-scenario-row" style="background:#f0fdf4;">
+                <div class="scenario-dot" style="background:#16a34a"></div>
+                <div style="flex:1">
+                  <div class="fi-scenario-label">✦ Most likely: confirm hold, vendor retracts</div>
+                  <div class="fi-scenario-desc">One message to Praxis confirming PO-7718 was already paid via INV-1024. Vendor retracts INV-1027 from portal within 24h (matches prior 2 cases). Case closes, no payment leaves.</div>
+                </div>
+                <div class="fi-scenario-outcome">
+                  <div class="val green">Pay $0.00</div>
+                  <div class="sub">Already paid $890.40 via INV-1024</div>
+                </div>
+              </div>
+
+              <div class="fi-scenario-row">
+                <div class="scenario-dot" style="background:#b17728"></div>
+                <div style="flex:1">
+                  <div class="fi-scenario-label">Vendor claims legitimate reissue</div>
+                  <div class="fi-scenario-desc">Praxis says INV-1027 replaces INV-1024 (e.g., wrong remit-to bank on first version). Need to verify INV-1024 funds returned before paying INV-1027 — would be a swap, not a double-pay.</div>
+                </div>
+                <div class="fi-scenario-outcome">
+                  <div class="val" style="color:#b17728;">Pay $890.40</div>
+                  <div class="sub">Only after INV-1024 reversal confirmed</div>
+                </div>
+              </div>
+
+              <div class="fi-scenario-row">
+                <div class="scenario-dot" style="background:#dc2626"></div>
+                <div style="flex:1">
+                  <div class="fi-scenario-label">Hold overridden without check</div>
+                  <div class="fi-scenario-desc">Someone clicks "Release for payment" without verifying. ACH runs the next cycle. Praxis is paid $890.40 twice for SHP-2241 — recovery via vendor refund or next-invoice offset, with AP labor cost.</div>
+                </div>
+                <div class="fi-scenario-outcome">
+                  <div class="val red">Pay $1,780.80</div>
+                  <div class="sub">−$890.40 to recover</div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div><!-- /tab-financial -->
+
+        <!-- ─── TAB 4: Comments ─── -->
+        <div class="tab-panel" id="tab-comments" style="flex-direction:column;">
+          <div class="cm-header">
+            <div class="cm-header-title">Case comments</div>
+            <span style="font-size:12px;color:#adadad">2 comments</span>
+          </div>
+          <div class="cm-body">
+
+            <!-- Comment 1: AI auto-detection -->
+            <div class="comment-item">
+              <div class="cm-av" style="background:#ff6900;font-size:11px">✦</div>
+              <div class="cm-bubble">
+                <div class="cm-meta">
+                  <span class="cm-author">Witness AI</span>
+                  <span class="cm-role">Automated detection</span>
+                  <span class="cm-time">Apr 28 · 2:14 AM</span>
+                </div>
+                <div class="cm-text ai">
+                  Held INV-1027 as a likely duplicate of <strong>INV-1024</strong> (paid Apr 26 via ACH). 6 of 7 signals match — PO-7718, shipment SHP-2241, total $890.40, tax, vendor, bill-to. Only the invoice number and submission channel differ. PO-7718 is already marked fully invoiced. <strong>Action taken:</strong> removed from AP queue; no payment routed. Awaiting your confirmation to notify Praxis.
+                </div>
+                <div class="cm-actions">
+                  <button class="cm-action-btn">Reply</button>
+                  <button class="cm-action-btn">View sources</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="cm-divider">
+              <div class="cm-divider-line"></div>
+              <span>Apr 28</span>
+              <div class="cm-divider-line"></div>
+            </div>
+
+            <!-- Comment 2: AI pattern note -->
+            <div class="comment-item">
+              <div class="cm-av" style="background:#ff6900;font-size:11px">✦</div>
+              <div class="cm-bubble">
+                <div class="cm-meta">
+                  <span class="cm-author">Witness AI</span>
+                  <span class="cm-role">Pattern note</span>
+                  <span class="cm-time">Apr 28 · 2:15 AM</span>
+                </div>
+                <div class="cm-text ai">
+                  This is the 3rd duplicate from Praxis Logistics in 12 months. In the prior 2 cases (Aug 2024, Jan 2025), the vendor confirmed billing-system re-emission within 24h and retracted. No disputes, no escalation. Avg recovery: $820. <strong>Suggested:</strong> confirm hold and send the pre-drafted retract request — same script that worked the last two times.
+                </div>
+                <div class="cm-actions">
+                  <button class="cm-action-btn">Reply</button>
+                  <button class="cm-action-btn">View prior cases (2)</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="cm-compose">
+            <div class="cm-compose-av">MC</div>
+            <textarea class="cm-compose-input" rows="2" placeholder="Add a comment or note…"></textarea>
+            <button class="cm-send">Send</button>
+          </div>
+        </div><!-- /tab-comments -->
+
+      </div><!-- /center-col -->
+
+      <!-- RIGHT: AI context -->
+      <div class="right-col">
+
+        <!-- Duplicate snapshot — INV-1024 / PO / INV-1027 -->
+        <div>
+          <div class="rs-title">Duplicate snapshot <span class="rs-link">View full</span></div>
+          <div class="rs-meta">Apr 28, 2025 · 2:14 AM · 98% confidence</div>
+
+          <svg viewBox="0 0 240 230" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+            <!-- edges -->
+            <line x1="120" y1="40" x2="48" y2="170" stroke="#16a34a" stroke-width="2" fill="none"/>
+            <line x1="120" y1="40" x2="192" y2="170" stroke="#e9e9e9" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+            <line x1="48" y1="170" x2="192" y2="170" stroke="#dc2626" stroke-width="2.5" fill="none" stroke-dasharray="6 3"/>
+            <!-- edge labels -->
+            <rect x="40" y="97" width="62" height="18" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+            <text x="71" y="110" font-family="Inter" font-size="10" font-weight="700" fill="#15803d" text-anchor="middle">paid Apr 26</text>
+            <rect x="138" y="97" width="68" height="18" rx="3" fill="white" stroke="#e9e9e9" stroke-width="1"/>
+            <text x="172" y="110" font-family="Inter" font-size="10" font-weight="600" fill="#b17728" text-anchor="middle">2nd bill · held</text>
+            <rect x="80" y="186" width="80" height="18" rx="3" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+            <text x="120" y="199" font-family="Inter" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">+$890.40 ◆</text>
+            <!-- nodes -->
+            <circle cx="120" cy="40" r="28" fill="white" stroke="#e9e9e9" stroke-width="1.5"/>
+            <text x="120" y="36" font-family="Inter" font-size="10" font-weight="700" fill="#0b0d12" text-anchor="middle">PO-7718</text>
+            <text x="120" y="50" font-family="Inter" font-size="8" fill="#adadad" text-anchor="middle">fully invoiced</text>
+            <circle cx="48" cy="170" r="30" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+            <text x="48" y="166" font-family="Inter" font-size="10" font-weight="700" fill="#15803d" text-anchor="middle">INV-1024</text>
+            <text x="48" y="180" font-family="Inter" font-size="8" fill="#15803d" text-anchor="middle">paid · ACH</text>
+            <circle cx="192" cy="170" r="30" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+            <text x="192" y="166" font-family="Inter" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">INV-1027</text>
+            <text x="192" y="180" font-family="Inter" font-size="8" fill="#dc2626" text-anchor="middle">held</text>
+          </svg>
+
+          <div class="mt-legend">
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:#dc2626"></div><div>◆ Primary — INV-1027 mirrors INV-1024. Risk: $890.40 paid twice if released.</div></div>
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:#16a34a"></div><div>INV-1024 closed PO-7718 cleanly on Apr 26 (ACH, vendor ack'd).</div></div>
+            <div class="mt-leg"><div class="mt-leg-dot" style="background:#c8c8c8"></div><div>PO-7718 has no remaining scope — second invoice has no business basis.</div></div>
+          </div>
+        </div>
+
+        <!-- Auto-hold status -->
+        <div>
+          <div class="rs-title" style="margin-bottom:10px">Auto-hold status</div>
+          <div class="as-card">
+            <div class="as-person">
+              <div class="as-av" style="background:#ff6900">✦</div>
+              <div>
+                <div class="as-name">Witness AI</div>
+                <div class="as-role">Auto-held · 98% confidence</div>
+              </div>
+              <div class="as-status">
+                <span class="badge approved" style="background:#dcfce7;color:#15803d;"><span class="bdot" style="background:#16a34a;"></span>Held</span>
+              </div>
+            </div>
+            <div class="as-field-row"><span class="as-field-label">Detected</span><span class="as-field-val">Apr 28 · 2:14 AM</span></div>
+            <div class="as-field-row"><span class="as-field-label">Latency from intake</span><span class="as-field-val">1 min</span></div>
+            <div class="as-field-row"><span class="as-field-label">Routed to AP queue</span><span class="as-field-val">No · removed</span></div>
+            <div class="as-field-row"><span class="as-field-label">Reviewer</span><span class="as-field-val">M. Chen · AP Analyst</span></div>
+            <div class="as-field-row"><span class="as-field-label">Auto-archive in</span><span class="as-field-val">7 days if no override</span></div>
+          </div>
+          <a class="view-chain">View prior Praxis dupes (2) →</a>
+        </div>
+
+      </div><!-- /right-col -->
+
+    </div><!-- /three-col -->
+
+  </main>
+</div><!-- /main -->
+
+<script>
+  function toggleStep(el) {
+    const expanded = el.querySelector('.tl-expanded');
+    if (expanded) expanded.classList.toggle('open');
+  }
+
+  function switchTab(btn) {
+    // Update tab buttons
+    document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    // Show matching panel
+    const target = btn.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + target).classList.add('active');
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.tl-expanded.open').forEach(e => e.classList.remove('open'));
+  }
+</script>
+<script>
+  (function(){
+    var sb = document.querySelector('.sidebar');
+    var btn = document.querySelector('.sidebar-toggle');
+    if (!sb || !btn) return;
+    if (localStorage.getItem('witness-sidebar') === 'collapsed') sb.classList.add('collapsed');
+    btn.addEventListener('click', function(){
+      sb.classList.toggle('collapsed');
+      localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
+    });
+  })();
+</script>
+
+<!-- ═══════════ Witness chat panel (shared — see witness-chat-panel.{css,js}) ═══════════ -->
+<aside class="chat" id="chat"></aside>
+</div><!-- /.app-grid -->
+
+<link rel="stylesheet" href="witness-chat-panel.css">
+<script src="witness-chat-panel.js"></script>
+</body>
+</html>
