@@ -154,11 +154,19 @@
   .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
   .sidebar.collapsed .brand-name { display: none; }
   .sidebar.collapsed .sidebar-toggle {
-    position: absolute; top: 80px; right: -12px;
+    position: fixed;
+    top: calc(var(--topbar-h) + 14px);
+    left: calc(var(--sidebar-w) - 14px);
     background: #fff; border: 1.5px solid #e9e9e9;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    width: 24px; height: 24px; border-radius: 50%;
-    margin: 0; z-index: 21;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    width: 28px; height: 28px; border-radius: 50%;
+    margin: 0; z-index: 35;
+    transition: background .15s, box-shadow .15s, transform .15s;
+  }
+  .sidebar.collapsed .sidebar-toggle:hover {
+    background: #f4f4f4;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+    transform: scale(1.06);
   }
   .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
   .sidebar.collapsed .nav-label { display: none; }
@@ -290,6 +298,83 @@
     font-weight: 600;
   }
 
+  /* Clickable stat card (links to a detail page) */
+  a.stat-card {
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+  }
+  a.stat-card:hover {
+    border-color: #ff6900;
+    box-shadow: 0 6px 18px rgba(255, 105, 0, 0.12);
+    transform: translateY(-1px);
+  }
+  a.stat-card:focus-visible {
+    outline: 2px solid #ff6900;
+    outline-offset: 2px;
+  }
+  a.stat-card.card-risk:hover     { border-color: #b91c1c; box-shadow: 0 6px 18px rgba(185, 28, 28, 0.12); }
+  a.stat-card.card-wait:hover     { border-color: #b17728; box-shadow: 0 6px 18px rgba(177, 119, 40, 0.12); }
+  a.stat-card.card-discount:hover { border-color: #15803d; box-shadow: 0 6px 18px rgba(21, 128, 61, 0.12); }
+  a.stat-card.card-risk .stat-preview-dot     { background: #b91c1c; }
+  a.stat-card.card-wait .stat-preview-dot     { background: #b17728; }
+  a.stat-card.card-discount .stat-preview-dot { background: #15803d; }
+  a.stat-card.card-risk .stat-preview-foot     { color: #b91c1c; }
+  a.stat-card.card-wait .stat-preview-foot     { color: #b17728; }
+  a.stat-card.card-discount .stat-preview-foot { color: #15803d; }
+
+  /* Hover preview popover */
+  .stat-preview {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 320px;
+    background: white;
+    border: 1px solid #e9e9e9;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(11, 13, 18, 0.12);
+    padding: 14px 16px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity .15s ease, transform .15s ease;
+    z-index: 50;
+  }
+  a.stat-card:hover .stat-preview,
+  a.stat-card:focus-visible .stat-preview {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* First card's popover sits on the left so it doesn't run off-screen */
+  a.stat-card.card-risk .stat-preview { right: auto; left: 0; }
+  .stat-preview-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .stat-preview-title {
+    font-size: 12px; font-weight: 600; color: #0b0d12;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .stat-preview-meta { font-size: 11px; color: #6b7280; }
+  .stat-preview-list { display: flex; flex-direction: column; gap: 8px; }
+  .stat-preview-row {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 12px; color: #45556c; line-height: 1.4;
+  }
+  .stat-preview-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #ff6900; margin-top: 6px; flex-shrink: 0;
+  }
+  .stat-preview-row b { color: #0b0d12; font-weight: 600; }
+  .stat-preview-foot {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 12px; font-weight: 600; color: #ff6900;
+    display: flex; align-items: center; gap: 4px;
+  }
+
   /* ─────────── AP Aging snapshot (info-viz block) ─────────── */
   .aging-card {
     background: white;
@@ -346,6 +431,60 @@
   .aging-bucket .sub {
     font-size: 11px; color: #9f9fa6;
   }
+
+  /* ─────────── Section tabs (switch between groups) ─────────── */
+  .section-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: #f4f4f4;
+    border-radius: 12px;
+    border: 1px solid #e9e9e9;
+  }
+  .section-tab {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 10px 16px;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 500;
+    color: #45556c;
+    line-height: 1.25;
+    letter-spacing: -0.1px;
+    transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+  }
+  .section-tab:hover { color: #0b0d12; background: rgba(255, 255, 255, 0.6); }
+  .section-tab.active {
+    background: white;
+    color: #0b0d12;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(11, 13, 18, 0.06), 0 0 0 1px #e9e9e9;
+  }
+  .section-tab-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .section-tab[data-tab="urgent"] .section-tab-dot { background: #dc2626; }
+  .section-tab[data-tab="wait"]   .section-tab-dot { background: #e9b44c; }
+  .section-tab[data-tab="done"]   .section-tab-dot { background: #16a34a; }
+  .section-tab-count {
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    background: #e9e9e9; color: #45556c;
+    font-variant-numeric: tabular-nums;
+  }
+  .section-tab[data-tab="urgent"].active .section-tab-count { background: #fee2e2; color: #b91c1c; }
+  .section-tab[data-tab="wait"].active   .section-tab-count { background: #fdf2d4; color: #b17728; }
+  .section-tab[data-tab="done"].active   .section-tab-count { background: #dcfce7; color: #15803d; }
+
+  /* When tabs are active, only the matching group is visible */
+  .groups.tabbed > .group { display: none; }
+  .groups.tabbed > .group.tab-active { display: block; }
+  /* Collapse button is redundant inside a tab view */
+  .groups.tabbed .group-toggle { display: none; }
 
   /* ─────────── Section header (group) ─────────── */
   .group {
@@ -643,11 +782,11 @@
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 6v3 M16 23v3 M6 16h3 M23 16h3 M9.6 9.6l2.1 2.1 M20.3 20.3l2.1 2.1 M9.6 22.4l2.1-2.1 M20.3 11.7l2.1-2.1" stroke="#ff6900" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="16" r="4.5" fill="#ff6900"/></svg>
         <h1 class="gtitle">Good morning, Sarah.</h1>
       </div>
-      <p class="gsub">I worked through <b>24 cases</b> overnight — about <b>3 hours</b> saved. <b>4 cases</b> are with you today.</p>
+      <p class="gsub">I worked through <b>24 cases</b> overnight — about <b>3 hours</b> saved. <b>4 cases</b> are with you today. <a href="dashboard-brief.html" style="font-size:14px;font-weight:500;color:#ff6900;text-decoration:none;letter-spacing:-0.15px;white-space:nowrap;">Read full brief →</a></p>
 
       <!-- KPI row — each card has a sparkline / mini viz -->
       <div class="stat-row">
-        <div class="stat-card">
+        <a class="stat-card card-risk" href="invoices.html#at-risk" aria-label="$123K at risk across 12 cases — open invoices">
           <div class="stat-top">
             <div class="stat-icon risk">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2v16 M13.5 5.5c-.7-1-2-1.7-3.5-1.7-2 0-3.5 1-3.5 2.5 0 1.7 1.5 2 3.5 2.5 2 .5 3.5 1 3.5 2.5 0 1.5-1.5 2.5-3.5 2.5-1.5 0-2.8-.7-3.5-1.5" stroke="#b91c1c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -667,9 +806,23 @@
             </div>
             <div class="stat-foot-lbl">Current · 1–30d · 31–60d · 60d+</div>
           </div>
-        </div>
 
-        <div class="stat-card">
+          <div class="stat-preview" role="tooltip">
+            <div class="stat-preview-head">
+              <div class="stat-preview-title">Top exposure</div>
+              <div class="stat-preview-meta">12 cases · +$18K wk</div>
+            </div>
+            <div class="stat-preview-list">
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>Brightline Industries</b> · $42K · 60d+ past due</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>Lumen Logistics</b> · $28K · dispute open</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>Mercer Foods</b> · $18K · over credit limit</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>9 others</b> · $35K combined</div></div>
+            </div>
+            <div class="stat-preview-foot">View all at-risk invoices →</div>
+          </div>
+        </a>
+
+        <a class="stat-card card-wait" href="invoices.html#waiting" aria-label="8 invoices waiting on approvers — open invoices">
           <div class="stat-top">
             <div class="stat-icon wait">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="#b17728" stroke-width="1.6"/><path d="M10 5.5v4.5l3 2" stroke="#b17728" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -687,9 +840,23 @@
               <span class="muted">3 others</span>
             </div>
           </div>
-        </div>
 
-        <div class="stat-card">
+          <div class="stat-preview" role="tooltip">
+            <div class="stat-preview-head">
+              <div class="stat-preview-title">Pending approvals</div>
+              <div class="stat-preview-meta">8 invoices · 3 past SLA</div>
+            </div>
+            <div class="stat-preview-list">
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>J. Park</b> · 3 invoices · 2 past SLA</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>S. Reed</b> · 2 invoices · 1 past SLA</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>M. Lee</b> · 2 invoices</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>T. Greenfield</b> · 1 invoice</div></div>
+            </div>
+            <div class="stat-preview-foot">View pending approvals →</div>
+          </div>
+        </a>
+
+        <a class="stat-card card-discount" href="invoices.html#discount" aria-label="5 invoices in discount window — open invoices">
           <div class="stat-top">
             <div class="stat-icon discount">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 16L16 4" stroke="#15803d" stroke-width="1.6" stroke-linecap="round"/><circle cx="6.5" cy="6.5" r="2" stroke="#15803d" stroke-width="1.6"/><circle cx="13.5" cy="13.5" r="2" stroke="#15803d" stroke-width="1.6"/></svg>
@@ -706,9 +873,24 @@
               <span class="muted">3 this week</span>
             </div>
           </div>
-        </div>
 
-        <div class="stat-card">
+          <div class="stat-preview" role="tooltip">
+            <div class="stat-preview-head">
+              <div class="stat-preview-title">Early-pay discounts</div>
+              <div class="stat-preview-meta">$2.1K available</div>
+            </div>
+            <div class="stat-preview-list">
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>Brightline</b> · 2% closes today · save $850</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>Acme Supply</b> · 1.5% closes today · save $620</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>Northwind</b> · 2% in 3 days · save $410</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>2 others</b> closing this week · $220</div></div>
+            </div>
+            <div class="stat-preview-foot">View discount invoices →</div>
+          </div>
+        </a>
+
+        <a class="stat-card" href="ai-activity.html" aria-label="24 cases handled by AI — open AI Activity" style="position:relative;">
+          <span class="wt-ai-tag" data-trace-prov="dash-handled-by-ai" onclick="event.preventDefault();event.stopPropagation();">✦ Trace</span>
           <div class="stat-top">
             <div class="stat-icon ai">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.4 3.6L15 7l-3.6 1L10 12 8.6 8 5 7l3.6-1.4L10 2z" stroke="#ff6900" stroke-width="1.5" stroke-linejoin="round"/><path d="M15 14l.7 1.8L17.5 16l-1.8.7L15 18.5l-.7-1.8L12.5 16l1.8-.5L15 14z" stroke="#ff6900" stroke-width="1.3" stroke-linejoin="round"/></svg>
@@ -726,15 +908,72 @@
               <span><b>2</b> held</span>
             </div>
           </div>
-        </div>
+
+          <div class="stat-preview" role="tooltip">
+            <div class="stat-preview-head">
+              <div class="stat-preview-title">Recent AI actions</div>
+              <div class="stat-preview-meta">Last 24h · 3h saved</div>
+            </div>
+            <div class="stat-preview-list">
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>14 invoices</b> paid · 3-way match clean</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>8 invoices</b> routed for approval</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>1 duplicate</b> caught on INV-1048 · held</div></div>
+              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>1 dispute</b> flagged on Lumen Logistics · held</div></div>
+            </div>
+            <div class="stat-preview-foot">See full activity log →</div>
+          </div>
+
+          <!-- Provenance content for the Trace tag -->
+          <div hidden id="trace-prov-dash-handled-by-ai">
+            <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Today's automation</span><button class="wt-pop-close" type="button">✕</button></div>
+            <div class="wt-pop-title">24 cases handled · 3h saved (est.)</div>
+            <div class="wt-pop-sub">Period: last 24h · rolling window</div>
+            <div class="wt-prov-section">
+              <div class="wt-prov-label why-auto"><span class="wt-dot"></span>What ran on your behalf</div>
+              <ul class="wt-prov-list">
+                <li><strong>14 paid</strong> via <span class="pill rule">Clean payment routing</span> (≤$5K, clean match)</li>
+                <li><strong>8 routed</strong> via <span class="pill rule">Approval routing</span> to assigned approvers</li>
+                <li><strong>2 held</strong> for you: <strong>INV-1048</strong> exception, <strong>INV-1027</strong> duplicate</li>
+              </ul>
+            </div>
+            <div class="wt-prov-section">
+              <div class="wt-prov-label why-wait"><span class="wt-dot"></span>What Witness never does without you</div>
+              <div class="wt-prov-body">
+                Pay above your <strong>$5,000</strong> ceiling · email vendors · approve disputes · change bank info · turn on a new workflow.
+              </div>
+            </div>
+            <div class="wt-pop-foot">
+              <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open AI Activity ↗</button>
+              <button class="wt-pop-btn" data-trace-action="goto-workflow">View rules →</button>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
 
     <!-- ─────────── STATUS-GROUPED TABLES ─────────── -->
-    <div class="groups">
+    <div class="section-tabs" role="tablist" aria-label="Case views">
+      <button class="section-tab active" type="button" role="tab" aria-selected="true" aria-controls="g-urgent" data-tab="urgent">
+        <span class="section-tab-dot"></span>
+        <span>Must handle today</span>
+        <span class="section-tab-count">8</span>
+      </button>
+      <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="g-wait" data-tab="wait">
+        <span class="section-tab-dot"></span>
+        <span>Waiting on others</span>
+        <span class="section-tab-count">8</span>
+      </button>
+      <button class="section-tab" type="button" role="tab" aria-selected="false" aria-controls="g-done" data-tab="done">
+        <span class="section-tab-dot"></span>
+        <span>Handled by AI</span>
+        <span class="section-tab-count">24</span>
+      </button>
+    </div>
+
+    <div class="groups tabbed">
 
       <!-- GROUP 1: Must handle today -->
-      <section class="group urgent" id="g-urgent">
+      <section class="group urgent tab-active" id="g-urgent">
         <div class="group-head">
           <div class="group-pip"></div>
           <div>
@@ -743,8 +982,8 @@
             </div>
           </div>
           <div class="group-meta">
-            <span class="group-count">4 cases</span>
-            <span class="group-amount">$63,650.45</span>
+            <span class="group-count">8 cases</span>
+            <span class="group-amount">$95,690.45</span>
             <button class="group-toggle" type="button">
               <span>Collapse</span>
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -800,6 +1039,42 @@
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Identical to INV-0998 (paid Apr 22). Compare side-by-side.</span></span></td>
                 <td class="td-due">Held<span class="row-arrow">→</span></td>
               </tr>
+              <tr>
+                <td class="td-inv">INV-1077</td>
+                <td class="td-po">PO-7745</td>
+                <td class="t-amt">$5,890.00</td>
+                <td class="td-vendor">Praxis Logistics</td>
+                <td><span class="status-badge review"><span class="sdot"></span>Tax mismatch</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Vendor charged 8.5% — your jurisdiction is 6.25%. Confirm before paying.</span></span></td>
+                <td class="td-due today">Today<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1084</td>
+                <td class="td-po">PO-7752</td>
+                <td class="t-amt">$14,200.00</td>
+                <td class="td-vendor">Tetra Pak</td>
+                <td><span class="status-badge review"><span class="sdot"></span>PO over-billing</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Billed 12 units, PO says 10. Approve the variance or send back?</span></span></td>
+                <td class="td-due tomorrow">Tomorrow<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1056</td>
+                <td class="td-po">PO-7740</td>
+                <td class="t-amt">$2,150.00</td>
+                <td class="td-vendor">Spectra Office</td>
+                <td><span class="status-badge review"><span class="sdot"></span>First-time vendor</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">New vendor — verify the W-9 before the first payment goes out.</span></span></td>
+                <td class="td-due tomorrow">Tomorrow<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1071</td>
+                <td class="td-po">PO-7748</td>
+                <td class="t-amt">$9,800.00</td>
+                <td class="td-vendor">Crestline Print</td>
+                <td><span class="status-badge review"><span class="sdot"></span>Rate change</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Unit price is up 11% vs last invoice. Confirm the new rate.</span></span></td>
+                <td class="td-due tomorrow">Tomorrow<span class="row-arrow">→</span></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -815,8 +1090,8 @@
             </div>
           </div>
           <div class="group-meta">
-            <span class="group-count">4 cases</span>
-            <span class="group-amount">$28,500.95</span>
+            <span class="group-count">8 cases</span>
+            <span class="group-amount">$61,836.45</span>
             <button class="group-toggle" type="button">
               <span>Collapse</span>
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -871,6 +1146,42 @@
                 <td><span class="status-badge waiting"><span class="sdot"></span>Contact unreachable</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Need your call on the backup contact.</span></span></td>
                 <td class="td-due">6 days<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1115</td>
+                <td class="td-po">PO-7815</td>
+                <td class="t-amt">$4,520.00</td>
+                <td class="td-vendor">Vertex Cleaning</td>
+                <td><span class="status-badge waiting"><span class="sdot"></span>With approver</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">M. Lee has had this 4 days — sent a reminder this morning.</span></span></td>
+                <td class="td-due">3 days<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1098</td>
+                <td class="td-po">PO-7770</td>
+                <td class="t-amt">$18,900.00</td>
+                <td class="td-vendor">Crestline Print</td>
+                <td><span class="status-badge waiting"><span class="sdot"></span>Awaiting credit memo</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Asked vendor for a credit on the duplicate ship charge.</span></span></td>
+                <td class="td-due">5 days<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1121</td>
+                <td class="td-po">PO-7826</td>
+                <td class="t-amt">$3,275.50</td>
+                <td class="td-vendor">FedEx</td>
+                <td><span class="status-badge waiting"><span class="sdot"></span>With vendor</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Asked FedEx to confirm the dimensional-weight charges.</span></span></td>
+                <td class="td-due">7 days<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1142</td>
+                <td class="td-po">PO-7845</td>
+                <td class="t-amt">$6,640.00</td>
+                <td class="td-vendor">Spectra Office</td>
+                <td><span class="status-badge waiting"><span class="sdot"></span>With AP team</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Routed to L. Chen for tax-code review.</span></span></td>
+                <td class="td-due">8 days<span class="row-arrow">→</span></td>
               </tr>
             </tbody>
           </table>
@@ -944,6 +1255,78 @@
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Verified the vendor by callback.</span></span></td>
                 <td class="td-due done">4:48 AM<span class="row-arrow">→</span></td>
               </tr>
+              <tr>
+                <td class="td-inv">INV-1051</td>
+                <td class="td-po">PO-7732</td>
+                <td class="t-amt">$720.00</td>
+                <td class="td-vendor">Costco Wholesale</td>
+                <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Auto-paid on net-15 terms.</span></span></td>
+                <td class="td-due done">5:12 AM<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1063</td>
+                <td class="td-po">PO-7741</td>
+                <td class="t-amt">$3,400.00</td>
+                <td class="td-vendor">Office Depot</td>
+                <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Matched 3-way and paid.</span></span></td>
+                <td class="td-due done">5:34 AM<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1067</td>
+                <td class="td-po">PO-7743</td>
+                <td class="t-amt">$12,800.00</td>
+                <td class="td-vendor">Tetra Pak</td>
+                <td><span class="status-badge routing"><span class="sdot"></span>Routed</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Sent to D. Greene — your usual approver for this vendor.</span></span></td>
+                <td class="td-due done">5:51 AM<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1073</td>
+                <td class="td-po">PO-7747</td>
+                <td class="t-amt">$445.00</td>
+                <td class="td-vendor">Amazon Business</td>
+                <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Under $500 — auto-approved on net-30.</span></span></td>
+                <td class="td-due done">6:08 AM<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1080</td>
+                <td class="td-po">PO-7751</td>
+                <td class="t-amt">$8,150.00</td>
+                <td class="td-vendor">NorthStar Freight</td>
+                <td><span class="status-badge done"><span class="sdot"></span>Verified</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Confirmed vendor banking unchanged via lookup.</span></span></td>
+                <td class="td-due done">6:22 AM<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1086</td>
+                <td class="td-po">PO-7755</td>
+                <td class="t-amt">$1,920.00</td>
+                <td class="td-vendor">BetaCo</td>
+                <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Reused last month's coding from the same vendor.</span></span></td>
+                <td class="td-due done">6:47 AM<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1093</td>
+                <td class="td-po">PO-7762</td>
+                <td class="t-amt">$5,300.00</td>
+                <td class="td-vendor">Praxis Logistics</td>
+                <td><span class="status-badge routing"><span class="sdot"></span>Routed</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Sent to J. Park for sign-off.</span></span></td>
+                <td class="td-due done">7:03 AM<span class="row-arrow">→</span></td>
+              </tr>
+              <tr>
+                <td class="td-inv">INV-1109</td>
+                <td class="td-po">PO-7811</td>
+                <td class="t-amt">$2,450.00</td>
+                <td class="td-vendor">Greenline Logistics</td>
+                <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
+                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Standard freight charge — within $50 of your monthly average.</span></span></td>
+                <td class="td-due done">7:19 AM<span class="row-arrow">→</span></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -978,7 +1361,9 @@
 </div><!-- /.app-grid -->
 
 <link rel="stylesheet" href="witness-chat-panel.css">
+<link rel="stylesheet" href="witness-trace.css">
 <script src="witness-chat-panel.js"></script>
+<script src="witness-trace.js"></script>
 
 <script>
   /* ─────────── Sidebar collapse (reused) ─────────── */
@@ -1009,6 +1394,40 @@
       btn.querySelector('span').textContent = collapsed ? 'Expand' : 'Collapse';
     });
   });
+
+  /* ─────────── Section tabs — switch between case views ─────────── */
+  (function () {
+    const tabs = document.querySelectorAll('.section-tab');
+    const groups = document.querySelectorAll('.groups.tabbed > .group');
+    const targetFor = { urgent: 'g-urgent', wait: 'g-wait', done: 'g-done' };
+
+    function activate(name) {
+      tabs.forEach(t => {
+        const on = t.dataset.tab === name;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      groups.forEach(g => g.classList.toggle('tab-active', g.id === targetFor[name]));
+      history.replaceState(null, '', '#' + name);
+    }
+
+    tabs.forEach(t => t.addEventListener('click', () => activate(t.dataset.tab)));
+
+    // Keyboard: left/right arrow to switch tabs while focused on the tablist
+    document.querySelector('.section-tabs').addEventListener('keydown', e => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      const order = ['urgent', 'wait', 'done'];
+      const current = document.querySelector('.section-tab.active').dataset.tab;
+      const dir = e.key === 'ArrowRight' ? 1 : -1;
+      const next = order[(order.indexOf(current) + dir + order.length) % order.length];
+      activate(next);
+      document.querySelector('.section-tab.active').focus();
+    });
+
+    // Open to the hash if it matches a tab
+    const hash = (location.hash || '').replace('#', '');
+    if (Object.prototype.hasOwnProperty.call(targetFor, hash)) activate(hash);
+  })();
 </script>
 
 </body>

@@ -389,7 +389,7 @@
     .dr-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(240,237,232,0.4); margin-bottom: 10px; }
     .dr-list { display: flex; flex-direction: column; gap: 6px; }
     .dr-item { display: flex; gap: 7px; font-size: 11px; color: rgba(240,237,232,0.75); line-height: 1.4; }
-    .dr-num { color: #16a34a; font-size: 9px; font-weight: 700; flex-shrink: 0; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .dr-num { color: #ff6900; font-size: 9px; font-weight: 700; flex-shrink: 0; margin-top: 2px; font-variant-numeric: tabular-nums; }
     .dr-foot { font-size: 10px; color: rgba(240,237,232,0.4); margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
 
     /* Page heading row */
@@ -609,7 +609,7 @@
           </div>
         </button>
       </div>
-      <div class="avatar">MC</div>
+      <div class="avatar">SC</div>
     </div>
   </header>
 
@@ -617,7 +617,7 @@
 
     <!-- ─── PAGE HEADING ─── -->
     <div style="display:flex;flex-direction:column;gap:10px">
-      <a href="#" style="align-self:flex-start;font-size:13px;font-weight:500;color:#45556c;text-decoration:none;display:flex;align-items:center;gap:4px;">← All Invoices</a>
+      <a href="invoices.html" style="align-self:flex-start;font-size:13px;font-weight:500;color:#45556c;text-decoration:none;display:flex;align-items:center;gap:4px;">← All Invoices</a>
       <div class="page-hd">
         <div class="page-hd-left">
           <h1 class="ptitle">INV-1048 &nbsp;—&nbsp; Brightline Office Supply</h1>
@@ -679,6 +679,13 @@
       Net exposure if unresolved by Apr 30: <strong style="color:#dc2626;">−$420.32</strong> &nbsp;=&nbsp; $280 overbilling + $140 discount lost + $42 freight &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How is this calculated?</span>
     </div>
 
+    <!-- ─── AI HISTORY STRIP (centralised revert lives in AI Activity) ─── -->
+    <div class="wt-history-strip">
+      <span class="wt-h-icon">✦</span>
+      <span>Witness AI has taken <strong>3 actions</strong> on this invoice today — exception flagged, J. Park nudge drafted, freight variance noted. All are revertable.</span>
+      <a class="wt-h-link" href="ai-activity.html">View / revert in Activity ↗</a>
+    </div>
+
     <!-- ─── AI INSIGHT BANNER — 3-way match flow (evidence, not $ amounts) ─── -->
     <div class="ai-insight-banner structured">
       <div class="ai-banner-head">
@@ -687,21 +694,73 @@
           Witness AI
         </div>
         <span class="ai-banner-meta"><strong>2 match exceptions detected</strong> · matched 3 documents in 0.6s · 96% confidence</span>
+        <button class="wt-prov-trigger" data-trace-prov="banner-1048-match" style="margin-left:auto" onclick="event.stopPropagation()">
+          <span class="wt-prov-spark">✦</span> Provenance
+        </button>
       </div>
+
+      <!-- Provenance content for banner -->
+      <div hidden id="trace-prov-banner-1048-match">
+        <div class="wt-pop-head">
+          <span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · 3-way match</span>
+          <button class="wt-pop-close" type="button">✕</button>
+        </div>
+        <div class="wt-pop-title">Detected 2 exceptions on INV-1048</div>
+        <div class="wt-pop-sub">Apr 24, 2025 · 9:06 AM · ran in 0.6s</div>
+        <div class="wt-prov-section">
+          <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Why allowed to auto</div>
+          <div class="wt-prov-body">
+            <span class="pill rule">3-way match</span><br>
+            Read-only on PO + GRN + Invoice. Writes only a match result and a hold flag.
+            <em class="muted">Never pays, never contacts vendor without you.</em>
+          </div>
+        </div>
+        <div class="wt-prov-section">
+          <div class="wt-prov-label why-wait"><span class="wt-dot"></span>Why waiting on you</div>
+          <div class="wt-prov-body">
+            Quantity dispute &gt; $250 needs sign-off per your settings. Witness will not request a credit memo or email Brightline until you approve.
+          </div>
+        </div>
+        <div class="wt-prov-section">
+          <div class="wt-prov-label read"><span class="wt-dot"></span>Sources</div>
+          <ul class="wt-prov-list">
+            <li><strong>PO-7721</strong> · 12 units ordered <span class="src">Amazon Business · L4</span></li>
+            <li><strong>GRN-2043</strong> · 10 units received <span class="src">ERP · L7</span></li>
+            <li><strong>INV-1048</strong> · 12 units billed <span class="src">Brightline · L3, L11</span></li>
+          </ul>
+        </div>
+        <div class="wt-pop-foot">
+          <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
+          <button class="wt-pop-btn" data-trace-action="goto-workflow">View rule →</button>
+        </div>
+      </div>
+
       <div class="match-flow">
-        <div class="mf-doc">
+        <div class="mf-doc wt-src" onclick="event.stopPropagation()"
+             data-trace-system="Amazon Business"
+             data-trace-doc="PO-7721.pdf" data-trace-loc="Line 4"
+             data-trace-url="#amzn"
+             data-trace-fields="Item|Monitor Arm Pro;Qty ordered|12;Unit price|$701.67;PO total|$8,420.04;Requester|Nina Lee;PO date|Apr 15, 2025">
           <div class="mf-doc-label">PO-7721</div>
           <div class="mf-doc-val">12 ordered</div>
           <div class="mf-doc-sub">Apr 15 · Nina Lee</div>
         </div>
         <div class="mf-arrow">→</div>
-        <div class="mf-doc warn">
+        <div class="mf-doc warn wt-src" onclick="event.stopPropagation()"
+             data-trace-system="ERP"
+             data-trace-doc="GRN-2043.pdf" data-trace-loc="Line 7"
+             data-trace-url="#erp"
+             data-trace-fields="Qty received|10 of 12;Short reason|2 damaged in transit;Signed by|Nina Lee;Received|Apr 23, 2025 · 2:41 PM;Driver|XPO #2241">
           <div class="mf-doc-label">GRN-2043</div>
           <div class="mf-doc-val amber">10 received</div>
           <div class="mf-doc-sub">Apr 23 · 2 damaged in transit</div>
         </div>
         <div class="mf-arrow">→</div>
-        <div class="mf-doc crit">
+        <div class="mf-doc crit wt-src" onclick="event.stopPropagation()"
+             data-trace-system="Brightline portal"
+             data-trace-doc="INV-1048.pdf" data-trace-loc="Line 3, Line 11"
+             data-trace-url="#brightline"
+             data-trace-fields="Qty billed|12;Unit price|$701.67;Subtotal|$8,420.04;Freight (L11)|$42.00;Total|$8,420.00;Due|Apr 30, 2025;Discount|2% if paid by Apr 30">
           <div class="mf-doc-label">INV-1048</div>
           <div class="mf-doc-val red">12 billed ✕</div>
           <div class="mf-doc-sub">Apr 24 · overbills by 2 units</div>
@@ -802,8 +861,12 @@
                       <span class="tl-tag tt-ai">✦ Witness AI</span>
                     </div>
                     <div class="tl-step-name warn">3-way match exception detected</div>
-                    <div class="tl-ai-annotation">
-                      <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected — 2 exceptions on INV-1048</div>
+                    <div class="tl-ai-annotation" style="position:relative;">
+                      <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected — 2 exceptions on INV-1048
+                        <button class="wt-prov-trigger compact" data-trace-prov="tl-step-match" onclick="event.stopPropagation()" style="margin-left:auto;">
+                          <span class="wt-prov-spark">✦</span> Why
+                        </button>
+                      </div>
                       <div class="ai-fact-strip">
                         <div class="ai-fact">
                           <div class="ai-fact-k">PO qty</div>
@@ -821,6 +884,23 @@
                           <div class="ai-fact-k">Freight</div>
                           <div class="ai-fact-v amber">$42 no PO</div>
                         </div>
+                      </div>
+                      <div hidden id="trace-prov-tl-step-match">
+                        <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Provenance</span><button class="wt-pop-close" type="button">✕</button></div>
+                        <div class="wt-pop-title">3-way match exception detection</div>
+                        <div class="wt-pop-sub">Apr 24, 2025 · 9:06 AM · 0.6s</div>
+                        <div class="wt-prov-section">
+                          <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Allowed because</div>
+                          <div class="wt-prov-body"><span class="pill rule">3-way match</span> Read-only on PO/GRN/Invoice. Always-on per your setup.</div>
+                        </div>
+                        <div class="wt-prov-section">
+                          <div class="wt-prov-label wrote"><span class="wt-dot"></span>Wrote</div>
+                          <ul class="wt-prov-list">
+                            <li>Exception note on INV-1048 case file</li>
+                            <li>Status: <strong>received → held_for_review</strong></li>
+                          </ul>
+                        </div>
+                        <div class="wt-pop-foot"><button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button></div>
                       </div>
                     </div>
                   </div>
@@ -844,9 +924,18 @@
                     </div>
                     <div class="te-sources">
                       <span class="te-src-label">Sources</span>
-                      <span class="te-src-chip">PO-7721.pdf · L4</span>
-                      <span class="te-src-chip">GRN-2043.pdf · L7</span>
-                      <span class="te-src-chip">INV-1048.pdf · L3,L11</span>
+                      <span class="te-src-chip wt-src no-arrow" onclick="event.stopPropagation()"
+                            data-trace-system="Amazon Business" data-trace-doc="PO-7721.pdf" data-trace-loc="Line 4"
+                            data-trace-url="#amzn"
+                            data-trace-fields="Item|Monitor Arm Pro;Qty|12 units;Unit price|$701.67;PO date|Apr 15, 2025;Requester|Nina Lee">PO-7721.pdf · L4 ↗</span>
+                      <span class="te-src-chip wt-src no-arrow" onclick="event.stopPropagation()"
+                            data-trace-system="ERP" data-trace-doc="GRN-2043.pdf" data-trace-loc="Line 7"
+                            data-trace-url="#erp"
+                            data-trace-fields="Qty received|10 of 12;Reason|2 damaged in transit;Signed by|Nina Lee;Received|Apr 23 · 2:41 PM">GRN-2043.pdf · L7 ↗</span>
+                      <span class="te-src-chip wt-src no-arrow" onclick="event.stopPropagation()"
+                            data-trace-system="Brightline portal" data-trace-doc="INV-1048.pdf" data-trace-loc="L3, L11"
+                            data-trace-url="#brightline"
+                            data-trace-fields="L3 qty billed|12 units;L3 line total|$8,420.04;L11 freight|$42.00 (no PO line);Due|Apr 30, 2025">INV-1048.pdf · L3,L11 ↗</span>
                     </div>
                   </div>
                 </div>
@@ -949,6 +1038,29 @@
               <div class="ai-banner-head">
                 <div class="ai-insight-badge"><div class="ai-badge-dot"></div>Witness AI</div>
                 <span class="ai-banner-meta">Matched <strong>PO-7721 · GRN-2043 · INV-1048</strong> · 96% confidence · 0.6s</span>
+                <button class="wt-prov-trigger compact" data-trace-prov="ms-note" onclick="event.stopPropagation()" style="margin-left:auto;">
+                  <span class="wt-prov-spark">✦</span> Provenance
+                </button>
+                <div hidden id="trace-prov-ms-note">
+                  <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Match summary</span><button class="wt-pop-close" type="button">✕</button></div>
+                  <div class="wt-pop-title">3-way match computation</div>
+                  <div class="wt-pop-sub">Apr 24, 2025 · 9:06 AM · 0.6s · 96% confidence</div>
+                  <div class="wt-prov-section">
+                    <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Why this was computed automatically</div>
+                    <div class="wt-prov-body">Rule <span class="pill rule">3-way match</span> runs on every invoice that arrives with a PO + GRN. Confidence 96% &gt; 90% threshold to publish a match summary.</div>
+                  </div>
+                  <div class="wt-prov-section">
+                    <div class="wt-prov-label read"><span class="wt-dot"></span>Read</div>
+                    <ul class="wt-prov-list">
+                      <li><strong>PO-7721</strong> from Amazon Business</li>
+                      <li><strong>GRN-2043</strong> from ERP receiving</li>
+                      <li><strong>INV-1048</strong> from Brightline portal</li>
+                    </ul>
+                  </div>
+                  <div class="wt-pop-foot">
+                    <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
+                  </div>
+                </div>
               </div>
               <div class="ai-key-grid">
                 <div class="ai-key-cell">
@@ -1077,9 +1189,27 @@
               <table class="ms-table">
                 <thead><tr><th>Document</th><th>Source</th><th>Key fields extracted</th></tr></thead>
                 <tbody>
-                  <tr><td class="label">PO-7721.pdf</td><td><span class="src-chip src-amazon" style="font-size:10px"><span class="src-dot"></span>Amazon Business</span></td><td>Qty (12), unit price ($701.67), vendor, date, line items</td></tr>
-                  <tr><td class="label">GRN-2043.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>Qty received (10), short reason, signatory (Nina Lee), date</td></tr>
-                  <tr><td class="label">INV-1048.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>Qty billed (12), unit price, freight ($42 L11), due date</td></tr>
+                  <tr><td class="label">PO-7721.pdf</td>
+                      <td><span class="src-chip src-amazon wt-src" style="font-size:10px;cursor:pointer;"
+                                data-trace-system="Amazon Business" data-trace-doc="PO-7721.pdf" data-trace-loc="Full document"
+                                data-trace-url="#amzn"
+                                data-trace-fields="Qty|12;Unit price|$701.67;Vendor|Brightline Office Supply;PO date|Apr 15, 2025;Requester|Nina Lee;Lines|3"
+                                data-trace-captured="Apr 15, 2025 · 9:24 AM" data-trace-extractor="Amazon Business webhook + Witness OCR" data-trace-confidence="98%"><span class="src-dot"></span>Amazon Business</span></td>
+                      <td>Qty (12), unit price ($701.67), vendor, date, line items</td></tr>
+                  <tr><td class="label">GRN-2043.pdf</td>
+                      <td><span class="src-chip src-erp wt-src" style="font-size:10px;cursor:pointer;"
+                                data-trace-system="ERP" data-trace-doc="GRN-2043.pdf" data-trace-loc="Receiving module"
+                                data-trace-url="#erp"
+                                data-trace-fields="Qty received|10 of 12;Short reason|2 damaged in transit;Signed by|Nina Lee;Date|Apr 23, 2025;Driver|XPO #2241"
+                                data-trace-captured="Apr 23, 2025 · 2:41 PM" data-trace-extractor="ERP receiving webhook" data-trace-confidence="100% (system-generated)"><span class="src-dot"></span>ERP</span></td>
+                      <td>Qty received (10), short reason, signatory (Nina Lee), date</td></tr>
+                  <tr><td class="label">INV-1048.pdf</td>
+                      <td><span class="src-chip src-erp wt-src" style="font-size:10px;cursor:pointer;"
+                                data-trace-system="ERP" data-trace-doc="INV-1048.pdf" data-trace-loc="AP intake"
+                                data-trace-url="#erp"
+                                data-trace-fields="Qty billed|12;Unit price|$701.67;Freight (L11)|$42.00;Due|Apr 30, 2025;Lines|3"
+                                data-trace-captured="Apr 24, 2025 · 6:32 AM" data-trace-extractor="Witness OCR + schema match" data-trace-confidence="96%"><span class="src-dot"></span>ERP</span></td>
+                      <td>Qty billed (12), unit price, freight ($42 L11), due date</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1206,14 +1336,42 @@
                 <div class="cm-meta">
                   <span class="cm-author">Witness AI</span>
                   <span class="cm-role">Automated detection</span>
+                  <button class="wt-prov-trigger compact" data-trace-prov="ai-comment-1048" onclick="event.stopPropagation()">
+                    <span class="wt-prov-spark">✦</span> Provenance
+                  </button>
                   <span class="cm-time">Apr 24 · 9:06 AM</span>
                 </div>
                 <div class="cm-text ai">
-                  Two exceptions detected on INV-1048. <strong>Quantity mismatch:</strong> Invoice bills 12 units; only 10 received per GRN-2043. <strong>Freight variance:</strong> $42 charge on invoice line 11 has no corresponding PO line. Recommended action: request credit memo for $280 and flag freight for approver review.
+                  Two exceptions detected on INV-1048. <strong>Quantity mismatch:</strong> Invoice bills 12 units; only 10 received per
+                  <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="ERP" data-trace-doc="GRN-2043.pdf" data-trace-loc="Line 7" data-trace-url="#erp" data-trace-fields="Qty received|10;Reason|2 damaged in transit;Signed by|Nina Lee">GRN-2043</span>.
+                  <strong>Freight variance:</strong> $42 charge on invoice line 11 has no corresponding PO line. Recommended action: request credit memo for $280 and flag freight for approver review.
                 </div>
                 <div class="cm-actions">
                   <button class="cm-action-btn">Reply</button>
-                  <button class="cm-action-btn">View sources</button>
+                  <button class="cm-action-btn" onclick="window.location.href='ai-activity.html'">View / revert in Activity ↗</button>
+                </div>
+              </div>
+
+              <div hidden id="trace-prov-ai-comment-1048">
+                <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Comment trace</span><button class="wt-pop-close" type="button">✕</button></div>
+                <div class="wt-pop-title">Auto-posted exception summary</div>
+                <div class="wt-pop-sub">Apr 24, 2025 · 9:06 AM</div>
+                <div class="wt-prov-section">
+                  <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Why this comment was posted</div>
+                  <div class="wt-prov-body">
+                    Rule <span class="pill rule">Exception explainer</span> posts a plain-language summary on any case Witness flags. Internal note only — never sent to vendor.
+                  </div>
+                </div>
+                <div class="wt-prov-section">
+                  <div class="wt-prov-label read"><span class="wt-dot"></span>Sources cited</div>
+                  <ul class="wt-prov-list">
+                    <li><strong>GRN-2043</strong> line 7 <span class="src">ERP</span></li>
+                    <li><strong>INV-1048</strong> lines 3 + 11 <span class="src">Brightline</span></li>
+                    <li><strong>PO-7721</strong> line 4 <span class="src">Amazon Business</span></li>
+                  </ul>
+                </div>
+                <div class="wt-pop-foot">
+                  <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
                 </div>
               </div>
             </div>
@@ -1244,10 +1402,10 @@
 
             <!-- Comment 3: Finance -->
             <div class="comment-item">
-              <div class="cm-av" style="background:#155dfc">MC</div>
+              <div class="cm-av" style="background:#155dfc">SC</div>
               <div class="cm-bubble">
                 <div class="cm-meta">
-                  <span class="cm-author">M. Chen</span>
+                  <span class="cm-author">Sarah Chen</span>
                   <span class="cm-role">AP Analyst · Finance</span>
                   <span class="cm-time">Apr 25 · 11:02 AM</span>
                 </div>
@@ -1262,7 +1420,7 @@
 
           </div>
           <div class="cm-compose">
-            <div class="cm-compose-av">MC</div>
+            <div class="cm-compose-av">SC</div>
             <textarea class="cm-compose-input" rows="2" placeholder="Add a comment or note…"></textarea>
             <button class="cm-send">Send</button>
           </div>
@@ -1313,6 +1471,8 @@
 </div><!-- /.app-grid -->
 
 <link rel="stylesheet" href="witness-chat-panel.css">
+<link rel="stylesheet" href="witness-trace.css">
 <script src="witness-chat-panel.js"></script>
+<script src="witness-trace.js"></script>
 </body>
 </html>

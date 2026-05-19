@@ -1,0 +1,509 @@
+/* ═══════════════════════════════════════════════════════════════════
+   WITNESS · TRACEABILITY MODULE
+   Layer 1 — source jump (clickable origin chip → popover preview)
+   Layer 2 — AI provenance (✦ trigger → popover: what/when/why-auto/why-waiting/sources)
+   Layer 3 — revert (centralised in ai-activity; helper styles for the confirm sheet)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── shared popover shell ─── */
+.wt-pop {
+  position: fixed;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(11,13,18,0.14), 0 2px 6px rgba(11,13,18,0.06);
+  font-family: 'Inter', sans-serif;
+  color: #0b0d12;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity .14s ease, transform .14s ease;
+  max-width: 360px;
+  width: max-content;
+}
+.wt-pop.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.wt-pop[data-variant="ai"] { border-color: #ffd5b8; }
+.wt-pop[data-variant="revert"] { max-width: 380px; }
+
+.wt-pop-arrow {
+  position: absolute;
+  top: -6px;
+  left: 18px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-left: 1px solid #e9e9e9;
+  border-top: 1px solid #e9e9e9;
+  transform: rotate(45deg);
+}
+.wt-pop[data-variant="ai"] .wt-pop-arrow { border-color: #ffd5b8; }
+
+/* ─── popover content blocks (shared) ─── */
+.wt-pop-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.wt-pop-eyebrow {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #45556c;
+  display: flex; align-items: center; gap: 6px;
+}
+.wt-pop-eyebrow.src { color: #155dfc; }
+.wt-pop-eyebrow.ai  { color: #d95b03; }
+.wt-pop-eyebrow.revert { color: #b91c1c; }
+.wt-pop-eyebrow .wt-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  display: inline-block; background: currentColor;
+}
+.wt-pop-close {
+  margin-left: auto; background: transparent; border: none;
+  color: #adadad; cursor: pointer; padding: 2px 4px;
+  font-size: 14px; line-height: 1;
+}
+.wt-pop-close:hover { color: #45556c; }
+
+.wt-pop-title {
+  padding: 10px 14px 4px;
+  font-size: 13px; font-weight: 600; color: #0b0d12;
+  line-height: 1.35;
+}
+.wt-pop-sub {
+  padding: 0 14px 10px;
+  font-size: 11px; color: #45556c; line-height: 1.45;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.wt-pop-rows {
+  padding: 4px 14px 12px;
+  display: flex; flex-direction: column;
+}
+.wt-pop-row {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 5px 0;
+  font-size: 12px;
+  border-bottom: 1px dashed #f0f0f0;
+}
+.wt-pop-row:last-child { border-bottom: none; }
+.wt-pop-row .k {
+  color: #adadad; font-weight: 500;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.wt-pop-row .v { color: #0b0d12; font-weight: 500; text-align: right; }
+.wt-pop-row .v.warn { color: #b17728; }
+.wt-pop-row .v.crit { color: #dc2626; }
+.wt-pop-row .v.ok   { color: #16a34a; }
+
+.wt-pop-foot {
+  display: flex; gap: 6px; padding: 10px 14px 12px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+  border-radius: 0 0 12px 12px;
+  flex-wrap: wrap;
+}
+.wt-pop-btn {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px; font-weight: 600;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px solid #e9e9e9;
+  background: #fff;
+  color: #0b0d12;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  white-space: nowrap;
+  transition: all .12s;
+}
+.wt-pop-btn:hover { background: #f4f4f4; border-color: #c8c8c8; }
+.wt-pop-btn.primary { background: #120b0b; color: white; border-color: #120b0b; }
+.wt-pop-btn.primary:hover { background: #45556c; border-color: #45556c; }
+.wt-pop-btn.danger { background: #dc2626; color: white; border-color: #dc2626; }
+.wt-pop-btn.danger:hover { background: #b91c1c; border-color: #b91c1c; }
+.wt-pop-btn.ghost { color: #45556c; border-color: transparent; background: transparent; }
+.wt-pop-btn.ghost:hover { color: #0b0d12; background: #f4f4f4; }
+
+/* ─── AI provenance content (Layer 2) ─── */
+.wt-prov-section {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.wt-prov-section:last-of-type { border-bottom: none; }
+.wt-prov-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.wt-prov-label.what { color: #45556c; }
+.wt-prov-label.when { color: #45556c; }
+.wt-prov-label.why-auto { color: #15803d; }
+.wt-prov-label.why-wait { color: #b17728; }
+.wt-prov-label.read { color: #155dfc; }
+.wt-prov-label.wrote { color: #d95b03; }
+.wt-prov-label .wt-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  display: inline-block; background: currentColor;
+}
+.wt-prov-body {
+  font-size: 12px; color: #0b0d12; line-height: 1.5;
+}
+.wt-prov-body strong { font-weight: 600; }
+.wt-prov-body .muted { color: #45556c; }
+.wt-prov-body .pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: 4px;
+  background: #f4f4f4; color: #45556c;
+  margin-right: 4px;
+}
+.wt-prov-body .pill.rule { background: #e7f4ff; color: #155dfc; }
+.wt-prov-body .pill.workflow { background: #fff5f0; color: #d95b03; cursor: pointer; }
+.wt-prov-body .pill.workflow:hover { background: #ffe8d8; }
+.wt-prov-body .pill.confidence { background: #dcfce7; color: #15803d; }
+.wt-prov-list {
+  list-style: none; padding: 0; margin: 0;
+  font-size: 12px; color: #45556c;
+}
+.wt-prov-list li {
+  padding: 3px 0 3px 14px;
+  position: relative;
+  line-height: 1.5;
+}
+.wt-prov-list li::before {
+  content: "↳";
+  position: absolute; left: 0; color: #adadad;
+}
+.wt-prov-list li strong { color: #0b0d12; font-weight: 600; }
+.wt-prov-list li .src {
+  color: #adadad; font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10.5px; margin-left: 4px;
+}
+
+/* ─── LAYER 1: source-jump trigger ─── */
+.wt-src {
+  cursor: pointer;
+  position: relative;
+  transition: filter .12s, transform .12s;
+}
+.wt-src:hover { filter: brightness(0.94); }
+.wt-src::after {
+  content: "↗";
+  font-size: 9px;
+  margin-left: 4px;
+  opacity: 0.55;
+  display: inline-block;
+  vertical-align: baseline;
+  font-weight: 700;
+}
+.wt-src.no-arrow::after { display: none; }
+.wt-src[data-trace-open="1"] { outline: 2px solid rgba(21,93,252,0.3); outline-offset: 1px; }
+
+/* compact inline source mention (used inside body text / lists) */
+.wt-src-mention {
+  display: inline-flex; align-items: center; gap: 4px;
+  cursor: pointer;
+  color: #155dfc;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+.wt-src-mention::after {
+  content: "↗"; font-size: 9px; opacity: 0.6; font-weight: 700;
+}
+.wt-src-mention:hover { color: #0b46c4; }
+
+/* ─── LAYER 2: provenance trigger ─── */
+.wt-prov-trigger {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px 3px 6px;
+  border-radius: 6px;
+  background: #fff5f0;
+  color: #d95b03;
+  border: 1px solid #ffd5b8;
+  cursor: pointer;
+  transition: all .12s;
+  white-space: nowrap;
+}
+.wt-prov-trigger:hover { background: #ffe8d8; border-color: #ffb088; }
+.wt-prov-trigger[data-trace-open="1"] {
+  background: #d95b03; color: white; border-color: #d95b03;
+}
+.wt-prov-trigger .wt-prov-spark {
+  font-size: 11px; line-height: 1;
+}
+.wt-prov-trigger.compact {
+  padding: 2px 6px 2px 5px;
+  font-size: 9px;
+  gap: 3px;
+}
+.wt-prov-trigger.compact .wt-prov-spark { font-size: 9px; }
+
+/* alternate: minimal icon-only trigger (for dense rows) */
+.wt-prov-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #fff5f0;
+  color: #d95b03;
+  border: 1px solid #ffd5b8;
+  font-size: 10px; font-weight: 700;
+  cursor: pointer;
+  transition: all .12s;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+.wt-prov-icon:hover { background: #d95b03; color: white; border-color: #d95b03; }
+.wt-prov-icon[data-trace-open="1"] { background: #d95b03; color: white; border-color: #d95b03; }
+
+/* AI-block decoration: subtle "✦ Witness AI" attribution baked into block corner */
+.wt-ai-tag {
+  position: absolute;
+  top: -1px; right: -1px;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 4px 8px 4px 7px;
+  background: #fff5f0;
+  color: #d95b03;
+  border: 1px solid #ffd5b8;
+  border-radius: 0 8px 0 8px;
+  cursor: pointer;
+  transition: all .12s;
+}
+.wt-ai-tag:hover { background: #d95b03; color: white; }
+
+/* ─── LAYER 3: revert button + confirm sheet ─── */
+.wt-revert {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(69,85,108,0.24);
+  background: white;
+  color: #45556c;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all .12s;
+}
+.wt-revert:hover { color: #dc2626; border-color: #dc2626; background: #fef2f2; }
+.wt-revert .wt-revert-icon { font-size: 12px; }
+.wt-revert.compact { padding: 4px 8px; font-size: 11px; }
+.wt-revert.reverted {
+  background: #f4f4f4; color: #adadad;
+  border-color: #e9e9e9; cursor: default;
+}
+.wt-revert.reverted:hover { color: #adadad; border-color: #e9e9e9; background: #f4f4f4; }
+
+/* "Revertable" marker — small chip used inside provenance blocks and timeline cards */
+.wt-revertable-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #f4f4f4;
+  color: #45556c;
+}
+.wt-revertable-chip.reverted { background: #fef2f2; color: #b91c1c; }
+
+/* full-screen revert confirmation modal */
+.wt-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(11,13,18,0.36);
+  z-index: 1100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .16s ease;
+}
+.wt-modal-backdrop.open { opacity: 1; pointer-events: auto; }
+.wt-modal {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.24);
+  width: 100%; max-width: 480px;
+  overflow: hidden;
+  transform: scale(0.96);
+  transition: transform .16s ease;
+}
+.wt-modal-backdrop.open .wt-modal { transform: scale(1); }
+.wt-modal-head {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.wt-modal-eyebrow {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #b91c1c;
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 6px;
+}
+.wt-modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 400;
+  color: #120b0b;
+  line-height: 1.3;
+}
+.wt-modal-body { padding: 16px 22px; }
+.wt-modal-section-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: #45556c;
+  margin-bottom: 8px;
+}
+.wt-modal-undo-list {
+  list-style: none; padding: 0; margin: 0 0 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.wt-modal-undo-list li {
+  padding: 9px 14px;
+  font-size: 13px; color: #0b0d12;
+  border-bottom: 1px solid rgba(220,38,38,0.12);
+  display: flex; gap: 10px; align-items: flex-start;
+  line-height: 1.45;
+}
+.wt-modal-undo-list li:last-child { border-bottom: none; }
+.wt-modal-undo-list li::before {
+  content: "−"; color: #dc2626; font-weight: 700;
+  flex-shrink: 0; font-size: 14px; line-height: 1.4;
+}
+.wt-modal-undo-list li strong { font-weight: 600; }
+.wt-modal-note {
+  font-size: 12px; color: #45556c; line-height: 1.5;
+  margin-top: 6px;
+  display: flex; gap: 8px;
+  padding: 10px 12px;
+  background: #fafafa; border-radius: 8px;
+}
+.wt-modal-note::before {
+  content: "ⓘ"; color: #45556c; flex-shrink: 0;
+}
+.wt-modal-foot {
+  padding: 14px 22px 18px;
+  display: flex; gap: 10px; justify-content: flex-end;
+  border-top: 1px solid #f0f0f0;
+}
+.wt-modal-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 500;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(69,85,108,0.24);
+  background: white; color: #0b0d12;
+  cursor: pointer;
+  transition: all .12s;
+}
+.wt-modal-btn:hover { background: #f4f4f4; }
+.wt-modal-btn.danger {
+  background: #dc2626; color: white; border-color: #dc2626;
+}
+.wt-modal-btn.danger:hover { background: #b91c1c; border-color: #b91c1c; }
+
+/* Reverted state — strikethrough log card */
+.log-card.wt-card-reverted {
+  background: #fafafa;
+  opacity: 0.78;
+}
+.log-card.wt-card-reverted .log-title {
+  text-decoration: line-through;
+  text-decoration-color: rgba(0,0,0,0.35);
+}
+.log-card.wt-card-reverted::after {
+  content: "REVERTED";
+  position: absolute;
+  top: 12px; right: 12px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  background: #fef2f2; color: #b91c1c;
+  border-radius: 4px;
+  border: 1px solid #fecaca;
+}
+.log-card { position: relative; }
+
+/* Toast for simulated jumps */
+.wt-toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #120b0b;
+  color: #f0ede8;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.24);
+  z-index: 1200;
+  opacity: 0;
+  transition: all .2s ease;
+  pointer-events: none;
+  display: flex; align-items: center; gap: 8px;
+  max-width: 420px;
+}
+.wt-toast.open {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.wt-toast .wt-toast-icon {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #ff6900; color: white;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  flex-shrink: 0;
+}
+.wt-toast .wt-toast-link {
+  margin-left: 8px;
+  color: #ff9a5c; font-weight: 600;
+  text-decoration: underline; cursor: pointer;
+}
+
+/* ─── inline AI history strip (used in invoice-detail header) ─── */
+.wt-history-strip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: #fafafa;
+  border: 1px solid #e9e9e9;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #45556c;
+}
+.wt-history-strip .wt-h-icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #fff5f0;
+  color: #d95b03;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  border: 1px solid #ffd5b8;
+  flex-shrink: 0;
+}
+.wt-history-strip strong { color: #0b0d12; font-weight: 600; }
+.wt-history-strip .wt-h-link {
+  margin-left: auto;
+  color: #d95b03; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  font-size: 12px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.wt-history-strip .wt-h-link:hover { color: #b34604; }

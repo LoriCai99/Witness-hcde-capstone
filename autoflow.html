@@ -205,7 +205,7 @@
         <img src="https://www.figma.com/api/mcp/asset/7be4afc7-921a-48d2-8e2b-bca5dd6a50fc" alt="" />
         <span>All systems healthy</span>
       </div>
-      <div class="avatar">MC</div>
+      <div class="avatar">SC</div>
     </div>
   </header>
 
@@ -263,8 +263,11 @@
             <span class="status-pill active">Active</span>
           </div>
           <p class="flow-desc">Match incoming invoices to POs, route by amount threshold. Auto-approves clean cases under $5K, escalates the rest to Maya.</p>
-          <div class="perm-block">
+          <div class="perm-block" style="position:relative;">
             <span class="perm-block-label">AI permissions across 6 steps</span>
+            <button class="wt-prov-trigger compact" data-trace-prov="flow-invoice-approval" onclick="event.preventDefault();event.stopPropagation();" style="position:absolute;top:10px;right:10px;">
+              <span class="wt-prov-spark">✦</span> Why auto
+            </button>
             <div class="perm-bar">
               <div class="perm-seg manual" style="flex: 1"></div>
               <div class="perm-seg suggest" style="flex: 1"></div>
@@ -274,6 +277,35 @@
               <span><span class="dot manual"></span>1 manual</span>
               <span><span class="dot suggest"></span>1 suggest</span>
               <span><span class="dot auto"></span>4 auto</span>
+            </div>
+            <div hidden id="trace-prov-flow-invoice-approval">
+              <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Permission scope</span><button class="wt-pop-close" type="button">✕</button></div>
+              <div class="wt-pop-title">Invoice approval — what runs without you</div>
+              <div class="wt-pop-sub">Authorised Mar 12, 2025 · last edited by you Apr 18</div>
+              <div class="wt-prov-section">
+                <div class="wt-prov-label why-auto"><span class="wt-dot"></span>4 steps run automatically</div>
+                <ul class="wt-prov-list">
+                  <li><strong>Ingest invoice</strong> · OCR + schema match · always-on, read-only</li>
+                  <li><strong>3-way match</strong> · PO + GRN + Invoice · read-only, writes match result</li>
+                  <li><strong>Clean payment routing</strong> · only if amount ≤ <strong>$5,000</strong> + vendor in pre-approved list</li>
+                  <li><strong>Early discount capture</strong> · only within vendor discount window</li>
+                </ul>
+              </div>
+              <div class="wt-prov-section">
+                <div class="wt-prov-label why-wait"><span class="wt-dot"></span>1 step always asks first</div>
+                <div class="wt-prov-body">
+                  <strong>Vendor outbound</strong> — any email/portal message to a vendor requires your click.
+                </div>
+              </div>
+              <div class="wt-prov-section">
+                <div class="wt-prov-label what"><span class="wt-dot"></span>1 step never runs without you</div>
+                <div class="wt-prov-body">
+                  <strong>Exception escalation</strong> — disputes &gt; $250 or any quantity mismatch is held for human review.
+                </div>
+              </div>
+              <div class="wt-pop-foot">
+                <button class="wt-pop-btn primary" data-trace-action="goto-activity">See it in action ↗</button>
+              </div>
             </div>
           </div>
           <div class="flow-foot">
@@ -289,8 +321,11 @@
             <span class="status-pill active">Active</span>
           </div>
           <p class="flow-desc">When a new vendor sends their first invoice, AI verifies their tax info, suggests a category, and asks Maya to confirm before payment.</p>
-          <div class="perm-block">
+          <div class="perm-block" style="position:relative;">
             <span class="perm-block-label">AI permissions across 6 steps</span>
+            <button class="wt-prov-trigger compact" data-trace-prov="flow-vendor-onboarding" onclick="event.preventDefault();event.stopPropagation();" style="position:absolute;top:10px;right:10px;">
+              <span class="wt-prov-spark">✦</span> Why auto
+            </button>
             <div class="perm-bar">
               <div class="perm-seg manual" style="flex: 1"></div>
               <div class="perm-seg suggest" style="flex: 3"></div>
@@ -300,6 +335,33 @@
               <span><span class="dot manual"></span>1 manual</span>
               <span><span class="dot suggest"></span>3 suggest</span>
               <span><span class="dot auto"></span>2 auto</span>
+            </div>
+            <div hidden id="trace-prov-flow-vendor-onboarding">
+              <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Permission scope</span><button class="wt-pop-close" type="button">✕</button></div>
+              <div class="wt-pop-title">Vendor onboarding — deliberately cautious</div>
+              <div class="wt-pop-sub">First-time vendors are high-risk for fraud; most steps suggest, don't act.</div>
+              <div class="wt-prov-section">
+                <div class="wt-prov-label why-auto"><span class="wt-dot"></span>2 steps run automatically</div>
+                <ul class="wt-prov-list">
+                  <li><strong>Ingest first invoice</strong> · OCR + schema match</li>
+                  <li><strong>Tax-ID lookup</strong> · IRS public registry, read-only</li>
+                </ul>
+              </div>
+              <div class="wt-prov-section">
+                <div class="wt-prov-label why-wait"><span class="wt-dot"></span>3 steps draft for you</div>
+                <ul class="wt-prov-list">
+                  <li>Vendor category suggestion</li>
+                  <li>Payment terms recommendation</li>
+                  <li>Welcome email draft</li>
+                </ul>
+              </div>
+              <div class="wt-prov-section">
+                <div class="wt-prov-label what"><span class="wt-dot"></span>1 step is always manual</div>
+                <div class="wt-prov-body"><strong>Bank-info confirmation</strong> — never automated to prevent payment redirection fraud.</div>
+              </div>
+              <div class="wt-pop-foot">
+                <button class="wt-pop-btn primary" data-trace-action="goto-activity">See it in action ↗</button>
+              </div>
             </div>
           </div>
           <div class="flow-foot">
@@ -363,6 +425,8 @@
 </div><!-- /.app-grid -->
 
 <link rel="stylesheet" href="witness-chat-panel.css">
+<link rel="stylesheet" href="witness-trace.css">
 <script src="witness-chat-panel.js"></script>
+<script src="witness-trace.js"></script>
 </body>
 </html>

@@ -193,7 +193,7 @@
     .urg-chip .urg-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
     .urg-red   { background: #fee2e2; color: #b91c1c; } .urg-red   .urg-dot { background: #dc2626; }
     .urg-amber { background: #fdf2d4; color: #b17728; } .urg-amber .urg-dot { background: #e9b44c; }
-    .urg-green { background: #dcfce7; color: #15803d; } .urg-green .urg-dot { background: #16a34a; }
+    .urg-green { background: #f1f1f1; color: #45556c; } .urg-green .urg-dot { background: #9ca3af; }
 
     .action-cell { display: flex; align-items: center; gap: 6px; width: 100%; }
     .btn-open { background: white; border: 1.5px solid #0b0d12; border-radius: 8px; padding: 5px 0; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; color: #0b0d12; cursor: pointer; flex: 1; text-align: center; }
@@ -284,7 +284,7 @@
     <div class="topbar-date">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
     <div class="topbar-right">
       <div class="health-chip"><img src="https://www.figma.com/api/mcp/asset/7be4afc7-921a-48d2-8e2b-bca5dd6a50fc" alt="" /><span>All systems healthy</span></div>
-      <div class="avatar">MC</div>
+      <div class="avatar">SC</div>
     </div>
   </header>
 
@@ -313,7 +313,7 @@
     <div class="stat-row">
       <div class="stat-card"><div class="stat-inner"><div><div class="stat-num">$284K</div><div class="stat-lbl">Total Invoice Value</div><div class="stat-sub">across 26 invoices</div></div></div></div>
       <div class="stat-card"><div class="stat-inner"><div><div class="stat-num red">5</div><div class="stat-lbl">Blocked</div><div class="stat-sub">need your action</div></div></div></div>
-      <div class="stat-card"><div class="stat-inner"><div><div class="stat-num amber">8</div><div class="stat-lbl">Pending Approval</div><div class="stat-sub">waiting on approvers</div></div></div></div>
+      <div class="stat-card"><div class="stat-inner"><div><div class="stat-num">8</div><div class="stat-lbl">Pending Approval</div><div class="stat-sub">waiting on approvers</div></div></div></div>
       <div class="stat-card"><div class="stat-inner"><div><div class="stat-num green">11</div><div class="stat-lbl">Approved</div><div class="stat-sub">ready to pay</div></div></div></div>
       <div class="stat-card"><div class="stat-inner"><div><div class="stat-num">14</div><div class="stat-lbl">Handled by AI</div><div class="stat-sub">auto-resolved overnight</div></div></div></div>
       <div class="stat-card"><div class="stat-inner"><div><div class="stat-num red">$123K</div><div class="stat-lbl">At Risk</div><div class="stat-sub">discount or exposure</div></div></div></div>
@@ -357,7 +357,31 @@
             <div class="ai-insight-inner">
               <span class="ai-insight-badge"><span class="ai-insight-badge-dot"></span>✦ Witness AI</span>
               <span class="ai-insight-txt"><strong>Global Industrial</strong> appears in 3 blocked invoices this week. A vendor rate card issue may be the root cause.</span>
+              <button class="wt-prov-trigger compact" data-trace-prov="grouped-global-pattern" onclick="event.stopPropagation()">
+                <span class="wt-prov-spark">✦</span> Provenance
+              </button>
               <span class="ai-insight-link">Investigate pattern →</span>
+            </div>
+            <div hidden id="trace-prov-grouped-global-pattern">
+              <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Pattern detection</span><button class="wt-pop-close" type="button">✕</button></div>
+              <div class="wt-pop-title">Vendor pattern: Global Industrial</div>
+              <div class="wt-pop-sub">Detected May 19, 2025 · 8:14 AM</div>
+              <div class="wt-prov-section">
+                <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Why this surfaced</div>
+                <div class="wt-prov-body">
+                  Rule <span class="pill rule">Vendor pattern watcher</span> · flags any vendor with ≥3 blocked invoices in 7 days. Read-only.
+                </div>
+              </div>
+              <div class="wt-prov-section">
+                <div class="wt-prov-label read"><span class="wt-dot"></span>Read</div>
+                <ul class="wt-prov-list">
+                  <li>3 blocked invoices from Global Industrial</li>
+                  <li>Vendor rate card v4.2 <span class="src">Vendor portal</span></li>
+                </ul>
+              </div>
+              <div class="wt-pop-foot">
+                <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
+              </div>
             </div>
           </div>
           <table class="inv">
@@ -367,7 +391,7 @@
               <tr>
                 <td><span class="inv-id">INV-1062</span><span class="po-id">PO-7704</span></td>
                 <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div><div class="issue-ai"><span class="ai-pulse"></span>Pattern detected</div></td>
-                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
                 <td><div class="td-amount">$8,420.00</div><span class="amt-sub">$8.4k highest</span></td>
                 <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
                 <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Discount in 1d</span></td>
@@ -376,7 +400,7 @@
               <tr>
                 <td><span class="inv-id">INV-1048</span><span class="po-id">PO-7721</span></td>
                 <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div><div class="issue-ai"><span class="ai-pulse"></span>Qty mismatch · freight</div></td>
-                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
                 <td><div class="td-amount">$3,210.45</div><span class="amt-sub">−$280 overbilled</span></td>
                 <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
                 <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 1d</span></td>
@@ -385,7 +409,7 @@
               <tr>
                 <td><span class="inv-id">INV-1039</span><span class="po-id">PO-7698</span></td>
                 <td><div class="vnd-name">Acme Logistics Co.</div><div class="vnd-meta">Freight · Avg 2.1d response</div><div class="issue-ai"><span class="ai-pulse"></span>Price variance</div></td>
-                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
                 <td><div class="td-amount">$12,750.00</div><span class="amt-sub">+$340 variance</span></td>
                 <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
                 <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 2d</span></td>
@@ -394,7 +418,7 @@
               <tr>
                 <td><span class="inv-id">INV-1124</span><span class="po-id">PO-7748</span></td>
                 <td><div class="vnd-name">Meridian Freight Co.</div><div class="vnd-meta">Freight · Avg 2.8d response</div><div class="issue-ai"><span class="ai-pulse"></span>Witness flagged</div></td>
-                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
                 <td><div class="td-amount">$14,500.00</div><span class="amt-sub">PO exceeded</span></td>
                 <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
                 <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 2d</span></td>
@@ -403,7 +427,7 @@
               <tr>
                 <td><span class="inv-id">INV-1101</span><span class="po-id">PO-7730</span></td>
                 <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div><div class="issue-ai"><span class="ai-pulse"></span>Possible duplicate</div></td>
-                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
                 <td><div class="td-amount">$5,620.00</div><span class="amt-sub">Duplicate risk</span></td>
                 <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
                 <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 1d</span></td>
@@ -436,7 +460,7 @@
               <tr>
                 <td><span class="inv-id">INV-1092</span><span class="po-id">PO-7705</span></td>
                 <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div></td>
-                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
                 <td><div class="td-amount">$6,100.45</div><span class="amt-sub">$6.1k pending</span></td>
                 <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
                 <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>2nd reminder</span></td>
@@ -445,7 +469,7 @@
               <tr>
                 <td><span class="inv-id">INV-1081</span><span class="po-id">PO-7710</span></td>
                 <td><div class="vnd-name">TechSupply Inc.</div><div class="vnd-meta">IT Procurement · Last login 1d ago</div></td>
-                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
                 <td><div class="td-amount">$4,890.00</div><span class="amt-sub">$4.9k pending</span></td>
                 <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
                 <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>3 days</span></td>
@@ -454,7 +478,7 @@
               <tr>
                 <td><span class="inv-id">INV-1074</span><span class="po-id">PO-7706</span></td>
                 <td><div class="vnd-name">Sierra Packaging LLC</div><div class="vnd-meta">Packaging · Avg 4.5d response</div></td>
-                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
                 <td><div class="td-amount">$1,540.20</div><span class="amt-sub">$1.5k pending</span></td>
                 <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
                 <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>3 days</span></td>
@@ -463,7 +487,7 @@
               <tr>
                 <td><span class="inv-id">INV-1119</span><span class="po-id">PO-7741</span></td>
                 <td><div class="vnd-name">Vantage Systems LLC</div><div class="vnd-meta">Software · Avg 1.8d response</div></td>
-                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
                 <td><div class="td-amount">$7,200.00</div><span class="amt-sub">$7.2k pending</span></td>
                 <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
                 <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>4 days</span></td>
@@ -497,7 +521,7 @@
               <tr>
                 <td><span class="inv-id">INV-1067</span><span class="po-id">PO-7699</span></td>
                 <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div></td>
-                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
                 <td><div class="td-amount">$2,200.00</div><span class="amt-sub">GRN pending</span></td>
                 <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
                 <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>4 days</span></td>
@@ -506,7 +530,7 @@
               <tr>
                 <td><span class="inv-id">INV-1136</span><span class="po-id">PO-7759</span></td>
                 <td><div class="vnd-name">Crestline Interiors</div><div class="vnd-meta">Facilities · GRN pending</div></td>
-                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
                 <td><div class="td-amount">$2,640.00</div><span class="amt-sub">GRN pending</span></td>
                 <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
                 <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>5 days</span></td>
@@ -515,7 +539,7 @@
               <tr>
                 <td><span class="inv-id">INV-1161</span><span class="po-id">PO-7784</span></td>
                 <td><div class="vnd-name">Acme Logistics Co.</div><div class="vnd-meta">Freight · GRN pending</div></td>
-                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
                 <td><div class="td-amount">$4,610.00</div><span class="amt-sub">GRN pending</span></td>
                 <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
                 <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>9 days</span></td>
@@ -548,7 +572,7 @@
               <tr>
                 <td><span class="inv-id">INV-1055</span><span class="po-id">PO-7695</span></td>
                 <td><div class="vnd-name">Atlas Freight Services</div><div class="vnd-meta">Freight · Active vendor</div></td>
-                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
                 <td><div class="td-amount">$9,300.00</div><span class="amt-sub">Clean match</span></td>
                 <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
                 <td><span class="urg-chip urg-green"><span class="urg-dot"></span>5 days</span></td>
@@ -557,7 +581,7 @@
               <tr>
                 <td><span class="inv-id">INV-1043</span><span class="po-id">PO-7690</span></td>
                 <td><div class="vnd-name">NovaTech Supplies</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
-                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
                 <td><div class="td-amount">$17,400.00</div><span class="amt-sub">$17.4k highest</span></td>
                 <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
                 <td><span class="urg-chip urg-green"><span class="urg-dot"></span>7 days</span></td>
@@ -566,7 +590,7 @@
               <tr>
                 <td><span class="inv-id">INV-1033</span><span class="po-id">PO-7682</span></td>
                 <td><div class="vnd-name">Pacific Rim Supplies</div><div class="vnd-meta">Facilities · Active vendor</div></td>
-                <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
+                <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
                 <td><div class="td-amount">$3,880.00</div><span class="amt-sub">Clean match</span></td>
                 <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
                 <td><span class="urg-chip urg-green"><span class="urg-dot"></span>8 days</span></td>
@@ -575,7 +599,7 @@
               <tr>
                 <td><span class="inv-id">INV-1027</span><span class="po-id">PO-7674</span></td>
                 <td><div class="vnd-name">Keystone Hardware</div><div class="vnd-meta">Facilities · Active vendor</div></td>
-                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
                 <td><div class="td-amount">$6,750.00</div><span class="amt-sub">Clean match</span></td>
                 <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
                 <td><span class="urg-chip urg-green"><span class="urg-dot"></span>10 days</span></td>
@@ -584,7 +608,7 @@
               <tr>
                 <td><span class="inv-id">INV-1021</span><span class="po-id">PO-7668</span></td>
                 <td><div class="vnd-name">TechSupply Inc.</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
-                <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
+                <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
                 <td><div class="td-amount">$9,150.00</div><span class="amt-sub">Clean match</span></td>
                 <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
                 <td><span class="urg-chip urg-green"><span class="urg-dot"></span>12 days</span></td>
@@ -645,6 +669,8 @@
 </div><!-- /.app-grid -->
 
 <link rel="stylesheet" href="witness-chat-panel.css">
+<link rel="stylesheet" href="witness-trace.css">
 <script src="witness-chat-panel.js"></script>
+<script src="witness-trace.js"></script>
 </body>
 </html>

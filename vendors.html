@@ -155,10 +155,10 @@
     .vnd-cell { display: flex; align-items: center; gap: 12px; }
     .vnd-logo { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 500; color: white; flex-shrink: 0; letter-spacing: -0.5px; }
     .vnd-logo.global   { background: linear-gradient(135deg, #45556c, #0f172b); }
-    .vnd-logo.bright   { background: linear-gradient(135deg, #16a34a, #15803d); }
+    .vnd-logo.bright   { background: linear-gradient(135deg, #14b8a6, #0d9488); }
     .vnd-logo.acme     { background: linear-gradient(135deg, #ff9900, #ff5c1b); }
     .vnd-logo.tech     { background: linear-gradient(135deg, #155dfc, #4c8dff); }
-    .vnd-logo.hudson   { background: linear-gradient(135deg, #b91c1c, #dc2626); }
+    .vnd-logo.hudson   { background: linear-gradient(135deg, #9a3412, #7c2d12); }
     .vnd-logo.coastal  { background: linear-gradient(135deg, #2563eb, #155dfc); }
     .vnd-logo.apex     { background: linear-gradient(135deg, #d95b03, #ff6900); }
     .vnd-logo.fast     { background: linear-gradient(135deg, #6b21a8, #4f46e5); }
@@ -387,7 +387,7 @@
         <span class="hdot"></span>
         <span>All systems healthy</span>
       </div>
-      <div class="avatar">MC</div>
+      <div class="avatar">SC</div>
     </div>
   </header>
 
@@ -644,13 +644,41 @@
     </div>
 
     <!-- CROSS-VENDOR AI INSIGHT -->
-    <div class="insight-card">
+    <div class="insight-card" style="position:relative;">
       <span class="insight-spark">✦</span>
       <div class="insight-body">
-        <span class="insight-lbl">Witness AI · cross-vendor pattern</span>
+        <span class="insight-lbl">Witness AI · cross-vendor pattern
+          <button class="wt-prov-trigger compact" data-trace-prov="vendors-cross-pattern" onclick="event.stopPropagation()" style="margin-left:8px;">
+            <span class="wt-prov-spark">✦</span> Provenance
+          </button>
+        </span>
         <p class="insight-txt"><b>Global Industrial</b> appears in 3 blocked invoices this week — same pattern as last month. A vendor rate-card refresh would likely fix it. <b>Apex Manufacturing</b> has 2 invoices nearing their 2/10 discount window — net savings ~$340 if cleared by Thursday.</p>
       </div>
       <a class="insight-link" href="ai-activity.html">Review →</a>
+
+      <div hidden id="trace-prov-vendors-cross-pattern">
+        <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Cross-vendor pattern</span><button class="wt-pop-close" type="button">✕</button></div>
+        <div class="wt-pop-title">Pattern observation</div>
+        <div class="wt-pop-sub">Composed May 19, 2025 · 7:48 AM · refreshes hourly</div>
+        <div class="wt-prov-section">
+          <div class="wt-prov-label why-auto"><span class="wt-dot"></span>How this was synthesised</div>
+          <div class="wt-prov-body">
+            Rule <span class="pill rule">Vendor pattern watcher</span> + <span class="pill rule">Discount window scanner</span>. Read-only — Witness does not contact vendors.
+          </div>
+        </div>
+        <div class="wt-prov-section">
+          <div class="wt-prov-label read"><span class="wt-dot"></span>Read</div>
+          <ul class="wt-prov-list">
+            <li>3 blocked invoices from Global Industrial (this week + last month historicals)</li>
+            <li>2 discount-window invoices from Apex Manufacturing</li>
+            <li>Vendor rate cards <span class="src">Vendor portal</span></li>
+            <li>NetSuite vendor master <span class="src">ERP</span></li>
+          </ul>
+        </div>
+        <div class="wt-pop-foot">
+          <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
+        </div>
+      </div>
     </div>
 
     <!-- VENDOR PROFILE — SPOTLIGHT -->
@@ -674,7 +702,7 @@
               <span class="ph-id">VND-0042</span>
               <span class="v-pill watch"><span class="dot"></span>Watch · pattern</span>
             </div>
-            <p class="ph-tagline">High-volume MRO supplier · partnered since Mar 2023 · primary buyer Sarah Park · 7 active invoices · 3 flagged this week</p>
+            <p class="ph-tagline">High-volume MRO supplier · partnered since Mar 2023 · primary buyer Sarah Chen · 7 active invoices · 3 flagged this week</p>
           </div>
           <div class="ph-actions">
             <button class="btn-outline">View 7 invoices →</button>
@@ -858,12 +886,44 @@
                     <span class="thread-from">Witness AI</span>
                     <span class="thread-when">Today · 9:18 AM</span>
                     <span class="thread-tag">Draft reply</span>
+                    <button class="wt-prov-trigger compact" data-trace-prov="vendors-ai-draft-reply" onclick="event.stopPropagation()" style="margin-left:auto;">
+                      <span class="wt-prov-spark">✦</span> Provenance
+                    </button>
                   </div>
-                  <p class="thread-text">Drafted a reply confirming receipt and offering to push the new rate card to NetSuite vendor master. Same pattern as your Mar 14 resolution with Lena. Want me to send it?</p>
+                  <p class="thread-text">Drafted a reply confirming receipt and offering to push the new rate card to NetSuite vendor master. Same pattern as
+                    <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="Witness" data-trace-doc="Past thread · Mar 14" data-trace-loc="Lena Ortiz · Global Industrial" data-trace-url="#thread" data-trace-fields="Resolution|Updated NetSuite vendor master with new rate card;Time saved|2 days back-and-forth;Outcome|3 invoices auto-matched within 24h">your Mar 14 resolution with Lena</span>.
+                    Want me to send it?</p>
+                </div>
+
+                <div hidden id="trace-prov-vendors-ai-draft-reply">
+                  <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Draft reply</span><button class="wt-pop-close" type="button">✕</button></div>
+                  <div class="wt-pop-title">Why this reply was drafted</div>
+                  <div class="wt-pop-sub">Drafted Today · 9:18 AM · 4 min after Lena's message</div>
+                  <div class="wt-prov-section">
+                    <div class="wt-prov-label why-auto"><span class="wt-dot"></span>What triggered it</div>
+                    <div class="wt-prov-body">
+                      Rule <span class="pill rule">Vendor reply assist</span> · drafts only when an open invoice exception is mentioned. Never sends.
+                    </div>
+                  </div>
+                  <div class="wt-prov-section">
+                    <div class="wt-prov-label why-wait"><span class="wt-dot"></span>Why it's waiting on you</div>
+                    <div class="wt-prov-body">All vendor outbound requires your click — Witness will never email Global Industrial without you pressing Send.</div>
+                  </div>
+                  <div class="wt-prov-section">
+                    <div class="wt-prov-label read"><span class="wt-dot"></span>Sources used to compose</div>
+                    <ul class="wt-prov-list">
+                      <li>Lena's message · today 9:14 AM</li>
+                      <li>Mar 14 thread (same vendor, same issue) · 1 paragraph re-used</li>
+                      <li>NetSuite vendor master schema · field names referenced</li>
+                    </ul>
+                  </div>
+                  <div class="wt-pop-foot">
+                    <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
+                  </div>
                 </div>
               </div>
               <div class="thread-item">
-                <div class="thread-avatar us">MC</div>
+                <div class="thread-avatar us">SC</div>
                 <div class="thread-body">
                   <div class="thread-meta">
                     <span class="thread-from">Maya Chen · You</span>
@@ -1020,6 +1080,8 @@
 </div><!-- /.app-grid -->
 
 <link rel="stylesheet" href="witness-chat-panel.css">
+<link rel="stylesheet" href="witness-trace.css">
 <script src="witness-chat-panel.js"></script>
+<script src="witness-trace.js"></script>
 </body>
 </html>

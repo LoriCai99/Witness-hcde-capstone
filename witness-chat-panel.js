@@ -27,32 +27,23 @@
 
   var EMPTY_STATE_HTML =
     '<div class="empty-state" id="emptyState">' +
-      '<div class="empty-lede">Hi Sarah. What needs untangling?</div>' +
-      '<div class="empty-sub">I work in three modes — pick one to try.</div>' +
-      '<div class="empty-prompts">' +
-        '<button class="qp-big ask" onclick="runPrompt(\'ask\')">' +
-          '<span class="qp-big-mark">?</span>' +
-          '<span class="qp-body">' +
-            '<div class="qp-kind">Ask · gather information</div>' +
-            '<div class="qp-text">Where is INV-1048 in the approval chain?</div>' +
-            '<div class="qp-desc">Cross-system status, timeline, source-of-truth docs.</div>' +
-          '</span>' +
+      '<div class="empty-title">What can Witness do for you?</div>' +
+      '<div class="empty-spacer"></div>' +
+      '<div class="empty-chips-row" role="list" aria-label="Suggested modes">' +
+        '<button class="empty-chip" type="button" role="listitem" data-kind="ask"' +
+                ' data-prompt="Where is INV-1048 in the approval chain?">' +
+          '<span class="empty-chip-title">Assist</span>' +
+          '<span class="empty-chip-sub">info</span>' +
         '</button>' +
-        '<button class="qp-big think" onclick="runPrompt(\'think\')">' +
-          '<span class="qp-big-mark">◇</span>' +
-          '<span class="qp-body">' +
-            '<div class="qp-kind">Think · suggest &amp; analyze</div>' +
-            '<div class="qp-text">How should I handle the Brightline backlog?</div>' +
-            '<div class="qp-desc">Ranked options with risk, effort, and rationale.</div>' +
-          '</span>' +
+        '<button class="empty-chip" type="button" role="listitem" data-kind="think"' +
+                ' data-prompt="How should I handle the Brightline backlog?">' +
+          '<span class="empty-chip-title">Suggest</span>' +
+          '<span class="empty-chip-sub">action</span>' +
         '</button>' +
-        '<button class="qp-big do" onclick="runPrompt(\'do\')">' +
-          '<span class="qp-big-mark">⚡</span>' +
-          '<span class="qp-body">' +
-            '<div class="qp-kind">Do · execute via AutoFlow</div>' +
-            '<div class="qp-text">Send follow-ups to all 6 overdue vendor items</div>' +
-            '<div class="qp-desc">I plan, execute, and pause when I need your call.</div>' +
-          '</span>' +
+        '<button class="empty-chip" type="button" role="listitem" data-kind="do"' +
+                ' data-prompt="Send follow-ups to all 6 overdue vendor items">' +
+          '<span class="empty-chip-title">Do</span>' +
+          '<span class="empty-chip-sub">review</span>' +
         '</button>' +
       '</div>' +
     '</div>';
@@ -64,14 +55,14 @@
       'Where is INV-1048 in the approval chain?' +
     '</div>' +
     '<div class="msg-agent">' +
-      '<div class="lede">Here\'s where INV-1048 currently lives, pulled across three systems.</div>' +
-      '<div class="ask-block">' +
+      '<div class="lede stream-item">Here\'s where INV-1048 currently lives, pulled across three systems.</div>' +
+      '<div class="ask-block stream-item">' +
         '<div class="ask-block-head">' +
           '<span>Current status</span>' +
           '<span class="src-badge live">NetSuite ERP · live</span>' +
         '</div>' +
         '<div class="ask-block-body">' +
-          '<div class="ask-status">' +
+          '<div class="ask-status stream-item">' +
             '<div>' +
               '<div class="status-label">Stage</div>' +
               '<div class="status-val">Pending J. Park\'s approval</div>' +
@@ -79,14 +70,14 @@
             '<div class="status-time">waiting 3 days</div>' +
           '</div>' +
           '<ul class="ask-timeline">' +
-            '<li><span class="time">Apr 22 · 10:14</span>Invoice received via Brightline EDI</li>' +
-            '<li><span class="time">Apr 22 · 10:15</span>3-way match passed · PO-7702 / GRN-4421</li>' +
-            '<li><span class="time">Apr 22 · 10:16</span>Routed to J. Park (over $5k threshold)</li>' +
-            '<li><span class="time">Apr 24 · 09:00</span>Agent reminder #1 sent</li>' +
-            '<li><span class="time">Apr 25 · 09:00</span>Agent reminder #2 sent</li>' +
-            '<li class="current"><span class="time">Now</span>Awaiting J. Park\'s approval</li>' +
+            '<li class="stream-item"><span class="time">Apr 22 · 10:14</span>Invoice received via Brightline EDI</li>' +
+            '<li class="stream-item"><span class="time">Apr 22 · 10:15</span>3-way match passed · PO-7702 / GRN-4421</li>' +
+            '<li class="stream-item"><span class="time">Apr 22 · 10:16</span>Routed to J. Park (over $5k threshold)</li>' +
+            '<li class="stream-item"><span class="time">Apr 24 · 09:00</span>Agent reminder #1 sent</li>' +
+            '<li class="stream-item"><span class="time">Apr 25 · 09:00</span>Agent reminder #2 sent</li>' +
+            '<li class="current stream-item"><span class="time">Now</span>Awaiting J. Park\'s approval</li>' +
           '</ul>' +
-          '<div class="ask-cross">' +
+          '<div class="ask-cross stream-item">' +
             '<div class="ask-doc">' +
               '<div class="dn">PO-7702.pdf</div>' +
               '<div class="ds"><span class="src-badge">Amazon Business</span></div>' +
@@ -96,12 +87,12 @@
               '<div class="ds"><span class="src-badge">NetSuite</span></div>' +
             '</div>' +
           '</div>' +
-          '<div class="trust-strip">' +
+          '<div class="trust-strip stream-item">' +
             '✓ <strong>Auto-verified</strong> · all three docs match · synced 2 min ago' +
           '</div>' +
         '</div>' +
       '</div>' +
-      '<div class="ask-followup">' +
+      '<div class="ask-followup stream-item">' +
         'Heads up — Brightline\'s <strong>2% early-pay discount expires Apr 29</strong>. <a onclick="runPrompt(\'think\')">What should we do?</a>' +
       '</div>' +
     '</div>';
@@ -113,11 +104,11 @@
       'How should I handle the Brightline backlog?' +
     '</div>' +
     '<div class="msg-agent">' +
-      '<div class="think-analysis">' +
+      '<div class="think-analysis stream-item">' +
         '<em>Here\'s what I\'m seeing.</em> Brightline has <strong>2 items, $10,470</strong>, oldest waiting 2 days. They\'ve responded to <strong>2 of your last 3 follow-ups</strong> (typical turnaround: 18h after a nudge). One item has a credit memo pending; the other needs a proof of delivery.' +
       '</div>' +
       '<div class="think-options">' +
-        '<div class="think-opt recommended">' +
+        '<div class="think-opt recommended stream-item">' +
           '<div class="opt-head">' +
             '<div class="opt-title">Send one consolidated follow-up</div>' +
             '<div class="opt-tags">' +
@@ -133,7 +124,7 @@
             '<a class="opt-why">Why this works</a>' +
           '</div>' +
         '</div>' +
-        '<div class="think-opt">' +
+        '<div class="think-opt stream-item">' +
           '<div class="opt-head">' +
             '<div class="opt-title">Escalate to Brightline AR lead</div>' +
             '<div class="opt-tags">' +
@@ -149,7 +140,7 @@
             '<a class="opt-why">Why this works</a>' +
           '</div>' +
         '</div>' +
-        '<div class="think-opt">' +
+        '<div class="think-opt stream-item">' +
           '<div class="opt-head">' +
             '<div class="opt-title">Pause + review contract SLA</div>' +
             '<div class="opt-tags">' +
@@ -593,17 +584,24 @@
   async function streamSimple(scope) {
     var token = ++streamToken;
     setAgentThinking(true);
-    await wait(420);
+    await wait(600); // matches the initial 'running' beat in streamDo
 
     var agentMsg = scope.querySelector('.msg-agent');
     if (agentMsg) {
-      var blocks = Array.prototype.slice.call(agentMsg.children);
-      blocks.forEach(function (b) { b.classList.add('stream-item'); });
-      for (var i = 0; i < blocks.length; i++) {
+      var items = Array.prototype.slice.call(agentMsg.querySelectorAll('.stream-item'));
+      if (items.length === 0) {
+        items = Array.prototype.slice.call(agentMsg.children);
+        items.forEach(function (b) { b.classList.add('stream-item'); });
+      }
+      for (var i = 0; i < items.length; i++) {
         if (isStale(token)) return;
-        blocks[i].classList.add('shown');
+        items[i].classList.add('shown');
         scrollToBottom();
-        await wait(320);
+        // Block-level items (cards/sections) match Do's per-log-line cadence
+        // ~800ms; list-row items (LI inside a timeline) tick faster ~220ms so
+        // a list reveals as one paced burst, not 6 separate beats.
+        var isRow = items[i].tagName === 'LI';
+        await wait(isRow ? 220 : 800);
       }
     }
     setAgentThinking(false);
@@ -831,6 +829,51 @@
     };
   }
 
+  /* ─────────── Input wiring: chip prefill + send/Enter to fire ─────────── */
+  function attachInputWiring() {
+    var input   = document.querySelector('.chat-input');
+    var sendBtn = document.querySelector('.send-btn');
+    if (!input || !sendBtn) return;
+
+    // Chip click behavior differs by autonomy mode:
+    //   Assist (ask)   → prefill the input; the user reads and presses send.
+    //                    Reflects "user asks a question."
+    //   Suggest/Do     → fire immediately; the agent initiates, no user text.
+    //                    Reflects "agent surfaces a recommendation / has done X."
+    var chips = document.querySelectorAll('.empty-chip[data-kind]');
+    Array.prototype.forEach.call(chips, function (chip) {
+      chip.addEventListener('click', function () {
+        var kind = chip.getAttribute('data-kind');
+        if (kind === 'ask') {
+          input.value = chip.getAttribute('data-prompt') || '';
+          input.setAttribute('data-kind', kind);
+          input.focus();
+        } else if (typeof window.runPrompt === 'function') {
+          window.runPrompt(kind);
+        }
+      });
+    });
+
+    function fire() {
+      var kind = input.getAttribute('data-kind') || 'ask';
+      if (typeof window.runPrompt !== 'function') return;
+      window.runPrompt(kind);
+      input.value = '';
+      input.removeAttribute('data-kind');
+    }
+
+    sendBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      fire();
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        fire();
+      }
+    });
+  }
+
   /* ─────────── Boot ─────────── */
   function boot() {
     ensureStylesheet();
@@ -843,6 +886,7 @@
     setChatMode(initialMode, { persist: false });
 
     attachToolButtons();
+    attachInputWiring();
     attachFloatDrag();
     attachRailResize();
     attachStorageSync();
