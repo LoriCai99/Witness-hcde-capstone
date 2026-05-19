@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witness — I adapt to you</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F4F4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ─── Subtle futuristic gradient overlay ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 55% 55% at 85% 15%, rgba(255, 208, 0, 0.07) 0%, transparent 65%),
+                radial-gradient(ellipse 45% 55% at 15% 85%, rgba(21, 93, 252, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 35% 40% at 75% 80%, rgba(255, 92, 27, 0.05) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header, main { position: relative; z-index: 1; }
+
+        /* ─── Animations ─── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes exampleReveal {
+            from { opacity: 0; transform: translateY(5px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(0.8); }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes breathe {
+            0%, 100% { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12)); }
+            50% {
+                filter:
+                    drop-shadow(0 2px 4px rgba(0,0,0,0.06))
+                    drop-shadow(0 6px 20px rgba(255,140,0,0.24))
+                    drop-shadow(0 14px 34px rgba(255,92,27,0.13));
+            }
+        }
+        @keyframes logoIn {
+            from { opacity: 0; transform: scale(0.88); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        /* ─── Header ─── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 52px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 130px;
+        }
+
+
+        .logo-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: #120B0B;
+            letter-spacing: -0.01em;
+        }
+
+        /* ─── Progress ─── */
+        .progress-system { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .progress-phases { display: flex; align-items: flex-end; }
+
+        .phase { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+
+        .phase-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #ADADAD;
+        }
+
+        .phase-label.active-phase { color: #FF5C1B; }
+
+        .phase-dots { display: flex; gap: 6px; align-items: center; }
+
+        .dot {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background-color: #BEBEBE;
+            transition: all 0.3s ease;
+        }
+        .dot.active { background-color: #FF5C1B; width: 28px; border-radius: 5px; }
+        .dot.done   { background-color: #FF5C1B; opacity: 0.35; }
+
+        .phase-divider { width: 20px; }
+
+        .step-counter {
+            min-width: 130px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .step-counter span {
+            font-size: 11px;
+            font-weight: 500;
+            color: #ADADAD;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* ─── Main ─── */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 0 52px;
+            gap: 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ─── Left ─── */
+        .left {
+            flex: 1;
+            max-width: 460px;
+            animation: fadeInUp 0.6s ease both;
+        }
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .eyebrow-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background-color: #FF5C1B;
+            flex-shrink: 0;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        .eyebrow-text {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #FF5C1B;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px;
+            line-height: 1.15;
+            font-weight: 600;
+            color: #120B0B;
+            margin-bottom: 22px;
+            letter-spacing: -0.02em;
+        }
+
+        h1 .accent { color: #FF5C1B; font-style: italic; }
+
+        .body-text {
+            font-size: 15px;
+            line-height: 1.78;
+            color: #45556C;
+            margin-bottom: 44px;
+            font-weight: 400;
+        }
+
+        .cta-group { display: flex; align-items: center; gap: 20px; }
+
+        .btn-next {
+            background-color: #120B0B;
+            color: white;
+            border: none;
+            padding: 13px 48px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.01em;
+            transition: background-color 0.2s;
+        }
+        .btn-next:hover { background-color: #FF5C1B; }
+
+        .btn-prev {
+            font-size: 13px;
+            color: #ADADAD;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            transition: color 0.15s;
+        }
+        .btn-prev:hover {
+            color: #45556C;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        /* ─── Right: Autonomy cards ─── */
+        .right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .autonomy-panel { width: 380px; }
+
+        .panel-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #ADADAD;
+            margin-bottom: 14px;
+        }
+
+        /* ─── Mode cards ─── */
+        .mode-card {
+            background: #FFFFFF;
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 10px;
+            border: 1.5px solid rgba(18,11,11,0.06);
+            cursor: pointer;
+            /* Smooth transition on all properties */
+            transition:
+                border-color 0.28s ease,
+                box-shadow 0.28s ease,
+                transform 0.22s ease;
+            animation: cardIn 0.5s ease both;
+            box-shadow: 0 2px 8px rgba(18,11,11,0.04);
+        }
+
+        .mode-card:nth-child(2) { animation-delay: 0.06s; }
+        .mode-card:nth-child(3) { animation-delay: 0.12s; }
+        .mode-card:nth-child(4) { animation-delay: 0.18s; }
+
+        /* Hover — only for cards NOT already selected */
+        .mode-card:not(.active):hover {
+            border-color: rgba(255, 92, 27, 0.28);
+            box-shadow:
+                0 8px 32px rgba(255, 92, 27, 0.10),
+                0 2px 10px rgba(18,11,11,0.06);
+            transform: translateY(-1px);
+        }
+
+        /* Show example on hover (unselected) */
+        .mode-card:not(.active):hover .mode-example {
+            max-height: 80px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+
+        /* Active / selected state */
+        .mode-card.active {
+            border-color: rgba(255, 92, 27, 0.32);
+            box-shadow:
+                0 8px 36px rgba(255, 92, 27, 0.11),
+                0 2px 10px rgba(18,11,11,0.06);
+        }
+
+        .mode-card.active .mode-example {
+            max-height: 80px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+        .mode-card.active .mode-badge { opacity: 1; }
+
+        /* Header row inside card */
+        .mode-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+
+        .mode-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-icon-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            opacity: 0.55;
+            transition: opacity 0.22s ease;
+        }
+
+        .mode-card:not(.active):hover .mode-icon-wrap,
+        .mode-card.active .mode-icon-wrap {
+            opacity: 1;
+        }
+
+        .mode-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #120B0B;
+        }
+
+        .mode-badge {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: #FF5C1B;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.24s ease;
+        }
+
+        .mode-desc {
+            font-size: 12px;
+            color: #45556C;
+            line-height: 1.55;
+        }
+
+        /* Example row */
+        .mode-example {
+            margin-top: 12px;
+            padding: 10px 12px;
+            background: #F8F8F8;
+            border-radius: 8px;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition:
+                max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.28s ease,
+                margin-top 0.28s ease;
+            margin-top: 0;
+        }
+
+        .example-label {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #BEBEBE;
+            margin-bottom: 4px;
+        }
+
+        .example-text {
+            font-size: 11px;
+            color: #120B0B;
+            line-height: 1.5;
+        }
+
+        .example-text span { color: #FF5C1B; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="8" fill="#120B0B"/>
+                <mask id="mask-s3" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="4" width="24" height="24">
+                    <rect x="4" y="4" width="24" height="24" fill="#D9D9D9"/>
+                </mask>
+                <g mask="url(#mask-s3)">
+                    <path d="M10.7125 16.9125C10.4542 17.1708 10.1458 17.3 9.7875 17.3H5.8125C5.45417 17.3 5.14583 17.1708 4.8875 16.9125C4.62917 16.6542 4.5 16.3458 4.5 15.9875C4.5 15.6292 4.62917 15.3208 4.8875 15.0625C5.14583 14.8042 5.45417 14.675 5.8125 14.675H9.7875C10.1458 14.675 10.4542 14.8042 10.7125 15.0625C10.9708 15.3208 11.1 15.6292 11.1 15.9875C11.1 16.3458 10.9708 16.6542 10.7125 16.9125ZM12.5125 12.5125C12.2292 12.7958 11.9167 12.9375 11.575 12.9375C11.2333 12.9375 10.9208 12.7958 10.6375 12.5125L9.9125 11.7625C9.64583 11.4958 9.5125 11.1917 9.5125 10.85C9.5125 10.5083 9.65417 10.1958 9.9375 9.9125C10.2042 9.64583 10.5083 9.5125 10.85 9.5125C11.1917 9.5125 11.4958 9.64583 11.7625 9.9125L12.5125 10.6375C12.7792 10.9042 12.9125 11.2167 12.9125 11.575C12.9125 11.9333 12.7792 12.2458 12.5125 12.5125ZM14.7 9.7875V5.8125C14.7 5.45417 14.8292 5.14583 15.0875 4.8875C15.3458 4.62917 15.6542 4.5 16.0125 4.5C16.3708 4.5 16.6792 4.62917 16.9375 4.8875C17.1958 5.14583 17.325 5.45417 17.325 5.8125V9.7875C17.325 10.1458 17.1958 10.4542 16.9375 10.7125C16.6792 10.9708 16.3708 11.1 16.0125 11.1C15.6542 11.1 15.3458 10.9708 15.0875 10.7125C14.8292 10.4542 14.7 10.1458 14.7 9.7875ZM19.4875 12.5125C19.2042 12.2292 19.0625 11.9167 19.0625 11.575C19.0625 11.2333 19.2042 10.9208 19.4875 10.6375L20.2375 9.9125C20.5042 9.64583 20.8083 9.5125 21.15 9.5125C21.4917 9.5125 21.8042 9.65417 22.0875 9.9375C22.3542 10.2042 22.4875 10.5083 22.4875 10.85C22.4875 11.1917 22.3542 11.4958 22.0875 11.7625L21.3625 12.5125C21.0958 12.7792 20.7833 12.9125 20.425 12.9125C20.0667 12.9125 19.7542 12.7792 19.4875 12.5125ZM21.2875 15.0625C21.5458 14.8042 21.8542 14.675 22.2125 14.675H26.1875C26.5458 14.675 26.8542 14.8042 27.1125 15.0625C27.3708 15.3208 27.5 15.6292 27.5 15.9875C27.5 16.3458 27.3708 16.6542 27.1125 16.9125C26.8542 17.1708 26.5458 17.3 26.1875 17.3H22.2125C21.8542 17.3 21.5458 17.1708 21.2875 16.9125C21.0292 16.6542 20.9 16.3458 20.9 15.9875C20.9 15.6292 21.0292 15.3208 21.2875 15.0625ZM13.7188 18.2812C13.0896 17.6521 12.775 16.8917 12.775 16C12.775 15.1083 13.0896 14.3479 13.7188 13.7188C14.3479 13.0896 15.1083 12.775 16 12.775C16.8917 12.775 17.6521 13.0896 18.2812 13.7188C18.9104 14.3479 19.225 15.1083 19.225 16C19.225 16.8917 18.9104 17.6521 18.2812 18.2812C17.6521 18.9104 16.8917 19.225 16 19.225C15.1083 19.225 14.3479 18.9104 13.7188 18.2812ZM19.4875 19.4875C19.7708 19.2042 20.0833 19.0625 20.425 19.0625C20.7667 19.0625 21.0792 19.2042 21.3625 19.4875L22.0625 20.2125C22.3292 20.4792 22.4625 20.7833 22.4625 21.125C22.4625 21.4667 22.3208 21.7792 22.0375 22.0625C21.7708 22.3292 21.4667 22.4625 21.125 22.4625C20.7833 22.4625 20.4792 22.3292 20.2125 22.0625L19.4875 21.3625C19.2208 21.0958 19.0875 20.7833 19.0875 20.425C19.0875 20.0667 19.2208 19.7542 19.4875 19.4875ZM12.5125 19.4875C12.7958 19.7708 12.9375 20.0833 12.9375 20.425C12.9375 20.7667 12.7958 21.0792 12.5125 21.3625L11.7875 22.0625C11.5208 22.3292 11.2167 22.4625 10.875 22.4625C10.5333 22.4625 10.2208 22.3208 9.9375 22.0375C9.67083 21.7708 9.5375 21.4667 9.5375 21.125C9.5375 20.7833 9.67083 20.4792 9.9375 20.2125L10.6375 19.4875C10.9042 19.2208 11.2167 19.0875 11.575 19.0875C11.9333 19.0875 12.2458 19.2208 12.5125 19.4875ZM16.9375 21.2875C17.1958 21.5458 17.325 21.8542 17.325 22.2125V26.1875C17.325 26.5458 17.1958 26.8542 16.9375 27.1125C16.6792 27.3708 16.3708 27.5 16.0125 27.5C15.6542 27.5 15.3458 27.3708 15.0875 27.1125C14.8292 26.8542 14.7 26.5458 14.7 26.1875V22.2125C14.7 21.8542 14.8292 21.5458 15.0875 21.2875C15.3458 21.0292 15.6542 20.9 16.0125 20.9C16.3708 20.9 16.6792 21.0292 16.9375 21.2875Z" fill="url(#grad-s3)"/>
+                </g>
+                <defs>
+                    <linearGradient id="grad-s3" x1="4.5" y1="4.5" x2="31.6" y2="20.6" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FFD000"/>
+                        <stop offset="1" stop-color="#FF5C1B"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span class="logo-name">Witness</span>
+        </div>
+
+        <div class="progress-system">
+            <div class="progress-phases">
+                <div class="phase">
+                    <div class="phase-label active-phase">Learn</div>
+                    <div class="phase-dots">
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                        <div class="dot active"></div>
+                    </div>
+                </div>
+                <div class="phase-divider"></div>
+                <div class="phase">
+                    <div class="phase-label">Set up</div>
+                    <div class="phase-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-counter"><span>Step 3 of 7</span></div>
+    </header>
+
+    <main>
+        <!-- Left -->
+        <div class="left">
+            <div class="eyebrow">
+                <div class="eyebrow-dot"></div>
+                <span class="eyebrow-text">How to get started</span>
+            </div>
+
+            <h1>I <em class="accent">adapt</em> to you, not the other way around</h1>
+
+            <p class="body-text">
+                Maintain full governance and oversight as we work together. I identify patterns, learn your style, and get smarter over time. Set the autonomy level that feels right and build trust at your own pace.
+            </p>
+
+            <div class="cta-group">
+                <button class="btn-prev" onclick="window.location.href='screen-2.html'">← Previous</button>
+                <button class="btn-next" onclick="window.location.href='screen-4.html'">Get started →</button>
+            </div>
+        </div>
+
+        <!-- Right -->
+        <div class="right">
+            <div class="autonomy-panel">
+
+                <div class="panel-label">Set your autonomy levels</div>
+
+                <!-- Assist -->
+                <div class="mode-card" id="card-assist" onclick="selectMode('assist')">
+                    <div class="mode-header">
+                        <div class="mode-title">
+                            <span class="mode-icon-wrap">
+                                <!-- Eye icon: surface & watch -->
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M1.5 8s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1.5 8 1.5 8z" stroke="#120B0B" stroke-width="1.3" stroke-linejoin="round"/>
+                                    <circle cx="8" cy="8" r="2" stroke="#120B0B" stroke-width="1.3"/>
+                                </svg>
+                            </span>
+                            <span class="mode-name">Assist</span>
+                        </div>
+                        <span class="mode-badge">Selected</span>
+                    </div>
+                    <div class="mode-desc">I surface what matters. You review and decide everything.</div>
+                    <div class="mode-example">
+                        <div class="example-label">For example</div>
+                        <div class="example-text">"Invoice INV-2245 looks off. <span>Review before approving?</span>"</div>
+                    </div>
+                </div>
+
+                <!-- Draft for review -->
+                <div class="mode-card active" id="card-draft" onclick="selectMode('draft')">
+                    <div class="mode-header">
+                        <div class="mode-title">
+                            <span class="mode-icon-wrap">
+                                <!-- Edit/pen icon: draft & compose -->
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M11 2.5l2.5 2.5-7 7H4v-2.5l7-7z" stroke="#120B0B" stroke-width="1.3" stroke-linejoin="round"/>
+                                    <path d="M2 14h12" stroke="#120B0B" stroke-width="1.3" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <span class="mode-name">Draft for review</span>
+                        </div>
+                    </div>
+                    <div class="mode-desc">I prepare the action. You approve before anything happens.</div>
+                    <div class="mode-example">
+                        <div class="example-label">For example</div>
+                        <div class="example-text">"Drafted a follow-up to Acme Corp. <span>Ready to send?</span>"</div>
+                    </div>
+                </div>
+
+                <!-- Handle it -->
+                <div class="mode-card" id="card-handle" onclick="selectMode('handle')">
+                    <div class="mode-header">
+                        <div class="mode-title">
+                            <span class="mode-icon-wrap">
+                                <!-- Lightning bolt: fast, autonomous action -->
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M9.5 1.5L4.5 9h5L5.5 14.5l7-8.5H8l1.5-4.5z" stroke="#120B0B" stroke-width="1.3" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <span class="mode-name">Handle it</span>
+                        </div>
+                        <span class="mode-badge">Selected</span>
+                    </div>
+                    <div class="mode-desc">I take care of it end-to-end and keep you informed.</div>
+                    <div class="mode-example">
+                        <div class="example-label">For example</div>
+                        <div class="example-text">"Matched and filed INV-2245. <span>Done.</span>"</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const modes = ['assist', 'draft', 'handle'];
+        function selectMode(mode) {
+            modes.forEach(m => {
+                document.getElementById('card-' + m).classList.toggle('active', m === mode);
+            });
+        }
+    </script>
+
+</body>
+</html>
