@@ -215,6 +215,110 @@
     .footer-note { display: flex; align-items: center; gap: 10px; padding: 18px; background: #fff5f1; border: 1px solid #ffb299; border-radius: 10px; font-size: 13px; color: #d95b03; }
     .footer-note svg { flex-shrink: 0; }
 
+    /* ═══ INVOICE-CENTRIC HISTORY (per-invoice trace + revert/permission) ═══ */
+    .inv-list { display: flex; flex-direction: column; }
+    .inv-card { background: white; border: 1px solid #e9e9e9; border-radius: 10px; margin-bottom: 8px; overflow: hidden; transition: border-color .15s; }
+    .inv-card:hover { border-color: rgba(69,85,108,0.32); }
+    .inv-card.open { border-color: rgba(69,85,108,0.4); }
+
+    .inv-head { padding: 16px 20px; display: grid; grid-template-columns: 10px 1fr auto auto; gap: 16px; cursor: pointer; align-items: center; }
+    .inv-status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .inv-status-dot.held { background: #e9b44c; }
+    .inv-status-dot.dup { background: #ff6900; }
+    .inv-status-dot.scheduled { background: #16a34a; }
+    .inv-status-dot.done { background: #16a34a; }
+    .inv-status-dot.draft { background: #155dfc; }
+
+    .inv-main { min-width: 0; }
+    .inv-top { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 3px; }
+    .inv-id { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #120b0b; letter-spacing: -0.2px; }
+    .inv-vendor { font-size: 13px; color: #45556c; }
+    .inv-sep { color: #d4d4d4; font-size: 11px; }
+    .inv-amount { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #120b0b; font-weight: 500; }
+    .inv-status-line { font-size: 12.5px; color: #45556c; line-height: 1.5; }
+    .inv-status-line b { color: #120b0b; font-weight: 600; }
+
+    .inv-meta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .inv-last { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #adadad; white-space: nowrap; }
+    .inv-chev { color: #adadad; transition: transform .2s; flex-shrink: 0; }
+    .inv-card.open .inv-chev { transform: rotate(180deg); }
+
+    /* expanded history timeline */
+    .inv-body { display: none; padding: 0 22px 18px 22px; }
+    .inv-card.open .inv-body { display: block; }
+
+    .hist-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #adadad; padding: 14px 0 10px; border-top: 1px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
+    .hist-label .hl-count { color: #d4d4d4; font-weight: 500; }
+
+    .hist-list { position: relative; padding-left: 4px; }
+    .hist-list::before { content: ''; position: absolute; left: 17px; top: 14px; bottom: 14px; width: 1px; background: #ededed; }
+
+    .hist-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 14px; align-items: flex-start; padding: 10px 0; position: relative; }
+
+    .who { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; font-weight: 600; position: relative; z-index: 1; box-shadow: 0 0 0 3px #fff; line-height: 1; }
+    .who.ai  { background: #ffe0ca; color: #d95b03; }
+    .who.you { background: #0f172b; color: #fff; font-size: 10px; }
+    .who.sys { background: #f4f4f4; color: #adadad; font-size: 14px; }
+
+    .hist-body { min-width: 0; padding-top: 3px; }
+    .hist-headline { font-size: 13px; color: #120b0b; line-height: 1.45; font-weight: 500; }
+    .hist-headline b { font-weight: 600; }
+    .hist-headline .hist-who-name { color: #adadad; font-weight: 500; font-size: 11.5px; margin-right: 6px; }
+    .hist-sub { font-size: 12px; color: #45556c; line-height: 1.5; margin-top: 4px; }
+    .hist-sub a { color: #d95b03; text-decoration: none; font-weight: 500; }
+    .hist-sub a:hover { text-decoration: underline; }
+    .hist-sub .arr { color: #d4d4d4; margin-right: 6px; }
+
+    .hist-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; padding-top: 5px; }
+    .hist-time { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: #adadad; white-space: nowrap; }
+
+    .hist-act { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 500; padding: 5px 10px; border-radius: 6px; border: 1px solid #ededed; background: white; color: #45556c; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .12s; white-space: nowrap; text-decoration: none; }
+    .hist-act:hover { color: #120b0b; border-color: #b8b8b8; }
+    .hist-act.revert:hover { color: #dc2626; border-color: #dc2626; background: #fef2f2; }
+    .hist-act.perm:hover { color: #d95b03; border-color: #ff9d6c; background: #fff5f1; }
+    .hist-act .ico { font-size: 11px; opacity: .7; }
+    .hist-act.locked { color: #adadad; cursor: not-allowed; }
+    .hist-act.locked:hover { color: #adadad; border-color: #ededed; background: white; }
+
+    .inv-foot { display: flex; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #f0f0f0; }
+    .inv-foot .ib { font-size: 12px; font-weight: 500; padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(69,85,108,0.24); background: white; color: #120b0b; cursor: pointer; font-family: 'Inter', sans-serif; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .inv-foot .ib:hover { background: #f4f4f4; }
+    .inv-foot .ib.primary { background: #120b0b; color: white; border-color: #120b0b; }
+    .inv-foot .ib.primary:hover { background: #45556c; }
+    .inv-foot .ib.attn { background: #ff6900; color: white; border-color: #ff6900; }
+    .inv-foot .ib.attn:hover { background: #d95b03; border-color: #d95b03; }
+
+    .show-more { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; margin-top: 8px; font-size: 12.5px; color: #45556c; background: transparent; border: 1px dashed #d4d4d4; border-radius: 10px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .show-more:hover { color: #120b0b; border-color: #45556c; background: #fafafa; }
+    .show-more b { color: #120b0b; font-weight: 600; }
+
+    /* Inline "Why allowed / Why waiting" provenance (default closed, click to reveal) */
+    .why-toggle { margin-top: 8px; font-size: 11.5px; font-weight: 500; padding: 4px 10px; border-radius: 6px; border: 1px dashed #e0e0e0; background: transparent; color: #45556c; cursor: pointer; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 5px; transition: all .12s; }
+    .why-toggle:hover { color: #d95b03; border-color: #ff9d6c; border-style: solid; }
+    .why-toggle .wts { color: #d95b03; font-size: 12px; }
+    .why-toggle.open { background: white; border-style: solid; border-color: #ffd5b8; color: #120b0b; }
+    .why-toggle.open::after { content: '▾'; font-size: 9px; margin-left: 2px; color: #adadad; }
+    .why-toggle::after { content: '▸'; font-size: 9px; margin-left: 2px; color: #adadad; }
+    .why-detail { display: none; margin-top: 10px; background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 12px 14px; }
+    .why-toggle.open + .why-detail { display: block; }
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .why-grid.single { grid-template-columns: 1fr; }
+    .why-block { font-size: 12px; color: #45556c; line-height: 1.55; }
+    .why-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+    .why-block.allowed .why-label { color: #15803d; }
+    .why-block.allowed .why-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #15803d; }
+    .why-block.wait .why-label { color: #b17728; }
+    .why-block.wait .why-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #b17728; }
+    .why-block b { color: #120b0b; font-weight: 600; }
+    .why-block a { color: #d95b03; text-decoration: none; font-weight: 500; }
+    .why-block a:hover { text-decoration: underline; }
+
+    /* Compare side-by-side mode (only inside inv-card.compare-mode) */
+    .inv-summary { display: block; }
+    .inv-compare { display: none; padding-top: 14px; border-top: 1px solid #f0f0f0; }
+    .inv-card.compare-mode .inv-summary { display: none; }
+    .inv-card.compare-mode .inv-compare { display: block; }
+
     @media (max-width: 1100px) {
       .content { padding: 32px 28px; }
       .stat-row { flex-direction: column; }
@@ -307,7 +411,7 @@
           </div>
           <h1 class="ptitle">AI Activity</h1>
         </div>
-        <p class="page-sub">Every case Witness handled on your behalf — what it read, what it changed, and what it left for you. <b>Nothing runs without appearing here.</b></p>
+        <p class="page-sub">The full history of every invoice — <b>who did each step, and what you can still take back.</b> AI actions are reversible; auto-sent items link to the rule that authorized them.</p>
       </div>
       <div class="page-actions">
         <button class="btn">
@@ -396,319 +500,502 @@
       </div>
     </div>
 
-    <!-- TIMELINE -->
-    <div class="timeline">
+    <!-- INVOICE-CENTRIC HISTORY -->
+    <div class="inv-list">
 
-      <!-- Apr 28 group -->
+      <!-- ─── Mon · Apr 28 ─── -->
       <div class="day-group">
         <div class="day-header">
           <span class="day-label">Mon · Apr 28</span>
           <span class="day-line"></span>
-          <span class="day-count">5 events</span>
+          <span class="day-count">3 invoices</span>
         </div>
 
-        <!-- Entry 1: held -->
-        <div class="log-card open" onclick="toggleCard(this)">
-          <div class="log-head">
-            <div class="log-dot-col"><div class="log-dot a"></div></div>
-            <div class="log-main">
-              <div class="log-top">
-                <span class="log-title">INV-1048 · exception flagged · held</span>
-                <span class="log-time">06:42 AM</span>
+        <!-- INV-1048 · held (open by default to teach the pattern) -->
+        <div class="inv-card open">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot held"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1048</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Brightline Audio</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$4,200.00</span>
               </div>
-              <div class="log-desc">Qty mismatch on line 2. Held for your review — no payment, no email sent.</div>
-              <div class="log-meta-row">
-                <span class="actor ai">⚡ Witness AI</span>
-                <span class="via">via 3-way match</span>
-                <span class="actor wa">⏳ Waiting for you</span>
-              </div>
+              <div class="inv-status-line"><b>Held for review</b> · qty mismatch on line 2 — waiting on you</div>
             </div>
-            <svg class="log-chev" width="14" height="14" viewbox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="inv-meta">
+              <span class="inv-last">06:42 AM</span>
+            </div>
+            <svg class="inv-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div class="log-detail">
-            <div class="ld-section">
-              <div class="ld-sec-label read"><div class="ld-sec-dot read"></div>Read · 3 records from 3 systems</div>
-              <div class="ld-line"><span class="arrow">↳</span>PO #4823 · 12 units <span class="src">· Amazon Business</span></div>
-              <div class="ld-line"><span class="arrow">↳</span>GRN #4823-R · 10 units received <span class="src">· ERP</span></div>
-              <div class="ld-line"><span class="arrow">↳</span>INV-1048 · 12 units billed <span class="src">· Brightline</span></div>
-            </div>
-            <div class="ld-section">
-              <div class="ld-sec-label wrote"><div class="ld-sec-dot wrote"></div>Wrote · 1 system</div>
-              <div class="ld-line"><span class="arrow">↳</span>Exception note: "Line 2 qty mismatch · GRN&lt;PO" <span class="src">· Witness case</span></div>
-              <div class="ld-line"><span class="arrow">↳</span>Status = held_for_review <span class="src">· Witness queue</span></div>
-            </div>
-            <div class="ld-section">
-              <div class="ld-sec-label skip"><div class="ld-sec-dot skip"></div>Did not touch — and why</div>
-              <div class="ld-line skipped"><strong>Did not pay.</strong> Match was not clean.</div>
-              <div class="ld-line skipped"><strong>Did not email vendor.</strong> Outbound communication needs your approval.</div>
-            </div>
-            <div class="ld-actions">
-              <button class="ld-btn review" onclick="event.stopPropagation();window.location.href='invoice-detail.html'">Open INV-1048 →</button>
-              <button class="ld-btn">View case file</button>
-            </div>
-          </div>
-        </div>
+          <div class="inv-body">
+            <div class="hist-label">History <span class="hl-count">· 4 steps · Witness 3 · you 0</span></div>
+            <div class="hist-list">
 
-        <!-- Entry 2: routed batch -->
-        <div class="log-card" onclick="toggleCard(this)">
-          <div class="log-head">
-            <div class="log-dot-col"><div class="log-dot g"></div></div>
-            <div class="log-main">
-              <div class="log-top">
-                <span class="log-title">8 invoices routed for payment · ERP</span>
-                <span class="log-time">12:14 AM</span>
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline"><b>Held for review</b> — qty mismatch on line 2</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Read PO #4823 (12u), GRN #4823-R (10u received), INV-1048 (12u billed). No payment, no email sent.</div>
+                  <button class="why-toggle" onclick="event.stopPropagation();this.classList.toggle('open')">
+                    <span class="wts">✦</span> Why was Witness allowed to hold this
+                  </button>
+                  <div class="why-detail">
+                    <div class="why-grid single">
+                      <div class="why-block allowed">
+                        <div class="why-label">Why allowed</div>
+                        Rule <b>3-way match exception</b> · when GRN &lt; PO or Invoice, hold automatically; never auto-pay. Confidence 92%. <a href="autoflow.html#three-way-match" onclick="event.stopPropagation()">Edit rule →</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">06:42 AM</span>
+                  <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                          data-trace-revert="hold-inv1048"
+                          data-revert-title="Release review hold on INV-1048?"
+                          data-revert-undos="Status: held_for_review → received;Invoice will re-enter clean-routing path;Witness will not re-flag this exact mismatch"
+                          data-revert-note="Match was not clean (GRN 10 &lt; PO 12). Releasing may schedule payment for an unverified quantity.">
+                    <span class="ico">↩</span> Revert
+                  </button>
+                </div>
               </div>
-              <div class="log-desc">Clean invoices under $5,000 · payment batch posted to ERP under your pre-authorization.</div>
-              <div class="log-meta-row">
-                <span class="actor ai">⚡ Witness AI</span>
-                <span class="via">via clean payment routing</span>
-                <span class="actor hu">✓ Pre-approved by you</span>
-                <span class="conf-pill">98% confidence</span>
-              </div>
-            </div>
-            <svg class="log-chev" width="14" height="14" viewbox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="log-detail">
-            <div class="ld-section">
-              <div class="ld-sec-label wrote"><div class="ld-sec-dot wrote"></div>Wrote · payment batch posted</div>
-              <div class="ld-line"><span class="arrow">↳</span>Payment batch <strong>#PB-0428-A</strong> · $18,420.00 <span class="src">· ERP</span></div>
-              <div class="ld-line"><span class="arrow">↳</span>8 invoice statuses → "scheduled" <span class="src">· Witness</span></div>
-            </div>
-            <div class="ld-section">
-              <div class="ld-sec-label skip"><div class="ld-sec-dot skip"></div>Did not touch — and why</div>
-              <div class="ld-line skipped"><strong>Did not route 2 invoices over $5,000.</strong> Above your pre-authorized limit.</div>
-            </div>
-            <div class="ld-actions">
-              <button class="ld-btn verify" onclick="event.stopPropagation()">✓ Verify in ERP</button>
-              <button class="ld-btn undo" onclick="event.stopPropagation();this.textContent='Undone ✓';this.style.color='#dc2626'">↩ Undo batch</button>
-            </div>
-          </div>
-        </div>
 
-        <!-- Entry 3: nudge draft -->
-        <div class="log-card" onclick="toggleCard(this)">
-          <div class="log-head">
-            <div class="log-dot-col"><div class="log-dot b"></div></div>
-            <div class="log-main">
-              <div class="log-top">
-                <span class="log-title">Nudge draft ready · J. Park · INV-1048</span>
-                <span class="log-time">02:00 AM</span>
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Ran 3-way match — flagged exception</div>
+                  <div class="hist-sub"><span class="arr">↳</span>GRN &lt; PO and Invoice. Confidence 92%.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">06:40 AM</span>
+                </div>
               </div>
-              <div class="log-desc">Approval pending 3 days. Draft prepared — waiting for your sign-off before sending.</div>
-              <div class="log-meta-row">
-                <span class="actor ai">⚡ Witness AI</span>
-                <span class="via">via approval nudges</span>
-                <span class="actor wa">⏳ Waiting for you</span>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent receipt confirmation to Brightline</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Auto-sent per rule <a href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">Vendor receipt confirmation</a>.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">03:15 AM</span>
+                  <a class="hist-act perm" href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">
+                    <span class="ico">⚙</span> Edit rule
+                  </a>
+                </div>
               </div>
+
+              <div class="hist-row">
+                <div class="who sys">·</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Invoice received via vendor portal</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">03:14 AM</span>
+                </div>
+              </div>
+
             </div>
-            <svg class="log-chev" width="14" height="14" viewbox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="log-detail">
-            <div class="ld-section">
-              <div class="ld-sec-label read"><div class="ld-sec-dot read"></div>Read</div>
-              <div class="ld-line"><span class="arrow">↳</span>Approval queue · INV-1048 pending 3d 4h <span class="src">· Approval system</span></div>
-            </div>
-            <div class="ld-section">
-              <div class="ld-sec-label wrote"><div class="ld-sec-dot wrote"></div>Drafted</div>
-              <div class="ld-line"><span class="arrow">↳</span>Email draft to J. Park · subject "Reminder: INV-1048 awaiting your approval"</div>
-            </div>
-            <div class="ld-section">
-              <div class="ld-sec-label skip"><div class="ld-sec-dot skip"></div>Did not touch — and why</div>
-              <div class="ld-line skipped"><strong>Did not send the email.</strong> Outbound to people requires your approval per workflow setting.</div>
-            </div>
-            <div class="ld-actions">
-              <button class="ld-btn review">Review draft & send</button>
-              <button class="ld-btn">Edit draft</button>
+            <div class="inv-foot">
+              <a class="ib attn" href="invoice-detail.html">Open invoice →</a>
+              <button class="ib">View case file</button>
             </div>
           </div>
         </div>
 
-        <!-- Entry 4: 14 auto-matched -->
-        <div class="log-card" onclick="toggleCard(this)">
-          <div class="log-head">
-            <div class="log-dot-col"><div class="log-dot g"></div></div>
-            <div class="log-main">
-              <div class="log-top">
-                <span class="log-title">14 invoices auto-matched · all clean</span>
-                <span class="log-time">11:02 PM</span>
+        <!-- INV-1031 · waiting on approver, nudge drafted -->
+        <div class="inv-card">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot draft"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1031</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Globex Materials</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$12,400.00</span>
               </div>
-              <div class="log-desc">3-way match ran on all invoices received after 6 PM. No exceptions.</div>
-              <div class="log-meta-row">
-                <span class="actor ai">⚡ Witness AI</span>
-                <span class="via">via 3-way match</span>
-                <span class="conf-pill">96% confidence</span>
-              </div>
+              <div class="inv-status-line"><b>Awaiting approval · J. Park</b> · nudge drafted — review before sending</div>
             </div>
-            <svg class="log-chev" width="14" height="14" viewbox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="inv-meta">
+              <span class="inv-last">02:00 AM</span>
+            </div>
+            <svg class="inv-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div class="log-detail">
-            <div class="ld-section">
-              <div class="ld-sec-label read"><div class="ld-sec-dot read"></div>Read · 28 records from 2 systems</div>
-              <div class="ld-line"><span class="arrow">↳</span>14 POs <span class="src">· Amazon Business</span></div>
-              <div class="ld-line"><span class="arrow">↳</span>14 GRNs <span class="src">· ERP / receiving</span></div>
+          <div class="inv-body">
+            <div class="hist-label">History <span class="hl-count">· 5 steps · Witness 4 · you 1</span></div>
+            <div class="hist-list">
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Drafted approval nudge to J. Park — <b>held to send</b></div>
+                  <div class="hist-sub"><span class="arr">↳</span>3 days overdue. Outbound to people requires your sign-off — draft is waiting.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 28 · 02:00 AM</span>
+                  <button class="hist-act">Review & send</button>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who you">SC</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent for approval to J. Park</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 25 · 09:15 AM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">3-way match — clean</div>
+                  <div class="hist-sub"><span class="arr">↳</span>PO, GRN, Invoice all aligned. No write to ERP yet — waiting on approval.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 25 · 09:00 AM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent receipt confirmation to Globex</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Auto-sent per rule <a href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">Vendor receipt confirmation</a>.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 25 · 08:55 AM</span>
+                  <a class="hist-act perm" href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">
+                    <span class="ico">⚙</span> Edit rule
+                  </a>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who sys">·</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Invoice received via email</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 25 · 08:30 AM</span>
+                </div>
+              </div>
+
             </div>
-            <div class="ld-section">
-              <div class="ld-sec-label wrote"><div class="ld-sec-dot wrote"></div>Wrote · 1 system</div>
-              <div class="ld-line"><span class="arrow">↳</span>Match result = clean (×14) <span class="src">· Witness case file</span></div>
-            </div>
-            <div class="ld-section">
-              <div class="ld-sec-label skip"><div class="ld-sec-dot skip"></div>Did not touch</div>
-              <div class="ld-line skipped">Payment execution — out of scope for this workflow.</div>
-              <div class="ld-line skipped">ERP GL coding — not authorized at this step.</div>
-            </div>
-            <div class="ld-actions">
-              <button class="ld-btn" onclick="event.stopPropagation();window.location.href='invoices.html'">View 14 invoices</button>
+            <div class="inv-foot">
+              <button class="ib primary">Review draft & send</button>
+              <button class="ib">Edit draft</button>
             </div>
           </div>
         </div>
 
-        <!-- Entry 5: workflow off -->
-        <div class="log-card" onclick="toggleCard(this)">
-          <div class="log-head">
-            <div class="log-dot-col"><div class="log-dot gr"></div></div>
-            <div class="log-main">
-              <div class="log-top">
-                <span class="log-title">Vendor dispute follow-up · skipped</span>
-                <span class="log-time">03:30 AM</span>
+        <!-- INV-1042 · auto routed, fully automated -->
+        <div class="inv-card">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot scheduled"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1042</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Northwind Supplies</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$1,840.00</span>
               </div>
-              <div class="log-desc">Workflow is off. 2 disputes overdue — flagged but no action taken.</div>
-              <div class="log-meta-row">
-                <span class="actor of">○ Workflow off</span>
-              </div>
+              <div class="inv-status-line"><b>Scheduled</b> · added to batch PB-0428-A under your pre-authorization</div>
             </div>
-            <svg class="log-chev" width="14" height="14" viewbox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="inv-meta">
+              <span class="inv-last">12:14 AM</span>
+            </div>
+            <svg class="inv-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div class="log-detail">
-            <div class="ld-section">
-              <div class="ld-sec-label skip"><div class="ld-sec-dot skip"></div>Did not run — workflow off</div>
-              <div class="ld-line skipped">Disputes #D-204 and #D-211 are 4+ days without reply. No data read, no records modified.</div>
+          <div class="inv-body">
+            <div class="hist-label">History <span class="hl-count">· 4 steps · Witness 4 · you 0 (pre-authorized)</span></div>
+            <div class="hist-list">
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Added to payment batch <b>PB-0428-A</b></div>
+                  <div class="hist-sub"><span class="arr">↳</span>Clean invoice under $5,000 · within your pre-authorized routing limit.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 28 · 12:14 AM</span>
+                  <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                          data-trace-revert="batch-inv1042"
+                          data-revert-title="Remove INV-1042 from payment batch PB-0428-A?"
+                          data-revert-undos="ERP: invoice status scheduled → received;Batch total: $18,420.00 → $16,580.00;Vendor will not be paid on May 1">
+                    <span class="ico">↩</span> Revert
+                  </button>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">3-way match — clean</div>
+                  <div class="hist-sub"><span class="arr">↳</span>PO #6118, GRN, Invoice all aligned. Confidence 98%.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 27 · 08:30 PM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent receipt confirmation to Northwind</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Auto-sent per rule <a href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">Vendor receipt confirmation</a>.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 27 · 06:25 PM</span>
+                  <a class="hist-act perm" href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">
+                    <span class="ico">⚙</span> Edit rule
+                  </a>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who sys">·</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Invoice received via vendor portal</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 27 · 04:30 PM</span>
+                </div>
+              </div>
+
             </div>
-            <div class="ld-actions">
-              <button class="ld-btn review" onclick="event.stopPropagation();window.location.href='autoflow.html'">Turn workflow on →</button>
+            <div class="inv-foot">
+              <a class="ib" href="invoice-detail.html">Open invoice →</a>
+              <button class="ib">Verify in ERP</button>
             </div>
           </div>
         </div>
 
       </div>
 
-      <!-- Apr 27 group -->
+      <!-- ─── Sun · Apr 27 ─── -->
       <div class="day-group">
         <div class="day-header">
           <span class="day-label">Sun · Apr 27</span>
           <span class="day-line"></span>
-          <span class="day-count">21 events</span>
+          <span class="day-count">2 invoices · +21 fully auto-resolved</span>
         </div>
 
-        <div class="log-card" onclick="toggleCard(this)">
-          <div class="log-head">
-            <div class="log-dot-col"><div class="log-dot g"></div></div>
-            <div class="log-main">
-              <div class="log-top">
-                <span class="log-title">Early payment discount applied · INV-1008</span>
-                <span class="log-time">11:45 PM</span>
+        <!-- INV-1008 · discount captured (with prior human approval) -->
+        <div class="inv-card">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot done"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1008</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Acme Coffee Roasters</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$8,210 → $8,045.80</span>
               </div>
-              <div class="log-desc">2/10 net 30 discount captured · saved $164.20.</div>
-              <div class="log-meta-row">
-                <span class="actor ai">⚡ Witness AI</span>
-                <span class="via">via clean payment routing</span>
-                <span class="conf-pill">99% confidence</span>
-                <span class="wt-revertable-chip">Revertable</span>
-              </div>
+              <div class="inv-status-line"><b>Discount captured</b> · 2/10 net 30 — saved $164.20</div>
             </div>
-            <svg class="log-chev" width="14" height="14" viewbox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="inv-meta">
+              <span class="inv-last">11:45 PM</span>
+            </div>
+            <svg class="inv-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div class="log-detail">
+          <div class="inv-body">
+            <div class="hist-label">History <span class="hl-count">· 6 steps · Witness 5 · you 1</span></div>
+            <div class="hist-list">
 
-            <!-- LAYER 2 -->
-            <div class="ld-section" style="background:white;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px;margin-bottom:12px;">
-              <div class="ld-sec-label" style="color:#15803d;"><div class="ld-sec-dot" style="background:#15803d;"></div>Why allowed to capture discount</div>
-              <div style="font-size:12px;color:#45556c;line-height:1.55;">
-                Rule <strong style="color:#0b0d12;">Early payment discount capture</strong> · invoice was clean-matched, vendor terms specify <strong style="color:#0b0d12;">2/10 net 30</strong>, today is day 9 — within the discount window. Confidence 99%.<br>
-                <a href="autoflow.html" onclick="event.stopPropagation()" style="font-size:11px;color:#d95b03;">View rule →</a>
-              </div>
-            </div>
-
-            <div class="ld-section">
-              <div class="ld-sec-label wrote"><div class="ld-sec-dot wrote"></div>Wrote</div>
-              <div class="ld-line"><span class="arrow">↳</span>Discount terms applied: $8,210 → $8,045.80 · <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="ERP" data-trace-doc="INV-1008" data-trace-loc="AP entry · payable_amount" data-trace-url="#erp" data-trace-fields="Field|payable_amount;Old value|$8,210.00;New value|$8,045.80;Discount captured|$164.20 (2.0%);Pay date|May 1 (day 10)">ERP</span></div>
-            </div>
-            <div class="ld-actions">
-              <button class="ld-btn verify">✓ Verify in ERP</button>
-              <button class="ld-btn wt-revert" onclick="event.stopPropagation()"
-                      data-trace-revert="discount-inv1008"
-                      data-revert-title="Reverse early payment discount?"
-                      data-revert-undos="ERP: restore payable_amount $8,045.80 → $8,210.00;Pay date will move to net-30 (May 22);Discount $164.20 will be released back to vendor">
-                <span class="wt-revert-icon">↩</span> Reverse discount
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="log-card" id="duplicate-prevented-inv-1014" onclick="toggleCard(this)">
-          <div class="log-head">
-            <div class="log-dot-col"><div class="log-dot o"></div></div>
-            <div class="log-main">
-              <div class="log-top">
-                <span class="log-title">Duplicate prevented · INV-1027</span>
-                <span class="log-time">10:22 PM</span>
-              </div>
-              <div class="log-desc">Identical amount + vendor + date as INV-1024 (paid Apr 22). Held for confirmation.</div>
-              <div class="log-meta-row">
-                <span class="actor ai">⚡ Witness AI</span>
-                <span class="via">via duplicate detection</span>
-                <span class="actor wa">⏳ Waiting for you</span>
-                <span class="wt-revertable-chip">Revertable</span>
-              </div>
-            </div>
-            <svg class="log-chev" width="14" height="14" viewbox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="log-detail">
-            <div class="ld-summary">
-
-              <!-- LAYER 2 -->
-              <div class="ld-section" style="background:white;border:1px solid #ffd5b8;border-radius:8px;padding:12px 14px;margin-bottom:12px;">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-                  <div>
-                    <div class="ld-sec-label" style="color:#15803d;"><div class="ld-sec-dot" style="background:#15803d;"></div>Why allowed to hold</div>
-                    <div style="font-size:12px;color:#45556c;line-height:1.5;">
-                      Rule <strong style="color:#0b0d12;">Duplicate detection</strong> · 6 of 7 identity signals matched a paid invoice. Triggers an automatic hold; never auto-pays.<br>
-                      <a href="autoflow.html" onclick="event.stopPropagation()" style="font-size:11px;color:#d95b03;">View rule →</a>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="ld-sec-label" style="color:#b17728;"><div class="ld-sec-dot" style="background:#b17728;"></div>Why waiting on you</div>
-                    <div style="font-size:12px;color:#45556c;line-height:1.5;">
-                      Releasing a held duplicate could mean paying $890.40 twice. Only you can confirm whether this is a legitimate second invoice.
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline"><b>Captured 2/10 discount</b> — saved $164.20</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Wrote: payable $8,210.00 → $8,045.80 in <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="ERP" data-trace-doc="INV-1008" data-trace-loc="AP entry · payable_amount" data-trace-url="#erp" data-trace-fields="Field|payable_amount;Old value|$8,210.00;New value|$8,045.80;Discount captured|$164.20 (2.0%);Pay date|May 1 (day 10)">ERP</span>.</div>
+                  <button class="why-toggle" onclick="event.stopPropagation();this.classList.toggle('open')">
+                    <span class="wts">✦</span> Why was Witness allowed to capture
+                  </button>
+                  <div class="why-detail">
+                    <div class="why-grid single">
+                      <div class="why-block allowed">
+                        <div class="why-label">Why allowed</div>
+                        Rule <b>Early payment discount capture</b> · invoice clean-matched, vendor terms <b>2/10 net 30</b>, today is day 9 (within window). Confidence 99%. <a href="autoflow.html#early-discount" onclick="event.stopPropagation()">Edit rule →</a>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 27 · 11:45 PM</span>
+                  <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                          data-trace-revert="discount-inv1008"
+                          data-revert-title="Reverse early payment discount?"
+                          data-revert-undos="ERP: restore payable_amount $8,045.80 → $8,210.00;Pay date will move to net-30 (May 22);Discount $164.20 will be released back to vendor">
+                    <span class="ico">↩</span> Revert
+                  </button>
+                </div>
               </div>
 
-              <div class="ld-section">
-                <div class="ld-sec-label read"><div class="ld-sec-dot read"></div>Read</div>
-                <div class="ld-line"><span class="arrow">↳</span>INV-1027 · PO-7718 · <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="Vendor portal" data-trace-doc="INV-1027.pdf" data-trace-loc="Submission #PR-9981" data-trace-url="#vendor" data-trace-fields="Submission channel|Vendor portal;Submitted|Apr 27 · 10:18 PM;Vendor|Praxis Logistics;Total|$890.40;PO|PO-7718">Praxis Logistics</span> · $890.40 · Apr 22</div>
-                <div class="ld-line"><span class="arrow">↳</span>INV-1024 · PO-7718 · Praxis Logistics · $890.40 · Apr 22 · <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="ERP" data-trace-doc="INV-1024" data-trace-loc="AP · paid invoices" data-trace-url="#erp" data-trace-fields="Status|Paid Apr 26 · ACH;Submission channel|Email · AP inbox;Total|$890.40;PO|PO-7718;Reference|SHP-2241">already paid</span></div>
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Scheduled payment for May 1 (day 10 of discount window)</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 27 · 11:43 PM</span>
+                  <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                          data-trace-revert="schedule-inv1008"
+                          data-revert-title="Cancel May 1 payment schedule?"
+                          data-revert-undos="ERP: payment status scheduled → pending;Discount of $164.20 will be forfeited if not rescheduled in time">
+                    <span class="ico">↩</span> Revert
+                  </button>
+                </div>
               </div>
-              <div class="ld-section">
-                <div class="ld-sec-label skip"><div class="ld-sec-dot skip"></div>Did not pay</div>
-                <div class="ld-line skipped">Possible duplicate. Holding until you confirm.</div>
+
+              <div class="hist-row">
+                <div class="who you">SC</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Approved batch routing for vendors &lt; $10,000</div>
+                  <div class="hist-sub"><span class="arr">↳</span>This authorization let Witness schedule INV-1008 without further approval.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 27 · 09:30 AM</span>
+                </div>
               </div>
-              <div class="ld-actions">
-                <button class="ld-btn review" onclick="showCompare(this)">Compare side-by-side</button>
-                <button class="ld-btn">Mark not duplicate</button>
-                <button class="ld-btn wt-revert" onclick="event.stopPropagation()"
-                        data-trace-revert="hold-inv1027"
-                        data-revert-title="Release duplicate hold on INV-1027?"
-                        data-revert-undos="Status: held_duplicate → received;Witness will not re-flag this exact invoice;Invoice will enter standard AP routing"
-                        data-revert-note="If INV-1027 is in fact a duplicate of INV-1024, releasing the hold may cause a $890.40 double payment.">
-                  <span class="wt-revert-icon">↩</span> Release hold
-                </button>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">3-way match — clean</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 27 · 06:30 PM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent receipt confirmation to Acme</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Auto-sent per rule <a href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">Vendor receipt confirmation</a>.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 27 · 06:25 PM</span>
+                  <a class="hist-act perm" href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">
+                    <span class="ico">⚙</span> Edit rule
+                  </a>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who sys">·</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Invoice received via email</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time">Apr 27 · 06:24 PM</span>
+                </div>
+              </div>
+
+            </div>
+            <div class="inv-foot">
+              <a class="ib" href="invoice-detail.html">Open invoice →</a>
+              <button class="ib">Verify in ERP</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- INV-1027 · held duplicate -->
+        <div class="inv-card" id="duplicate-prevented-inv-1014">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot dup"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1027</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Praxis Logistics</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$890.40</span>
+              </div>
+              <div class="inv-status-line"><b>Held — possible duplicate</b> of INV-1024 (paid Apr 26) — waiting on you</div>
+            </div>
+            <div class="inv-meta">
+              <span class="inv-last">10:22 PM</span>
+            </div>
+            <svg class="inv-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="inv-body">
+            <div class="inv-summary">
+              <div class="hist-label">History <span class="hl-count">· 3 steps · Witness 2 · you 0</span></div>
+              <div class="hist-list">
+
+                <div class="hist-row">
+                  <div class="who ai">✦</div>
+                  <div class="hist-body">
+                    <div class="hist-headline"><b>Held as possible duplicate</b> of INV-1024</div>
+                    <div class="hist-sub"><span class="arr">↳</span>6 of 7 identity signals matched a paid invoice. Releasing could mean paying $890.40 twice.</div>
+                    <button class="why-toggle" onclick="event.stopPropagation();this.classList.toggle('open')">
+                      <span class="wts">✦</span> Why was Witness allowed to hold — and why it's on you
+                    </button>
+                    <div class="why-detail">
+                      <div class="why-grid">
+                        <div class="why-block allowed">
+                          <div class="why-label">Why allowed</div>
+                          Rule <b>Duplicate detection</b> · 6 of 7 identity signals matched a paid invoice. Triggers automatic hold; never auto-pays. <a href="autoflow.html#duplicate" onclick="event.stopPropagation()">Edit rule →</a>
+                        </div>
+                        <div class="why-block wait">
+                          <div class="why-label">Why waiting on you</div>
+                          Releasing a held duplicate could mean paying <b>$890.40 twice</b>. Only you can confirm whether this is a legitimate second invoice.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hist-side">
+                    <span class="hist-time">Apr 27 · 10:22 PM</span>
+                    <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                            data-trace-revert="hold-inv1027"
+                            data-revert-title="Release duplicate hold on INV-1027?"
+                            data-revert-undos="Status: held_duplicate → received;Witness will not re-flag this exact invoice;Invoice will enter standard AP routing"
+                            data-revert-note="If INV-1027 is in fact a duplicate of INV-1024, releasing the hold may cause a $890.40 double payment.">
+                      <span class="ico">↩</span> Revert
+                    </button>
+                  </div>
+                </div>
+
+                <div class="hist-row">
+                  <div class="who ai">✦</div>
+                  <div class="hist-body">
+                    <div class="hist-headline">Matched 6/7 signals against <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="ERP" data-trace-doc="INV-1024" data-trace-loc="AP · paid invoices" data-trace-url="#erp" data-trace-fields="Status|Paid Apr 26 · ACH;Submission channel|Email · AP inbox;Total|$890.40;PO|PO-7718;Reference|SHP-2241">INV-1024</span> (paid)</div>
+                    <div class="hist-sub"><span class="arr">↳</span>Vendor, PO, shipment ref, total, tax, bill-to all identical. Only invoice # and submission channel differ.</div>
+                  </div>
+                  <div class="hist-side">
+                    <span class="hist-time">Apr 27 · 10:20 PM</span>
+                  </div>
+                </div>
+
+                <div class="hist-row">
+                  <div class="who sys">·</div>
+                  <div class="hist-body">
+                    <div class="hist-headline">Invoice received via vendor portal</div>
+                  </div>
+                  <div class="hist-side">
+                    <span class="hist-time">Apr 27 · 10:18 PM</span>
+                  </div>
+                </div>
+
+              </div>
+              <div class="inv-foot">
+                <a class="ib attn" href="invoice-detail-duplicate.html">Open invoice →</a>
+                <button class="ib" onclick="event.stopPropagation();showCompare(this)">Compare side-by-side</button>
+                <button class="ib">Mark not duplicate</button>
               </div>
             </div>
 
-            <div class="ld-compare">
+            <div class="inv-compare">
               <div class="cmp-head">
-                <button class="cmp-back" onclick="hideCompare(this)">← Back to summary</button>
+                <button class="cmp-back" onclick="event.stopPropagation();hideCompare(this)">← Back to history</button>
                 <div class="cmp-title">Compare · INV-1027 vs INV-1024</div>
               </div>
 
@@ -739,10 +1026,10 @@
                 <span>If released in error: <strong>−$890.40 paid twice for the same shipment</strong></span>
               </div>
 
-              <div class="ld-actions">
-                <button class="ld-btn review">Confirm hold</button>
-                <button class="ld-btn">Mark not duplicate</button>
-                <a class="cmp-link" href="invoice-detail-duplicate.html">Open full invoice →</a>
+              <div class="inv-foot">
+                <button class="ib attn">Confirm hold</button>
+                <button class="ib">Mark not duplicate</button>
+                <a class="ib" href="invoice-detail-duplicate.html">Open full invoice →</a>
               </div>
             </div>
           </div>
@@ -750,26 +1037,28 @@
 
       </div>
 
+      <button class="show-more">Showing <b>5 of 26</b> invoices · show all activity from the last 7 days</button>
+
     </div>
 
     <!-- FOOTER NOTE -->
     <div class="footer-note">
       <svg width="18" height="18" viewbox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4M9 12.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      <span>Every AI action is logged here. Nothing runs without appearing in this log — and everything is reversible.</span>
+      <span>Every step is logged. AI actions can be reverted; auto-sent emails can't be un-sent, but the rule that authorized them is one click away.</span>
     </div>
 
   </main>
 </div>
 
 <script>
-  function toggleCard(card) { card.classList.toggle('open'); }
   function filterTab(tab) {
     document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
   }
-  function showCompare(btn) { btn.closest('.log-card').classList.add('compare-mode'); }
-  function hideCompare(btn) { btn.closest('.log-card').classList.remove('compare-mode'); }
-  document.querySelectorAll('.ld-btn, .search-input, .ptab, .cmp-back, .cmp-link').forEach(el => {
+  function showCompare(btn) { btn.closest('.inv-card').classList.add('compare-mode'); }
+  function hideCompare(btn) { btn.closest('.inv-card').classList.remove('compare-mode'); }
+  // Stop click bubbling on interactive children so they don't toggle the inv-head
+  document.querySelectorAll('.search-input, .ptab, .ftab, .cmp-back, .ib, .hist-act').forEach(el => {
     el.addEventListener('click', e => e.stopPropagation());
   });
 
