@@ -23,6 +23,39 @@
   var MIN_W = 280;
   var MAX_W = 520;
 
+  /* ─────────── Toolbar icons (line SVGs, currentColor) ───────────
+     The previous glyphs (↺ ⊞ ⇲ — → ↻) read as random symbols. These
+     SVGs match the line-weight used by the rest of the prototype
+     (e.g. dashboard.html's sidebar toggle) so the affordances are
+     self-evident at button-size. */
+  var SVG_NEW = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" aria-hidden="true">' +
+                  '<path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+                '</svg>';
+  // Fold: ›› chevrons pointing right — "tuck the panel to the right edge".
+  var SVG_FOLD = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" aria-hidden="true">' +
+                   '<path d="M5 4l4 4-4 4M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                 '</svg>';
+  // Unfold: ‹‹ chevrons pointing left — "pull the panel back out".
+  var SVG_UNFOLD = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" aria-hidden="true">' +
+                     '<path d="M11 4l-4 4 4 4M7 4l-4 4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                   '</svg>';
+  // Float: overlapping square with arrow — "pop out as window".
+  var SVG_FLOAT = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" aria-hidden="true">' +
+                    '<rect x="2.5" y="5.5" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.4"/>' +
+                    '<path d="M7 3h6v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>' +
+                    '<path d="M13 3 7.5 8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+                  '</svg>';
+  // Dock: arrow into a right-edge bar — "snap back to the side".
+  var SVG_DOCK = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" aria-hidden="true">' +
+                   '<path d="M13 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+                   '<path d="M3 8h7m-2-2 2 2-2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                 '</svg>';
+  // Replay: a curved arrow looping back — "play this prompt again".
+  var SVG_REPLAY = '<svg viewBox="0 0 16 16" width="10" height="10" fill="none" aria-hidden="true">' +
+                     '<path d="M3 4v3h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                     '<path d="M3 7a5 5 0 1 0 1.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                   '</svg>';
+
   /* ─────────── Template strings (extracted from dashboard.html) ─────────── */
 
   var EMPTY_STATE_HTML =
@@ -53,7 +86,7 @@
 
   var TPL_ASK_HTML =
     '<div class="msg-user">' +
-      '<button class="msg-replay" onclick="runPrompt(\'ask\')" title="Replay">↻</button>' +
+      '<button class="msg-replay" onclick="runPrompt(\'ask\')" title="Replay">' + SVG_REPLAY + '</button>' +
       '<span class="kind-tag">Ask</span><br/>' +
       'Where is INV-1048 in the approval chain?' +
     '</div>' +
@@ -102,7 +135,7 @@
 
   var TPL_THINK_HTML =
     '<div class="msg-user">' +
-      '<button class="msg-replay" onclick="runPrompt(\'think\')" title="Replay">↻</button>' +
+      '<button class="msg-replay" onclick="runPrompt(\'think\')" title="Replay">' + SVG_REPLAY + '</button>' +
       '<span class="kind-tag">Suggest</span><br/>' +
       'How should I handle the Brightline backlog?' +
     '</div>' +
@@ -164,7 +197,7 @@
 
   var TPL_DO_HTML =
     '<div class="msg-user">' +
-      '<button class="msg-replay" onclick="runPrompt(\'do\')" title="Replay">↻</button>' +
+      '<button class="msg-replay" onclick="runPrompt(\'do\')" title="Replay">' + SVG_REPLAY + '</button>' +
       '<span class="kind-tag">Do</span><br/>' +
       'Send follow-ups to all 6 overdue vendor items' +
     '</div>' +
@@ -315,9 +348,9 @@
         '</div>' +
         '<div class="chat-status-dot" title="Online"></div>' +
         '<div class="chat-tools" onclick="event.stopPropagation()">' +
-          '<button class="chat-tool-btn" id="btnReset" title="New conversation" onclick="resetConvo()">↺</button>' +
-          '<button class="chat-tool-btn" id="btnFloat" title="Float as window">⊞</button>' +
-          '<button class="chat-tool-btn" id="btnSlim"  title="Collapse">—</button>' +
+          '<button class="chat-tool-btn" id="btnReset" title="New conversation" onclick="resetConvo()">' + SVG_NEW + '</button>' +
+          '<button class="chat-tool-btn" id="btnFloat" title="Float as window">' + SVG_FLOAT + '</button>' +
+          '<button class="chat-tool-btn" id="btnSlim"  title="Collapse">' + SVG_FOLD + '</button>' +
         '</div>' +
       '</div>' +
       '<div class="chat-body" id="chatBody">' +
@@ -403,13 +436,13 @@
     var btnFloat = document.getElementById('btnFloat');
     if (btnSlim) {
       btnSlim.classList.toggle('active', mode === 'slim');
-      btnSlim.textContent = mode === 'slim' ? '→' : '—';
-      btnSlim.title       = mode === 'slim' ? 'Expand' : 'Collapse';
+      btnSlim.innerHTML = mode === 'slim' ? SVG_UNFOLD : SVG_FOLD;
+      btnSlim.title     = mode === 'slim' ? 'Expand' : 'Collapse';
     }
     if (btnFloat) {
       btnFloat.classList.toggle('active', mode === 'float');
-      btnFloat.textContent = mode === 'float' ? '⇲' : '⊞';
-      btnFloat.title       = mode === 'float' ? 'Dock to side' : 'Float as window';
+      btnFloat.innerHTML = mode === 'float' ? SVG_DOCK : SVG_FLOAT;
+      btnFloat.title     = mode === 'float' ? 'Dock to side' : 'Float as window';
     }
 
     if (persist && mode !== prev) lsWrite(LS_MODE, mode);

@@ -224,6 +224,18 @@
   .greeting { display: flex; flex-direction: column; gap: 24px; }
   .greeting-title-row { display: flex; align-items: center; gap: 12px; }
   .greeting-title-row img { width: 32px; height: 32px; object-fit: contain; }
+  .greeting-title-row .gclock {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px; font-weight: 500; color: #45556c;
+    letter-spacing: -0.1px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f6f6f6; border-radius: 999px; padding: 6px 12px;
+  }
+  .greeting-title-row .gclock::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: #15803d; box-shadow: 0 0 0 3px rgba(21,128,61,.18);
+  }
   h1.gtitle {
     font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400;
     color: #120b0b; line-height: 1.4;
@@ -780,7 +792,8 @@
     <div class="greeting">
       <div class="greeting-title-row">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 6v3 M16 23v3 M6 16h3 M23 16h3 M9.6 9.6l2.1 2.1 M20.3 20.3l2.1 2.1 M9.6 22.4l2.1-2.1 M20.3 11.7l2.1-2.1" stroke="#ff6900" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="16" r="4.5" fill="#ff6900"/></svg>
-        <h1 class="gtitle">Good morning, Sarah.</h1>
+        <h1 class="gtitle"><span data-wt-greeting>Good morning</span>, Sarah.</h1>
+        <span class="gclock" aria-label="Current Pacific time"><span data-wt-clock="full">Mon, Apr 28 · 6:42 AM PST</span></span>
       </div>
       <p class="gsub">I worked through <b>24 cases</b> overnight — about <b>3 hours</b> saved. <b>4 cases</b> are with you today. <a href="dashboard-brief.html" style="font-size:14px;font-weight:500;color:#ff6900;text-decoration:none;letter-spacing:-0.15px;white-space:nowrap;">Read full brief →</a></p>
 
@@ -1226,7 +1239,7 @@
                 <td class="td-vendor">Amazon Business</td>
                 <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Matched the PO and paid with the 2% early discount.</span></span></td>
-                <td class="td-due done">12:01 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 00:01" data-wt-fmt="time">12:01 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1019</td>
@@ -1235,7 +1248,7 @@
                 <td class="td-vendor">NorthStar Freight</td>
                 <td><span class="status-badge routing"><span class="sdot"></span>Routed</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Sent to S. Reed for sign-off.</span></span></td>
-                <td class="td-due done">12:03 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 00:03" data-wt-fmt="time">12:03 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr data-href="invoice-detail-duplicate.html">
                 <td class="td-inv">INV-1027</td>
@@ -1244,7 +1257,7 @@
                 <td class="td-vendor">Praxis Logistics</td>
                 <td><span class="status-badge waiting"><span class="sdot"></span>Duplicate held</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Held — already paid as INV-1024.</span></span></td>
-                <td class="td-due done">2:14 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 02:14" data-wt-fmt="time">2:14 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1044</td>
@@ -1253,7 +1266,7 @@
                 <td class="td-vendor">BetaCo</td>
                 <td><span class="status-badge done"><span class="sdot"></span>Verified</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Verified the vendor by callback.</span></span></td>
-                <td class="td-due done">4:48 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 04:48" data-wt-fmt="time">4:48 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1051</td>
@@ -1262,7 +1275,7 @@
                 <td class="td-vendor">Costco Wholesale</td>
                 <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Auto-paid on net-15 terms.</span></span></td>
-                <td class="td-due done">5:12 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 05:12" data-wt-fmt="time">5:12 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1063</td>
@@ -1271,7 +1284,7 @@
                 <td class="td-vendor">Office Depot</td>
                 <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Matched 3-way and paid.</span></span></td>
-                <td class="td-due done">5:34 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 05:34" data-wt-fmt="time">5:34 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1067</td>
@@ -1280,7 +1293,7 @@
                 <td class="td-vendor">Tetra Pak</td>
                 <td><span class="status-badge routing"><span class="sdot"></span>Routed</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Sent to D. Greene — your usual approver for this vendor.</span></span></td>
-                <td class="td-due done">5:51 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 05:51" data-wt-fmt="time">5:51 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1073</td>
@@ -1289,7 +1302,7 @@
                 <td class="td-vendor">Amazon Business</td>
                 <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Under $500 — auto-approved on net-30.</span></span></td>
-                <td class="td-due done">6:08 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 06:08" data-wt-fmt="time">6:08 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1080</td>
@@ -1298,7 +1311,7 @@
                 <td class="td-vendor">NorthStar Freight</td>
                 <td><span class="status-badge done"><span class="sdot"></span>Verified</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Confirmed vendor banking unchanged via lookup.</span></span></td>
-                <td class="td-due done">6:22 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 06:22" data-wt-fmt="time">6:22 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1086</td>
@@ -1307,7 +1320,7 @@
                 <td class="td-vendor">BetaCo</td>
                 <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Reused last month's coding from the same vendor.</span></span></td>
-                <td class="td-due done">6:47 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 06:47" data-wt-fmt="time">6:47 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1093</td>
@@ -1316,7 +1329,7 @@
                 <td class="td-vendor">Praxis Logistics</td>
                 <td><span class="status-badge routing"><span class="sdot"></span>Routed</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Sent to J. Park for sign-off.</span></span></td>
-                <td class="td-due done">7:03 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 07:03" data-wt-fmt="time">7:03 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1109</td>
@@ -1325,7 +1338,7 @@
                 <td class="td-vendor">Greenline Logistics</td>
                 <td><span class="status-badge done"><span class="sdot"></span>Paid</span></td>
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Standard freight charge — within $50 of your monthly average.</span></span></td>
-                <td class="td-due done">7:19 AM<span class="row-arrow">→</span></td>
+                <td class="td-due done"><span data-wt-time="today 07:19" data-wt-fmt="time">7:19 AM</span><span class="row-arrow">→</span></td>
               </tr>
             </tbody>
           </table>
@@ -1364,6 +1377,7 @@
 <link rel="stylesheet" href="witness-trace.css">
 <script src="witness-chat-panel.js"></script>
 <script src="witness-trace.js"></script>
+<script src="witness-time.js"></script>
 
 <script>
   /* ─────────── Sidebar collapse (reused) ─────────── */
