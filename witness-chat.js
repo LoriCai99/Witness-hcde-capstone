@@ -154,9 +154,9 @@
         '<div class="chat-tools"><button class="chat-tool-btn" id="btnFloat" title="Float as window">⊞</button><button class="chat-tool-btn" id="btnSlim" title="Collapse">—</button></div>' +
       '</div>' +
       '<div class="chat-body">' +
-        '<div class="msg agent"><span class="msg-author">Witness · 09:02</span><div class="msg-bubble">Morning, Maya. Your brief is ready above. The <strong>$47,820 payment batch</strong> is built — I will wait for your commit before the 2 PM ACH cutoff.</div></div>' +
+        '<div class="msg agent"><span class="msg-author">Witness · 09:02</span><div class="msg-bubble">Morning, Sarah. Your brief is ready above. The <strong>$47,820 payment batch</strong> is built — I will wait for your commit before the 2 PM ACH cutoff.</div></div>' +
         '<div class="msg agent"><span class="msg-author">Witness · 09:03</span><div class="msg-bubble">Heads up: <strong>D. Lee approval</strong> escalates at 10 AM unless you decide on it first.</div></div>' +
-        '<div class="msg user"><span class="msg-author">Maya</span><div class="msg-bubble">Pull up the BetaCo banking change. I want to verify before lunch.</div></div>' +
+        '<div class="msg user"><span class="msg-author">Sarah</span><div class="msg-bubble">Pull up the BetaCo banking change. I want to verify before lunch.</div></div>' +
         '<div class="msg agent"><span class="msg-author">Witness · just now</span><div class="msg-bubble">On it — routing change, old vs new account, source email, and callback template. <span class="link">Open panel</span></div></div>' +
       '</div>' +
       '<div class="chat-suggestions"><span class="suggestion-chip">Draft Acme reply</span><span class="suggestion-chip">Show critical path</span><span class="suggestion-chip">Why was BetaCo held?</span></div>' +

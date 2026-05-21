@@ -369,7 +369,7 @@
               <div class="node-hd">
                 <span class="node-type">Action</span>
               </div>
-              <div class="node-title">Send to Maya for approval</div>
+              <div class="node-title">Send to Sarah for approval</div>
               <div class="perm-toggle" data-target="approve_maya">
                 <button class="perm-opt active" data-perm="manual"><span class="pdot"></span>Manual</button>
                 <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
@@ -451,7 +451,7 @@
       title: 'Extract invoice data',
       desc: 'Witness AI parses the invoice file and pulls out the structured data: vendor, line items, amounts, due dates, and PO references.',
       aiCanDo: ['Read PDF and email attachments', 'Identify line items via OCR', 'Match vendor name against your directory', 'Detect currency and tax info'],
-      fallback: 'If extraction confidence is below 80% on any field, route to "Send to Maya" for manual review instead of continuing.',
+      fallback: 'If extraction confidence is below 80% on any field, route to "Send to Sarah" for manual review instead of continuing.',
     },
     match: {
       type: 'Action',
@@ -468,17 +468,17 @@
     },
     approve_maya: {
       type: 'Action',
-      title: 'Send to Maya for approval',
-      desc: 'Notify Maya in the Approvals queue. She must approve, reject, or request more info before payment is scheduled.',
+      title: 'Send to Sarah for approval',
+      desc: 'Notify Sarah in the Approvals queue. She must approve, reject, or request more info before payment is scheduled.',
       aiCanDo: ['Pre-fill the approval card with extracted data', 'Surface similar past approvals', 'Highlight unusual line items'],
-      fallback: 'If Maya is OOO or has not responded in 4 hours, escalate to her backup approver (set in Settings).',
+      fallback: 'If Sarah is OOO or has not responded in 4 hours, escalate to her backup approver (set in Settings).',
     },
     auto_approve: {
       type: 'Action',
       title: 'Auto-approve & schedule payment',
       desc: 'Mark the invoice as approved, schedule payment per the vendor\'s terms (Net 30 by default), and update NetSuite ERP.',
       aiCanDo: ['Approve the invoice', 'Schedule payment in your accounts payable system', 'Update NetSuite with status', 'Send a confirmation email to the vendor'],
-      fallback: 'If the ERP write fails, retry 3 times then escalate to Maya with the error details.',
+      fallback: 'If the ERP write fails, retry 3 times then escalate to Sarah with the error details.',
     },
     notify: {
       type: 'Action',
