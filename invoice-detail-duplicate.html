@@ -626,7 +626,7 @@
       <div class="page-hd">
         <div class="page-hd-left">
           <h1 class="ptitle">INV-1027 &nbsp;—&nbsp; Praxis Logistics</h1>
-          <div class="page-sub">Duplicate auto-held &nbsp;·&nbsp; PO-7718 &nbsp;·&nbsp; ERP &nbsp;·&nbsp; Detected Apr 28 · 2:14 AM</div>
+          <div class="page-sub">Duplicate auto-held &nbsp;·&nbsp; PO-7718 &nbsp;·&nbsp; ERP &nbsp;·&nbsp; Detected <span data-wt-time="today 02:14" data-wt-fmt="datetimeN">Apr 28 · 2:14 AM</span></div>
         </div>
         <div class="hd-actions">
           <div style="position:relative;display:inline-block;" class="approve-wrap">
@@ -681,7 +681,7 @@
       </div>
     </div>
     <div style="font-size:11px;color:#adadad;margin-top:-16px;padding-left:2px;">
-      Witness auto-held this at <strong style="color:#0b0d12;">2:14 AM</strong> — payment will not go out unless you override. Confirm the hold or release to AP queue. &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How was this detected?</span>
+      Witness auto-held this at <strong style="color:#0b0d12;"><span data-wt-time="today 02:14" data-wt-fmt="time">2:14 AM</span></strong> — payment will not go out unless you override. Confirm the hold or release to AP queue. &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How was this detected?</span>
     </div>
 
     <!-- ─── AI INSIGHT BANNER — signal evidence (not $ amounts) ─── -->
@@ -802,7 +802,7 @@
               <div class="tl-content" onclick="toggleStep(this)">
                 <div class="tl-main-row">
                   <div><div class="tl-step-name">INV-1027 arrived · vendor portal · same PO &amp; total</div></div>
-                  <div class="tl-step-right"><div class="tl-time">Apr 28 · 2:13 AM</div></div>
+                  <div class="tl-step-right"><div class="tl-time" data-wt-time="today 02:13" data-wt-fmt="datetimeN">Apr 28 · 2:13 AM</div></div>
                 </div>
               </div>
             </div>
@@ -848,7 +848,7 @@
                   </div>
                   <div class="tl-step-right">
                     <span class="src-chip src-witness"><span class="src-dot"></span>Witness AI</span>
-                    <div class="tl-time">Apr 28 · 2:14 AM</div>
+                    <div class="tl-time" data-wt-time="today 02:14" data-wt-fmt="datetimeN">Apr 28 · 2:14 AM</div>
                   </div>
                 </div>
                 <div class="tl-expanded open">
@@ -1041,7 +1041,7 @@
                 <div class="ms-card-title">
                   <span style="font-size:15px">📄</span> Source documents
                 </div>
-                <span style="font-size:11px;color:#adadad;">Apr 28 · 2:14 AM · 98% confidence · 0.3s</span>
+                <span style="font-size:11px;color:#adadad;"><span data-wt-time="today 02:14" data-wt-fmt="datetimeN">Apr 28 · 2:14 AM</span> · 98% confidence · 0.3s</span>
               </div>
               <table class="ms-table">
                 <thead><tr><th>Document</th><th>Source</th><th>Key fields extracted</th></tr></thead>
@@ -1176,7 +1176,7 @@
                 <div class="cm-meta">
                   <span class="cm-author">Witness AI</span>
                   <span class="cm-role">Automated detection</span>
-                  <span class="cm-time">Apr 28 · 2:14 AM</span>
+                  <span class="cm-time" data-wt-time="today 02:14" data-wt-fmt="datetimeN">Apr 28 · 2:14 AM</span>
                 </div>
                 <div class="cm-text ai">
                   Held INV-1027 as a likely duplicate of <strong>INV-1024</strong> (paid Apr 26 via ACH). 6 of 7 signals match — PO-7718, shipment SHP-2241, total $890.40, tax, vendor, bill-to. Only the invoice number and submission channel differ. PO-7718 is already marked fully invoiced. <strong>Action taken:</strong> removed from AP queue; no payment routed. Awaiting your confirmation to notify Praxis.
@@ -1201,7 +1201,7 @@
                 <div class="cm-meta">
                   <span class="cm-author">Witness AI</span>
                   <span class="cm-role">Pattern note</span>
-                  <span class="cm-time">Apr 28 · 2:15 AM</span>
+                  <span class="cm-time" data-wt-time="today 02:15" data-wt-fmt="datetimeN">Apr 28 · 2:15 AM</span>
                 </div>
                 <div class="cm-text ai">
                   This is the 3rd duplicate from Praxis Logistics in 12 months. In the prior 2 cases (Aug 2024, Jan 2025), the vendor confirmed billing-system re-emission within 24h and retracted. No disputes, no escalation. Avg recovery: $820. <strong>Suggested:</strong> confirm hold and send the pre-drafted retract request — same script that worked the last two times.
@@ -1267,5 +1267,6 @@
 
 <link rel="stylesheet" href="witness-chat-panel.css">
 <script src="witness-chat-panel.js"></script>
+<script src="witness-time.js"></script>
 </body>
 </html>

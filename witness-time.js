@@ -32,6 +32,7 @@
 */
 (function () {
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MONTHS_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const WEEKDAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const WEEKDAYS_LONG  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
@@ -112,6 +113,11 @@
       case 'daylabel':  return fmtDayLabel(d);
       case 'pst':       return `${fmtTime(d, false)} PST`;
       case 'full':      return `${WEEKDAYS_LONG[d.getDay()]}, ${fmtDate(d)} · ${fmtTime(d, false)} PST`;
+      case 'topbar':    return `${WEEKDAYS_LONG[d.getDay()]}  ·  ${MONTHS_LONG[d.getMonth()]} ${d.getDate()}  ·  ${d.getFullYear()}  ·  ${fmtTime(d, true)}`;
+      case 'longdate':  return `${MONTHS_LONG[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+      case 'longdatetime': return `${MONTHS_LONG[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} · ${fmtTime(d, false)}`;
+      case 'longdatetime2': return `${MONTHS_LONG[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} · ${fmtTime(d, true)}`;
+      case 'fullbrief':     return `${WEEKDAYS_LONG[d.getDay()]} · ${MONTHS_LONG[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
       default:          return fmtTime(d, false);
     }
   }
@@ -122,6 +128,99 @@
     if (h < 12) return 'Good morning';
     if (h < 18) return 'Good afternoon';
     return 'Good evening';
+  }
+
+  // Re-anchor any "Mon DD" or "Mon DD, 2025" date that appears in prose / attributes
+  // The prototype's narrative date is Apr 28, 2025 → today. Other dates shift by the
+  // same offset (Apr 27 → yesterday, Apr 15 → 13 days ago, May 1 → 3 days from today, …).
+  const ANCHOR = new Date(2025, 3, 28); // Apr 28, 2025
+  const MONTH_RE = /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2})(,\s*2025)?\b/g;
+
+  function shiftedTarget(monIdx, day) {
+    const orig = new Date(2025, monIdx, day);
+    const diffDays = Math.round((orig - ANCHOR) / (24 * 3600 * 1000));
+    const target = new Date(pstNow());
+    target.setHours(0, 0, 0, 0);
+    target.setDate(target.getDate() + diffDays);
+    return target;
+  }
+
+  function rewriteDateText(s) {
+    if (!s || s.indexOf(' ') === -1) return s;
+    return s.replace(MONTH_RE, (m, mon, day, yearPart) => {
+      const monIdx = MONTHS.indexOf(mon);
+      if (monIdx < 0) return m;
+      const t = shiftedTarget(monIdx, +day);
+      return yearPart
+        ? `${MONTHS[t.getMonth()]} ${t.getDate()}, ${t.getFullYear()}`
+        : `${MONTHS[t.getMonth()]} ${t.getDate()}`;
+    });
+  }
+
+  const REWRITE_ATTRS = [
+    'data-trace-fields',
+    'data-trace-captured',
+    'data-revert-undos',
+    'data-revert-title',
+    'data-revert-note',
+    'aria-label',
+    'title'
+  ];
+
+  // Cache original attribute values so re-renders are idempotent
+  function snapshotAttr(el, name) {
+    const key = `__wt_orig_${name}`;
+    if (!(key in el.dataset)) {
+      el.dataset[key] = el.getAttribute(name) || '';
+    }
+    return el.dataset[key];
+  }
+
+  function rewriteAttributes() {
+    REWRITE_ATTRS.forEach(attr => {
+      document.querySelectorAll('[' + attr + ']').forEach(el => {
+        const orig = snapshotAttr(el, attr);
+        const next = rewriteDateText(orig);
+        if (next !== orig) el.setAttribute(attr, next);
+      });
+    });
+  }
+
+  // Rewrite text-node dates across the document. Walks once, caches originals,
+  // so day-rollover re-renders against the unmodified text (no compounding drift).
+  let cachedNodes = null;
+  const SEARCH_RE = new RegExp(MONTH_RE.source); // non-global copy for .test()
+
+  function collectTextNodes() {
+    const roots = document.querySelectorAll('[data-wt-rewrite-dates]');
+    const scope = roots.length ? Array.from(roots) : [document.body];
+    const nodes = [];
+    scope.forEach(root => {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          if (parent.closest('[data-wt-time], [data-wt-day], [data-wt-clock], script, style')) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          return SEARCH_RE.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      let node;
+      while ((node = walker.nextNode())) {
+        nodes.push({ node, orig: node.nodeValue });
+      }
+    });
+    cachedNodes = nodes;
+  }
+
+  function rewriteTextNodes() {
+    if (!cachedNodes) collectTextNodes();
+    cachedNodes.forEach(({ node, orig }) => {
+      MONTH_RE.lastIndex = 0;
+      const next = rewriteDateText(orig);
+      if (next !== node.nodeValue) node.nodeValue = next;
+    });
   }
 
   function renderAll() {
@@ -149,6 +248,9 @@
       const fmt = el.getAttribute('data-wt-clock') || 'pst';
       el.textContent = format(pstNow(), fmt);
     });
+
+    rewriteAttributes();
+    rewriteTextNodes();
   }
 
   function start() {

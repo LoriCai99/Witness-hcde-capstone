@@ -921,10 +921,10 @@
 
       <!-- ZONE 1 — Date + Witness's Brief -->
       <div class="date-row">
-        <span>Tuesday · March 11, 2026</span>
+        <span data-wt-clock="fullbrief">Tuesday · March 11, 2026</span>
         <span class="witness-tag">
           <span class="live-dot"></span>
-          Witness · drafted 9:02 AM
+          Witness · drafted <span data-wt-time="today 09:02" data-wt-fmt="time">9:02 AM</span>
         </span>
       </div>
 
@@ -1116,7 +1116,7 @@
           <div class="agent-split">
             <div>
               <div class="agent-row-label">Right now</div>
-              <div class="agent-row-text">Tracking 5 pending approvals. Next scheduled nudge: 10:30 AM.</div>
+              <div class="agent-row-text">Tracking 5 pending approvals. Next scheduled nudge: <span data-wt-time="today 10:30" data-wt-fmt="time">10:30 AM</span>.</div>
             </div>
             <div>
               <div class="agent-row-label">I need you to</div>
@@ -1245,7 +1245,7 @@
         <div class="critical-row">
           <div class="critical-time">
             <span class="by">by</span>
-            <strong class="urgent">10:00 AM</strong>
+            <strong class="urgent" data-wt-time="today 10:00" data-wt-fmt="time">10:00 AM</strong>
             <span>~2 hrs left</span>
           </div>
           <div class="critical-body">
@@ -1264,7 +1264,7 @@
         <div class="critical-row">
           <div class="critical-time">
             <span class="by">by</span>
-            <strong>12:00 PM</strong>
+            <strong data-wt-time="today 12:00" data-wt-fmt="time">12:00 PM</strong>
             <span>~4 hrs left</span>
           </div>
           <div class="critical-body">
@@ -1283,7 +1283,7 @@
         <div class="critical-row">
           <div class="critical-time">
             <span class="by">by</span>
-            <strong class="urgent">2:00 PM</strong>
+            <strong class="urgent" data-wt-time="today 14:00" data-wt-fmt="time">2:00 PM</strong>
             <span>ACH cutoff</span>
           </div>
           <div class="critical-body">
@@ -1482,5 +1482,6 @@
 
 <link rel="stylesheet" href="witness-chat-panel.css">
 <script src="witness-chat-panel.js"></script>
+<script src="witness-time.js"></script>
 </body>
 </html>
