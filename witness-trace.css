@@ -48,7 +48,7 @@
 .wt-pop-eyebrow {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
-  text-transform: uppercase; color: #45556c;
+  color: #45556c;
   display: flex; align-items: center; gap: 6px;
 }
 .wt-pop-eyebrow.src { color: #155dfc; }
@@ -90,7 +90,7 @@
 .wt-pop-row .k {
   color: #adadad; font-weight: 500;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em;
+  font-size: 10.5px; letter-spacing: 0.04em;
   flex-shrink: 0;
 }
 .wt-pop-row .v { color: #0b0d12; font-weight: 500; text-align: right; }
@@ -137,7 +137,7 @@
 .wt-prov-label {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
-  text-transform: uppercase;
+  
   margin-bottom: 6px;
   display: flex; align-items: center; gap: 6px;
 }
@@ -227,7 +227,7 @@
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 10px; font-weight: 700;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
+  
   padding: 3px 8px 3px 6px;
   border-radius: 6px;
   background: #fff5f0;
@@ -275,7 +275,7 @@
   display: inline-flex; align-items: center; gap: 4px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 9px; font-weight: 700;
-  letter-spacing: 0.04em; text-transform: uppercase;
+  letter-spacing: 0.04em; 
   padding: 4px 8px 4px 7px;
   background: #fff5f0;
   color: #d95b03;
@@ -313,7 +313,7 @@
   display: inline-flex; align-items: center; gap: 4px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 9px; font-weight: 700;
-  letter-spacing: 0.04em; text-transform: uppercase;
+  letter-spacing: 0.04em; 
   padding: 2px 7px;
   border-radius: 4px;
   background: #f4f4f4;
@@ -350,7 +350,7 @@
 .wt-modal-eyebrow {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-  text-transform: uppercase; color: #b91c1c;
+  color: #b91c1c;
   display: flex; align-items: center; gap: 6px;
   margin-bottom: 6px;
 }
@@ -364,7 +364,7 @@
 .wt-modal-section-label {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 10px; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
+  letter-spacing: 0.08em; 
   color: #45556c;
   margin-bottom: 8px;
 }

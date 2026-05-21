@@ -32,16 +32,19 @@
       '<div class="empty-chips-row" role="list" aria-label="Suggested modes">' +
         '<button class="empty-chip" type="button" role="listitem" data-kind="ask"' +
                 ' data-prompt="Where is INV-1048 in the approval chain?">' +
-          '<span class="empty-chip-title">Assist</span>' +
+          '<span class="empty-chip-icon ask">?</span>' +
+          '<span class="empty-chip-title">Ask</span>' +
           '<span class="empty-chip-sub">info</span>' +
         '</button>' +
         '<button class="empty-chip" type="button" role="listitem" data-kind="think"' +
                 ' data-prompt="How should I handle the Brightline backlog?">' +
+          '<span class="empty-chip-icon think">◇</span>' +
           '<span class="empty-chip-title">Suggest</span>' +
           '<span class="empty-chip-sub">action</span>' +
         '</button>' +
         '<button class="empty-chip" type="button" role="listitem" data-kind="do"' +
                 ' data-prompt="Send follow-ups to all 6 overdue vendor items">' +
+          '<span class="empty-chip-icon do">⚡</span>' +
           '<span class="empty-chip-title">Do</span>' +
           '<span class="empty-chip-sub">review</span>' +
         '</button>' +
@@ -100,7 +103,7 @@
   var TPL_THINK_HTML =
     '<div class="msg-user">' +
       '<button class="msg-replay" onclick="runPrompt(\'think\')" title="Replay">↻</button>' +
-      '<span class="kind-tag">Think</span><br/>' +
+      '<span class="kind-tag">Suggest</span><br/>' +
       'How should I handle the Brightline backlog?' +
     '</div>' +
     '<div class="msg-agent">' +
@@ -324,9 +327,18 @@
       '<div class="chat-bottom-prompts" id="bottomPrompts" style="display:none;">' +
         '<div class="bp-label">Try another mode</div>' +
         '<div class="bp-row">' +
-          '<button class="bp-chip ask"   onclick="runPrompt(\'ask\')">  <span class="m">?</span><span class="lbl">Ask</span>  </button>' +
-          '<button class="bp-chip think" onclick="runPrompt(\'think\')"><span class="m">◇</span><span class="lbl">Think</span></button>' +
-          '<button class="bp-chip do"    onclick="runPrompt(\'do\')">   <span class="m">⚡</span><span class="lbl">Do</span>   </button>' +
+          '<button class="bp-chip ask"   type="button" data-kind="ask"' +
+                  ' data-prompt="Where is INV-1048 in the approval chain?">' +
+            '<span class="m">?</span><span class="lbl">Ask</span>' +
+          '</button>' +
+          '<button class="bp-chip think" type="button" data-kind="think"' +
+                  ' data-prompt="How should I handle the Brightline backlog?">' +
+            '<span class="m">◇</span><span class="lbl">Suggest</span>' +
+          '</button>' +
+          '<button class="bp-chip do"    type="button" data-kind="do"' +
+                  ' data-prompt="Send follow-ups to all 6 overdue vendor items">' +
+            '<span class="m">⚡</span><span class="lbl">Do</span>' +
+          '</button>' +
         '</div>' +
       '</div>' +
       '<div class="chat-foot">' +
@@ -835,22 +847,28 @@
     var sendBtn = document.querySelector('.send-btn');
     if (!input || !sendBtn) return;
 
-    // Chip click behavior differs by autonomy mode:
-    //   Assist (ask)   → prefill the input; the user reads and presses send.
-    //                    Reflects "user asks a question."
-    //   Suggest/Do     → fire immediately; the agent initiates, no user text.
-    //                    Reflects "agent surfaces a recommendation / has done X."
-    var chips = document.querySelectorAll('.empty-chip[data-kind]');
+    // Chip click behavior differs by autonomy mode (same rule in BOTH the
+    // empty-state chips and the "Try another mode" bottom-prompts row):
+    //   Ask         → prefill the input; the user reads/edits and presses send.
+    //                 Reflects "user asks a question."
+    //   Suggest/Do  → fire immediately; the agent initiates, no user text.
+    //                 Reflects "agent surfaces a recommendation / has done X."
+    window.runChip = function runChip(kind, prompt) {
+      if (document.body.getAttribute('data-chat') === 'slim') setChatMode('rail');
+      if (kind === 'ask') {
+        input.value = prompt || '';
+        input.setAttribute('data-kind', kind);
+        input.focus();
+      } else if (typeof window.runPrompt === 'function') {
+        window.runPrompt(kind);
+      }
+    };
+
+    var chips = document.querySelectorAll('.empty-chip[data-kind], .bp-chip[data-kind]');
     Array.prototype.forEach.call(chips, function (chip) {
-      chip.addEventListener('click', function () {
-        var kind = chip.getAttribute('data-kind');
-        if (kind === 'ask') {
-          input.value = chip.getAttribute('data-prompt') || '';
-          input.setAttribute('data-kind', kind);
-          input.focus();
-        } else if (typeof window.runPrompt === 'function') {
-          window.runPrompt(kind);
-        }
+      chip.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.runChip(chip.getAttribute('data-kind'), chip.getAttribute('data-prompt') || '');
       });
     });
 

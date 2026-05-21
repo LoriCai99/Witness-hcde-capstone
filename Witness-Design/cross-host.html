@@ -74,8 +74,8 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
 .page-sub { font-size: 14px; color: var(--color-cool-grey); line-height: 1.5; max-width: 640px; }
 .page-sub b { color: var(--color-black); font-weight: 600; }
 
-/* ── HOST TABS ── */
-.host-tabs { display: flex; gap: 8px; padding: 6px; background: var(--color-grey); border: 1px solid var(--color-lotion); border-radius: 12px; align-self: flex-start; }
+/* ── HOST TABS / scrubber (sticky anchor nav) ── */
+.host-tabs { display: flex; gap: 8px; padding: 6px; background: rgba(244,244,244,0.94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--color-lotion); border-radius: 12px; align-self: flex-start; position: sticky; top: 80px; z-index: 9; }
 .host-tab { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--color-cool-grey); background: transparent; border: none; cursor: pointer; font-family: var(--font-body); transition: all .15s; }
 .host-tab:hover { color: var(--color-black); }
 .host-tab.active { background: var(--color-white); color: var(--color-black); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
@@ -95,9 +95,10 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
 .context-value b { font-weight: 600; }
 
 /* ── SCENARIO STAGE ── */
-.scenario { display: none; }
-.scenario.active { display: block; }
+.scenario { display: block; scroll-margin-top: 140px; }
+.scenario + .scenario { margin-top: 56px; }
 .stage { background: var(--color-grey); border: 1px solid var(--color-lotion); border-radius: 14px; padding: 20px; }
+.stage-meta-right { display: flex; align-items: center; gap: 12px; }
 .stage-meta { display: flex; align-items: center; justify-content: space-between; padding: 0 4px 16px; }
 .stage-meta-left { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--color-cool-grey); }
 .stage-pill { font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; background: white; border: 1px solid var(--color-lotion); border-radius: 999px; color: var(--color-cool-grey); }
@@ -107,7 +108,7 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
    WITNESS CARD — universal, host-agnostic
 ═══════════════════════════════════════════ */
 .witness-card { background: white; border: 1px solid var(--color-lotion); border-radius: 12px; overflow: hidden; font-family: var(--font-body); position: relative; }
-.witness-card .wc-stripe { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--color-orange) 0%, var(--color-yellow) 50%, var(--color-blue) 100%); }
+.witness-card .wc-stripe { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--color-orange) 0%, var(--color-yellow) 50%, var(--color-blue) 100%); opacity: 0.9; }
 .wc-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--color-lotion); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .wc-header-left { display: flex; align-items: center; gap: 10px; }
 .wc-mark { width: 28px; height: 28px; background: var(--color-black); color: white; border-radius: 8px; display: grid; place-items: center; font-family: var(--font-display); font-style: italic; font-size: 15px; flex-shrink: 0; }
@@ -161,9 +162,21 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
 .wc-btn.accent { background: var(--color-orange); color: white; border-color: var(--color-orange); }
 .wc-btn.accent:hover { background: #e54f12; }
 
-.wc-footer { padding: 12px 20px; background: var(--color-grey); border-top: 1px solid var(--color-lotion); font-family: var(--font-mono); font-size: 11px; color: var(--color-cool-grey); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.wc-footer { padding: 12px 20px; background: var(--color-grey); border-top: 1px solid var(--color-lotion); font-family: var(--font-mono); font-size: 11px; color: var(--color-cool-grey); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
 .wc-protocol { display: inline-flex; align-items: center; gap: 6px; }
 .wc-protocol::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--color-success-500); }
+
+/* Expandable MCP sources */
+.wc-sources { flex: 1; min-width: 0; }
+.wc-sources summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 4px; outline: none; user-select: none; }
+.wc-sources summary::-webkit-details-marker { display: none; }
+.wc-sources summary::after { content: '▸'; font-size: 8px; color: var(--color-dark-grey); transition: transform .2s; margin-left: 2px; }
+.wc-sources[open] summary::after { transform: rotate(90deg); }
+.wc-sources summary:hover { color: var(--color-black); }
+.wc-sources-list { list-style: none; padding: 10px 0 2px; margin: 10px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; border-top: 1px dashed var(--color-lotion); }
+.wc-sources-list li { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10.5px; color: var(--color-cool-grey); line-height: 1.4; }
+.wc-sources-list li::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--color-orange); flex-shrink: 0; }
+.wc-sources-list b { color: var(--color-black); font-weight: 600; }
 
 /* ═══════════════════════════════════════════
    HOST 1 — AMAZON BUSINESS
@@ -206,8 +219,10 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
 .host-amazon .ab-banner { font-size: 12px; line-height: 1.55; color: var(--color-pending-1000); padding: 12px 14px; background: var(--color-pending-100); border-radius: 6px; border-left: 3px solid var(--color-pending-500); margin-top: 14px; }
 .host-amazon .ab-banner b { font-weight: 700; }
 
-/* Side panel (host AI assistant) */
-.host-amazon .ab-side { background: white; border: 1px solid #d5d9d9; border-radius: 8px; display: flex; flex-direction: column; max-height: 760px; }
+/* Side panel — floating assistant (Amazon's real assistant is a popover) */
+.host-amazon .ab-content { gap: 24px; }
+.host-amazon .ab-side { background: white; border: 1px solid rgba(0,0,0,0.04); border-radius: 14px; display: flex; flex-direction: column; max-height: 760px; box-shadow: 0 12px 32px rgba(15,23,42,0.10), 0 2px 8px rgba(15,23,42,0.06); position: relative; align-self: flex-start; }
+.host-amazon .ab-side::before { content: ''; position: absolute; top: -10px; right: 22px; width: 36px; height: 4px; background: #ff9900; border-radius: 0 0 2px 2px; opacity: 0.85; }
 .host-amazon .ab-side-h { padding: 14px 16px; border-bottom: 1px solid #d5d9d9; display: flex; align-items: center; gap: 10px; background: linear-gradient(180deg, #fff6e6 0%, #ffffff 100%); }
 .host-amazon .ab-side-icon { width: 24px; height: 24px; background: #ff9900; color: white; border-radius: 6px; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
 .host-amazon .ab-side-title { font-size: 13.5px; font-weight: 600; color: #0f1111; }
@@ -259,7 +274,10 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
 /* ═══════════════════════════════════════════
    HOST 3 — WALMART
 ═══════════════════════════════════════════ */
-.host-walmart .wm-bar { background: #0071dc; color: white; padding: 12px 20px; display: flex; align-items: center; gap: 14px; }
+.host-walmart { position: relative; border: 1px solid #2a2a2a; background: #1a1a1a; padding: 12px; border-radius: 22px; box-shadow: 0 18px 48px rgba(0,0,0,0.18); max-width: 940px; margin: 0 auto; }
+.host-walmart::before { content: ''; position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 64px; height: 3px; background: #2a2a2a; border-radius: 2px; z-index: 2; }
+.host-walmart .wm-bar { background: #0071dc; color: white; padding: 12px 20px; display: flex; align-items: center; gap: 14px; border-radius: 12px 12px 0 0; }
+.host-walmart .wm-content { border-radius: 0 0 12px 12px; }
 .host-walmart .wm-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
 .host-walmart .wm-spark { font-size: 18px; color: #ffc220; }
 .host-walmart .wm-biz { font-size: 10px; text-transform: uppercase; background: #ffc220; color: #004f9a; padding: 2px 7px; border-radius: 4px; font-weight: 700; letter-spacing: 0.05em; }
@@ -324,6 +342,115 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
 .flag-tag { display: inline-block; font-size: 10px; background: var(--color-pending-100); color: var(--color-pending-1000); padding: 3px 7px; border-radius: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .suggest-chip { display: inline-block; padding: 5px 12px; background: white; border: 1px solid var(--color-blue); color: var(--color-blue); border-radius: 999px; font-size: 11.5px; cursor: pointer; margin: 2px 4px 2px 0; font-weight: 500; }
 .suggest-chip:hover { background: var(--color-blue-sky); }
+
+/* ═══════════════════════════════════════════
+   PACED REVEAL — one-at-a-time chat playback
+═══════════════════════════════════════════ */
+[data-scene] > [data-role] {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .45s ease, transform .45s ease;
+  will-change: opacity, transform;
+}
+[data-scene] > [data-role].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Typing indicator (3 pulsing dots) */
+.typing-indicator-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  background: #f3f4f5;
+  border-radius: 14px 14px 14px 4px;
+  width: fit-content;
+  align-self: flex-start;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .25s ease, transform .25s ease;
+}
+.typing-indicator-live.is-revealed { opacity: 1; transform: translateY(0); }
+.typing-indicator-live span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-cool-grey);
+  animation: typing-pulse 1.3s infinite ease-in-out;
+}
+.typing-indicator-live span:nth-child(2) { animation-delay: 0.15s; }
+.typing-indicator-live span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typing-pulse {
+  0%, 60%, 100% { opacity: 0.35; transform: scale(1); }
+  30% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Host-specific typing variants */
+.host-sap .typing-indicator-live { background: #f5f6f7; border-radius: 6px; }
+.host-walmart .typing-indicator-live { background: #f5f6f8; }
+.host-claude .typing-indicator-live { background: rgba(204,120,92,0.08); border-radius: 12px; }
+
+/* Tool chip — "calling witness.mcp" */
+.tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-orange-glare);
+  border: 1px solid var(--color-orange-touch);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-cool-grey);
+  width: fit-content;
+  line-height: 1.4;
+}
+.tool-chip .spinner {
+  width: 12px; height: 12px;
+  border: 1.5px solid rgba(255,92,27,0.25);
+  border-top-color: var(--color-orange);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  flex-shrink: 0;
+}
+.tool-chip .check {
+  width: 12px; height: 12px;
+  display: none;
+  flex-shrink: 0;
+  color: var(--color-success-500);
+}
+.tool-chip .label-complete { display: none; }
+.tool-chip.tool-chip--complete .spinner { display: none; }
+.tool-chip.tool-chip--complete .check { display: inline-block; }
+.tool-chip.tool-chip--complete .label-consulting { display: none; }
+.tool-chip.tool-chip--complete .label-complete { display: inline; }
+.tool-chip .server-name { color: var(--color-black); font-weight: 600; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Host-specific tool chip tweaks */
+.host-sap .tool-chip { border-radius: 4px; background: #f5f6f7; border-color: #d9d9d9; }
+.host-walmart .tool-chip { border-radius: 10px; }
+.host-claude .tool-chip { background: rgba(204,120,92,0.06); border-color: rgba(204,120,92,0.2); }
+
+/* Replay button on the stage meta */
+.replay-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: white;
+  border: 1px solid var(--color-lotion);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-cool-grey);
+  cursor: pointer;
+  transition: all .15s;
+}
+.replay-btn:hover { background: var(--color-grey); color: var(--color-black); border-color: var(--border-md); }
+.replay-btn svg { width: 11px; height: 11px; }
+.replay-btn[data-playing="true"] { opacity: 0.5; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -397,7 +524,6 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
       <span class="here">MCP Cross-Host</span>
     </div>
     <div class="topbar-right">
-      <div class="health-chip"><span class="dot"></span><span>All systems healthy</span></div>
       <div class="avatar">MC</div>
     </div>
   </header>
@@ -429,15 +555,15 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
       <div class="context-bar">
         <div class="context-block">
           <div class="context-label">User attention</div>
-          <div class="context-value">Looking at the <b>invoice itself</b> in Amazon Business. They have one half of the truth — what was ordered &amp; delivered through Amazon — but not the ERP-side PO context or warehouse receipt confirmation.</div>
+          <div class="context-value">Looking at the <b>invoice in Amazon Business</b> — half the truth, no PO or warehouse view.</div>
         </div>
         <div class="context-block">
           <div class="context-label">What Witness adds</div>
-          <div class="context-value"><b>Horizontal completion</b> — "you're seeing one side; here's what the other systems are saying about the same line items."</div>
+          <div class="context-value"><b>Horizontal completion</b> — what the other systems say about the same line items.</div>
         </div>
         <div class="context-block">
           <div class="context-label">Visual contract</div>
-          <div class="context-value">Witness sits inside Amazon's existing AI Assistant sidebar. The card uses Witness's own brand language — <b>Playfair</b> title, <b>orange-to-blue stripe</b>, <b>black mark</b> — so it's recognizably <em>not Amazon</em>.</div>
+          <div class="context-value">Lives <em>inside</em> Amazon's AI sidebar but is visibly its own — Playfair title, brand stripe, black mark.</div>
         </div>
       </div>
 
@@ -508,25 +634,32 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
                 </div>
               </div>
 
-              <div class="ab-chat">
-                <div class="ab-msg-user">Why is INV-99281 held?</div>
+              <div class="ab-chat" data-scene data-host="amazon">
+                <div class="ab-msg-user" data-role="user">Why is INV-99281 held?</div>
 
-                <div class="ab-msg-ai">
+                <div class="ab-msg-ai" data-role="ai" data-pre="1400">
                   <div class="tag">Amazon Business Assistant</div>
                   I can show you the invoice on my side — 100 units of HP 9000 paper at $14.20, billed by Acme on Apr 24. But the hold isn't from us; it came from your AP team because the PO (in NetSuite) and the warehouse receipt don't agree with what's billed. Want me to ask <b>Witness</b> to assemble the cross-system view?
                 </div>
 
-                <div class="ab-msg-user">Yes, ask Witness.</div>
+                <div class="ab-msg-user" data-role="user" data-after="200">Yes, ask Witness.</div>
+
+                <div class="tool-chip" data-role="tool" data-pre="1500">
+                  <span class="spinner"></span>
+                  <svg class="check" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="label-consulting">Consulting <span class="server-name">witness.mcp</span> · 4 servers…</span>
+                  <span class="label-complete"><span class="server-name">witness.mcp</span> · 4 servers · sealed</span>
+                </div>
 
                 <!-- ─── WITNESS CARD ─── -->
-                <div class="witness-card">
+                <div class="witness-card" data-role="witness" data-after="600">
                   <div class="wc-stripe"></div>
                   <div class="wc-header">
                     <div class="wc-header-left">
                       <div class="wc-mark">W</div>
                       <div>
                         <div class="wc-title">3-Way Match · INV-99281</div>
-                        <div class="wc-subtitle">Sealed evidence · 11 nodes · 4 servers consulted</div>
+                        <div class="wc-subtitle">Sealed evidence · 4 servers consulted</div>
                       </div>
                     </div>
                     <div class="wc-id">wtn::99281::v1</div>
@@ -580,19 +713,27 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
                     </div>
 
                     <div class="wc-actions">
-                      <button class="wc-btn primary">Open evidence tree</button>
-                      <button class="wc-btn">File marketplace dispute</button>
+                      <button class="wc-btn accent">File marketplace dispute</button>
                       <button class="wc-btn">Send to AP analyst</button>
+                      <button class="wc-btn">Open evidence tree</button>
                     </div>
                   </div>
                   <div class="wc-footer">
-                    <span class="wc-protocol">via MCP</span>
-                    <span>witness.mcp · sealed 14:23:12 UTC</span>
+                    <details class="wc-sources">
+                      <summary><span class="wc-protocol">via MCP · 4 sources</span></summary>
+                      <ul class="wc-sources-list">
+                        <li><b>amazon-business</b> · INV-99281</li>
+                        <li><b>netsuite</b> · PO-44871</li>
+                        <li><b>carrier-api</b> · POD scan</li>
+                        <li><b>warehouse</b> · receipt log</li>
+                      </ul>
+                    </details>
+                    <span>sealed 14:23:12 UTC</span>
                   </div>
                 </div>
                 <!-- ─── END WITNESS CARD ─── -->
 
-                <div class="ab-msg-ai">
+                <div class="ab-msg-ai" data-role="ai" data-pre="1200">
                   <div class="tag">Amazon Business Assistant</div>
                   I can also <span class="suggest-chip">file a partial-shipment claim</span> on Amazon's side for the 4 short units while AP investigates the $0.20 price gap. Want me to draft that?
                 </div>
@@ -607,12 +748,9 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
         </div>
 
         <div class="scenario-caption">
-          <div class="cap-title">What this Amazon Business mock is showing</div>
           <ul>
-            <li>Amazon Business Assistant <b>does not pretend</b> to know what's in NetSuite or the warehouse. It says "I can show you my side… would you like me to ask Witness?" — the honest split of authority.</li>
-            <li>The Witness card sits <b>inside Amazon's chat sidebar</b>. In the user's mental model: "Witness gave the cross-system answer right where I was looking at the invoice."</li>
-            <li>The <code>via MCP</code> footer is small but deliberate — it's the <b>protocol-level signature</b> proving the response really is from Witness, not Amazon Business reskinning a Witness response.</li>
-            <li>Three layers of authorship in the actions: <b>"Open evidence tree"</b> goes to full Witness, <b>"File marketplace dispute"</b> is an Amazon-native action Witness suggests but Amazon executes, <b>"Send to AP analyst"</b> is a human handoff.</li>
+            <li>Amazon's assistant <b>doesn't pretend</b> to know what's in NetSuite or the warehouse — it routes to Witness for the cross-system view. Honest split of authority.</li>
+            <li>Actions span three layers of authorship: <b>marketplace dispute</b> (Amazon executes), <b>send to AP analyst</b> (human handoff), <b>open evidence tree</b> (jump to Witness).</li>
           </ul>
         </div>
       </div>
@@ -624,15 +762,15 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
       <div class="context-bar">
         <div class="context-block">
           <div class="context-label">User attention</div>
-          <div class="context-value">Procurement specialist or AP analyst working in <b>SAP S/4HANA Fiori</b>, looking at the PO and the GR record. ERP shows quantity received but <b>not</b> the marketplace order details, carrier proof, or vendor history.</div>
+          <div class="context-value">AP analyst in <b>SAP S/4HANA</b>, looking at the PO + GR. ERP knows quantity received, not the marketplace or carrier.</div>
         </div>
         <div class="context-block">
           <div class="context-label">What Witness adds</div>
-          <div class="context-value"><b>Outside-the-walls perspective</b> — "your PO and GR are accurate, but the marketplace, carrier, and vendor reputation tell a more complete story."</div>
+          <div class="context-value"><b>Outside-the-walls perspective</b> — marketplace, carrier proof, and vendor history Joule can't see.</div>
         </div>
         <div class="context-block">
           <div class="context-label">Visual contract</div>
-          <div class="context-value">Witness is invoked through SAP's <b>Joule</b> sidepanel. The card visibly belongs to Witness, but is positioned as Joule's <em>cited source</em>, not Joule's own answer.</div>
+          <div class="context-value">Invoked via SAP's <b>Joule</b> sidepanel. Witness is Joule's <em>cited source</em>, not Joule's own answer.</div>
         </div>
       </div>
 
@@ -703,16 +841,28 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
                 <span class="sap-side-tag">PO assistant</span>
               </div>
 
-              <div class="joule-attr">You</div>
-              <div class="joule-msg-user">Why are we short 4 units? The PO and invoice both say 100.</div>
+              <div class="sap-chat" data-scene data-host="sap">
+                <div data-role="user">
+                  <div class="joule-attr">You</div>
+                  <div class="joule-msg-user">Why are we short 4 units? The PO and invoice both say 100.</div>
+                </div>
 
-              <div class="joule-attr">Joule</div>
-              <div class="joule-msg-ai">
-                The goods receipt was posted at 96 EA, so the variance is on receipt. To check whether this was a short ship or a posting error, I'll consult <b>Witness</b> — it can correlate our GR with the marketplace order, carrier proof, and vendor history.
-              </div>
+                <div data-role="ai" data-pre="1500">
+                  <div class="joule-attr">Joule</div>
+                  <div class="joule-msg-ai">
+                    The goods receipt was posted at 96 EA, so the variance is on receipt. To check whether this was a short ship or a posting error, I'll consult <b>Witness</b> — it can correlate our GR with the marketplace order, carrier proof, and vendor history.
+                  </div>
+                </div>
+
+                <div class="tool-chip" data-role="tool" data-pre="1500">
+                  <span class="spinner"></span>
+                  <svg class="check" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="label-consulting">Consulting <span class="server-name">witness.mcp</span> · 4 servers…</span>
+                  <span class="label-complete"><span class="server-name">witness.mcp</span> · 4 servers · sealed</span>
+                </div>
 
               <!-- WITNESS CARD -->
-              <div class="witness-card">
+              <div class="witness-card" data-role="witness" data-after="600">
                 <div class="wc-stripe"></div>
                 <div class="wc-header">
                   <div class="wc-header-left">
@@ -728,7 +878,7 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
                   <div class="wc-conclusion">
                     <div>
                       <div class="wc-status-label">Finding</div>
-                      <div class="wc-status">Likely <span class="accent fail">supplier short-ship</span></div>
+                      <div class="wc-status">Likely a <span class="accent fail">supplier short-ship</span></div>
                       <div class="wc-status-sub">corroborated by 2 independent non-SAP sources</div>
                     </div>
                     <div class="wc-conf high">
@@ -773,25 +923,31 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
                   </div>
                 </div>
                 <div class="wc-footer">
-                  <span class="wc-protocol">via MCP · 4 servers consulted</span>
+                  <details class="wc-sources">
+                    <summary><span class="wc-protocol">via MCP · 4 sources</span></summary>
+                    <ul class="wc-sources-list">
+                      <li><b>sap-s4hana</b> · GR 5000871</li>
+                      <li><b>amazon-business</b> · manifest</li>
+                      <li><b>carrier-api</b> · POD scan</li>
+                      <li><b>vendor-history</b> · 12mo</li>
+                    </ul>
+                  </details>
                   <span>sealed 14:23:12 UTC</span>
                 </div>
               </div>
 
-              <div class="sap-handoff">
+              <div class="sap-handoff" data-role="handoff" data-pre="600">
                 <b>SAP-side action:</b> If you accept Witness's recommendation, Joule will pre-fill transaction <code>MIRO</code> with the credit-memo line items and attach the Witness record as a sealed reference.
               </div>
+              </div><!-- /.sap-chat -->
             </div>
           </div>
         </div>
 
         <div class="scenario-caption">
-          <div class="cap-title">What this SAP mock is showing</div>
           <ul>
-            <li><b>Joule does not say "I figured out what happened."</b> Joule routes to Witness because Witness has access to non-SAP sources (carrier, marketplace, vendor history) that Joule doesn't.</li>
-            <li>The Witness card looks identical in structure to the Amazon mock, but the <b>recommendation is SAP-native</b> — "Post a credit memo request" matches SAP's transaction codes (<code>MIRO</code>) and document types. Witness adapts its <b>verbs</b> to the host without giving up its identity.</li>
-            <li>The <b>vendor history</b> check (?) is honest about uncertainty: 2 prior short-ships could indicate a pattern OR be coincidence. Witness flags it for the human to weigh, instead of pretending to know.</li>
-            <li>The handover footnote shows Witness <b>never tries to "do" SAP's job</b> — the actual posting happens in SAP via Joule pre-filling MIRO. Witness is the witness, not the actor.</li>
+            <li>Same card as Amazon, but the <b>recommendation is SAP-native</b> — "credit memo request" + <code>MIRO</code>. Witness adapts its verbs to the host without losing its identity.</li>
+            <li>The <b>vendor history (?)</b> check is honest about uncertainty — 2 prior short-ships could be a pattern or coincidence; Witness flags it instead of pretending to know.</li>
           </ul>
         </div>
       </div>
@@ -803,15 +959,15 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
       <div class="context-bar">
         <div class="context-block">
           <div class="context-label">User attention</div>
-          <div class="context-value">Small-business buyer reviewing a <b>Walmart Business receipt</b> on mobile-friendly Walmart Business. They see the receipt totals but no PO context — they're more "shopper" than AP analyst.</div>
+          <div class="context-value">Small-business buyer in <b>Walmart Business</b> — more "shopper" than AP analyst, no ERP access.</div>
         </div>
         <div class="context-block">
           <div class="context-label">What Witness adds</div>
-          <div class="context-value"><b>A fluent translation</b> — turning a complex 3-way mismatch into "you were charged $0.20 more per unit and got 4 fewer than expected" in plain language with one-tap actions.</div>
+          <div class="context-value"><b>Plain-language translation</b> — a 3-way mismatch turned into one sentence and a refund button.</div>
         </div>
         <div class="context-block">
           <div class="context-label">Visual contract</div>
-          <div class="context-value">The Witness card adapts to a more conversational tone. Same brand stripe and mark, but actions are <b>simpler</b> — designed for someone without ERP access.</div>
+          <div class="context-value">Same card, simpler verbs. Two actions instead of three; jargon removed.</div>
         </div>
       </div>
 
@@ -858,16 +1014,23 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
                 <div class="wm-side-sub">Connected to your back-office tools</div>
               </div>
 
-              <div class="wm-chat">
-                <div class="wm-msg wm-msg-user">Why is this flagged?</div>
+              <div class="wm-chat" data-scene data-host="walmart">
+                <div class="wm-msg wm-msg-user" data-role="user">Why is this flagged?</div>
 
-                <div class="wm-msg">
+                <div class="wm-msg" data-role="ai" data-pre="1300">
                   <div class="wm-tag">Spark</div>
                   Looks like there's a mismatch between what Walmart billed, what your warehouse logged, and what your PO said. I'll bring in <b>Witness</b> for the full picture.
                 </div>
 
+                <div class="tool-chip" data-role="tool" data-pre="1500">
+                  <span class="spinner"></span>
+                  <svg class="check" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="label-consulting">Consulting <span class="server-name">witness.mcp</span> · 4 servers…</span>
+                  <span class="label-complete"><span class="server-name">witness.mcp</span> · 4 servers · sealed</span>
+                </div>
+
                 <!-- WITNESS CARD -->
-                <div class="witness-card">
+                <div class="witness-card" data-role="witness" data-after="600">
                   <div class="wc-stripe"></div>
                   <div class="wc-header">
                     <div class="wc-header-left">
@@ -883,11 +1046,11 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
                     <div class="wc-conclusion">
                       <div>
                         <div class="wc-status-label">In short</div>
-                        <div class="wc-status">You were billed for <span class="accent fail">4 extra units</span></div>
-                        <div class="wc-status-sub">at a price <span style="color:var(--color-error-500);font-weight:600;">$0.20 higher</span> than your PO</div>
+                        <div class="wc-status">Billed for <span class="accent fail">4 units that didn't arrive</span></div>
+                        <div class="wc-status-sub">plus <span style="color:var(--color-error-500);font-weight:600;">$0.20 over PO</span> on each unit</div>
                       </div>
                       <div class="wc-conf high">
-                        <div class="wc-conf-label">Sure?</div>
+                        <div class="wc-conf-label">Confidence</div>
                         <div class="wc-conf-bar">
                           <div class="wc-conf-dots">
                             <span class="wc-conf-dot filled"></span>
@@ -928,12 +1091,20 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
                     </div>
                   </div>
                   <div class="wc-footer">
-                    <span class="wc-protocol">via MCP</span>
+                    <details class="wc-sources">
+                      <summary><span class="wc-protocol">via MCP · 4 sources</span></summary>
+                      <ul class="wc-sources-list">
+                        <li><b>walmart-business</b> · WMB-99281</li>
+                        <li><b>your warehouse</b> · scan log</li>
+                        <li><b>your PO</b> · WMB-99281</li>
+                        <li><b>carrier-api</b> · POD scan</li>
+                      </ul>
+                    </details>
                     <span>sealed · 14:23 UTC</span>
                   </div>
                 </div>
 
-                <div class="wm-msg">
+                <div class="wm-msg" data-role="ai" data-pre="1200">
                   <div class="wm-tag">Spark</div>
                   Want me to file the refund and email a copy to your bookkeeper?
                 </div>
@@ -943,12 +1114,9 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
         </div>
 
         <div class="scenario-caption">
-          <div class="cap-title">What this Walmart Business mock is showing</div>
           <ul>
-            <li>The same Witness server is being asked the same question, but the <b>language</b> changed — "You were billed for 4 extra units" instead of "Quantity match: −4 EA". Witness <b>adapts its register</b> to who's reading.</li>
-            <li>Actions collapse from <b>three to two</b>: the small-business buyer doesn't have access to MIRO, evidence trees, or AP queues. Witness offers what they <em>can</em> do.</li>
-            <li>The summary box does the math for them: "$76.80 refund total." This is interpretive work — but Witness is still showing the <b>checks underneath</b> so the conclusion is auditable, not just trusted.</li>
-            <li>Spark (Walmart's assistant) handles the next step ("file the refund, email your bookkeeper") — those are <b>Walmart-native + email-side</b> actions, not Witness's job.</li>
+            <li>Same Witness, plainer voice — "4 units that didn't arrive" replaces "Quantity match: −4 EA". The card <b>adapts its register</b> to who's reading.</li>
+            <li>The summary does the math ("$76.80 refund total") but the <b>checks underneath</b> stay visible, so the conclusion is auditable, not just trusted.</li>
           </ul>
         </div>
       </div>
@@ -960,15 +1128,15 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
       <div class="context-bar">
         <div class="context-block">
           <div class="context-label">User attention</div>
-          <div class="context-value">Knowledge worker in <b>Claude</b> drafting a vendor-relations email. They need the cross-system facts to write something that's both <em>diplomatic and accurate</em>.</div>
+          <div class="context-value">Knowledge worker in <b>Claude</b> drafting a vendor-relations email — needs accurate <em>and</em> diplomatic.</div>
         </div>
         <div class="context-block">
           <div class="context-label">What Witness adds</div>
-          <div class="context-value"><b>Cited evidence Claude can quote from</b> — the email draft references the Witness record, so the recipient can verify the claim without trusting Claude's word.</div>
+          <div class="context-value"><b>Citable evidence</b> — the email references the Witness record so Acme can verify without trusting Claude's word.</div>
         </div>
         <div class="context-block">
           <div class="context-label">Visual contract</div>
-          <div class="context-value">Witness shows up as a <b>tool result</b> in Claude's conversation. The card is the same shape but smaller — it's a <em>citation</em>, not the main attraction.</div>
+          <div class="context-value">Shows up as a <b>tool result</b> in conversation. Same card, smaller — a <em>citation</em>, not the main attraction.</div>
         </div>
       </div>
 
@@ -1003,17 +1171,23 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
             </aside>
 
             <div style="display:flex;flex-direction:column;flex:1;">
-              <div class="cl-main">
-                <div class="cl-msg-user">Help me draft an email to Acme about the short shipment on INV-99281. Use whatever evidence Witness has so the email is precise but not aggressive.</div>
+              <div class="cl-main" data-scene data-host="claude">
+                <div class="cl-msg-user" data-role="user">Help me draft an email to Acme about the short shipment on INV-99281. Use whatever evidence Witness has so the email is precise but not aggressive.</div>
 
-                <div class="cl-msg-claude">
+                <div class="cl-msg-claude" data-role="ai" data-pre="1300">
                   <div class="cl-claude-tag">Claude</div>
-                  <p>I'll pull the cross-system record from Witness first, then draft something diplomatic.</p>
-                  <div class="cl-tool"><span class="arrow">→</span> calling <span class="server">witness.mcp</span> · get_three_way_match("INV-99281")</div>
+                  <p style="margin-bottom:0;">I'll pull the cross-system record from Witness first, then draft something diplomatic.</p>
+                </div>
+
+                <div class="tool-chip" data-role="tool" data-pre="1500">
+                  <span class="spinner"></span>
+                  <svg class="check" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="label-consulting">calling <span class="server-name">witness.mcp</span> · get_three_way_match("INV-99281")</span>
+                  <span class="label-complete">witness.mcp returned · <span class="server-name">wtn::99281</span></span>
                 </div>
 
                 <!-- WITNESS CARD as tool result -->
-                <div class="witness-card" style="max-width:560px;">
+                <div class="witness-card" data-role="witness" data-after="600" style="max-width:560px;">
                   <div class="wc-stripe"></div>
                   <div class="wc-header">
                     <div class="wc-header-left">
@@ -1064,12 +1238,20 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
                     </div>
                   </div>
                   <div class="wc-footer">
-                    <span class="wc-protocol">via MCP</span>
+                    <details class="wc-sources">
+                      <summary><span class="wc-protocol">via MCP · 4 sources</span></summary>
+                      <ul class="wc-sources-list">
+                        <li><b>netsuite</b> · PO-44871</li>
+                        <li><b>amazon-business</b> · INV-99281</li>
+                        <li><b>carrier-api</b> · POD scan</li>
+                        <li><b>vendor-history</b> · 12mo</li>
+                      </ul>
+                    </details>
                     <span>cite as wtn::99281</span>
                   </div>
                 </div>
 
-                <div class="cl-msg-claude">
+                <div class="cl-msg-claude" data-role="ai" data-pre="1500">
                   <div class="cl-claude-tag">Claude</div>
                   <p>Witness confirmed the short-ship through carrier and marketplace records, plus flagged that this is the third short-ship in 12 months. I've drafted a firm-but-friendly email that cites the sealed Witness record so Acme can verify it themselves:</p>
 
@@ -1099,12 +1281,9 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
         </div>
 
         <div class="scenario-caption">
-          <div class="cap-title">What this Claude mock is showing</div>
           <ul>
-            <li>Witness shows up as a <b>tool result</b> — smaller, no big "Recommendation" verb. In Claude, the <em>conversation</em> is the surface; Witness is a <em>citation</em>.</li>
-            <li>The visible <code>→ calling witness.mcp</code> trace makes the protocol legible. The user can see Claude reaching out, not pretending to "just know."</li>
-            <li>The <b>email draft itself</b> cites <code>wtn::99281</code>. This is the highest-value Witness pattern: the recipient (Acme) can independently <b>verify the same evidence</b> without trusting Claude or Maya's account of it. The record is the bridge of trust.</li>
-            <li>Claude does the soft-skills work (tone, diplomacy, framing); Witness does the truth-anchored work (what actually happened across systems). Each does what it's good at.</li>
+            <li>The visible <code>calling witness.mcp</code> trace keeps the protocol legible — Claude is seen reaching out, not pretending to "just know."</li>
+            <li>The email draft cites <code>wtn::99281</code> directly — Acme can verify the same sealed evidence without trusting Claude's or Maya's account. The record is the bridge of trust.</li>
           </ul>
         </div>
       </div>
@@ -1114,17 +1293,132 @@ h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400;
 </div>
 
 <script>
+(function () {
+  const scenes = document.querySelectorAll('[data-scene]');
   const tabs = document.querySelectorAll('.host-tab');
   const scenarios = document.querySelectorAll('.scenario');
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const target = tab.getAttribute('data-target');
-      scenarios.forEach(s => s.classList.toggle('active', s.id === target));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const frame = () => new Promise((r) => requestAnimationFrame(r));
+
+  function makeTypingIndicator() {
+    const div = document.createElement('div');
+    div.className = 'typing-indicator-live';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    return div;
+  }
+
+  function makeReplayBtn(sceneEl) {
+    const btn = document.createElement('button');
+    btn.className = 'replay-btn';
+    btn.type = 'button';
+    btn.innerHTML =
+      '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+      '<path d="M3.5 8a4.5 4.5 0 1 0 1.3-3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<path d="M2.5 2v3.2H5.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg><span>Replay</span>';
+    btn.addEventListener('click', () => playScene(sceneEl, true));
+    return btn;
+  }
+
+  async function playScene(sceneEl, force) {
+    if (sceneEl.dataset.playing === 'true') return;
+    if (sceneEl.dataset.played === 'true' && !force) return;
+    sceneEl.dataset.playing = 'true';
+
+    const stage = sceneEl.closest('.stage');
+    const btn = stage ? stage.querySelector('.replay-btn') : null;
+    if (btn) btn.dataset.playing = 'true';
+
+    // Reset
+    const steps = Array.from(sceneEl.children).filter((el) => el.hasAttribute('data-role'));
+    steps.forEach((s) => s.classList.remove('is-revealed'));
+    sceneEl.querySelectorAll('.tool-chip').forEach((tc) => tc.classList.remove('tool-chip--complete'));
+    sceneEl.querySelectorAll('.typing-indicator-live').forEach((t) => t.remove());
+
+    await wait(280);
+
+    for (const step of steps) {
+      const role = step.dataset.role;
+      const pre = parseInt(step.dataset.pre || '0', 10);
+      const after = parseInt(step.dataset.after || '0', 10);
+
+      if (role === 'ai') {
+        const ti = makeTypingIndicator();
+        sceneEl.insertBefore(ti, step);
+        await frame();
+        ti.classList.add('is-revealed');
+        await wait(pre || 1200);
+        ti.classList.remove('is-revealed');
+        await wait(220);
+        ti.remove();
+        step.classList.add('is-revealed');
+        await wait(after || 350);
+      } else if (role === 'tool') {
+        step.classList.add('is-revealed');
+        await wait(pre || 1400);
+        step.classList.add('tool-chip--complete');
+        await wait(after || 500);
+      } else if (role === 'witness') {
+        step.classList.add('is-revealed');
+        await wait(after || 700);
+      } else if (role === 'handoff') {
+        await wait(pre || 500);
+        step.classList.add('is-revealed');
+        await wait(after || 300);
+      } else {
+        await wait(pre || 0);
+        step.classList.add('is-revealed');
+        await wait(after || 400);
+      }
+    }
+
+    sceneEl.dataset.playing = 'false';
+    sceneEl.dataset.played = 'true';
+    if (btn) btn.dataset.playing = 'false';
+  }
+
+  // Inject a Replay button next to each stage's meta
+  scenes.forEach((sceneEl) => {
+    const stage = sceneEl.closest('.stage');
+    if (!stage) return;
+    const meta = stage.querySelector('.stage-meta-right');
+    if (!meta) return;
+    meta.appendChild(makeReplayBtn(sceneEl));
+  });
+
+  // Tabs become anchor scrubbers — smooth-scroll on click
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = tab.getAttribute('data-target');
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
+
+  // IntersectionObserver: play scene + highlight matching tab
+  const playObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const scene = entry.target.querySelector('[data-scene]');
+      if (scene) playScene(scene, false);
+    });
+  }, { threshold: 0.2 });
+
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const id = entry.target.id;
+      tabs.forEach((t) => t.classList.toggle('active', t.getAttribute('data-target') === id));
+    });
+  }, { threshold: 0, rootMargin: '-30% 0px -55% 0px' });
+
+  scenarios.forEach((s) => {
+    playObserver.observe(s);
+    navObserver.observe(s);
+  });
+})();
 </script>
 
 </body>

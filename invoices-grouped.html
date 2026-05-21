@@ -20,7 +20,7 @@
     .brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
     .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
     .nav-group { display: flex; flex-direction: column; gap: 12px; }
-    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
     .nav-items { display: flex; flex-direction: column; gap: 2px; }
     .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: #45556c; font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: -0.15px; text-decoration: none; cursor: pointer; }
     .nav-item:hover { background: rgba(0,0,0,0.04); }
@@ -67,7 +67,7 @@
     .stat-num.red   { color: #dc2626; }
     .stat-num.amber { color: #e9b44c; }
     .stat-num.green { color: #16a34a; }
-    .stat-lbl { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; }
+    .stat-lbl { font-size: 12px; font-weight: 600; color: #0b0d12; letter-spacing: 0.6px; line-height: 16px; }
     .stat-sub { font-size: 12px; font-weight: 400; color: #45556c; margin-top: 6px; line-height: 16px; }
 
     /* ─── SEARCH ─── */
@@ -127,7 +127,7 @@
     /* AI insight banner inside group */
     .ai-insight-row { background: #fff5f0; border-top: 1px solid #ffb088; border-bottom: 1px solid #ffb088; padding: 11px 20px; }
     .ai-insight-inner { display: flex; align-items: center; gap: 10px; }
-    .ai-insight-badge { display: inline-flex; align-items: center; gap: 6px; background: white; color: #ff6900; font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; border: 1px solid #ffb088; white-space: nowrap; flex-shrink: 0; }
+    .ai-insight-badge { display: inline-flex; align-items: center; gap: 6px; background: white; color: #ff6900; font-size: 12px; font-weight: 600; letter-spacing: 0.6px; padding: 3px 10px; border-radius: 999px; border: 1px solid #ffb088; white-space: nowrap; flex-shrink: 0; }
     .ai-insight-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #ff6900; animation: pls 2s infinite; flex-shrink: 0; }
     .ai-insight-txt { font-size: 13px; font-weight: 400; color: black; line-height: 20px; }
     .ai-insight-txt strong { font-weight: 600; }
@@ -149,7 +149,7 @@
     table.inv col.c-act { width: 12%; }
 
     table.inv thead tr { background: #f7f7f7; }
-    table.inv thead th { font-size: 11px; font-weight: 600; color: #45556c; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; text-align: left; padding: 10px 12px; white-space: nowrap; }
+    table.inv thead th { font-size: 11px; font-weight: 600; color: #45556c; letter-spacing: 0.6px; line-height: 16px; text-align: left; padding: 10px 12px; white-space: nowrap; }
     table.inv thead th:first-child { padding-left: 20px; }
     table.inv thead th:last-child  { padding-right: 20px; }
 
@@ -227,7 +227,7 @@
 <aside class="sidebar">
   <div class="sidebar-brand">
     <div class="brand-logo">
-      <img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="" />
+      <img src="witness-logo.svg" alt="" />
     </div>
     <span class="brand-name">Witness</span>
     <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -304,7 +304,7 @@
 
     <!-- VIEW TOGGLE -->
     <div style="display:flex; gap:8px; align-items:center;">
-      <span style="font-size:12px; font-weight:600; color:#9f9fa6; text-transform:uppercase; letter-spacing:0.6px;">View</span>
+      <span style="font-size:12px; font-weight:600; color:#9f9fa6; letter-spacing:0.6px;">View</span>
       <a href="invoices.html" style="padding:6px 14px; border-radius:999px; border:1.5px solid #e9e9e9; background:white; font-size:12px; font-weight:500; color:#45556c; text-decoration:none;">Flat</a>
       <a href="invoices-grouped.html" style="padding:6px 14px; border-radius:999px; border:1.5px solid #120b0b; background:#120b0b; font-size:12px; font-weight:500; color:white; text-decoration:none;">Grouped</a>
     </div>
