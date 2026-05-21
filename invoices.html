@@ -339,126 +339,6 @@
     .pg-btn.active { background: #120b0b; color: white; border-color: #120b0b; }
     .pg-sep { font-size: 12px; color: #adadad; padding: 0 2px; }
 
-    /* ═══ INVOICE WORK QUEUE — action-first, grouped by what AP needs to do ═══ */
-    .queue { display: flex; flex-direction: column; gap: 12px; }
-    .queue-sec { border: 1px solid #e9e9e9; border-radius: 12px; background: white; overflow: hidden; transition: border-color .15s; }
-    .queue-sec.hot { border-color: rgba(255, 105, 0, 0.5); }
-    .queue-sec.open { border-color: rgba(69,85,108,0.4); }
-    .queue-sec.hot.open { border-color: rgba(255, 105, 0, 0.6); }
-
-    .qhead { padding: 16px 20px; cursor: pointer; display: grid; grid-template-columns: 10px 1fr auto 14px; gap: 14px; align-items: center; }
-    .qhead:hover { background: #fafafa; }
-    .qhead-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .qhead-dot.hot { background: #ff6900; }
-    .qhead-dot.wait { background: #e9b44c; }
-    .qhead-dot.auto { background: #16a34a; }
-    .qhead-dot.done { background: #adadad; }
-    .qhead-main { min-width: 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-    .qhead-title { font-size: 14px; font-weight: 600; color: #120b0b; }
-    .qhead-count { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #45556c; padding: 2px 8px; border-radius: 999px; background: #f4f4f4; }
-    .qhead-sub { font-size: 12px; color: #45556c; }
-    .qhead-meta { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #adadad; white-space: nowrap; }
-    .qhead-chev { color: #adadad; transition: transform .2s; }
-    .queue-sec.open .qhead-chev { transform: rotate(180deg); }
-
-    .qbody { display: none; }
-    .queue-sec.open .qbody { display: block; }
-
-    /* Invoice row — replaces 7-column table, same shape across all sections */
-    .inv-row { padding: 13px 20px; display: grid; grid-template-columns: 8px 1fr auto; gap: 14px; align-items: center; cursor: pointer; transition: background .12s; border-top: 1px solid #f4f4f4; scroll-margin-top: 96px; }
-    .inv-row:hover { background: #fafafa; }
-    .inv-row:hover .row-actions { opacity: 1; }
-    .inv-row:target { background: #fff5f1; }
-
-    .inv-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .inv-dot.blocked  { background: #dc2626; }
-    .inv-dot.pending  { background: #e9b44c; }
-    .inv-dot.waiting  { background: #b17728; }
-    .inv-dot.approved { background: #16a34a; }
-
-    .row-main { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-    .row-id-vendor { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-    .row-id { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #120b0b; letter-spacing: -0.2px; }
-    .row-vendor { font-size: 13px; color: #45556c; }
-    .row-sep { color: #d4d4d4; font-size: 11px; }
-    .row-amount { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #120b0b; font-weight: 600; }
-    .row-why { font-size: 12px; color: #45556c; line-height: 1.5; display: inline-flex; align-items: center; gap: 6px; }
-    .row-why .why-spark { color: #d95b03; font-size: 11px; flex-shrink: 0; }
-    .row-why .why-amt { color: #dc2626; font-weight: 600; }
-    .row-why .why-amt.gain { color: #16a34a; }
-
-    .row-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .row-urg { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.02em; }
-    .row-urg.urgent { background: #fef2f2; color: #b91c1c; }
-    .row-urg.warn   { background: #fdf2d4; color: #b17728; }
-    .row-urg.calm   { background: #f4f4f4; color: #adadad; }
-    .row-actions { display: flex; gap: 6px; opacity: 0; transition: opacity .12s; }
-    .row-act { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 6px; border: 1px solid #ededed; background: white; color: #45556c; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
-    .row-act:hover { color: #120b0b; border-color: #b8b8b8; }
-    .row-act.danger:hover { color: #dc2626; border-color: #dc2626; }
-    .row-open { font-size: 11.5px; font-weight: 500; padding: 5px 12px; border-radius: 6px; border: 1px solid #120b0b; background: white; color: #120b0b; cursor: pointer; font-family: 'Inter', sans-serif; text-decoration: none; white-space: nowrap; transition: all .12s; }
-    .row-open:hover { background: #120b0b; color: white; }
-
-    /* AI pattern callout — sits inside a queue section as a recognized observation */
-    .ai-callout { padding: 14px 20px; background: linear-gradient(to right, #fff5f0 0%, #fff 100%); border-top: 1px solid #ffd5b8; display: flex; align-items: center; gap: 12px; }
-    .ai-callout-icon { width: 28px; height: 28px; border-radius: 50%; background: #ffe0ca; color: #d95b03; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-    .ai-callout-txt { font-size: 13px; color: #120b0b; line-height: 1.5; flex: 1; min-width: 0; }
-    .ai-callout-txt b { font-weight: 600; }
-    .ai-callout-link { font-size: 12px; font-weight: 500; color: #d95b03; text-decoration: none; white-space: nowrap; }
-    .ai-callout-link:hover { text-decoration: underline; }
-
-    /* Auto-resolved summary row — for "Flowing through Witness" section */
-    .auto-summary { padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
-    .auto-summary .as-icon { width: 36px; height: 36px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-    .auto-summary .as-main { flex: 1; min-width: 0; }
-    .auto-summary .as-headline { font-size: 14px; color: #120b0b; line-height: 1.4; }
-    .auto-summary .as-headline b { font-weight: 600; }
-    .auto-summary .as-sub { font-size: 12px; color: #45556c; margin-top: 3px; }
-    .auto-summary .as-link { font-size: 12px; font-weight: 500; color: #d95b03; text-decoration: none; white-space: nowrap; }
-    .auto-summary .as-link:hover { text-decoration: underline; }
-
-    /* Simplified stat row — 3 cards instead of 6, focused on triage */
-    .stat-row-lite { display: flex; gap: 0; }
-    .stat-card-lite { background: white; border: 2px solid #e9e9e9; padding: 20px; flex: 1; min-width: 0; display: flex; align-items: center; gap: 16px; }
-    .stat-card-lite:first-child { border-radius: 10px 0 0 10px; }
-    .stat-card-lite:last-child  { border-radius: 0 10px 10px 0; }
-    .stat-card-lite + .stat-card-lite { border-left: none; }
-    .stat-card-lite .sc-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .stat-card-lite .sc-icon.hot { background: #fef2f2; color: #dc2626; }
-    .stat-card-lite .sc-icon.amber { background: #fdf2d4; color: #b17728; }
-    .stat-card-lite .sc-icon.brand { background: #fff5f0; color: #d95b03; }
-    .stat-card-lite .sc-icon svg { width: 18px; height: 18px; }
-    .stat-card-lite .sc-num { font-size: 28px; font-weight: 600; color: #120b0b; line-height: 1; }
-    .stat-card-lite .sc-num.hot { color: #dc2626; }
-    .stat-card-lite .sc-num.brand { color: #d95b03; }
-    .stat-card-lite .sc-lbl { font-size: 11.5px; font-weight: 600; color: #120b0b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px; }
-    .stat-card-lite .sc-sub { font-size: 11.5px; color: #45556c; margin-top: 3px; line-height: 1.4; }
-
-    /* Search — slim, prominent, single way to find anything */
-    .quick-search { position: relative; max-width: 460px; }
-    .quick-search input { width: 100%; padding: 10px 14px 10px 40px; border: 1.5px solid #e9e9e9; border-radius: 10px; background: white; font-size: 13px; font-family: 'Inter', sans-serif; color: #0b0d12; outline: none; transition: border-color .15s; }
-    .quick-search input:focus { border-color: #adadad; }
-    .quick-search input::placeholder { color: #adadad; }
-    .quick-search .qs-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #adadad; pointer-events: none; display: flex; }
-
-    /* Saved views — slim chip strip (kept, lighter visual weight) */
-    .views-strip { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .vs-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; color: #adadad; text-transform: uppercase; letter-spacing: 0.1em; margin-right: 6px; }
-    .vs-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid #e9e9e9; background: white; font-size: 12px; font-weight: 500; color: #45556c; cursor: pointer; transition: all .12s; }
-    .vs-chip:hover { border-color: #b8b8b8; color: #120b0b; }
-    .vs-chip.active { background: #120b0b; color: white; border-color: #120b0b; }
-    .vs-chip .vs-spark { color: #d95b03; font-size: 11px; }
-    .vs-chip.active .vs-spark { color: #ffd000; }
-    .vs-chip .vs-count { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; opacity: 0.55; }
-    .vs-chip.active .vs-count { opacity: 1; color: rgba(255,255,255,0.85); }
-    .vs-save { padding: 6px 12px; border-radius: 999px; border: 1px dashed #ffb299; background: transparent; color: #d95b03; font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .12s; }
-    .vs-save:hover { background: #fff5f0; border-color: #d95b03; border-style: solid; }
-
-    /* Search-mode flat list (when searching, queue grouping is bypassed) */
-    .search-result { border: 1px solid #e9e9e9; border-radius: 12px; background: white; overflow: hidden; }
-    .search-result-head { padding: 12px 20px; background: #fafafa; border-bottom: 1px solid #ededed; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #45556c; font-weight: 500; }
-    .empty-msg { padding: 32px 20px; text-align: center; font-size: 13px; color: #adadad; font-style: italic; }
-
     /* SIDEBAR COLLAPSE */
     .sidebar { transition: width .2s ease; }
     .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
@@ -553,8 +433,8 @@
     <!-- PAGE HEADING -->
     <div class="page-hd">
       <div class="page-hd-left">
-        <h1 class="ptitle">Invoice queue</h1>
-        <p class="page-sub"><b style="color:#120b0b">5 need your action right now</b> · 9 awaiting others · 14 flowing through Witness · 12 completed this week</p>
+        <h1 class="ptitle">All Invoices</h1>
+        <p class="page-sub">26 invoices · synced from Amazon Business &amp; NetSuite · updated 2 min ago</p>
       </div>
       <div class="hd-actions">
         <button class="btn-outline" id="btn-export">↑ Export CSV</button>
@@ -569,500 +449,580 @@
       <a href="invoices-grouped.html" style="padding:6px 14px; border-radius:999px; border:1.5px solid #e9e9e9; background:white; font-size:12px; font-weight:500; color:#45556c; text-decoration:none;">Grouped</a>
     </div>
 
-    <!-- STAT TRIAGE — 3 cards mapped to triage decisions, not numbers for numbers' sake -->
-    <div class="stat-row-lite">
-      <div class="stat-card-lite">
-        <div class="sc-icon hot">
-          <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M9 5v4.5M9 12.5v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </div>
-        <div>
-          <div class="sc-num hot">5</div>
-          <div class="sc-lbl">Needs your action</div>
-          <div class="sc-sub">Blocked exceptions, ranked by due date</div>
-        </div>
-      </div>
-      <div class="stat-card-lite">
-        <div class="sc-icon amber">
-          <svg viewBox="0 0 18 18" fill="none"><path d="M3 14V8m4 6V4m4 10v-7m4 7v-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </div>
-        <div>
-          <div class="sc-num">$44.5K</div>
-          <div class="sc-lbl">At risk</div>
-          <div class="sc-sub">Discount loss + dispute exposure</div>
+    <!-- STAT CARDS — same joined strip as dashboard -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num">$284K</div>
+            <div class="stat-lbl">Total Invoice Value</div>
+            <div class="stat-sub">across 26 invoices</div>
+          </div>
         </div>
       </div>
-      <div class="stat-card-lite">
-        <div class="sc-icon brand">
-          <svg viewBox="0 0 18 18" fill="none"><path d="M9 2L10.6 6L15 6.5L11.7 9.7L12.6 14L9 11.9L5.4 14L6.3 9.7L3 6.5L7.4 6L9 2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num red">5</div>
+            <div class="stat-lbl">Blocked</div>
+            <div class="stat-sub">need your action</div>
+          </div>
         </div>
-        <div>
-          <div class="sc-num brand">14</div>
-          <div class="sc-lbl">Fully auto today</div>
-          <div class="sc-sub">Witness handled overnight · no input needed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num">8</div>
+            <div class="stat-lbl">Pending Approval</div>
+            <div class="stat-sub">waiting on approvers</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num green">11</div>
+            <div class="stat-lbl">Approved</div>
+            <div class="stat-sub">ready to pay</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num">14</div>
+            <div class="stat-lbl">Handled by AI</div>
+            <div class="stat-sub">auto-resolved overnight</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-inner">
+          <div>
+            <div class="stat-num red">$123K</div>
+            <div class="stat-lbl">At Risk</div>
+            <div class="stat-sub">discount or exposure</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- QUICK SEARCH + SAVED VIEWS — refinements, not the primary axis -->
-    <div style="display:flex; flex-direction:column; gap:14px;">
-      <div class="quick-search">
-        <span class="qs-icon"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 10l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-        <input id="quick-search" type="text" placeholder="Search any invoice, vendor, or PO… (e.g. INV-1048, Brightline, PO-7704)" />
+    <!-- SAVED VIEWS / SMART FILTERS — persisted across sessions -->
+    <section class="views-bar" aria-label="Saved views">
+      <div class="views-bar-left">
+        <span class="views-label">Views</span>
+        <div class="views-scroll" id="views-scroll">
+          <button class="view-chip active" data-view="all" onclick="setView(this)">
+            All invoices
+            <span class="view-count" data-count-for="all">26</span>
+          </button>
+          <button class="view-chip" data-view="stuck" onclick="setView(this)">
+            <span class="view-spark" aria-hidden="true">✦</span>
+            Stuck &gt;5 days
+            <span class="view-count" data-count-for="stuck">0</span>
+          </button>
+          <button class="view-chip" data-view="my-approvals" onclick="setView(this)">
+            <span class="view-spark" aria-hidden="true">✦</span>
+            My approvals queue
+            <span class="view-count" data-count-for="my-approvals">0</span>
+          </button>
+          <button class="view-chip" data-view="acme-month" onclick="setView(this)">
+            <span class="view-spark" aria-hidden="true">✦</span>
+            Acme this month
+            <span class="view-count" data-count-for="acme-month">0</span>
+          </button>
+          <button class="view-chip" data-view="discount-risk" onclick="setView(this)">
+            <span class="view-spark" aria-hidden="true">✦</span>
+            Discount at risk
+            <span class="view-count" data-count-for="discount-risk">0</span>
+          </button>
+        </div>
       </div>
-      <div class="views-strip">
-        <span class="vs-label">Views</span>
-        <button class="vs-chip active" data-view="all" onclick="setView(this)">All <span class="vs-count" data-count-for="all">26</span></button>
-        <button class="vs-chip" data-view="stuck" onclick="setView(this)"><span class="vs-spark">✦</span>Stuck &gt;5d <span class="vs-count" data-count-for="stuck">0</span></button>
-        <button class="vs-chip" data-view="my-approvals" onclick="setView(this)"><span class="vs-spark">✦</span>My approvals <span class="vs-count" data-count-for="my-approvals">0</span></button>
-        <button class="vs-chip" data-view="acme-month" onclick="setView(this)"><span class="vs-spark">✦</span>Acme this month <span class="vs-count" data-count-for="acme-month">0</span></button>
-        <button class="vs-chip" data-view="discount-risk" onclick="setView(this)"><span class="vs-spark">✦</span>Discount at risk <span class="vs-count" data-count-for="discount-risk">0</span></button>
-        <button class="vs-save" id="btn-save-view">+ Save view</button>
+      <div class="views-bar-right">
+        <div class="view-meta" id="view-meta" style="display:none;">
+          <span class="view-meta-dot"></span>
+          <span><strong id="view-meta-name"></strong> <span id="view-meta-rule"></span></span>
+          <button class="view-clear" type="button" onclick="setViewByKey('all')">Clear</button>
+        </div>
+        <button class="view-save" type="button" id="btn-save-view">+ Save current view</button>
+      </div>
+    </section>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-wrap">
+          <span class="search-icon">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="6.5" cy="6.5" r="4.5" stroke="#adadad" stroke-width="1.5"/>
+              <path d="M10.5 10.5L14 14" stroke="#adadad" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input class="search-input" type="text" placeholder="Search invoices, vendors, POs…" />
+        </div>
+        <button class="filter-pill active" data-filter="null" onclick="setFilter(this)">All <span style="margin-left:2px;opacity:.5;font-weight:400">26</span></button>
+        <button class="filter-pill" data-filter="blocked" onclick="setFilter(this)">Blocked <span class="filter-count">5</span></button>
+        <button class="filter-pill" data-filter="pending" onclick="setFilter(this)">Pending</button>
+        <button class="filter-pill" data-filter="approved" onclick="setFilter(this)">Approved</button>
+        <button class="filter-pill" data-filter="ai" onclick="setFilter(this)">AI Handled</button>
+      </div>
+      <div class="toolbar-right">
+        <select class="sort-select" id="sort-select">
+          <option value="due-asc">Due date (soonest)</option>
+          <option value="amount-desc">Amount (highest)</option>
+          <option value="status">Status</option>
+          <option value="vendor-asc">Vendor A–Z</option>
+        </select>
       </div>
     </div>
 
-    <!-- WORK QUEUE — grouped by what AP needs to do, not by alphabetical/date -->
-    <div class="queue" id="queue">
+    <!-- INVOICE TABLE -->
+    <div class="inv-wrap">
+      <table class="inv">
+        <colgroup>
+          <col class="c-inv" /><col class="c-vnd" />
+          <col class="c-src" /><col class="c-amt" /><col class="c-sta" />
+          <col class="c-urg" /><col class="c-act" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Invoice</th>
+            <th>Vendor</th>
+            <th>Source</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Urgency</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
 
-      <!-- ─── Needs your action (default open, orange-tinted border) ─── -->
-      <div class="queue-sec hot open" id="qs-action">
-        <div class="qhead" onclick="this.parentElement.classList.toggle('open')">
-          <div class="qhead-dot hot"></div>
-          <div class="qhead-main">
-            <span class="qhead-title">Needs your action</span>
-            <span class="qhead-count">5</span>
-            <span class="qhead-sub">held exceptions · ranked by due date</span>
-          </div>
-          <span class="qhead-meta">$44,500 at risk</span>
-          <svg class="qhead-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="qbody">
+          <!-- 1 -->
+          <tr class="ai-flagged-row" data-status="blocked">
+            
+            <td><span class="inv-id">INV-1062</span><span class="po-id">PO-7704</span></td>
+            <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div><div class="issue-ai"><span class="ai-pulse"></span>Pattern detected</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$8,420.00</div><span class="amt-sub">$8.4k highest</span></td>
+            <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+            <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Discount in 1d</span></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <!-- AI pattern callout — Witness noticed something worth knowing -->
-          <div class="ai-callout">
-            <div class="ai-callout-icon">✦</div>
-            <div class="ai-callout-txt"><b>Global Industrial</b> appears in 3 of your blocked invoices this week — a vendor rate-card v4.2 mismatch is likely the root cause.</div>
-            <a class="ai-callout-link" href="ai-activity.html">Open in AI Activity →</a>
-          </div>
+          <!-- 2 -->
+          <tr data-status="blocked">
+            
+            <td><span class="inv-id">INV-1048</span><span class="po-id">PO-7721</span></td>
+            <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div><div class="issue-ai"><span class="ai-pulse"></span>Qty mismatch · freight</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$3,210.45</div><span class="amt-sub">−$280 overbilled</span></td>
+            <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+            <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 1d</span></td>
+            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <!-- INV-1062 -->
-          <div class="inv-row" data-status="blocked" data-vendor="global industrial" id="inv-1062" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot blocked"></div>
-            <div class="row-main">
-              <div class="row-id-vendor">
-                <span class="row-id">INV-1062</span><span class="row-sep">·</span>
-                <span class="row-vendor">Global Industrial</span><span class="row-sep">·</span>
-                <span class="row-amount">$8,420.00</span>
+          <!-- 3 -->
+          <tr class="ai-flagged-row" data-status="pending">
+            
+            <td><span class="inv-id">INV-1092</span><span class="po-id">PO-7705</span></td>
+            <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div><div class="issue-ai"><span class="ai-pulse"></span>Price variance</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$6,100.45</div><span class="amt-sub">$6.1k pending</span></td>
+            <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+            <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>2nd reminder</span></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
+
+          <!-- AI INSIGHT ROW -->
+          <tr class="ai-insight-row">
+            <td colspan="8">
+              <div class="ai-insight-inner">
+                <span class="ai-insight-badge"><span class="ai-insight-badge-dot"></span>✦ Witness AI</span>
+                <span class="ai-insight-txt"><strong>Global Industrial</strong> appears in 3 blocked invoices this week. A vendor rate card issue may be the root cause.</span>
+                <button class="wt-prov-trigger compact" data-trace-prov="invoices-global-pattern" onclick="event.stopPropagation()">
+                  <span class="wt-prov-spark">✦</span> Provenance
+                </button>
+                <span class="ai-insight-link">Investigate pattern →</span>
               </div>
-              <div class="row-why"><span class="why-spark">✦</span>Rate card mismatch · part of the Global Industrial pattern</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg urgent">Discount in 1d</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Nudge</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
-
-          <!-- INV-1048 (the held one we trace through other pages) -->
-          <div class="inv-row" data-status="blocked" data-vendor="brightline" id="inv-1048" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot blocked"></div>
-            <div class="row-main">
-              <div class="row-id-vendor">
-                <span class="row-id">INV-1048</span><span class="row-sep">·</span>
-                <span class="row-vendor">Brightline Office Supply</span><span class="row-sep">·</span>
-                <span class="row-amount">$3,210.45</span>
+              <div hidden id="trace-prov-invoices-global-pattern">
+                <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Pattern detection</span><button class="wt-pop-close" type="button">✕</button></div>
+                <div class="wt-pop-title">Vendor pattern: Global Industrial</div>
+                <div class="wt-pop-sub">Detected May 19, 2025 · 8:14 AM · refreshed every 10 min</div>
+                <div class="wt-prov-section">
+                  <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Why this surfaced</div>
+                  <div class="wt-prov-body">
+                    Rule <span class="pill rule">Vendor pattern watcher</span> · flags any vendor with ≥3 blocked invoices in 7 days. Read-only — never contacts vendor.
+                  </div>
+                </div>
+                <div class="wt-prov-section">
+                  <div class="wt-prov-label read"><span class="wt-dot"></span>Read</div>
+                  <ul class="wt-prov-list">
+                    <li><strong>3 blocked invoices</strong> from Global Industrial (INV-1062, INV-1071, INV-1092)</li>
+                    <li><strong>Vendor rate card v4.2</strong> <span class="src">Vendor portal</span></li>
+                    <li><strong>14 historical invoices</strong> last 90 days <span class="src">Witness</span></li>
+                  </ul>
+                </div>
+                <div class="wt-pop-foot">
+                  <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
+                </div>
               </div>
-              <div class="row-why"><span class="why-spark">✦</span>Qty mismatch on line 2 · <span class="why-amt">−$280 overbilled</span></div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg urgent">Due in 1d</span>
-              <div class="row-actions"><button class="row-act danger" onclick="event.stopPropagation()">Escalate</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+            </td>
+          </tr>
 
-          <!-- INV-1101 (duplicate risk) -->
-          <div class="inv-row" data-status="blocked" data-vendor="global industrial" id="inv-1101" onclick="location.href='invoice-detail-duplicate.html'">
-            <div class="inv-dot blocked"></div>
-            <div class="row-main">
-              <div class="row-id-vendor">
-                <span class="row-id">INV-1101</span><span class="row-sep">·</span>
-                <span class="row-vendor">Global Industrial</span><span class="row-sep">·</span>
-                <span class="row-amount">$5,620.00</span>
-              </div>
-              <div class="row-why"><span class="why-spark">✦</span>Possible duplicate · part of the Global Industrial pattern</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg urgent">Due in 1d</span>
-              <div class="row-actions"><button class="row-act danger" onclick="event.stopPropagation()">Escalate</button></div>
-              <a class="row-open" href="invoice-detail-duplicate.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 4 -->
+          <tr data-status="blocked">
+            
+            <td><span class="inv-id">INV-1039</span><span class="po-id">PO-7698</span></td>
+            <td><div class="vnd-name">Acme Logistics Co.</div><div class="vnd-meta">Freight · Avg 2.1d response</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$12,750.00</div><span class="amt-sub">+$340 variance</span></td>
+            <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+            <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 2d</span></td>
+            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <!-- INV-1039 (variance) -->
-          <div class="inv-row" data-status="blocked" data-vendor="acme" id="inv-1039" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot blocked"></div>
-            <div class="row-main">
-              <div class="row-id-vendor">
-                <span class="row-id">INV-1039</span><span class="row-sep">·</span>
-                <span class="row-vendor">Acme Logistics Co.</span><span class="row-sep">·</span>
-                <span class="row-amount">$12,750.00</span>
-              </div>
-              <div class="row-why"><span class="why-spark">✦</span>Total variance · <span class="why-amt">+$340 overbilled</span> vs PO</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg urgent">Due in 2d</span>
-              <div class="row-actions"><button class="row-act danger" onclick="event.stopPropagation()">Escalate</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 5 -->
+          <tr data-status="pending">
+            
+            <td><span class="inv-id">INV-1081</span><span class="po-id">PO-7710</span></td>
+            <td><div class="vnd-name">TechSupply Inc.</div><div class="vnd-meta">IT Procurement · Last login 1d ago</div><div class="issue-ai"><span class="ai-pulse"></span>Possible duplicate</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$4,890.00</div><span class="amt-sub">$4.9k pending</span></td>
+            <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+            <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>3 days</span></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <!-- INV-1124 (PO exceeded) -->
-          <div class="inv-row" data-status="blocked" data-vendor="meridian" id="inv-1124" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot blocked"></div>
-            <div class="row-main">
-              <div class="row-id-vendor">
-                <span class="row-id">INV-1124</span><span class="row-sep">·</span>
-                <span class="row-vendor">Meridian Freight Co.</span><span class="row-sep">·</span>
-                <span class="row-amount">$14,500.00</span>
-              </div>
-              <div class="row-why"><span class="why-spark">✦</span>Invoice exceeds the approved PO amount</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg urgent">Due in 2d</span>
-              <div class="row-actions"><button class="row-act danger" onclick="event.stopPropagation()">Escalate</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 6 -->
+          <tr data-status="pending">
+            
+            <td><span class="inv-id">INV-1074</span><span class="po-id">PO-7706</span></td>
+            <td><div class="vnd-name">Sierra Packaging LLC</div><div class="vnd-meta">Packaging · Avg 4.5d response</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$1,540.20</div><span class="amt-sub">$1.5k pending</span></td>
+            <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+            <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>3 days</span></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-        </div>
-      </div>
+          <!-- 7 -->
+          <tr data-status="waiting">
+            
+            <td><span class="inv-id">INV-1067</span><span class="po-id">PO-7699</span></td>
+            <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$2,200.00</div><span class="amt-sub">GRN pending</span></td>
+            <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
+            <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>4 days</span></td>
+            <td><div class="action-cell"><button class="btn-ctx followup">Follow up</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-      <!-- ─── Awaiting others (pending + waiting; you can nudge but the ball is elsewhere) ─── -->
-      <div class="queue-sec" id="qs-waiting">
-        <div class="qhead" onclick="this.parentElement.classList.toggle('open')">
-          <div class="qhead-dot wait"></div>
-          <div class="qhead-main">
-            <span class="qhead-title">Awaiting others</span>
-            <span class="qhead-count">9</span>
-            <span class="qhead-sub">approval pending · GRN missing · vendor reply</span>
-          </div>
-          <span class="qhead-meta">$36,920 in flight</span>
-          <svg class="qhead-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="qbody">
+          <!-- 8 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-1055</span><span class="po-id">PO-7695</span></td>
+            <td><div class="vnd-name">Atlas Freight Services</div><div class="vnd-meta">Freight · Active vendor</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$9,300.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>5 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="pending" data-vendor="global industrial" id="inv-1092" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot pending"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1092</span><span class="row-sep">·</span><span class="row-vendor">Global Industrial</span><span class="row-sep">·</span><span class="row-amount">$6,100.45</span></div>
-              <div class="row-why"><span class="why-spark">✦</span>Price variance · 2nd reminder sent to approver</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg warn">2 days waiting</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Nudge</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 9 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-1043</span><span class="po-id">PO-7690</span></td>
+            <td><div class="vnd-name">NovaTech Supplies</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$17,400.00</div><span class="amt-sub">$17.4k highest</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>7 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="pending" data-vendor="techsupply" id="inv-1081" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot pending"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1081</span><span class="row-sep">·</span><span class="row-vendor">TechSupply Inc.</span><span class="row-sep">·</span><span class="row-amount">$4,890.00</span></div>
-              <div class="row-why"><span class="why-spark">✦</span>Possible duplicate · awaiting approver decision</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg warn">3 days</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Nudge</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 10 -->
+          <tr class="ai-flagged-row" data-status="blocked">
+            
+            <td><span class="inv-id">INV-1101</span><span class="po-id">PO-7730</span></td>
+            <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$5,620.00</div><span class="amt-sub">Duplicate risk</span></td>
+            <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+            <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 1d</span></td>
+            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="pending" data-vendor="sierra" id="inv-1074" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot pending"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1074</span><span class="row-sep">·</span><span class="row-vendor">Sierra Packaging LLC</span><span class="row-sep">·</span><span class="row-amount">$1,540.20</span></div>
-              <div class="row-why">Awaiting approval from J. Park</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg warn">3 days</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Nudge</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 11 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-1033</span><span class="po-id">PO-7682</span></td>
+            <td><div class="vnd-name">Pacific Rim Supplies</div><div class="vnd-meta">Facilities · Active vendor</div><div class="issue-ai"><span class="ai-pulse"></span>Witness flagged</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$3,880.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>8 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="waiting" data-vendor="brightline" id="inv-1067" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot waiting"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1067</span><span class="row-sep">·</span><span class="row-vendor">Brightline Office Supply</span><span class="row-sep">·</span><span class="row-amount">$2,200.00</span></div>
-              <div class="row-why">GRN pending from warehouse</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg warn">4 days</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Follow up</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 12 -->
+          <tr data-status="pending">
+            
+            <td><span class="inv-id">INV-1119</span><span class="po-id">PO-7741</span></td>
+            <td><div class="vnd-name">Vantage Systems LLC</div><div class="vnd-meta">Software · Avg 1.8d response</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$7,200.00</div><span class="amt-sub">$7.2k pending</span></td>
+            <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+            <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>4 days</span></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="pending" data-vendor="vantage" id="inv-1119" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot pending"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1119</span><span class="row-sep">·</span><span class="row-vendor">Vantage Systems LLC</span><span class="row-sep">·</span><span class="row-amount">$7,200.00</span></div>
-              <div class="row-why">Awaiting approval · auto-routed by Witness</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg warn">4 days</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Nudge</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 13 -->
+          <tr data-status="blocked">
+            
+            <td><span class="inv-id">INV-1124</span><span class="po-id">PO-7748</span></td>
+            <td><div class="vnd-name">Meridian Freight Co.</div><div class="vnd-meta">Freight · Avg 2.8d response</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$14,500.00</div><span class="amt-sub">PO exceeded</span></td>
+            <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
+            <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 2d</span></td>
+            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="waiting" data-vendor="crestline" id="inv-1136" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot waiting"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1136</span><span class="row-sep">·</span><span class="row-vendor">Crestline Interiors</span><span class="row-sep">·</span><span class="row-amount">$2,640.00</span></div>
-              <div class="row-why">GRN pending from receiving</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg warn">5 days</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Follow up</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 14 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-1027</span><span class="po-id">PO-7674</span></td>
+            <td><div class="vnd-name">Keystone Hardware</div><div class="vnd-meta">Facilities · Active vendor</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$6,750.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>10 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="pending" data-vendor="orion" id="inv-1143" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot pending"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1143</span><span class="row-sep">·</span><span class="row-vendor">Orion Packaging</span><span class="row-sep">·</span><span class="row-amount">$1,980.00</span></div>
-              <div class="row-why">Awaiting approval from J. Park</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg warn">6 days</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Nudge</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 15 -->
+          <tr data-status="waiting">
+            
+            <td><span class="inv-id">INV-1136</span><span class="po-id">PO-7759</span></td>
+            <td><div class="vnd-name">Crestline Interiors</div><div class="vnd-meta">Facilities · GRN pending</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$2,640.00</div><span class="amt-sub">GRN pending</span></td>
+            <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
+            <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>5 days</span></td>
+            <td><div class="action-cell"><button class="btn-ctx followup">Follow up</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="pending" data-vendor="brightline" id="inv-1152" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot pending"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1152</span><span class="row-sep">·</span><span class="row-vendor">Brightline Office Supply</span><span class="row-sep">·</span><span class="row-amount">$4,320.00</span></div>
-              <div class="row-why">Awaiting approval · stuck longer than usual</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg warn">7 days</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Nudge</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 16 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-1021</span><span class="po-id">PO-7668</span></td>
+            <td><div class="vnd-name">TechSupply Inc.</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$9,150.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>12 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="waiting" data-vendor="acme" id="inv-1161" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot waiting"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1161</span><span class="row-sep">·</span><span class="row-vendor">Acme Logistics Co.</span><span class="row-sep">·</span><span class="row-amount">$5,050.00</span></div>
-              <div class="row-why">GRN pending · 9 days — past usual receipt window</div>
-            </div>
-            <div class="row-right">
-              <span class="row-urg warn">9 days</span>
-              <div class="row-actions"><button class="row-act" onclick="event.stopPropagation()">Follow up</button></div>
-              <a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a>
-            </div>
-          </div>
+          <!-- 17 -->
+          <tr data-status="pending">
+            
+            <td><span class="inv-id">INV-1143</span><span class="po-id">PO-7766</span></td>
+            <td><div class="vnd-name">Orion Packaging</div><div class="vnd-meta">Packaging · Avg 3.0d response</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$1,980.00</div><span class="amt-sub">$1.9k pending</span></td>
+            <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+            <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>6 days</span></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-        </div>
-      </div>
+          <!-- 18 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-1016</span><span class="po-id">PO-7661</span></td>
+            <td><div class="vnd-name">Atlas Freight Services</div><div class="vnd-meta">Freight · Active vendor</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$11,200.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>14 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-      <!-- ─── Flowing through Witness (summary only — these don't need your eyes) ─── -->
-      <div class="queue-sec" id="qs-auto">
-        <div class="qhead" onclick="this.parentElement.classList.toggle('open')">
-          <div class="qhead-dot auto"></div>
-          <div class="qhead-main">
-            <span class="qhead-title">Flowing through Witness</span>
-            <span class="qhead-count">14</span>
-            <span class="qhead-sub">auto-resolved overnight · no input needed</span>
-          </div>
-          <span class="qhead-meta">~3h saved</span>
-          <svg class="qhead-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="qbody">
-          <div class="auto-summary">
-            <div class="as-icon">✓</div>
-            <div class="as-main">
-              <div class="as-headline"><b>14 invoices auto-matched and routed</b> under your pre-authorization (≤ $5,000, clean 3-way match).</div>
-              <div class="as-sub">Witness ran the work overnight · Witness can be reverted from AI Activity if anything looks off.</div>
-            </div>
-            <a class="as-link" href="ai-activity.html">See full trace →</a>
-          </div>
-        </div>
-      </div>
+          <!-- 19 -->
+          <tr data-status="pending">
+            
+            <td><span class="inv-id">INV-1152</span><span class="po-id">PO-7775</span></td>
+            <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$4,320.00</div><span class="amt-sub">$4.3k pending</span></td>
+            <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
+            <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>7 days</span></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-      <!-- ─── Recently completed (audit / lookup, default collapsed) ─── -->
-      <div class="queue-sec" id="qs-done">
-        <div class="qhead" onclick="this.parentElement.classList.toggle('open')">
-          <div class="qhead-dot done"></div>
-          <div class="qhead-main">
-            <span class="qhead-title">Recently completed</span>
-            <span class="qhead-count">12</span>
-            <span class="qhead-sub">approved · last 7 days</span>
-          </div>
-          <span class="qhead-meta">$101,100 settled</span>
-          <svg class="qhead-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="qbody">
+          <!-- 20 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-1009</span><span class="po-id">PO-7654</span></td>
+            <td><div class="vnd-name">NovaTech Supplies</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$8,900.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>15 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="approved" data-vendor="atlas" id="inv-1055" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1055</span><span class="row-sep">·</span><span class="row-vendor">Atlas Freight Services</span><span class="row-sep">·</span><span class="row-amount">$9,300.00</span></div>
-              <div class="row-why">Clean match · paid 5 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">5d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
+          <!-- 21 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-1003</span><span class="po-id">PO-7647</span></td>
+            <td><div class="vnd-name">Sierra Packaging LLC</div><div class="vnd-meta">Packaging · Active vendor</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$3,100.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>18 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="approved" data-vendor="novatech" id="inv-1043" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1043</span><span class="row-sep">·</span><span class="row-vendor">NovaTech Supplies</span><span class="row-sep">·</span><span class="row-amount">$17,400.00</span></div>
-              <div class="row-why">Clean match · paid 7 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">7d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
+          <!-- 22 -->
+          <tr data-status="waiting">
+            
+            <td><span class="inv-id">INV-1161</span><span class="po-id">PO-7784</span></td>
+            <td><div class="vnd-name">Acme Logistics Co.</div><div class="vnd-meta">Freight · GRN pending</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$5,050.00</div><span class="amt-sub">GRN pending</span></td>
+            <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
+            <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>9 days</span></td>
+            <td><div class="action-cell"><button class="btn-ctx followup">Follow up</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="approved" data-vendor="pacific" id="inv-1033" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1033</span><span class="row-sep">·</span><span class="row-vendor">Pacific Rim Supplies</span><span class="row-sep">·</span><span class="row-amount">$3,880.00</span></div>
-              <div class="row-why"><span class="why-spark">✦</span>Witness flagged & cleared · paid 8 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">8d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
+          <!-- 23 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-0998</span><span class="po-id">PO-7641</span></td>
+            <td><div class="vnd-name">Keystone Hardware</div><div class="vnd-meta">Facilities · Active vendor</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$2,780.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>20 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="approved" data-vendor="keystone" id="inv-1027" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1027</span><span class="row-sep">·</span><span class="row-vendor">Keystone Hardware</span><span class="row-sep">·</span><span class="row-amount">$6,750.00</span></div>
-              <div class="row-why">Clean match · paid 10 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">10d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
+          <!-- 24 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-0991</span><span class="po-id">PO-7633</span></td>
+            <td><div class="vnd-name">Vantage Systems LLC</div><div class="vnd-meta">Software · Active vendor</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$16,200.00</div><span class="amt-sub">$16.2k highest</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>22 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="approved" data-vendor="techsupply" id="inv-1021" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1021</span><span class="row-sep">·</span><span class="row-vendor">TechSupply Inc.</span><span class="row-sep">·</span><span class="row-amount">$9,150.00</span></div>
-              <div class="row-why">Clean match · paid 12 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">12d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
+          <!-- 25 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-0984</span><span class="po-id">PO-7626</span></td>
+            <td><div class="vnd-name">Pacific Rim Supplies</div><div class="vnd-meta">Facilities · Active vendor</div></td>
+            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><div class="td-amount">$4,600.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>25 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="approved" data-vendor="atlas" id="inv-1016" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1016</span><span class="row-sep">·</span><span class="row-vendor">Atlas Freight Services</span><span class="row-sep">·</span><span class="row-amount">$11,200.00</span></div>
-              <div class="row-why">Clean match · paid 14 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">14d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
+          <!-- 26 -->
+          <tr data-status="approved">
+            
+            <td><span class="inv-id">INV-0977</span><span class="po-id">PO-7619</span></td>
+            <td><div class="vnd-name">Meridian Freight Co.</div><div class="vnd-meta">Freight · Active vendor</div></td>
+            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><div class="td-amount">$7,840.00</div><span class="amt-sub">Clean match</span></td>
+            <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
+            <td><span class="urg-chip urg-green"><span class="urg-dot"></span>28 days</span></td>
+            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+          </tr>
 
-          <div class="inv-row" data-status="approved" data-vendor="novatech" id="inv-1009" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1009</span><span class="row-sep">·</span><span class="row-vendor">NovaTech Supplies</span><span class="row-sep">·</span><span class="row-amount">$8,900.00</span></div>
-              <div class="row-why">Clean match · paid 15 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">15d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
-
-          <div class="inv-row" data-status="approved" data-vendor="sierra" id="inv-1003" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-1003</span><span class="row-sep">·</span><span class="row-vendor">Sierra Packaging LLC</span><span class="row-sep">·</span><span class="row-amount">$3,100.00</span></div>
-              <div class="row-why">Clean match · paid 18 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">18d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
-
-          <div class="inv-row" data-status="approved" data-vendor="keystone" id="inv-0998" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-0998</span><span class="row-sep">·</span><span class="row-vendor">Keystone Hardware</span><span class="row-sep">·</span><span class="row-amount">$2,780.00</span></div>
-              <div class="row-why">Clean match · paid 20 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">20d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
-
-          <div class="inv-row" data-status="approved" data-vendor="vantage" id="inv-0991" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-0991</span><span class="row-sep">·</span><span class="row-vendor">Vantage Systems LLC</span><span class="row-sep">·</span><span class="row-amount">$16,200.00</span></div>
-              <div class="row-why">Clean match · paid 22 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">22d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
-
-          <div class="inv-row" data-status="approved" data-vendor="pacific" id="inv-0984" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-0984</span><span class="row-sep">·</span><span class="row-vendor">Pacific Rim Supplies</span><span class="row-sep">·</span><span class="row-amount">$4,600.00</span></div>
-              <div class="row-why">Clean match · paid 25 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">25d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
-
-          <div class="inv-row" data-status="approved" data-vendor="meridian" id="inv-0977" onclick="location.href='invoice-detail.html'">
-            <div class="inv-dot approved"></div>
-            <div class="row-main">
-              <div class="row-id-vendor"><span class="row-id">INV-0977</span><span class="row-sep">·</span><span class="row-vendor">Meridian Freight Co.</span><span class="row-sep">·</span><span class="row-amount">$7,840.00</span></div>
-              <div class="row-why">Clean match · paid 28 days ago</div>
-            </div>
-            <div class="row-right"><span class="row-urg calm">28d ago</span><a class="row-open" href="invoice-detail.html" onclick="event.stopPropagation()">Open →</a></div>
-          </div>
-
-        </div>
-      </div>
-
+        </tbody>
+      </table>
     </div>
 
-    <!-- Empty-result message when search / view matches nothing -->
-    <div class="empty-msg" id="empty-msg" style="display:none;">No invoices match the current search or view. Try clearing it above.</div>
-
+    <!-- PAGINATION -->
+    <div class="pagination">
+      <div class="pg-info" id="pg-info">Showing 1–10 of 26 invoices</div>
+      <div class="pg-controls" id="pg-controls"></div>
+    </div>
 
   </main>
 </div>
 
-
-
-<!-- Toast -->
-<div id="toast" style="position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:#120b0b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:10px 20px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap;z-index:100"></div>
-
 <script>
+  const PER_PAGE   = 10;
+  let currentPage  = 1;
+  let activeFilter = null;
+  let activeSearch = '';
+  let activeView   = 'all';
+
   // ── helpers ──────────────────────────────────────────
-  function allRows() { return Array.from(document.querySelectorAll('.inv-row[data-status]')); }
-  function vendorOf(r) { return (r.dataset.vendor || '').toLowerCase(); }
-  function statusOf(r) { return r.dataset.status; }
-  function urgDays(r) {
-    const t = (r.querySelector('.row-urg')?.textContent || '').toLowerCase();
-    const m = t.match(/(\d+)\s*d/);
+  function allDataRows() {
+    return Array.from(document.querySelectorAll('table.inv tbody tr[data-status]'));
+  }
+  function aiInsightRow() {
+    return document.querySelector('.ai-insight-row');
+  }
+
+  // ── saved views / smart filters ──────────────────────
+  // Parse a "days outstanding" value from the urgency chip text.
+  // "Due in 1d" → 1 · "3 days" → 3 · "2nd reminder" → 6 (heuristic: reminders mean stuck)
+  function urgencyDays(tr) {
+    const t = (tr.querySelector('.urg-chip')?.textContent || '').toLowerCase();
+    const m = t.match(/(\d+)\s*(d\b|day)/);
     if (m) return parseInt(m[1], 10);
-    if (t.includes('discount in 1d')) return 1;
-    if (t.includes('reminder')) return 6;
+    if (/reminder/.test(t)) return 6;
     return 0;
   }
-  function urgText(r) { return (r.querySelector('.row-urg')?.textContent || '').toLowerCase(); }
+  function vendorName(tr) {
+    return (tr.querySelector('.vnd-name')?.textContent || '').toLowerCase();
+  }
+  function urgencyText(tr) {
+    return (tr.querySelector('.urg-chip')?.textContent || '').toLowerCase();
+  }
 
-  // ── saved views: predicate-based filter, identical mental model to before ──
+  // Built-in smart views. Each: predicate, display label, rule blurb shown in the meta.
   const VIEWS = {
-    all:            { label: 'All',                 predicate: () => true },
-    stuck:          { label: 'Stuck >5d',           predicate: r => statusOf(r) !== 'approved' && urgDays(r) >= 5 },
-    'my-approvals': { label: 'My approvals',        predicate: r => statusOf(r) === 'pending' },
-    'acme-month':   { label: 'Acme this month',     predicate: r => vendorOf(r).includes('acme') },
-    'discount-risk':{ label: 'Discount at risk',    predicate: r => urgText(r).includes('discount') }
+    'all':            { label: 'All invoices',      rule: '',                                       predicate: () => true },
+    'stuck':          { label: 'Stuck >5 days',     rule: 'unresolved · outstanding ≥ 5 days',      predicate: tr => tr.dataset.status !== 'approved' && urgencyDays(tr) >= 5 },
+    'my-approvals':   { label: 'My approvals queue',rule: 'status = pending · assignee = you',      predicate: tr => tr.dataset.status === 'pending' },
+    'acme-month':     { label: 'Acme this month',   rule: 'vendor contains “acme” · current month', predicate: tr => vendorName(tr).includes('acme') },
+    'discount-risk':  { label: 'Discount at risk',  rule: 'urgency mentions “discount”',            predicate: tr => urgencyText(tr).includes('discount') }
   };
 
-  let activeView = 'all';
-  let activeSearch = '';
+  function setView(btn)            { setViewByKey(btn.dataset.view); }
+  function setViewByKey(key) {
+    if (!VIEWS[key]) key = 'all';
+    activeView = key;
+    document.querySelectorAll('.view-chip').forEach(b => b.classList.toggle('active', b.dataset.view === key));
 
-  function refreshCounts() {
-    const rows = allRows();
+    // Surface the active rule in the bar — only when not the default
+    const meta = document.getElementById('view-meta');
+    if (key === 'all') {
+      meta.style.display = 'none';
+    } else {
+      meta.style.display = '';
+      document.getElementById('view-meta-name').textContent = VIEWS[key].label;
+      document.getElementById('view-meta-rule').textContent = VIEWS[key].rule ? '· ' + VIEWS[key].rule : '';
+    }
+
+    currentPage = 1;
+    persistState();
+    render();
+  }
+
+  // Refresh the live count on every chip after each render.
+  function refreshViewCounts() {
+    const rows = allDataRows();
     Object.keys(VIEWS).forEach(key => {
       const n = rows.filter(VIEWS[key].predicate).length;
       const el = document.querySelector('[data-count-for="' + key + '"]');
@@ -1070,68 +1030,174 @@
     });
   }
 
-  function applyView() {
-    const rows = allRows();
-    const viewPred = (VIEWS[activeView] || VIEWS.all).predicate;
-    let anyVisible = false;
-    rows.forEach(r => {
-      const text = r.textContent.toLowerCase();
-      const passView = viewPred(r);
-      const passSearch = activeSearch === '' || text.includes(activeSearch);
-      const show = passView && passSearch;
-      r.style.display = show ? '' : 'none';
-      if (show) anyVisible = true;
+  // ── filter persistence (per brief: filters survive navigation) ──
+  const STATE_KEY = 'witness-invoices-state';
+  function persistState() {
+    try {
+      localStorage.setItem(STATE_KEY, JSON.stringify({
+        view:   activeView,
+        filter: activeFilter,
+        search: activeSearch,
+        sort:   document.getElementById('sort-select')?.value || 'due-asc'
+      }));
+    } catch (e) {}
+  }
+  function restoreState() {
+    try {
+      const s = JSON.parse(localStorage.getItem(STATE_KEY) || '{}');
+      if (s.view && VIEWS[s.view]) {
+        activeView = s.view;
+        document.querySelectorAll('.view-chip').forEach(b => b.classList.toggle('active', b.dataset.view === s.view));
+        const meta = document.getElementById('view-meta');
+        if (s.view !== 'all' && meta) {
+          meta.style.display = '';
+          document.getElementById('view-meta-name').textContent = VIEWS[s.view].label;
+          document.getElementById('view-meta-rule').textContent = VIEWS[s.view].rule ? '· ' + VIEWS[s.view].rule : '';
+        }
+      }
+      if (s.filter) {
+        activeFilter = s.filter;
+        document.querySelectorAll('.filter-pill').forEach(b => {
+          const f = b.dataset.filter;
+          const matches = (f === s.filter) || (s.filter === null && (f === 'null' || !f));
+          b.classList.toggle('active', matches);
+        });
+      }
+      if (s.search) {
+        activeSearch = s.search;
+        const input = document.querySelector('.search-input');
+        if (input) input.value = s.search;
+      }
+      if (s.sort) {
+        const sel = document.getElementById('sort-select');
+        if (sel) {
+          sel.value = s.sort;
+          sel.dispatchEvent(new Event('change'));
+        }
+      }
+    } catch (e) {}
+  }
+
+  // Returns rows that pass the current filter + search (used by sortedMatchingRows)
+
+  // ── render ────────────────────────────────────────────
+  function render() {
+    refreshViewCounts();
+    const matched   = sortedMatchingRows();
+    const total     = matched.length;
+    const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+
+    // Clamp page
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const start = (currentPage - 1) * PER_PAGE; // 0-based
+    const end   = start + PER_PAGE;
+    const pageSet = new Set(matched.slice(start, end));
+
+    // Show/hide every data row
+    allDataRows().forEach(tr => {
+      tr.style.display = pageSet.has(tr) ? '' : 'none';
     });
 
-    // Hide a queue section if all its rows are hidden (cleaner than ghost empty sections)
-    document.querySelectorAll('.queue-sec').forEach(sec => {
-      const visibleRows = sec.querySelectorAll('.inv-row:not([style*="display: none"])').length;
-      const isAutoSummary = sec.querySelector('.auto-summary'); // "Flowing through Witness" has no rows
-      if (visibleRows === 0 && !isAutoSummary) {
-        sec.style.display = 'none';
-      } else {
-        sec.style.display = '';
+    // AI insight row: show on page 1 only when no filter/search active
+    const air = aiInsightRow();
+    if (air) {
+      air.style.display = (activeFilter === null && activeSearch === '' && currentPage === 1) ? '' : 'none';
+    }
+
+    // Info text
+    const from = total === 0 ? 0 : start + 1;
+    const to   = Math.min(end, total);
+    document.getElementById('pg-info').textContent =
+      `Showing ${from}–${to} of ${total} invoice${total !== 1 ? 's' : ''}`;
+
+    // Pagination buttons
+    const ctrl = document.getElementById('pg-controls');
+    ctrl.innerHTML = '';
+
+    function btn(label, page, disabled, active) {
+      const b = document.createElement('button');
+      b.className = 'pg-btn' + (active ? ' active' : '');
+      b.textContent = label;
+      b.disabled = disabled;
+      if (!disabled) b.addEventListener('click', () => { currentPage = page; render(); });
+      return b;
+    }
+
+    ctrl.appendChild(btn('← Prev', currentPage - 1, currentPage === 1, false));
+
+    // Page number buttons — show at most 5 around current page
+    const pages = [];
+    for (let p = 1; p <= totalPages; p++) pages.push(p);
+
+    pages.forEach(p => {
+      if (
+        p === 1 || p === totalPages ||
+        (p >= currentPage - 1 && p <= currentPage + 1)
+      ) {
+        ctrl.appendChild(btn(p, p, false, p === currentPage));
+      } else if (
+        p === currentPage - 2 || p === currentPage + 2
+      ) {
+        const sep = document.createElement('span');
+        sep.className = 'pg-sep';
+        sep.textContent = '…';
+        ctrl.appendChild(sep);
       }
     });
 
-    document.getElementById('empty-msg').style.display = anyVisible ? 'none' : '';
+    ctrl.appendChild(btn('Next →', currentPage + 1, currentPage === totalPages, false));
   }
 
-  function setView(btn) { setViewByKey(btn.dataset.view); }
-  function setViewByKey(key) {
-    if (!VIEWS[key]) key = 'all';
-    activeView = key;
-    document.querySelectorAll('.vs-chip').forEach(b => b.classList.toggle('active', b.dataset.view === key));
-    // When refining by a view, expand all sections so the refined results aren't hidden behind a collapsed header
-    if (key !== 'all') {
-      document.querySelectorAll('.queue-sec').forEach(sec => sec.classList.add('open'));
-    }
-    applyView();
-    try { localStorage.setItem('witness-inv-view', key); } catch (e) {}
+  // ── sort ─────────────────────────────────────────────
+  // Extract numeric "days" value from due cell text, e.g. "3 days" → 3
+  function dueDays(tr) {
+    const t = tr.querySelector('.td-due');
+    if (!t) return 999;
+    const m = t.textContent.match(/\d+/);
+    return m ? parseInt(m[0]) : 999;
   }
+  function amountVal(tr) {
+    const t = tr.querySelector('.td-amount');
+    if (!t) return 0;
+    return parseFloat(t.textContent.replace(/[$,]/g, '')) || 0;
+  }
+  function vendorText(tr) {
+    const t = tr.querySelector('.td-vendor');
+    return t ? t.textContent.trim().toLowerCase() : '';
+  }
+  const STATUS_ORDER = { blocked:0, pending:1, waiting:2, approved:3 };
+  function statusVal(tr) { return STATUS_ORDER[tr.dataset.status] ?? 9; }
 
-  // ── quick search ────────────────────────────────────
-  document.getElementById('quick-search').addEventListener('input', function() {
-    activeSearch = this.value.toLowerCase().trim();
-    if (activeSearch !== '') {
-      document.querySelectorAll('.queue-sec').forEach(sec => sec.classList.add('open'));
+  let activeSortFn = (a, b) => dueDays(a) - dueDays(b); // default: due asc
+
+  document.getElementById('sort-select').addEventListener('change', function () {
+    switch (this.value) {
+      case 'due-asc':     activeSortFn = (a,b) => dueDays(a) - dueDays(b); break;
+      case 'amount-desc': activeSortFn = (a,b) => amountVal(b) - amountVal(a); break;
+      case 'status':      activeSortFn = (a,b) => statusVal(a) - statusVal(b); break;
+      case 'vendor-asc':  activeSortFn = (a,b) => vendorText(a).localeCompare(vendorText(b)); break;
     }
-    applyView();
+    currentPage = 1;
+    persistState();
+    render();
   });
 
-  // ── hash anchor jump (from AI Activity → invoices.html#inv-1048) ────
-  function openInvoiceFromHash() {
-    if (!location.hash) return;
-    const target = document.querySelector(location.hash);
-    if (!target || !target.classList.contains('inv-row')) return;
-    const sec = target.closest('.queue-sec');
-    if (sec && !sec.classList.contains('open')) sec.classList.add('open');
-    setTimeout(() => target.scrollIntoView({behavior: 'smooth', block: 'center'}), 60);
+  // Patch matchingRows to also sort
+  function sortedMatchingRows() {
+    const viewPred = (VIEWS[activeView] || VIEWS.all).predicate;
+    return allDataRows().filter(tr => {
+      const status      = tr.dataset.status;
+      const isAiFlagged = tr.classList.contains('ai-flagged-row');
+      const text        = tr.textContent.toLowerCase();
+      const passView    = viewPred(tr);
+      const passFilter  = activeFilter === null || (activeFilter === 'ai' ? isAiFlagged : status === activeFilter);
+      const passSearch  = activeSearch === '' || text.includes(activeSearch);
+      return passView && passFilter && passSearch;
+    }).sort(activeSortFn);
   }
-  window.addEventListener('DOMContentLoaded', openInvoiceFromHash);
-  window.addEventListener('hashchange', openInvoiceFromHash);
 
-  // ── toast ──────────────────────────────────────────
+  // ── toast helper ─────────────────────────────────────
   let toastTimer;
   function showToast(msg) {
     const t = document.getElementById('toast');
@@ -1145,55 +1211,138 @@
     }, 2800);
   }
 
-  // ── export CSV ────────────────────────────────────
+  // ── export CSV ───────────────────────────────────────
   document.getElementById('btn-export').addEventListener('click', () => {
-    const headers = ['Invoice', 'Vendor', 'Amount', 'Status', 'Why', 'Urgency'];
-    const rows = allRows().filter(r => r.style.display !== 'none').map(r => {
-      const id  = r.querySelector('.row-id')?.textContent.trim() || '';
-      const vnd = r.querySelector('.row-vendor')?.textContent.trim() || '';
-      const amt = r.querySelector('.row-amount')?.textContent.trim() || '';
-      const st  = r.dataset.status || '';
-      const why = (r.querySelector('.row-why')?.textContent || '').replace(/✦\s*/g, '').trim();
-      const urg = r.querySelector('.row-urg')?.textContent.trim() || '';
-      return [id, vnd, amt, st, why, urg].map(v => `"${v.replace(/"/g, '""')}"`).join(',');
+    const headers = ['No.','Invoice','PO','Vendor','Source','Amount','Status','Issue','Due In'];
+    const rows = sortedMatchingRows().map(tr => {
+      const cells = tr.querySelectorAll('td');
+      const no     = cells[0]?.textContent.trim();
+      const inv    = tr.querySelector('.inv-id')?.textContent.trim();
+      const po     = tr.querySelector('.po-id')?.textContent.trim();
+      const vendor = tr.querySelector('.td-vendor')?.textContent.trim();
+      const source = tr.querySelector('.src-chip')?.textContent.trim();
+      const amount = tr.querySelector('.td-amount')?.textContent.trim();
+      const status = tr.querySelector('.badge')?.textContent.trim();
+      const issue  = tr.querySelector('.issue-line')?.textContent.trim();
+      const due    = tr.querySelector('.td-due')?.textContent.trim();
+      return [no, inv, po, vendor, source, amount, status, issue, due]
+        .map(v => `"${(v||'').replace(/"/g,'""')}"`).join(',');
     });
-    const csv = [headers.join(','), ...rows].join('\n');
-    const blob = new Blob([csv], {type: 'text/csv'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const csv  = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type:'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
     a.href = url; a.download = 'witness-invoices.csv'; a.click();
     URL.revokeObjectURL(url);
-    showToast('✓ CSV exported — ' + rows.length + ' invoices');
+    showToast('✓ CSV exported — witness-invoices.csv');
   });
 
-  // ── run batch match ──────────────────────────────
+  // ── batch match ──────────────────────────────────────
   document.getElementById('btn-batch').addEventListener('click', () => {
     const btn = document.getElementById('btn-batch');
-    const original = btn.innerHTML;
-    btn.innerHTML = '✦ Running…';
+    btn.textContent = '✦ Running…';
+    btn.style.opacity = '0.7';
     btn.disabled = true;
-    btn.style.opacity = '0.6';
     setTimeout(() => {
-      btn.innerHTML = original;
-      btn.disabled = false;
+      btn.textContent = '✦ Run batch match';
       btn.style.opacity = '1';
-      showToast('✦ Batch match complete — 14 auto-resolved');
-    }, 1500);
+      btn.disabled = false;
+      showToast('✦ Batch match complete — 14 invoices auto-resolved');
+    }, 1800);
   });
 
-  // ── save current view as preset ────────────────
+  // ── filter pills ─────────────────────────────────────
+  function setFilter(btn) {
+    document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    activeFilter = (f === 'null' || !f) ? null : f;
+    currentPage = 1;
+    persistState();
+    render();
+  }
+
+  // ── search ────────────────────────────────────────────
+  document.querySelector('.search-input').addEventListener('input', function () {
+    activeSearch = this.value.toLowerCase().trim();
+    currentPage = 1;
+    persistState();
+    render();
+  });
+
+  // ── save current view as a custom preset ─────────────
+  const CUSTOM_KEY = 'witness-invoices-custom-views';
+  function loadCustomViews() {
+    try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'); }
+    catch (e) { return []; }
+  }
+  function renderCustomViews() {
+    document.querySelectorAll('.view-chip.custom').forEach(el => el.remove());
+    const scroll = document.getElementById('views-scroll');
+    if (!scroll) return;
+    loadCustomViews().forEach(v => {
+      const key = 'custom:' + v.id;
+      VIEWS[key] = {
+        label: v.name,
+        rule: v.rule,
+        predicate: tr => {
+          const isAiFlagged = tr.classList.contains('ai-flagged-row');
+          const text        = tr.textContent.toLowerCase();
+          const passFilter  = v.filter === null || (v.filter === 'ai' ? isAiFlagged : tr.dataset.status === v.filter);
+          const passSearch  = !v.search || text.includes(v.search);
+          return passFilter && passSearch;
+        }
+      };
+      const btn = document.createElement('button');
+      btn.className = 'view-chip custom';
+      btn.dataset.view = key;
+      btn.onclick = () => setViewByKey(key);
+      btn.innerHTML =
+        '<span class="view-spark" aria-hidden="true">★</span>' +
+        v.name.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])) +
+        ' <span class="view-count" data-count-for="' + key + '">0</span>';
+      scroll.appendChild(btn);
+    });
+  }
   document.getElementById('btn-save-view').addEventListener('click', () => {
-    const name = (prompt('Name this view:', activeSearch || activeView) || '').trim();
+    const filterLabel = activeFilter ? activeFilter : 'all statuses';
+    const searchLabel = activeSearch ? '“' + activeSearch + '”' : '';
+    const suggested   = activeSearch
+      ? activeSearch.charAt(0).toUpperCase() + activeSearch.slice(1)
+      : (activeFilter ? activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1) + ' invoices' : '');
+    const name = (prompt('Name this view:', suggested) || '').trim();
     if (!name) return;
-    showToast('✓ Saved view — ' + name);
+    const rule = [filterLabel === 'all statuses' ? '' : 'status = ' + filterLabel, searchLabel && 'search = ' + searchLabel]
+      .filter(Boolean).join(' · ');
+    const list = loadCustomViews();
+    const id   = Date.now().toString(36);
+    list.push({ id, name, rule, filter: activeFilter, search: activeSearch });
+    try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(list)); } catch (e) {}
+    renderCustomViews();
+    setViewByKey('custom:' + id);
+    showToast('✓ View saved — ' + name);
   });
 
-  // ── boot ────────────────────────────────────────
-  refreshCounts();
-  try {
-    const saved = localStorage.getItem('witness-inv-view');
-    if (saved && VIEWS[saved]) setViewByKey(saved);
-  } catch (e) {}
+  // ── boot ─────────────────────────────────────────────
+  renderCustomViews();
+  restoreState();
+  render();
+</script>
+
+
+<!-- Toast -->
+<div id="toast" style="position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:#120b0b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:10px 20px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap;z-index:100"></div>
+
+<script>
+  document.querySelectorAll('table.inv tbody tr').forEach(tr => {
+    if (tr.classList.contains('ai-insight-row')) return;
+    if (!tr.querySelector('td')) return;
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('click', () => location.href = 'invoice-detail.html');
+  });
+  document.querySelectorAll('.btn-ctx').forEach(btn => {
+    btn.addEventListener('click', e => e.stopPropagation());
+  });
 </script>
 
 <script>
