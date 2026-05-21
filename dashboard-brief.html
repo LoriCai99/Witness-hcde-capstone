@@ -281,13 +281,23 @@
     50% { opacity: .4; transform: scale(.85); }
   }
 
+  .brief-title-row {
+    display: flex; align-items: center; gap: 16px;
+    margin: 0 0 var(--spacing-6);
+  }
+  .brief-title-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
   .brief-title {
     font-family: var(--font-display);
     font-weight: 500;
     font-size: 52px;
     letter-spacing: -0.025em;
     line-height: 1;
-    margin: 0 0 var(--spacing-6);
+    margin: 0;
     color: var(--ink);
   }
   .brief-title em {
@@ -928,7 +938,12 @@
         </span>
       </div>
 
-      <h1 class="brief-title">Morning <em>brief</em>.</h1>
+      <div class="brief-title-row">
+        <div class="brief-title-icon">
+          <svg width="26" height="26" viewbox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="4.5" stroke="white" stroke-width="1.8"/><path d="M13 2v3M13 21v3M2 13h3M21 13h3M5 5l2.1 2.1M18.9 18.9l2.1 2.1M21 5l-2.1 2.1M7.1 18.9L5 21" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <h1 class="brief-title">Morning <em>brief</em>.</h1>
+      </div>
 
       <div class="brief-letter">
         <div class="brief-body">

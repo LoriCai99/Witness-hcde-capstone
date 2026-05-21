@@ -416,9 +416,11 @@
     .dr-foot { font-size: 10px; color: rgba(240,237,232,0.4); margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
 
     /* Page heading row */
-    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; }
+    .page-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
     .page-hd-left { display: flex; flex-direction: column; gap: 4px; }
-    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+    .page-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+    .page-title-icon { width: 36px; height: 36px; border-radius: 10px; background: #120b0b; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 400; color: #120b0b; line-height: 1.2; letter-spacing: -0.5px; }
     .page-sub { font-size: 14px; font-weight: 400; color: #45556c; line-height: 20px; letter-spacing: -0.15px; }
     .hd-actions { display: flex; align-items: center; gap: 8px; }
     .approve-tooltip { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: #120b0b; color: #f0ede8; border-radius: 10px; padding: 12px 14px; width: 240px; font-size: 11px; line-height: 1.6; z-index: 50; text-align: left; }
@@ -625,7 +627,12 @@
       <a href="dashboard.html" style="align-self:flex-start;font-size:13px;font-weight:500;color:#45556c;text-decoration:none;display:flex;align-items:center;gap:4px;">← Dashboard</a>
       <div class="page-hd">
         <div class="page-hd-left">
-          <h1 class="ptitle">INV-1027 &nbsp;—&nbsp; Praxis Logistics</h1>
+          <div class="page-title-row">
+            <div class="page-title-icon">
+              <svg width="20" height="20" viewbox="0 0 20 20" fill="none"><path d="M5 2h7l3 3v13H5V2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 2v3h3M8 9h4M8 12h4M8 15h2" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <h1 class="ptitle">INV-1027 &nbsp;—&nbsp; Praxis Logistics</h1>
+          </div>
           <div class="page-sub">Duplicate auto-held &nbsp;·&nbsp; PO-7718 &nbsp;·&nbsp; ERP &nbsp;·&nbsp; Detected <span data-wt-time="today 02:14" data-wt-fmt="datetimeN">Apr 28 · 2:14 AM</span></div>
         </div>
         <div class="hd-actions">

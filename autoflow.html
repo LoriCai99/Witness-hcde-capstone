@@ -40,7 +40,7 @@
     .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
     .topbar-right { display: flex; align-items: center; gap: 24px; }
     .health-chip { display: flex; align-items: center; gap: 8px; background: var(--color-semantic-success-100); border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
-    .health-chip img { width: 16px; height: 16px; object-fit: contain; }
+    .health-chip .hdot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
     .health-chip span { font-size: 14px; font-weight: 500; color: #00a63e; letter-spacing: -0.15px; white-space: nowrap; }
     .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--color-neutral-white); }
 
@@ -48,9 +48,11 @@
     .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 32px; }
 
     /* PAGE HEAD */
-    .page-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+    .page-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
     .page-hd-left { display: flex; flex-direction: column; gap: 8px; }
-    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: var(--color-neutral-black); line-height: 1.4; }
+    .page-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+    .page-title-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--color-neutral-black); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 400; color: var(--color-neutral-black); line-height: 1.2; letter-spacing: -0.5px; }
     p.page-sub { font-size: 14px; color: var(--color-neutral-cool-grey); line-height: 20px; max-width: 640px; }
     .hd-actions { display: flex; gap: 8px; flex-shrink: 0; }
     .btn-outline { background: var(--color-neutral-white); border: 1.5px solid var(--color-neutral-lotion); border-radius: 8px; padding: 8px 14px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--color-neutral-black); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
@@ -289,7 +291,7 @@
     <div class="topbar-date" data-wt-clock="topbar">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
     <div class="topbar-right">
       <div class="health-chip">
-        <img src="https://www.figma.com/api/mcp/asset/7be4afc7-921a-48d2-8e2b-bca5dd6a50fc" alt="" />
+        <span class="hdot"></span>
         <span>All systems healthy</span>
       </div>
       <div class="avatar">SC</div>
@@ -301,7 +303,12 @@
     <!-- PAGE HEAD -->
     <div class="page-hd">
       <div class="page-hd-left">
-        <h1 class="ptitle">Autoflows</h1>
+        <div class="page-title-row">
+          <div class="page-title-icon">
+            <svg width="20" height="20" viewbox="0 0 20 20" fill="none"><path d="M11 2L4 11h5l-1 7 7-9h-5l1-7z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <h1 class="ptitle">Autoflows</h1>
+        </div>
         <p class="page-sub">The exact list of things Witness is allowed to do on your behalf — rule by rule. <b>Auto</b> runs without asking, <b>Suggest</b> waits for your click, <b>Manual</b> never runs without you. Edit any rule the moment it stops feeling right.</p>
       </div>
       <div class="hd-actions">
