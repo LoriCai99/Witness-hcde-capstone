@@ -193,6 +193,10 @@
           '</div>' +
         '</div>' +
       '</div>' +
+      '<div class="think-next stream-item">' +
+        'Tried these and still stuck? ' +
+        '<a class="think-next-link" onclick="focusChatInput(\'think\', \'Here\\\'s what didn\\\'t work: \')">Tell me what happened — I\'ll rethink →</a>' +
+      '</div>' +
     '</div>';
 
   var TPL_DO_HTML =
@@ -767,6 +771,21 @@
 
   window.expandFromSlim = function expandFromSlim() {
     if (document.body.getAttribute('data-chat') === 'slim') setChatMode('rail');
+  };
+
+  // Focus the chat input with a prefilled prompt and a mode tag. Used by
+  // the "Tell me what happened" link at the foot of a Suggest response so the
+  // user can describe what didn't work instead of being handed yet another
+  // canned menu.
+  window.focusChatInput = function focusChatInput(kind, prefill) {
+    if (document.body.getAttribute('data-chat') === 'slim') setChatMode('rail');
+    var input = document.querySelector('.chat-input');
+    if (!input) return;
+    input.value = prefill || '';
+    if (kind) input.setAttribute('data-kind', kind);
+    input.focus();
+    // Put caret at the end so the user can keep typing.
+    try { input.setSelectionRange(input.value.length, input.value.length); } catch (_) {}
   };
 
   window.resolveGate = function resolveGate(btn, text) {

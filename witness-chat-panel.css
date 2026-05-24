@@ -441,6 +441,22 @@ body.chat-padded[data-chat="float"] { padding-right: 0; }
   border-bottom: 1px dashed #9f9fa6;
 }
 .opt-why:hover { color: #120b0b; }
+.think-next {
+  margin-top: 10px; padding: 10px 12px;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  border-radius: 8px;
+  font-size: 12.5px; color: #15803d;
+  line-height: 1.5;
+}
+.think-next-link {
+  color: #15803d; text-decoration: none;
+  border-bottom: 1px dashed #15803d;
+  cursor: pointer; font-weight: 500;
+  margin-left: 2px;
+}
+.think-next-link:hover { color: #120b0b; border-bottom-color: #120b0b; }
+
 .think-confidence {
   margin-top: 10px; padding: 8px 10px;
   background: #f4f4f4; border-radius: 8px;

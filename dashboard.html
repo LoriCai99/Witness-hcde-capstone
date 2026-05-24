@@ -274,9 +274,17 @@
     font-variant-numeric: tabular-nums;
     background: #f4f4f4; color: #45556c;
   }
-  .stat-trend.up   { background: #fee2e2; color: #b91c1c; }
-  .stat-trend.down { background: #dcfce7; color: #15803d; }
-  .stat-trend.flat { background: #f4f4f4; color: #45556c; }
+  .stat-trend.up    { background: #fee2e2; color: #b91c1c; }
+  .stat-trend.down  { background: #dcfce7; color: #15803d; }
+  .stat-trend.flat  { background: #f4f4f4; color: #45556c; }
+  .stat-trend.alert {
+    background: #fee2e2; color: #b91c1c;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .stat-trend.alert::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: #dc2626;
+  }
   .stat-mid { display: flex; flex-direction: column; gap: 4px; }
   .stat-num {
     font-size: 30px; font-weight: 600; color: #0b0d12;
@@ -671,6 +679,33 @@
   .status-badge.held    { background: #f4f4f4; color: #45556c; }
   .status-badge.held .sdot    { background: #9f9fa6; }
 
+  /* ─────────── "Needs your review" affordance (AI handled it, but you still need to weigh in) ─────────── */
+  .section-tab-alert {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-left: 2px;
+    font-size: 11px; font-weight: 600; color: #b91c1c;
+    background: #fee2e2; padding: 2px 7px; border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+  }
+  .section-tab-alert::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: #dc2626; flex-shrink: 0;
+  }
+
+  table.ap tr.needs-review td:first-child {
+    box-shadow: inset 3px 0 0 #dc2626;
+  }
+  .ai-needs-review {
+    display: inline-block;
+    margin-bottom: 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+    color: #b91c1c; background: #fee2e2;
+    padding: 2px 7px; border-radius: 999px;
+    text-transform: uppercase;
+  }
+  .stat-preview-row.needs-review .stat-preview-dot { background: #dc2626; }
+  .stat-preview-row.needs-review b { color: #b91c1c; }
+
   /* ─────────── AI Suggestion cell ─────────── */
   .ai-sug { display: block; }
   .ai-sug-text {
@@ -811,13 +846,11 @@
             <div class="stat-lbl">At risk across 12 cases</div>
           </div>
           <div class="stat-foot">
-            <div class="stat-mini-bar" title="Exposure by aging bucket">
-              <div style="background:#15803d; flex:0 0 38%"></div>
-              <div style="background:#e9b44c; flex:0 0 32%"></div>
-              <div style="background:#ff6900; flex:0 0 22%"></div>
-              <div style="background:#dc2626; flex:0 0 8%"></div>
+            <div class="stat-foot-list">
+              <span><b>Brightline</b> · $42K</span>
+              <span><b>Lumen</b> · $28K</span>
+              <span class="muted">10 others</span>
             </div>
-            <div class="stat-foot-lbl">Current · 1–30d · 31–60d · 60d+</div>
           </div>
 
           <div class="stat-preview" role="tooltip">
@@ -902,13 +935,12 @@
           </div>
         </a>
 
-        <a class="stat-card" href="ai-activity.html" aria-label="24 cases handled by AI — open AI Activity" style="position:relative;">
-          <span class="wt-ai-tag" data-trace-prov="dash-handled-by-ai" onclick="event.preventDefault();event.stopPropagation();">✦ Trace</span>
+        <a class="stat-card" href="ai-activity.html" aria-label="24 cases handled by AI — 2 need your review">
           <div class="stat-top">
             <div class="stat-icon ai">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l1.4 3.6L15 7l-3.6 1L10 12 8.6 8 5 7l3.6-1.4L10 2z" stroke="#ff6900" stroke-width="1.5" stroke-linejoin="round"/><path d="M15 14l.7 1.8L17.5 16l-1.8.7L15 18.5l-.7-1.8L12.5 16l1.8-.5L15 14z" stroke="#ff6900" stroke-width="1.3" stroke-linejoin="round"/></svg>
             </div>
-            <span class="stat-trend down">3h saved</span>
+            <span class="stat-trend alert">2 need your review</span>
           </div>
           <div class="stat-mid">
             <div class="stat-num">24</div>
@@ -918,7 +950,7 @@
             <div class="stat-foot-list">
               <span><b>14</b> paid</span>
               <span><b>8</b> routed</span>
-              <span><b>2</b> held</span>
+              <span class="muted">3h saved</span>
             </div>
           </div>
 
@@ -928,37 +960,12 @@
               <div class="stat-preview-meta">Last 24h · 3h saved</div>
             </div>
             <div class="stat-preview-list">
+              <div class="stat-preview-row needs-review"><span class="stat-preview-dot"></span><div><b>1 duplicate</b> held on INV-1027 — needs your review</div></div>
+              <div class="stat-preview-row needs-review"><span class="stat-preview-dot"></span><div><b>1 dispute</b> flagged on Lumen Logistics — needs your review</div></div>
               <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>14 invoices</b> paid · 3-way match clean</div></div>
               <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>8 invoices</b> routed for approval</div></div>
-              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>1 duplicate</b> caught on INV-1048 · held</div></div>
-              <div class="stat-preview-row"><span class="stat-preview-dot"></span><div><b>1 dispute</b> flagged on Lumen Logistics · held</div></div>
             </div>
             <div class="stat-preview-foot">See full activity log →</div>
-          </div>
-
-          <!-- Provenance content for the Trace tag -->
-          <div hidden id="trace-prov-dash-handled-by-ai">
-            <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Today's automation</span><button class="wt-pop-close" type="button">✕</button></div>
-            <div class="wt-pop-title">24 cases handled · 3h saved (est.)</div>
-            <div class="wt-pop-sub">Period: last 24h · rolling window</div>
-            <div class="wt-prov-section">
-              <div class="wt-prov-label why-auto"><span class="wt-dot"></span>What ran on your behalf</div>
-              <ul class="wt-prov-list">
-                <li><strong>14 paid</strong> via <span class="pill rule">Clean payment routing</span> (≤$5K, clean match)</li>
-                <li><strong>8 routed</strong> via <span class="pill rule">Approval routing</span> to assigned approvers</li>
-                <li><strong>2 held</strong> for you: <strong>INV-1048</strong> exception, <strong>INV-1027</strong> duplicate</li>
-              </ul>
-            </div>
-            <div class="wt-prov-section">
-              <div class="wt-prov-label why-wait"><span class="wt-dot"></span>What Witness never does without you</div>
-              <div class="wt-prov-body">
-                Pay above your <strong>$5,000</strong> ceiling · email vendors · approve disputes · change bank info · turn on a new workflow.
-              </div>
-            </div>
-            <div class="wt-pop-foot">
-              <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open AI Activity ↗</button>
-              <button class="wt-pop-btn" data-trace-action="goto-workflow">View rules →</button>
-            </div>
           </div>
         </a>
       </div>
@@ -980,6 +987,7 @@
         <span class="section-tab-dot"></span>
         <span>Handled by AI</span>
         <span class="section-tab-count">24</span>
+        <span class="section-tab-alert">2 to review</span>
       </button>
     </div>
 
@@ -1250,14 +1258,29 @@
                 <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Sent to S. Reed for sign-off.</span></span></td>
                 <td class="td-due done"><span data-wt-time="today 00:03" data-wt-fmt="time">12:03 AM</span><span class="row-arrow">→</span></td>
               </tr>
-              <tr data-href="invoice-detail-duplicate.html">
+              <tr class="needs-review" data-href="invoice-detail-duplicate.html">
                 <td class="td-inv">INV-1027</td>
                 <td class="td-po">PO-7718</td>
                 <td class="t-amt">$890.40</td>
                 <td class="td-vendor">Praxis Logistics</td>
-                <td><span class="status-badge waiting"><span class="sdot"></span>Duplicate held</span></td>
-                <td class="td-ai"><span class="ai-sug"><span class="ai-sug-text">Held — already paid as INV-1024.</span></span></td>
+                <td><span class="status-badge held"><span class="sdot"></span>Duplicate held</span></td>
+                <td class="td-ai">
+                  <span class="ai-needs-review">Needs your review</span>
+                  <span class="ai-sug"><span class="ai-sug-text">Held — already paid as INV-1024. Approve the duplicate release or confirm the hold.</span></span>
+                </td>
                 <td class="td-due done"><span data-wt-time="today 02:14" data-wt-fmt="time">2:14 AM</span><span class="row-arrow">→</span></td>
+              </tr>
+              <tr class="needs-review">
+                <td class="td-inv">INV-1112</td>
+                <td class="td-po">PO-7819</td>
+                <td class="t-amt">$6,480.00</td>
+                <td class="td-vendor">Lumen Logistics</td>
+                <td><span class="status-badge held"><span class="sdot"></span>Dispute held</span></td>
+                <td class="td-ai">
+                  <span class="ai-needs-review">Needs your review</span>
+                  <span class="ai-sug"><span class="ai-sug-text">Vendor flagged a billing dispute on freight surcharge. Held pending your call.</span></span>
+                </td>
+                <td class="td-due done"><span data-wt-time="today 03:42" data-wt-fmt="time">3:42 AM</span><span class="row-arrow">→</span></td>
               </tr>
               <tr>
                 <td class="td-inv">INV-1044</td>
