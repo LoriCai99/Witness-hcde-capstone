@@ -77,65 +77,28 @@
     .sec-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: var(--color-neutral-black); }
     .sec-sub { font-size: 13px; color: var(--color-neutral-cool-grey); margin-top: 4px; }
 
-    /* FLOW LIST (vertical, expandable — same shape language as AI Activity) */
+    /* FLOW LIST */
     .flow-list { display: flex; flex-direction: column; gap: 10px; }
-
     .flow-card { background: var(--color-neutral-white); border: 1.5px solid var(--color-neutral-lotion); border-radius: 12px; overflow: hidden; transition: border-color .15s; }
     .flow-card:hover { border-color: #c8c8c8; }
-    .flow-card.open { border-color: rgba(69,85,108,0.4); }
 
-    .flow-head { padding: 20px 22px; display: grid; grid-template-columns: 1fr; gap: 18px; align-items: flex-start; }
+    .flow-head { padding: 20px 22px; }
     .flow-head-main { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
     .flow-name { font-size: 16px; font-weight: 600; color: var(--color-neutral-black); line-height: 22px; letter-spacing: -0.2px; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .flow-desc { font-size: 13px; color: var(--color-neutral-cool-grey); line-height: 19px; }
-    .flow-head-side { display: none; }
-    .flow-chev { display: none; }
 
-    /* ─── Section tabs (port of dashboard's `.section-tabs`, sized for 2 tabs) ─── */
-    .act-tabs {
-      display: inline-flex;        /* shrink-to-fit so 2 tabs don't stretch full row */
-      gap: 4px;
-      padding: 4px;
-      background: #f4f4f4;
-      border-radius: 12px;
-      border: 1px solid #e9e9e9;
-      width: fit-content;
-    }
-    .act-tab {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      padding: 10px 22px;
-      min-width: 180px;            /* gives each tab a balanced footprint matching dashboard's individual tab width */
-      background: transparent;
-      border: 0;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 500;
-      color: #45556c;
-      line-height: 1.25;
-      letter-spacing: -0.1px;
-      transition: background .15s ease, color .15s ease, box-shadow .15s ease;
-    }
+    /* ─── Section tabs (Active / Draft) ─── */
+    .act-tabs { display: inline-flex; gap: 4px; padding: 4px; background: #f4f4f4; border-radius: 12px; border: 1px solid #e9e9e9; width: fit-content; }
+    .act-tab { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 22px; min-width: 180px; background: transparent; border: 0; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #45556c; line-height: 1.25; letter-spacing: -0.1px; transition: background .15s ease, color .15s ease, box-shadow .15s ease; }
     .act-tab:hover { color: #0b0d12; background: rgba(255, 255, 255, 0.6); }
-    .act-tab.active {
-      background: white;
-      color: #0b0d12;
-      font-weight: 600;
-      box-shadow: 0 1px 2px rgba(11, 13, 18, 0.06), 0 0 0 1px #e9e9e9;
-    }
+    .act-tab.active { background: white; color: #0b0d12; font-weight: 600; box-shadow: 0 1px 2px rgba(11, 13, 18, 0.06), 0 0 0 1px #e9e9e9; }
     .act-tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .act-tab[data-tab="active"] .act-tab-dot { background: #ff6900; }
     .act-tab[data-tab="draft"]  .act-tab-dot { background: #adadad; }
-    .act-tab-count {
-      font-size: 11px; font-weight: 600;
-      padding: 2px 8px; border-radius: 999px;
-      background: #e9e9e9; color: #45556c;
-      font-family: 'JetBrains Mono', ui-monospace, monospace;
-    }
+    .act-tab-count { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: #e9e9e9; color: #45556c; font-family: 'JetBrains Mono', ui-monospace, monospace; }
     .act-tab[data-tab="active"].active .act-tab-count { background: #fff5f0; color: #d95b03; }
     .act-tab[data-tab="draft"].active  .act-tab-count { background: #f4f4f4; color: #45556c; }
 
-    /* Tabbed flow list — only the matching cards visible at a time */
     .flow-list.tabbed > .flow-card { display: none; }
     .flow-list.tabbed > .flow-card.tab-active { display: flex; flex-direction: column; }
     .flow-list.tabbed > .flow-new { display: none; }
@@ -149,7 +112,7 @@
     .status-pill.draft { background: var(--color-neutral-lotion); color: var(--color-neutral-cool-grey); }
     .status-pill.draft::before { background: var(--color-neutral-dark-grey); }
 
-    /* Summary perm bar — sits in the always-visible card head */
+    /* Summary perm bar */
     .perm-summary { display: flex; align-items: center; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
     .perm-bar { display: flex; gap: 2px; height: 6px; border-radius: 999px; overflow: hidden; background: var(--color-neutral-lotion); flex: 1; min-width: 160px; max-width: 280px; }
     .perm-seg { height: 100%; }
@@ -163,38 +126,63 @@
     .perm-legend .dot.suggest { background: #e9b44c; }
     .perm-legend .dot.auto    { background: #ff6900; }
 
-    /* Rule list body — always visible now that tabs filter cards instead of fold/unfold */
-    .flow-body { display: block; padding: 4px 22px 0 22px; }
+    /* ═══════════ PHASE RAIL (the real journey — one node per phase) ═══════════ */
+    .flow-body { display: block; padding: 8px 22px 14px; border-top: 1px solid #f0f0f0; }
 
-    .rule-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; font-weight: 600; letter-spacing: .1em; color: var(--color-neutral-cool-grey); padding: 14px 0 4px; border-top: 1px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
-    .rule-label .rl-count { color: #adadad; font-weight: 500; }
+    .rail { display: flex; align-items: flex-start; padding: 16px 2px 6px; }
+    .pnode { appearance: none; background: transparent; border: 0; cursor: pointer; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 9px; width: 110px; flex-shrink: 0; padding: 8px 4px; border-radius: 12px; transition: background .12s; }
+    .pnode:hover { background: #fafafa; }
+    .pnode-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 15px; font-weight: 700; color: #fff; background: #1d1d1f; box-shadow: 0 0 0 4px #fff, 0 0 0 5px #e5e5e5; transition: background .14s, box-shadow .14s; }
+    .pnode-circle svg { width: 18px; height: 18px; }
+    /* selected = the circle itself fills brand orange (not an outer ring that reads as a warning) */
+    .pnode.active .pnode-circle { background: #ff6900; box-shadow: 0 0 0 4px #fff, 0 0 0 5px #ffd0b0; }
+    .pnode-title { font-size: 12.5px; font-weight: 600; color: var(--color-neutral-black); text-align: center; line-height: 1.3; }
+    .pnode.active .pnode-title { color: #d95b03; }
+    .pnode-dots { display: inline-flex; gap: 5px; align-items: center; }
+    .pnode-dots i { width: 7px; height: 7px; border-radius: 50%; display: block; }
+    .pnode-dots i.auto    { background: #ff6900; }
+    .pnode-dots i.suggest { background: #e9b44c; }
+    .pnode-dots i.manual  { background: #c8d0db; }
 
-    .rule-list { display: flex; flex-direction: column; padding: 8px 0 4px; }
-    .rule-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 14px; align-items: flex-start; padding: 12px 8px; border-radius: 8px; scroll-margin-top: 96px; transition: background .15s; }
-    .rule-row + .rule-row { border-top: 1px solid #f5f5f5; }
-    .rule-row:target { background: #fff5f1; }
-    .rule-row:target + .rule-row { border-top-color: transparent; }
+    /* short directional connector with an arrowhead → the track reads as a forward journey */
+    .rail-conn { flex: 0 0 auto; width: 38px; height: 2px; background: #d8d8d8; margin-top: 28px; position: relative; }
+    .rail-conn::after { content: ''; position: absolute; right: -1px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 6px solid #d8d8d8; border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
 
-    .rule-perm { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 600; line-height: 1; box-shadow: 0 0 0 3px #fff; }
-    .rule-perm.auto    { background: #ffe0ca; color: #d95b03; font-size: 12px; }
-    .rule-perm.suggest { background: #fdf2d4; color: #b17728; font-size: 13px; }
-    .rule-perm.manual  { background: #f4f4f4; color: #adadad; font-size: 14px; }
+    /* fork: Validation splits — main line continues to Pay, off-ramp arrow drops to Exceptions */
+    .fork { display: flex; align-items: flex-start; }
+    .fork-svg { width: 48px; height: 222px; flex-shrink: 0; }
+    .fork-col { display: flex; flex-direction: column; gap: 14px; }
+    .fork-col .pnode { height: 104px; justify-content: flex-start; }
 
-    .rule-main { min-width: 0; padding-top: 3px; }
-    .rule-name { font-size: 13.5px; font-weight: 600; color: var(--color-neutral-black); line-height: 1.4; }
-    .rule-name .rule-anchor { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; color: #adadad; font-weight: 500; margin-left: 8px; }
-    .rule-row:target .rule-anchor { color: #d95b03; }
-    .rule-desc { font-size: 12px; color: var(--color-neutral-cool-grey); line-height: 1.5; margin-top: 3px; }
-    .rule-desc b { color: var(--color-neutral-black); font-weight: 600; }
+    /* expanded phase detail (collapsed by default) */
+    .flow-details { display: block; }
+    .phase-detail { display: none; margin-top: 8px; padding: 16px 18px; background: var(--color-neutral-grey); border: 1px solid #ededed; border-radius: 12px; }
+    .phase-detail.show { display: block; animation: pdIn .15s ease; }
+    @keyframes pdIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+    .pd-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .pd-name { font-size: 13.5px; font-weight: 600; color: var(--color-neutral-black); }
+    .pd-cond { font-size: 11.5px; color: var(--color-neutral-cool-grey); background: #fff; border: 1px solid #ededed; border-radius: 999px; padding: 3px 11px; display: inline-flex; align-items: center; gap: 6px; }
+    .pd-cond::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #c4c4c4; }
+    .pd-cond b { color: var(--color-neutral-black); font-weight: 600; }
 
-    .rule-side { display: flex; align-items: center; gap: 8px; padding-top: 4px; flex-shrink: 0; }
-    .rule-level { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 3px 8px; border-radius: 4px; }
-    .rule-level.auto    { background: #ffe0ca; color: #d95b03; }
-    .rule-level.suggest { background: #fdf2d4; color: #b17728; }
-    .rule-level.manual  { background: #f4f4f4; color: #adadad; }
-    .rule-edit { font-size: 11.5px; font-weight: 500; padding: 5px 10px; border-radius: 6px; border: 1px solid #ededed; background: white; color: var(--color-neutral-cool-grey); cursor: pointer; font-family: 'Inter', sans-serif; text-decoration: none; transition: all .12s; display: inline-flex; align-items: center; gap: 4px; }
-    .rule-edit:hover { color: var(--color-neutral-black); border-color: #b8b8b8; }
-    .rule-row:target .rule-edit { color: #d95b03; border-color: #ff9d6c; background: #fff; }
+    .pd-rule { display: grid; grid-template-columns: 14px 1fr auto; gap: 12px; align-items: flex-start; padding: 12px 6px; border-radius: 8px; scroll-margin-top: 96px; }
+    .pd-rule + .pd-rule { border-top: 1px solid #ededed; }
+    .pd-rule:target { background: #fff5f1; }
+    .pr-bullet { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; }
+    .pr-bullet.auto { background: #ff6900; } .pr-bullet.suggest { background: #e9b44c; } .pr-bullet.manual { background: #c8d0db; }
+    .pr-main { min-width: 0; }
+    .pr-name { font-size: 13px; font-weight: 600; color: var(--color-neutral-black); line-height: 1.4; }
+    .pr-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .pr-chip { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 5px; background: #fff; border: 1px solid #e5e5e5; color: var(--color-neutral-cool-grey); }
+    .pr-chip.warn  { color: #b42318; border-color: #f6c9c2; background: #fef3f1; }
+    .pr-chip.money { color: #175cd3; border-color: #c2d4f6; background: #eff4fe; }
+    .pr-desc { font-size: 12px; color: var(--color-neutral-cool-grey); line-height: 1.5; margin-top: 6px; }
+    .pr-side { display: flex; align-items: center; gap: 12px; padding-top: 2px; flex-shrink: 0; }
+    .pr-perm { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+    .pr-perm.auto { color: #d95b03; } .pr-perm.suggest { color: #b17728; } .pr-perm.manual { color: #9aa5b1; }
+    .pr-edit { font-size: 11.5px; font-weight: 500; padding: 5px 11px; border-radius: 6px; border: 1px solid #d8d8d8; background: #fff; color: var(--color-neutral-black); text-decoration: none; white-space: nowrap; transition: all .12s; }
+    .pr-edit:hover { border-color: #b8b8b8; background: #fafafa; }
+    .pr-edit:focus-visible { outline: 2px solid #ff9d6c; outline-offset: 2px; }
 
     /* Card foot */
     .flow-foot { padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid #f0f0f0; }
@@ -204,7 +192,7 @@
     .flow-open-btn.primary { background: var(--color-neutral-black); color: white; border-color: var(--color-neutral-black); }
     .flow-open-btn.primary:hover { background: #2a2222; }
 
-    /* New flow row (slim, full-width — replaces the old tile) */
+    /* New flow row */
     .flow-new { display: flex; align-items: center; gap: 14px; padding: 16px 22px; border: 1.5px dashed #d4d4d4; border-radius: 12px; background: transparent; text-decoration: none; color: inherit; cursor: pointer; transition: all .15s; }
     .flow-new:hover { border-color: #ff9d6c; border-style: solid; background: #fff5f1; }
     .flow-new .new-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--color-neutral-lotion); color: var(--color-neutral-cool-grey); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 400; flex-shrink: 0; }
@@ -309,7 +297,7 @@
           </div>
           <h1 class="ptitle">Autoflows</h1>
         </div>
-        <p class="page-sub">The exact list of things Witness is allowed to do on your behalf — rule by rule. <b>Auto</b> runs without asking, <b>Suggest</b> waits for your click, <b>Manual</b> never runs without you. Edit any rule the moment it stops feeling right.</p>
+        <p class="page-sub">Each flow is a journey of phases. Follow the track to see how work moves through Witness — tap any phase to see the rules inside and what each one is allowed to do. <b>Auto</b> runs without asking, <b>Suggest</b> waits for your click, <b>Manual</b> never runs without you.</p>
       </div>
       <div class="hd-actions">
         <a class="btn-outline" href="#">↑ Import template</a>
@@ -345,10 +333,10 @@
     <div>
       <div class="sec-hd">
         <h2 class="sec-title">Your flows</h2>
-        <p class="sec-sub">Switch between active and draft flows. Every rule is visible by default — click <b>Edit</b> on any row to change the permission.</p>
+        <p class="sec-sub">The track shows each flow's <b>phases</b> in order. Tap a phase to open the rules inside it — and edit any permission.</p>
       </div>
 
-      <!-- Tab bar (same pattern as dashboard's section-tabs) -->
+      <!-- Tab bar -->
       <div class="act-tabs" role="tablist" aria-label="Flow sort" style="margin-bottom:16px;">
         <button class="act-tab active" type="button" role="tab" aria-selected="true" data-tab="active">
           <span class="act-tab-dot"></span>
@@ -364,7 +352,7 @@
 
       <div class="flow-list tabbed">
 
-        <!-- ─── Flow 1: Invoice approval ─── -->
+        <!-- ═══════════ Flow 1: Invoice approval (branches at Validation) ═══════════ -->
         <div class="flow-card tab-active" data-tab="active">
           <div class="flow-head">
             <div class="flow-head-main">
@@ -372,7 +360,7 @@
                 Invoice approval flow
                 <span class="status-pill active">Active</span>
               </div>
-              <p class="flow-desc">Match incoming invoices to POs, route by amount threshold. Auto-approves clean cases under $5K, escalates the rest to you.</p>
+              <p class="flow-desc">From arrival to payment. Clean cases under $5K pay themselves; anything that fails the gate diverts to you.</p>
               <div class="perm-summary">
                 <div class="perm-bar" title="6 auto · 1 suggest · 1 manual">
                   <div class="perm-seg auto"    style="flex: 6"></div>
@@ -386,112 +374,105 @@
                 </div>
               </div>
             </div>
-            <div class="flow-head-side">
-              <svg class="flow-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
           </div>
 
           <div class="flow-body">
-            <div class="rule-label">Rules <span class="rl-count">· 8 total · 6 run automatically</span></div>
-            <div class="rule-list">
 
-              <div class="rule-row" id="ingest-invoice">
-                <div class="rule-perm auto">✦</div>
-                <div class="rule-main">
-                  <div class="rule-name">Ingest invoice <span class="rule-anchor">#ingest-invoice</span></div>
-                  <div class="rule-desc">OCR + schema match on every received invoice. Read-only — Witness never modifies the source file.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level auto">Auto</span>
-                  <a class="rule-edit" href="autoflow-editor.html#ingest-invoice" onclick="event.stopPropagation()">Edit →</a>
+            <!-- Intake → Validation, then Validation forks: main line → Pay, off-ramp → Exceptions -->
+            <div class="rail">
+              <button class="pnode" data-phase="inv-intake" aria-expanded="false">
+                <span class="pnode-circle">1</span>
+                <span class="pnode-title">Intake</span>
+                <span class="pnode-dots"><i class="auto"></i><i class="auto"></i></span>
+              </button>
+              <span class="rail-conn"></span>
+              <button class="pnode" data-phase="inv-validation" aria-expanded="false">
+                <span class="pnode-circle">2</span>
+                <span class="pnode-title">Validation</span>
+                <span class="pnode-dots"><i class="auto"></i><i class="auto"></i></span>
+              </button>
+              <div class="fork">
+                <svg class="fork-svg" viewBox="0 0 48 222" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- main line, straight on to Pay -->
+                  <path d="M0 28 H40" stroke="#d8d8d8" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M40 23 L48 28 L40 33 Z" fill="#d8d8d8"/>
+                  <!-- off-ramp, drops down to Exceptions -->
+                  <path d="M14 28 V140 Q14 146 20 146 H40" stroke="#d8d8d8" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M40 141 L48 146 L40 151 Z" fill="#d8d8d8"/>
+                </svg>
+                <div class="fork-col">
+                  <button class="pnode" data-phase="inv-pay" aria-expanded="false">
+                    <span class="pnode-circle">3</span>
+                    <span class="pnode-title">Clean → Pay</span>
+                    <span class="pnode-dots"><i class="auto"></i><i class="auto"></i></span>
+                  </button>
+                  <button class="pnode" data-phase="inv-exceptions" aria-expanded="false">
+                    <span class="pnode-circle"><svg viewBox="0 0 16 16" fill="none"><path d="M4 2v4.5a3 3 0 0 0 3 3h5M9.5 6 13 9.5 9.5 13" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="pnode-title">Exceptions</span>
+                    <span class="pnode-dots"><i class="suggest"></i><i class="manual"></i></span>
+                  </button>
                 </div>
               </div>
-
-              <div class="rule-row" id="three-way-match">
-                <div class="rule-perm auto">✦</div>
-                <div class="rule-main">
-                  <div class="rule-name">3-way match <span class="rule-anchor">#three-way-match</span></div>
-                  <div class="rule-desc">Compares PO, GRN, Invoice for qty + price alignment. Writes a match result; holds any exception for human review.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level auto">Auto</span>
-                  <a class="rule-edit" href="autoflow-editor.html#three-way-match" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="duplicate">
-                <div class="rule-perm auto">✦</div>
-                <div class="rule-main">
-                  <div class="rule-name">Duplicate detection <span class="rule-anchor">#duplicate</span></div>
-                  <div class="rule-desc">Holds any invoice that matches <b>5+ identity signals</b> of an already-paid invoice. Never auto-pays — only holds.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level auto">Auto</span>
-                  <a class="rule-edit" href="autoflow-editor.html#duplicate" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="vendor-receipt">
-                <div class="rule-perm auto">✦</div>
-                <div class="rule-main">
-                  <div class="rule-name">Vendor receipt confirmation <span class="rule-anchor">#vendor-receipt</span></div>
-                  <div class="rule-desc">Sends an acknowledgment email to the vendor on every received invoice. <b>Outbound — can't be un-sent.</b></div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level auto">Auto</span>
-                  <a class="rule-edit" href="autoflow-editor.html#vendor-receipt" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="clean-routing">
-                <div class="rule-perm auto">✦</div>
-                <div class="rule-main">
-                  <div class="rule-name">Clean payment routing <span class="rule-anchor">#clean-routing</span></div>
-                  <div class="rule-desc">Routes invoices to the ERP payment batch only when <b>amount ≤ $5,000</b> and vendor is pre-approved.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level auto">Auto</span>
-                  <a class="rule-edit" href="autoflow-editor.html#clean-routing" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="early-discount">
-                <div class="rule-perm auto">✦</div>
-                <div class="rule-main">
-                  <div class="rule-name">Early payment discount capture <span class="rule-anchor">#early-discount</span></div>
-                  <div class="rule-desc">Captures vendor discount terms (e.g. 2/10 net 30) — only inside the discount window, only on clean-matched invoices.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level auto">Auto</span>
-                  <a class="rule-edit" href="autoflow-editor.html#early-discount" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="approval-nudge">
-                <div class="rule-perm suggest">⏸</div>
-                <div class="rule-main">
-                  <div class="rule-name">Approval nudge <span class="rule-anchor">#approval-nudge</span></div>
-                  <div class="rule-desc">Drafts a reminder email after approvals sit <b>3+ days</b>. Holds the draft — never sends without your click.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level suggest">Suggest</span>
-                  <a class="rule-edit" href="autoflow-editor.html#approval-nudge" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="exception">
-                <div class="rule-perm manual">○</div>
-                <div class="rule-main">
-                  <div class="rule-name">Exception escalation <span class="rule-anchor">#exception</span></div>
-                  <div class="rule-desc">Disputes &gt; $250 or any quantity mismatch is held for human review. Witness never resolves these on its own.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level manual">Manual</span>
-                  <a class="rule-edit" href="autoflow-editor.html#exception" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
             </div>
+
+            <div class="flow-details">
+              <div class="phase-detail" id="inv-intake">
+                <div class="pd-head"><span class="pd-name">Phase 1 · Intake</span><span class="pd-cond">Runs on <b>every invoice</b> — no condition</span></div>
+                <div class="pd-rule" id="ingest-invoice">
+                  <span class="pr-bullet auto"></span>
+                  <div class="pr-main"><div class="pr-name">Ingest invoice</div><div class="pr-chips"><span class="pr-chip">Read-only</span></div><div class="pr-desc">OCR + schema match on every received invoice. Witness never modifies the source file.</div></div>
+                  <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit" href="autoflow-editor.html#ingest-invoice">Edit →</a></div>
+                </div>
+                <div class="pd-rule" id="vendor-receipt">
+                  <span class="pr-bullet auto"></span>
+                  <div class="pr-main"><div class="pr-name">Vendor receipt confirmation</div><div class="pr-chips"><span class="pr-chip warn">Outbound · can't un-send</span></div><div class="pr-desc">Sends an acknowledgment email to the vendor on every received invoice.</div></div>
+                  <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit" href="autoflow-editor.html#vendor-receipt">Edit →</a></div>
+                </div>
+              </div>
+
+              <div class="phase-detail" id="inv-validation">
+                <div class="pd-head"><span class="pd-name">Phase 2 · Validation</span><span class="pd-cond">The gate — <b>decides the path</b></span></div>
+                <div class="pd-rule" id="three-way-match">
+                  <span class="pr-bullet auto"></span>
+                  <div class="pr-main"><div class="pr-name">3-way match</div><div class="pr-chips"><span class="pr-chip">Writes match result</span></div><div class="pr-desc">Compares PO, GRN, and invoice for qty + price alignment. Holds any exception for human review.</div></div>
+                  <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit" href="autoflow-editor.html#three-way-match">Edit →</a></div>
+                </div>
+                <div class="pd-rule" id="duplicate">
+                  <span class="pr-bullet auto"></span>
+                  <div class="pr-main"><div class="pr-name">Duplicate detection</div><div class="pr-chips"><span class="pr-chip warn">Holds only · never auto-pays</span></div><div class="pr-desc">Holds any invoice matching 5+ identity signals of an already-paid invoice.</div></div>
+                  <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit" href="autoflow-editor.html#duplicate">Edit →</a></div>
+                </div>
+              </div>
+
+              <div class="phase-detail" id="inv-pay">
+                <div class="pd-head"><span class="pd-name">Phase 3 · Clean → Pay</span><span class="pd-cond">Clean match &amp; <b>amount ≤ $5,000</b> &amp; pre-approved vendor</span></div>
+                <div class="pd-rule" id="clean-routing">
+                  <span class="pr-bullet auto"></span>
+                  <div class="pr-main"><div class="pr-name">Clean payment routing</div><div class="pr-chips"><span class="pr-chip money">≤ $5,000</span><span class="pr-chip">Pre-approved only</span></div><div class="pr-desc">Routes clean-matched invoices to the ERP payment batch automatically.</div></div>
+                  <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit" href="autoflow-editor.html#clean-routing">Edit →</a></div>
+                </div>
+                <div class="pd-rule" id="early-discount">
+                  <span class="pr-bullet auto"></span>
+                  <div class="pr-main"><div class="pr-name">Early payment discount capture</div><div class="pr-chips"><span class="pr-chip">Discount window only</span></div><div class="pr-desc">Captures vendor discount terms (e.g. 2/10 net 30) on clean-matched invoices, inside the window only.</div></div>
+                  <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit" href="autoflow-editor.html#early-discount">Edit →</a></div>
+                </div>
+              </div>
+
+              <div class="phase-detail" id="inv-exceptions">
+                <div class="pd-head"><span class="pd-name">Off-ramp · Exceptions</span><span class="pd-cond">Gate failed · overdue <b>3+ days</b> · dispute <b>&gt; $250</b></span></div>
+                <div class="pd-rule" id="approval-nudge">
+                  <span class="pr-bullet suggest"></span>
+                  <div class="pr-main"><div class="pr-name">Approval nudge</div><div class="pr-chips"><span class="pr-chip">Draft only</span></div><div class="pr-desc">Drafts a reminder email after approvals sit 3+ days. Never sends without your click.</div></div>
+                  <div class="pr-side"><span class="pr-perm suggest">SUGGEST</span><a class="pr-edit" href="autoflow-editor.html#approval-nudge">Edit →</a></div>
+                </div>
+                <div class="pd-rule" id="exception">
+                  <span class="pr-bullet manual"></span>
+                  <div class="pr-main"><div class="pr-name">Exception escalation</div><div class="pr-chips"><span class="pr-chip warn">Always to human</span></div><div class="pr-desc">Disputes &gt; $250 or any quantity mismatch is held for review. Witness never resolves these on its own.</div></div>
+                  <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit" href="autoflow-editor.html#exception">Edit →</a></div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <div class="flow-foot">
@@ -500,7 +481,7 @@
           </div>
         </div>
 
-        <!-- ─── Flow 2: Vendor onboarding ─── -->
+        <!-- ═══════════ Flow 2: Vendor onboarding (linear) ═══════════ -->
         <div class="flow-card tab-active" data-tab="active">
           <div class="flow-head">
             <div class="flow-head-main">
@@ -508,7 +489,7 @@
                 Vendor onboarding
                 <span class="status-pill active">Active</span>
               </div>
-              <p class="flow-desc">When a new vendor sends their first invoice — Witness verifies tax info, drafts categorization, and asks you to confirm before any payment.</p>
+              <p class="flow-desc">First-time vendor = extra verification. Witness verifies and drafts, but never moves money without you.</p>
               <div class="perm-summary">
                 <div class="perm-bar" title="2 auto · 3 suggest · 1 manual">
                   <div class="perm-seg auto"    style="flex: 2"></div>
@@ -522,88 +503,74 @@
                 </div>
               </div>
             </div>
-            <div class="flow-head-side">
-              <svg class="flow-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
           </div>
 
           <div class="flow-body">
-            <div class="rule-label">Rules <span class="rl-count">· 6 total · deliberately cautious (first-time vendor = extra verification)</span></div>
-            <div class="rule-list">
 
-              <div class="rule-row" id="ingest-first">
-                <div class="rule-perm auto">✦</div>
-                <div class="rule-main">
-                  <div class="rule-name">Ingest first invoice</div>
-                  <div class="rule-desc">OCR + schema match. Same as ingest-invoice, but tags vendor as <b>first-touch</b>.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level auto">Auto</span>
-                  <a class="rule-edit" href="autoflow-editor.html#ingest-first" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="tax-id-lookup">
-                <div class="rule-perm auto">✦</div>
-                <div class="rule-main">
-                  <div class="rule-name">Tax-ID lookup</div>
-                  <div class="rule-desc">Looks up EIN/SSN against the IRS public registry. Read-only.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level auto">Auto</span>
-                  <a class="rule-edit" href="autoflow-editor.html#tax-id-lookup" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="category-suggest">
-                <div class="rule-perm suggest">⏸</div>
-                <div class="rule-main">
-                  <div class="rule-name">Vendor category suggestion</div>
-                  <div class="rule-desc">Suggests a GL category based on invoice line items. Waits for your confirm.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level suggest">Suggest</span>
-                  <a class="rule-edit" href="autoflow-editor.html#category-suggest" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="terms-recommend">
-                <div class="rule-perm suggest">⏸</div>
-                <div class="rule-main">
-                  <div class="rule-name">Payment terms recommendation</div>
-                  <div class="rule-desc">Recommends net-30 / net-60 / discount terms based on vendor size + industry.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level suggest">Suggest</span>
-                  <a class="rule-edit" href="autoflow-editor.html#terms-recommend" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="welcome-draft">
-                <div class="rule-perm suggest">⏸</div>
-                <div class="rule-main">
-                  <div class="rule-name">Welcome email draft</div>
-                  <div class="rule-desc">Drafts a welcome message + portal invite. Held for your review.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level suggest">Suggest</span>
-                  <a class="rule-edit" href="autoflow-editor.html#welcome-draft" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row" id="bank-info">
-                <div class="rule-perm manual">○</div>
-                <div class="rule-main">
-                  <div class="rule-name">Bank-info confirmation</div>
-                  <div class="rule-desc"><b>Never automated.</b> Prevents misdirected payments — you confirm bank details in person or via a verified channel.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level manual">Manual</span>
-                  <a class="rule-edit" href="autoflow-editor.html#bank-info" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
+            <div class="rail">
+              <button class="pnode" data-phase="vnd-verify" aria-expanded="false">
+                <span class="pnode-circle">1</span>
+                <span class="pnode-title">Verify identity</span>
+                <span class="pnode-dots"><i class="auto"></i><i class="auto"></i></span>
+              </button>
+              <span class="rail-conn"></span>
+              <button class="pnode" data-phase="vnd-draft" aria-expanded="false">
+                <span class="pnode-circle">2</span>
+                <span class="pnode-title">Draft proposals</span>
+                <span class="pnode-dots"><i class="suggest"></i><i class="suggest"></i><i class="suggest"></i></span>
+              </button>
+              <span class="rail-conn"></span>
+              <button class="pnode" data-phase="vnd-guard" aria-expanded="false">
+                <span class="pnode-circle">3</span>
+                <span class="pnode-title">Payment guard</span>
+                <span class="pnode-dots"><i class="manual"></i></span>
+              </button>
             </div>
+
+            <div class="flow-details">
+              <div class="phase-detail" id="vnd-verify">
+                <div class="pd-head"><span class="pd-name">Phase 1 · Verify identity</span><span class="pd-cond">New vendor's <b>first invoice</b> arrives</span></div>
+                <div class="pd-rule" id="ingest-first">
+                  <span class="pr-bullet auto"></span>
+                  <div class="pr-main"><div class="pr-name">Ingest first invoice</div><div class="pr-chips"><span class="pr-chip">Read-only</span></div><div class="pr-desc">OCR + schema match; tags the vendor as first-touch.</div></div>
+                  <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit" href="autoflow-editor.html#ingest-first">Edit →</a></div>
+                </div>
+                <div class="pd-rule" id="tax-id-lookup">
+                  <span class="pr-bullet auto"></span>
+                  <div class="pr-main"><div class="pr-name">Tax-ID lookup</div><div class="pr-chips"><span class="pr-chip">Read-only · IRS registry</span></div><div class="pr-desc">Looks up EIN/SSN against the IRS public registry.</div></div>
+                  <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit" href="autoflow-editor.html#tax-id-lookup">Edit →</a></div>
+                </div>
+              </div>
+
+              <div class="phase-detail" id="vnd-draft">
+                <div class="pd-head"><span class="pd-name">Phase 2 · Draft proposals</span><span class="pd-cond">AI drafts · <b>waits for your confirm</b></span></div>
+                <div class="pd-rule" id="category-suggest">
+                  <span class="pr-bullet suggest"></span>
+                  <div class="pr-main"><div class="pr-name">Vendor category suggestion</div><div class="pr-chips"><span class="pr-chip">Needs your confirm</span></div><div class="pr-desc">Suggests a GL category based on invoice line items.</div></div>
+                  <div class="pr-side"><span class="pr-perm suggest">SUGGEST</span><a class="pr-edit" href="autoflow-editor.html#category-suggest">Edit →</a></div>
+                </div>
+                <div class="pd-rule" id="terms-recommend">
+                  <span class="pr-bullet suggest"></span>
+                  <div class="pr-main"><div class="pr-name">Payment terms recommendation</div><div class="pr-chips"><span class="pr-chip">Needs your confirm</span></div><div class="pr-desc">Recommends net-30 / net-60 / discount terms based on vendor size + industry.</div></div>
+                  <div class="pr-side"><span class="pr-perm suggest">SUGGEST</span><a class="pr-edit" href="autoflow-editor.html#terms-recommend">Edit →</a></div>
+                </div>
+                <div class="pd-rule" id="welcome-draft">
+                  <span class="pr-bullet suggest"></span>
+                  <div class="pr-main"><div class="pr-name">Welcome email draft</div><div class="pr-chips"><span class="pr-chip">Draft only</span></div><div class="pr-desc">Drafts a welcome message + portal invite, held for your review.</div></div>
+                  <div class="pr-side"><span class="pr-perm suggest">SUGGEST</span><a class="pr-edit" href="autoflow-editor.html#welcome-draft">Edit →</a></div>
+                </div>
+              </div>
+
+              <div class="phase-detail" id="vnd-guard">
+                <div class="pd-head"><span class="pd-name">Phase 3 · Payment guard</span><span class="pd-cond"><b>Never automated</b> — bank-change verification</span></div>
+                <div class="pd-rule" id="bank-info">
+                  <span class="pr-bullet manual"></span>
+                  <div class="pr-main"><div class="pr-name">Bank-info confirmation</div><div class="pr-chips"><span class="pr-chip warn">Never automated · verified channel</span></div><div class="pr-desc">You confirm bank details in person or via a verified channel — prevents misdirected payments.</div></div>
+                  <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit" href="autoflow-editor.html#bank-info">Edit →</a></div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <div class="flow-foot">
@@ -612,7 +579,7 @@
           </div>
         </div>
 
-        <!-- ─── Flow 3: Month-end close — fully manual ─── -->
+        <!-- ═══════════ Flow 3: Month-end close (draft, linear, all manual) ═══════════ -->
         <div class="flow-card" data-tab="draft">
           <div class="flow-head">
             <div class="flow-head-main">
@@ -620,7 +587,7 @@
                 Month-end close
                 <span class="status-pill draft">Draft</span>
               </div>
-              <p class="flow-desc">Reconcile open invoices, flag overdue accounts, prepare the close report. Currently fully manual — open it to delegate steps.</p>
+              <p class="flow-desc">Reconcile, report, sign off. Currently fully manual — open a phase to delegate it to Witness.</p>
               <div class="perm-summary">
                 <div class="perm-bar" title="0 auto · 0 suggest · 5 manual">
                   <div class="perm-seg manual" style="flex: 5"></div>
@@ -631,76 +598,69 @@
                 </div>
               </div>
             </div>
-            <div class="flow-head-side">
-              <svg class="flow-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
           </div>
 
           <div class="flow-body">
-            <div class="rule-label">Rules <span class="rl-count">· 5 total · all manual until you grant AI permissions</span></div>
-            <div class="rule-list">
 
-              <div class="rule-row">
-                <div class="rule-perm manual">○</div>
-                <div class="rule-main">
-                  <div class="rule-name">Open invoice reconciliation</div>
-                  <div class="rule-desc">Match open AR/AP entries against bank statements.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level manual">Manual</span>
-                  <a class="rule-edit" href="autoflow-editor.html" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row">
-                <div class="rule-perm manual">○</div>
-                <div class="rule-main">
-                  <div class="rule-name">Overdue flagging</div>
-                  <div class="rule-desc">Identify invoices past their due date for collections follow-up.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level manual">Manual</span>
-                  <a class="rule-edit" href="autoflow-editor.html" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row">
-                <div class="rule-perm manual">○</div>
-                <div class="rule-main">
-                  <div class="rule-name">Close report preparation</div>
-                  <div class="rule-desc">Compile the month-end financial close package.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level manual">Manual</span>
-                  <a class="rule-edit" href="autoflow-editor.html" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row">
-                <div class="rule-perm manual">○</div>
-                <div class="rule-main">
-                  <div class="rule-name">Variance review</div>
-                  <div class="rule-desc">Investigate any line items differing &gt; 5% from prior month.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level manual">Manual</span>
-                  <a class="rule-edit" href="autoflow-editor.html" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
-              <div class="rule-row">
-                <div class="rule-perm manual">○</div>
-                <div class="rule-main">
-                  <div class="rule-name">Final approval</div>
-                  <div class="rule-desc">Sign-off and lock the close period.</div>
-                </div>
-                <div class="rule-side">
-                  <span class="rule-level manual">Manual</span>
-                  <a class="rule-edit" href="autoflow-editor.html" onclick="event.stopPropagation()">Edit →</a>
-                </div>
-              </div>
-
+            <div class="rail">
+              <button class="pnode" data-phase="me-reconcile" aria-expanded="false">
+                <span class="pnode-circle">1</span>
+                <span class="pnode-title">Reconcile</span>
+                <span class="pnode-dots"><i class="manual"></i><i class="manual"></i></span>
+              </button>
+              <span class="rail-conn"></span>
+              <button class="pnode" data-phase="me-report" aria-expanded="false">
+                <span class="pnode-circle">2</span>
+                <span class="pnode-title">Report</span>
+                <span class="pnode-dots"><i class="manual"></i><i class="manual"></i></span>
+              </button>
+              <span class="rail-conn"></span>
+              <button class="pnode" data-phase="me-signoff" aria-expanded="false">
+                <span class="pnode-circle">3</span>
+                <span class="pnode-title">Sign-off</span>
+                <span class="pnode-dots"><i class="manual"></i></span>
+              </button>
             </div>
+
+            <div class="flow-details">
+              <div class="phase-detail" id="me-reconcile">
+                <div class="pd-head"><span class="pd-name">Phase 1 · Reconcile</span><span class="pd-cond">Manual · start of close</span></div>
+                <div class="pd-rule" id="open-recon">
+                  <span class="pr-bullet manual"></span>
+                  <div class="pr-main"><div class="pr-name">Open invoice reconciliation</div><div class="pr-chips"><span class="pr-chip">Manual</span></div><div class="pr-desc">Match open AR/AP entries against bank statements.</div></div>
+                  <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit" href="autoflow-editor.html">Edit →</a></div>
+                </div>
+                <div class="pd-rule" id="overdue-flag">
+                  <span class="pr-bullet manual"></span>
+                  <div class="pr-main"><div class="pr-name">Overdue flagging</div><div class="pr-chips"><span class="pr-chip">Manual</span></div><div class="pr-desc">Identify invoices past their due date for collections follow-up.</div></div>
+                  <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit" href="autoflow-editor.html">Edit →</a></div>
+                </div>
+              </div>
+
+              <div class="phase-detail" id="me-report">
+                <div class="pd-head"><span class="pd-name">Phase 2 · Report</span><span class="pd-cond">Manual</span></div>
+                <div class="pd-rule" id="close-report">
+                  <span class="pr-bullet manual"></span>
+                  <div class="pr-main"><div class="pr-name">Close report preparation</div><div class="pr-chips"><span class="pr-chip">Manual</span></div><div class="pr-desc">Compile the month-end financial close package.</div></div>
+                  <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit" href="autoflow-editor.html">Edit →</a></div>
+                </div>
+                <div class="pd-rule" id="variance-review">
+                  <span class="pr-bullet manual"></span>
+                  <div class="pr-main"><div class="pr-name">Variance review</div><div class="pr-chips"><span class="pr-chip">Manual</span></div><div class="pr-desc">Investigate any line items differing &gt; 5% from prior month.</div></div>
+                  <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit" href="autoflow-editor.html">Edit →</a></div>
+                </div>
+              </div>
+
+              <div class="phase-detail" id="me-signoff">
+                <div class="pd-head"><span class="pd-name">Phase 3 · Sign-off</span><span class="pd-cond">Manual · <b>locks the period</b></span></div>
+                <div class="pd-rule" id="final-approval">
+                  <span class="pr-bullet manual"></span>
+                  <div class="pr-main"><div class="pr-name">Final approval</div><div class="pr-chips"><span class="pr-chip warn">Locks the period</span></div><div class="pr-desc">Sign-off and lock the close period.</div></div>
+                  <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit" href="autoflow-editor.html">Edit →</a></div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <div class="flow-foot">
@@ -709,7 +669,7 @@
           </div>
         </div>
 
-        <!-- New flow row (slim) -->
+        <!-- New flow row -->
         <a class="flow-new" href="autoflow-editor.html">
           <span class="new-icon">+</span>
           <div class="new-txt">Build a new flow</div>
@@ -751,32 +711,49 @@
   document.querySelectorAll('.act-tab').forEach(function(t){
     t.addEventListener('click', function(){ setTab(t.dataset.tab); });
   });
-  // Restore last-chosen tab on load — setTab handles show-new toggle correctly
   try {
     var saved = localStorage.getItem('witness-autoflow-tab');
     if (saved === 'draft' || saved === 'active') setTab(saved);
     else setTab('active');
   } catch (e) { setTab('active'); }
 
-  // Cross-page anchor jump: AI Activity → autoflow.html#vendor-receipt etc.
-  // Find the rule, switch to the correct tab, then scroll into view.
-  function openRuleFromHash() {
-    if (!location.hash) return;
-    var target = document.querySelector(location.hash);
-    if (!target || !target.classList.contains('rule-row')) return;
-    var card = target.closest('.flow-card');
-    if (card && card.dataset.tab) setTab(card.dataset.tab);
-    setTimeout(function(){
-      target.scrollIntoView({behavior: 'smooth', block: 'center'});
-    }, 60);
+  // ─── Phase nodes: open one phase per flow ───
+  function openPhase(node, force) {
+    var card = node.closest('.flow-card');
+    if (!card) return;
+    var willOpen = (force === true) || !node.classList.contains('active');
+    card.querySelectorAll('.pnode.active').forEach(function(n){
+      n.classList.remove('active'); n.setAttribute('aria-expanded', 'false');
+    });
+    card.querySelectorAll('.phase-detail.show').forEach(function(d){ d.classList.remove('show'); });
+    if (willOpen) {
+      node.classList.add('active');
+      node.setAttribute('aria-expanded', 'true');
+      var d = document.getElementById(node.dataset.phase);
+      if (d) d.classList.add('show');
+    }
   }
-  window.addEventListener('DOMContentLoaded', openRuleFromHash);
-  window.addEventListener('hashchange', openRuleFromHash);
-
-  // Stop click bubbling on rule-edit / open-editor
-  document.querySelectorAll('.rule-edit, .flow-open-btn').forEach(function(el){
-    el.addEventListener('click', function(e){ e.stopPropagation(); });
+  document.querySelectorAll('.pnode').forEach(function(n){
+    n.addEventListener('click', function(){ openPhase(n); });
   });
+
+  // ─── Cross-page deep link: AI Activity → autoflow.html#vendor-receipt ───
+  // Hash points at a rule; open its flow tab + its phase, then scroll to it.
+  function openFromHash() {
+    if (!location.hash) return;
+    var rule = document.querySelector(location.hash);
+    if (!rule || !rule.classList.contains('pd-rule')) return;
+    var card = rule.closest('.flow-card');
+    if (card && card.dataset.tab) setTab(card.dataset.tab);
+    var phase = rule.closest('.phase-detail');
+    var node = card && phase ? card.querySelector('.pnode[data-phase="' + phase.id + '"]') : null;
+    if (node) openPhase(node, true);
+    setTimeout(function(){
+      rule.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 80);
+  }
+  window.addEventListener('DOMContentLoaded', openFromHash);
+  window.addEventListener('hashchange', openFromHash);
 </script>
 
 <!-- ═══════════ Witness chat panel (shared — see witness-chat-panel.{css,js}) ═══════════ -->
