@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Witness – Vendors</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
-    body { font-family: 'Poppins', sans-serif; background: #fff; color: #0b0d12; overflow: hidden; --sidebar-w: 258px; --chat-w: 340px; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #fff; color: #0b0d12; overflow: hidden; --sidebar-w: 258px; --chat-w: 340px; --radius-sm: 6px; --radius-md: 8px; --radius-lg: 10px; --radius-xl: 12px; -webkit-font-smoothing: antialiased; }
     body:has(.sidebar.collapsed) { --sidebar-w: 72px; }
     .app-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--chat-w); transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1); }
 
@@ -58,19 +58,19 @@
     .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
 
     /* ─── CONTENT ─── */
-    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 52px; }
+    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 52px; max-width: 1400px; min-width: 900px; width: 100%; margin: 0 auto; }
 
     /* ─── PAGE HEADING ─── */
     .page-hd { display: flex; flex-direction: column; gap: 6px; }
     .page-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
     .page-title-icon { width: 36px; height: 36px; border-radius: 10px; background: #120b0b; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    h1.ptitle { font-family: 'Poppins', sans-serif; font-size: 32px; font-weight: 400; color: #120b0b; line-height: 1.2; letter-spacing: -0.5px; }
+    h1.ptitle { font-family: 'Playfair Display', Georgia, serif; font-size: 32px; font-weight: 400; color: #120b0b; line-height: 1.2; letter-spacing: -0.5px; }
     .page-sub { font-size: 14px; font-weight: 400; color: #45556c; line-height: 20px; letter-spacing: -0.15px; }
     .hd-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
-    .btn-outline { background: white; border: 1.5px solid #e9e9e9; border-radius: 999px; height: 32px; padding: 0 18px; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; color: #0b0d12; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-outline { background: white; border: 1.5px solid #e9e9e9; border-radius: 999px; height: 32px; padding: 0 18px; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; color: #0b0d12; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
     .btn-outline:hover { background: #f4f4f4; }
-    .btn-solid { background: #ff7a3d; border: none; border-radius: 999px; padding: 0 20px; height: 32px; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 700; color: white; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-solid { background: #ff7a3d; border: none; border-radius: 999px; padding: 0 20px; height: 32px; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 700; color: white; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
     .btn-solid:hover { background: #ff6826; }
 
     /* ─── STAT CARDS ─── */
@@ -103,7 +103,7 @@
     .view-chip {
       display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
       border-radius: 999px; border: 1.5px solid #e9e9e9; background: white;
-      font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: #0b0d12;
+      font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 500; color: #0b0d12;
       cursor: pointer; white-space: nowrap; transition: border-color .15s, background .15s, color .15s;
     }
     .view-chip:hover { border-color: #adadad; }
@@ -112,7 +112,7 @@
     .view-chip.active .view-spark { color: #ffd000; }
     .view-chip .view-count { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 18px; padding: 0 6px; border-radius: 999px; background: #f4f4f4; color: #45556c; font-size: 11px; font-weight: 700; letter-spacing: 0.2px; }
     .view-chip.active .view-count { background: rgba(255,255,255,0.18); color: white; }
-    .view-save { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; border: 1.5px dashed #ffb299; background: transparent; color: #d95b03; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s; }
+    .view-save { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; border: 1.5px dashed #ffb299; background: transparent; color: #d95b03; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s; }
     .view-save:hover { background: white; border-color: #ff5c1b; }
 
     /* ─── TOOLBAR ─── */
@@ -122,10 +122,10 @@
     .search-wrap { position: relative; }
     .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; display: flex; align-items: center; }
     .search-icon svg { width: 15px; height: 15px; color: #adadad; }
-    .search-input { width: 340px; padding: 8px 12px 8px 36px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-size: 13px; font-family: 'Poppins', sans-serif; color: #0b0d12; outline: none; }
+    .search-input { width: 340px; padding: 8px 12px 8px 36px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-size: 13px; font-family: 'Inter', system-ui, sans-serif; color: #0b0d12; outline: none; }
     .search-input::placeholder { color: #adadad; }
     .search-input:focus { border-color: #c8c8c8; }
-    .sort-select { padding: 8px 28px 8px 12px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-family: 'Poppins', sans-serif; font-size: 13px; color: #0b0d12; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 4l3 3 3-3' stroke='%2345556c' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+    .sort-select { padding: 8px 28px 8px 12px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; color: #0b0d12; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 4l3 3 3-3' stroke='%2345556c' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
 
     /* ─── TABLE ─── */
     .vendors-wrap { width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid #e9e9e9; }
@@ -154,7 +154,7 @@
     table.vnd tbody td:last-child  { padding-right: 20px; }
 
     .vnd-cell { display: flex; align-items: center; gap: 12px; }
-    .vnd-logo { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 500; color: white; flex-shrink: 0; letter-spacing: -0.5px; }
+    .vnd-logo { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 16px; font-weight: 500; color: white; flex-shrink: 0; letter-spacing: -0.5px; }
     .vnd-logo.global   { background: linear-gradient(135deg, #45556c, #0f172b); }
     .vnd-logo.bright   { background: linear-gradient(135deg, #14b8a6, #0d9488); }
     .vnd-logo.acme     { background: linear-gradient(135deg, #ff9900, #ff5c1b); }
@@ -189,7 +189,7 @@
     .insight-hd { display: flex; align-items: center; gap: 8px; }
     .insight-spark { color: #ff6900; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
     .insight-body { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-    .insight-lbl { font-size: 11px; font-weight: 700; color: #ff6900; letter-spacing: 0.6px; line-height: 16px; }
+    .insight-lbl { font-size: 11px; font-weight: 700; color: #d95b03; letter-spacing: 0.6px; line-height: 16px; }
     .insight-txt { font-size: 14px; font-weight: 400; color: #0b0d12; line-height: 20px; letter-spacing: -0.15px; }
     .insight-txt b { font-weight: 600; }
     .insight-link { font-size: 13px; font-weight: 500; color: #d95b03; text-decoration: underline; cursor: pointer; white-space: nowrap; margin-left: 12px; flex-shrink: 0; align-self: center; }
@@ -197,31 +197,33 @@
     /* ─── VENDOR PROFILE (SPOTLIGHT) ─── */
     .profile-wrap { display: flex; flex-direction: column; gap: 24px; }
     .profile-eyebrow-row { display: flex; align-items: center; gap: 8px; }
-    .profile-eyebrow { font-family: 'Poppins', sans-serif; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
+    .profile-eyebrow { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
     .profile-eyebrow b { color: #d95b03; font-weight: 700; }
     .sec-hd-vp { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-    h2.stitle { font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+    h2.stitle { font-family: 'Playfair Display', Georgia, serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
 
     .profile-card { background: white; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
     .profile-head { padding: 24px 28px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #ededed; flex-wrap: wrap; }
-    .vnd-logo-lg { width: 64px; height: 64px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 500; color: white; flex-shrink: 0; letter-spacing: -0.5px; }
+    .vnd-logo-lg { width: 64px; height: 64px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 28px; font-weight: 500; color: white; flex-shrink: 0; letter-spacing: -0.5px; }
     .vnd-logo-lg.global { background: linear-gradient(135deg, #45556c, #0f172b); }
     .ph-info { flex: 1; min-width: 220px; }
     .ph-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
-    .ph-name { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 500; color: #120b0b; letter-spacing: -0.3px; }
-    .ph-id { font-family: 'Poppins', sans-serif; font-size: 11px; color: #45556c; padding: 2px 8px; background: #f4f4f4; border-radius: 4px; }
-    .ph-tagline { font-size: 13px; color: #45556c; line-height: 1.5; }
+    .ph-name { font-family: 'Inter', system-ui, sans-serif; font-size: 24px; font-weight: 500; color: #120b0b; letter-spacing: -0.3px; }
+    .ph-id { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #45556c; padding: 2px 8px; background: #f4f4f4; border-radius: 4px; }
+    .ph-tagline { font-size: 13px; color: #45556c; line-height: 1.65; }
     .ph-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
     /* tabs */
     .vp-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e9e9e9; padding: 0 28px; background: #fafafa; }
-    .vp-tab { font-size: 13px; font-weight: 500; padding: 14px 14px; border: none; background: transparent; color: #45556c; cursor: pointer; font-family: 'Poppins', sans-serif; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .12s; display: inline-flex; align-items: center; gap: 6px; }
+    .vp-tab { font-size: 13px; font-weight: 500; padding: 14px 14px; border: none; background: transparent; color: #45556c; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .12s; display: inline-flex; align-items: center; gap: 6px; }
     .vp-tab:hover { color: #120b0b; }
     .vp-tab.active { color: #120b0b; font-weight: 600; border-bottom-color: #120b0b; }
-    .vp-tab .ct { font-family: 'Poppins', sans-serif; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: #e9e9e9; color: #45556c; }
+    .vp-tab .ct { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: #e9e9e9; color: #45556c; }
     .vp-tab.active .ct { background: #120b0b; color: white; }
     .vp-tab .ct.warn { background: #ffe0ca; color: #d95b03; }
     .vp-tab.active .ct.warn { background: #ff7a3d; color: white; }
+    .vp-tab .ct.zero { background: transparent; color: #c8c8c8; border: 1px solid #ebebeb; font-weight: 400; }
+    .vp-tab.active .ct.zero { background: transparent; border-color: rgba(18,11,11,0.15); color: rgba(18,11,11,0.32); }
 
     /* tab body */
     .vp-body { padding: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
@@ -230,7 +232,7 @@
     .vp-block { background: white; border: 1px solid #e9e9e9; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
     .vp-block.flat { padding: 0; border: none; }
     .vp-block-hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .vp-block-title { font-family: 'Poppins', sans-serif; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
+    .vp-block-title { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
     .vp-block-link { font-size: 12px; font-weight: 500; color: #45556c; text-decoration: underline; cursor: pointer; }
     .vp-block-link:hover { color: #120b0b; }
 
@@ -260,7 +262,7 @@
     @keyframes pls { 0%,100%{opacity:1} 50%{opacity:.35} }
     .mem-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
     .mem-title { font-size: 13px; font-weight: 600; color: #0b0d12; line-height: 1.4; }
-    .mem-sub { font-size: 12px; color: #45556c; line-height: 1.5; }
+    .mem-sub { font-size: 12px; color: #45556c; line-height: 1.65; }
     .mem-link { font-size: 12px; font-weight: 500; color: #d95b03; text-decoration: underline; cursor: pointer; }
     .mem-item.calm .mem-link { color: #45556c; }
 
@@ -275,8 +277,8 @@
     .thread-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .thread-from { font-size: 13px; font-weight: 600; color: #0b0d12; }
     .thread-when { font-size: 12px; color: #adadad; }
-    .thread-ref  { font-family: 'Poppins', sans-serif; font-size: 10px; color: #155dfc; background: #e7f4ff; padding: 2px 6px; border-radius: 4px; }
-    .thread-text { font-size: 13px; color: #0b0d12; line-height: 1.55; }
+    .thread-ref  { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; color: #155dfc; background: #e7f4ff; padding: 2px 6px; border-radius: 4px; }
+    .thread-text { font-size: 13px; color: #0b0d12; line-height: 1.65; }
     .thread-tag  { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: rgba(107,33,168,0.1); color: #6b21a8; }
 
     /* compliance */
@@ -305,10 +307,10 @@
     /* witness chat context strip */
     .chat-context { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: #0f172b; border-radius: 10px; color: white; }
     .chat-context .spark { color: #ffd000; font-size: 16px; flex-shrink: 0; }
-    .chat-context .text { font-size: 13px; line-height: 1.5; flex: 1; }
+    .chat-context .text { font-size: 13px; line-height: 1.65; flex: 1; }
     .chat-context .text b { font-weight: 600; }
     .chat-context .text .muted { color: #94a5bc; }
-    .chat-context .open-chat { background: white; color: #0f172b; border: none; border-radius: 999px; padding: 6px 16px; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .chat-context .open-chat { background: white; color: #0f172b; border: none; border-radius: 999px; padding: 6px 16px; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
     .chat-context .open-chat:hover { background: #f4f4f4; }
 
     /* ═══ VENDOR RELATIONSHIP CARDS — expandable, one shape for every vendor ═══ */
@@ -319,8 +321,6 @@
     /* Stretch so cards sharing a row are equal height; min-height makes the
        whole grid uniform (sized to the tallest collapsed card). */
     .vendor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 12px; align-items: stretch; }
-    .vc-card[data-status="fraud"],
-    .vc-card[data-status="compliance"] { grid-column: 1 / -1; }
     .vc-card { min-height: 182px; }
     /* Detail no longer expands in-grid — it opens in a slide-over (see .vsheet),
        so the card grid never reflows. The .vc-body is the data source, moved
@@ -336,15 +336,15 @@
     .vc-head:hover { background: #fafafa; }
 
     /* Identifier square (was gradient logos — neutralized to dark avatar pattern so identity, not branding) */
-    .vc-id-sq { width: 32px; height: 32px; border-radius: 8px; background: #0f172b; color: white; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: -0.3px; flex-shrink: 0; }
+    .vc-id-sq { width: 32px; height: 32px; border-radius: 8px; background: #0f172b; color: white; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 500; letter-spacing: -0.3px; flex-shrink: 0; }
 
     .vc-main { min-width: 0; }
     .vc-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 3px; }
     .vc-name { font-size: 14.5px; font-weight: 600; color: #120b0b; letter-spacing: -0.15px; }
-    .vc-id { font-family: 'Poppins', sans-serif; font-size: 11px; color: #adadad; padding: 1px 6px; background: #f4f4f4; border-radius: 4px; }
+    .vc-id { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #adadad; padding: 1px 6px; background: #f4f4f4; border-radius: 4px; }
     .vc-tag { font-size: 12.5px; color: #45556c; }
 
-    .vc-signals { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 7px; font-family: 'Poppins', sans-serif; font-size: 11px; color: #45556c; }
+    .vc-signals { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 7px; font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #45556c; }
     .vc-signals .sig { display: inline-flex; align-items: baseline; gap: 4px; }
     .vc-signals .sig-lbl { color: #adadad; letter-spacing: 0.05em; font-size: 10px; font-weight: 600; }
     .vc-signals .sig-val { font-weight: 600; color: #120b0b; }
@@ -374,9 +374,9 @@
     .vsheet-body .vc-body { display: block; }
 
     .vc-sec { padding: 18px 0; border-top: 1px solid #f0f0f0; }
-    .vc-sec-lbl { font-family: 'Poppins', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: .1em; color: #45556c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .vc-sec-lbl { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: .1em; color: #45556c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .vc-sec-lbl .lbl-count { color: #adadad; font-weight: 500; }
-    .vc-sec-lbl .lbl-link { margin-left: auto; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 11.5px; color: #45556c; text-decoration: none; text-transform: none; letter-spacing: 0; }
+    .vc-sec-lbl .lbl-link { margin-left: auto; font-family: 'Inter', system-ui, sans-serif; font-weight: 500; font-size: 11.5px; color: #45556c; text-decoration: none; text-transform: none; letter-spacing: 0; }
     .vc-sec-lbl .lbl-link:hover { color: #120b0b; text-decoration: underline; }
 
     .vc-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
@@ -411,11 +411,11 @@
     .vc-flag-item.calm .vc-flag-icon { background: #e9e9e9; color: #adadad; }
     .vc-flag-body { min-width: 0; padding-top: 3px; }
     .vc-flag-title { font-size: 13px; font-weight: 600; color: #120b0b; line-height: 1.4; }
-    .vc-flag-sub { font-size: 12px; color: #45556c; margin-top: 3px; line-height: 1.5; }
+    .vc-flag-sub { font-size: 12px; color: #45556c; margin-top: 3px; line-height: 1.65; }
     .vc-flag-sub a { color: #d95b03; font-weight: 500; text-decoration: none; }
     .vc-flag-sub a:hover { text-decoration: underline; }
     .vc-flag-item.calm .vc-flag-sub a { color: #45556c; }
-    .vc-flag-side { font-family: 'Poppins', sans-serif; font-size: 10px; color: #adadad; font-weight: 500; white-space: nowrap; padding-top: 6px; }
+    .vc-flag-side { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; color: #adadad; font-weight: 500; white-space: nowrap; padding-top: 6px; }
 
     /* ─── EXPANDED DATA VIZ (first principle: show state + trajectory only) ─── */
     /* Two small charts, no chrome: a stacked bar = the state of money in flight
@@ -424,7 +424,7 @@
     .vc-viz { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; margin-top: 12px; }
     .vc-viz-card { border: 1px solid #ededed; border-radius: 8px; padding: 12px 14px; min-width: 0; }
     .vc-viz-hd { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 11px; }
-    .vc-viz-title { font-family: 'Poppins', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: #45556c; }
+    .vc-viz-title { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: #45556c; }
     .vc-viz-sum { font-size: 11.5px; font-weight: 600; color: #120b0b; white-space: nowrap; }
     .vc-viz-sum.green { color: #15803d; }
     .vc-bar { height: 9px; border-radius: 999px; overflow: hidden; display: flex; background: #f4f4f4; }
@@ -436,10 +436,10 @@
     .vc-spark { display: flex; align-items: flex-end; gap: 3px; height: 36px; }
     .vc-spark .bar { flex: 1; background: #e4e4e4; border-radius: 2px 2px 0 0; min-height: 4px; }
     .vc-spark .bar.curr { background: #120b0b; }
-    .vc-spark-x { display: flex; justify-content: space-between; font-family: 'Poppins', sans-serif; font-size: 9px; color: #adadad; margin-top: 5px; }
+    .vc-spark-x { display: flex; justify-content: space-between; font-family: 'Inter', system-ui, sans-serif; font-size: 9px; color: #adadad; margin-top: 5px; }
     /* condensed recent-activity line (detail panel) */
     .vc-mini-act { display: flex; gap: 12px; align-items: baseline; font-size: 12.5px; color: #120b0b; line-height: 1.5; }
-    .vc-mini-when { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: #adadad; font-weight: 600; flex-shrink: 0; min-width: 44px; }
+    .vc-mini-when { font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; color: #adadad; font-weight: 600; flex-shrink: 0; min-width: 44px; }
     .vc-mini-act .who { font-weight: 600; }
 
     /* Active invoices summary strip */
@@ -452,7 +452,7 @@
     .vc-inv-cell .l { font-size: 11px; font-weight: 600; color: #45556c; letter-spacing: 0.04em; margin-top: 6px; display: block; }
     .vc-inv-link { display: inline-block; font-size: 11.5px; font-weight: 500; color: #d95b03; text-decoration: none; margin-top: 4px; }
     .vc-inv-link:hover { text-decoration: underline; }
-    .vc-inv-note { font-size: 12px; color: #45556c; line-height: 1.55; padding-top: 10px; }
+    .vc-inv-note { font-size: 12px; color: #45556c; line-height: 1.65; padding-top: 10px; }
     .vc-inv-note b { color: #120b0b; font-weight: 600; }
 
     /* Compliance grid */
@@ -461,7 +461,7 @@
     .vc-comp-item.ok   { border-color: #c7e8d3; background: white; }
     .vc-comp-item.warn { border-color: #ffd9c2; background: white; }
     .vc-comp-item.bad  { border-color: #fecaca; background: white; }
-    .vc-comp-lbl { font-family: 'Poppins', sans-serif; font-size: 9px; font-weight: 600; color: #45556c; letter-spacing: 0.05em; }
+    .vc-comp-lbl { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; color: #45556c; letter-spacing: 0.05em; }
     .vc-comp-val { font-size: 12px; font-weight: 600; color: #120b0b; }
     .vc-comp-sub { font-size: 10.5px; color: #45556c; }
     .vc-comp-item.ok   .vc-comp-lbl { color: #15803d; }
@@ -478,14 +478,14 @@
     .vc-thread-body { min-width: 0; }
     .vc-thread-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
     .vc-thread-from { font-size: 12.5px; font-weight: 600; color: #120b0b; }
-    .vc-thread-when { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: #adadad; }
-    .vc-thread-ref  { font-family: 'Poppins', sans-serif; font-size: 10px; color: #155dfc; background: #e7f4ff; padding: 1px 6px; border-radius: 4px; }
-    .vc-thread-tag  { font-family: 'Poppins', sans-serif; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: #ffe0ca; color: #d95b03; }
+    .vc-thread-when { font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; color: #adadad; }
+    .vc-thread-ref  { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; color: #155dfc; background: #e7f4ff; padding: 1px 6px; border-radius: 4px; }
+    .vc-thread-tag  { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: #ffe0ca; color: #d95b03; }
     .vc-thread-text { font-size: 12.5px; color: #120b0b; line-height: 1.55; }
 
     /* Card foot — primary actions */
     .vc-foot { display: flex; gap: 8px; padding-top: 18px; border-top: 1px solid #f0f0f0; margin-top: 4px; flex-wrap: wrap; }
-    .vc-btn { font-size: 12px; font-weight: 500; padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(69,85,108,0.24); background: white; color: #120b0b; cursor: pointer; font-family: 'Poppins', sans-serif; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all .15s; }
+    .vc-btn { font-size: 12px; font-weight: 500; padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(69,85,108,0.24); background: white; color: #120b0b; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all .15s; }
     .vc-btn:hover { background: #f4f4f4; }
     .vc-btn.primary { background: #120b0b; color: white; border-color: #120b0b; }
     .vc-btn.primary:hover { background: #45556c; }
@@ -493,7 +493,7 @@
     /* Cross-vendor AI callout — top of list, same orange gradient as invoices */
     .vendor-callout { padding: 14px 20px; background: linear-gradient(to right, #fff5f0 0%, #fff 100%); border: 1px solid #ffd5b8; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
     .vendor-callout-icon { width: 28px; height: 28px; border-radius: 50%; background: #ffe0ca; color: #d95b03; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-    .vendor-callout-txt { font-size: 13px; color: #120b0b; line-height: 1.55; flex: 1; min-width: 0; }
+    .vendor-callout-txt { font-size: 13px; color: #120b0b; line-height: 1.65; flex: 1; min-width: 0; }
     .vendor-callout-txt b { font-weight: 600; }
     .vendor-callout-link { font-size: 12px; font-weight: 500; color: #d95b03; text-decoration: none; white-space: nowrap; }
     .vendor-callout-link:hover { text-decoration: underline; }
@@ -518,7 +518,7 @@
 
     /* Quick search */
     .v-search { position: relative; width: 340px; flex-shrink: 0; }
-    .v-search input { width: 100%; padding: 9px 14px 9px 38px; border: 1.5px solid #e9e9e9; border-radius: 999px; background: white; font-size: 13px; font-family: 'Poppins', sans-serif; color: #0b0d12; outline: none; transition: border-color .15s; }
+    .v-search input { width: 100%; padding: 9px 14px 9px 38px; border: 1.5px solid #e9e9e9; border-radius: 999px; background: white; font-size: 13px; font-family: 'Inter', system-ui, sans-serif; color: #0b0d12; outline: none; transition: border-color .15s; }
     .v-search input:focus { border-color: #adadad; }
     .v-search input::placeholder { color: #adadad; }
     .v-search .vs-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #adadad; pointer-events: none; display: flex; }
@@ -541,13 +541,13 @@
 
     /* Slim chip strip for views — same as invoices */
     .vv-strip { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .vv-label { font-family: 'Poppins', sans-serif; font-size: 10px; font-weight: 600; color: #adadad; letter-spacing: 0.1em; margin-right: 6px; }
+    .vv-label { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; color: #adadad; letter-spacing: 0.1em; margin-right: 6px; }
     .vv-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid #e9e9e9; background: white; font-size: 12px; font-weight: 500; color: #45556c; cursor: pointer; transition: all .12s; }
     .vv-chip:hover { border-color: #b8b8b8; color: #120b0b; }
     .vv-chip.active { background: #120b0b; color: white; border-color: #120b0b; }
     .vv-chip .vv-spark { color: #d95b03; font-size: 11px; }
     .vv-chip.active .vv-spark { color: #ffd000; }
-    .vv-chip .vv-count { font-family: 'Poppins', sans-serif; font-size: 10px; font-weight: 700; opacity: 0.55; }
+    .vv-chip .vv-count { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 700; opacity: 0.55; }
     .vv-chip.active .vv-count { opacity: 1; color: rgba(255,255,255,0.85); }
 
     /* ─── SITUATION LINE (collapsed-card one-liner) ─── */
@@ -570,8 +570,8 @@
     .vc-tray.info  .vc-tray-icon { background: #d3e6ff; color: #155dfc; }
     .vc-tray-body { min-width: 0; }
     .vc-tray-title { font-size: 13px; font-weight: 600; color: #120b0b; line-height: 1.4; }
-    .vc-tray-sub { font-size: 12px; color: #45556c; margin-top: 3px; line-height: 1.5; }
-    .vc-tray-act { font-size: 12px; font-weight: 600; color: white; background: #120b0b; border: none; border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: 'Poppins', sans-serif; white-space: nowrap; text-decoration: none; }
+    .vc-tray-sub { font-size: 12px; color: #45556c; margin-top: 3px; line-height: 1.65; }
+    .vc-tray-act { font-size: 12px; font-weight: 600; color: white; background: #120b0b; border: none; border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; white-space: nowrap; text-decoration: none; }
     .vc-tray-act:hover { background: #45556c; }
     .vc-tray.bad .vc-tray-act { background: #b91c1c; }
     .vc-tray.bad .vc-tray-act:hover { background: #991414; }
@@ -583,43 +583,44 @@
     .vc-doc-item.stale  { border-color: #ffd9c2; background: #fff8f3; }
     .vc-doc-item.expire { border-color: #fde68a; background: #fffbeb; }
     .vc-doc-item.bad    { border-color: #fecaca; background: #fef2f2; }
-    .vc-doc-icon { width: 32px; height: 32px; border-radius: 6px; background: #f4f4f4; color: #45556c; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.05em; }
+    .vc-doc-icon { width: 32px; height: 32px; border-radius: 6px; background: #f4f4f4; color: #45556c; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.05em; }
     .vc-doc-item.stale  .vc-doc-icon { background: #ffe0ca; color: #d95b03; }
     .vc-doc-item.expire .vc-doc-icon { background: #fde68a; color: #92400e; }
     .vc-doc-item.bad    .vc-doc-icon { background: #fecaca; color: #b91c1c; }
     .vc-doc-name { font-size: 12.5px; font-weight: 600; color: #120b0b; line-height: 1.3; }
     .vc-doc-meta { font-size: 11px; color: #45556c; margin-top: 2px; }
-    .vc-doc-meta .badge { font-family: 'Poppins', sans-serif; font-size: 9.5px; font-weight: 600; padding: 1px 5px; border-radius: 3px; margin-left: 4px; }
+    .vc-doc-meta .badge { font-family: 'Inter', system-ui, sans-serif; font-size: 9.5px; font-weight: 600; padding: 1px 5px; border-radius: 3px; margin-left: 4px; }
     .vc-doc-meta .badge.warn { background: #fff0e0; color: #d95b03; }
     .vc-doc-meta .badge.expire { background: #fde68a; color: #92400e; }
     .vc-doc-meta .badge.bad { background: #fee2e2; color: #b91c1c; }
-    .vc-doc-act { font-size: 11px; font-weight: 500; color: #45556c; background: white; border: 1px solid #e9e9e9; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-family: 'Poppins', sans-serif; text-decoration: none; }
+    .vc-doc-act { font-size: 11px; font-weight: 500; color: #45556c; background: white; border: 1px solid #e9e9e9; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; text-decoration: none; }
     .vc-doc-act:hover { background: #f4f4f4; color: #120b0b; }
     .vc-doc-act.primary { color: #120b0b; border-color: #c8c8c8; }
     .vc-docs-empty { font-size: 12px; color: #adadad; padding: 12px; text-align: center; border: 1px dashed #e9e9e9; border-radius: 8px; background: #fafafa; }
-    .vc-docs-add { font-size: 11.5px; font-weight: 500; color: #45556c; background: transparent; border: 1px dashed #c8c8c8; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-family: 'Poppins', sans-serif; margin-top: 4px; transition: border-color .15s, color .15s; }
+    .vc-docs-add { font-size: 11.5px; font-weight: 500; color: #45556c; background: transparent; border: 1px dashed #c8c8c8; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; margin-top: 4px; transition: border-color .15s, color .15s; }
     .vc-docs-add:hover { border-color: #45556c; color: #120b0b; }
 
     /* ─── MONEY & BANKING ─── */
     .vc-bank-box { background: #f7f7f7; border: 1px solid #ededed; border-radius: 8px; padding: 12px 14px; margin-top: 8px; }
     .vc-bank-box.alert { background: #fff8f3; border-color: #ffd9c2; }
     .vc-bank-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 4px 0; }
-    .vc-bank-k { font-family: 'Poppins', sans-serif; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.06em; }
-    .vc-bank-v { font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; color: #120b0b; }
+    .vc-bank-k { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.06em; }
+    .vc-bank-v { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; color: #120b0b; }
     .vc-bank-pending { font-size: 12px; color: #b91c1c; font-weight: 600; padding: 8px 10px; border: 1px solid #fecaca; background: #fef2f2; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
     .vc-bank-pending::before { content: '⚠'; font-size: 13px; }
     .vc-changelog { margin-top: 12px; padding-top: 12px; border-top: 1px solid #ededed; display: flex; flex-direction: column; gap: 8px; }
-    .vc-changelog-title { font-family: 'Poppins', sans-serif; font-size: 9px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; margin-bottom: 2px; }
+    .vc-changelog-title { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; margin-bottom: 2px; }
     .vc-change-row { display: grid; grid-template-columns: 70px 1fr; gap: 12px; font-size: 12px; line-height: 1.55; padding: 4px 0; border-bottom: 1px solid #f4f4f4; }
+    .vc-change-row:hover { border-bottom-style: dashed; border-bottom-color: rgba(69,85,108,0.2); }
     .vc-change-row:last-child { border-bottom: none; }
-    .vc-change-when { font-family: 'Poppins', sans-serif; font-size: 10.5px; color: #adadad; font-weight: 500; }
+    .vc-change-when { font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; color: #adadad; font-weight: 500; }
     .vc-change-what { color: #120b0b; }
     .vc-change-what b { font-weight: 600; }
     .vc-change-what .who { color: #45556c; font-size: 11px; display: block; margin-top: 1px; }
 
     /* ─── BEHAVIORAL NOTES (inside Relationship memory) ─── */
     .vc-notes { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
-    .vc-notes-title { font-family: 'Poppins', sans-serif; font-size: 9px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
+    .vc-notes-title { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
     .vc-note { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: flex-start; padding: 6px 0; font-size: 12.5px; color: #120b0b; line-height: 1.5; }
     .vc-note .nm { color: #d95b03; font-size: 11px; margin-top: 3px; }
     .vc-note .nt { font-style: italic; color: #45556c; }
@@ -627,7 +628,7 @@
 
     /* ─── LIFETIME & TRENDS (collapsible drawer) ─── */
     .vc-life { border-top: 1px solid #f0f0f0; padding: 14px 0 18px; }
-    .vc-life-toggle { display: flex; align-items: center; gap: 8px; background: transparent; border: none; padding: 0; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: #45556c; }
+    .vc-life-toggle { display: flex; align-items: center; gap: 8px; background: transparent; border: none; padding: 0; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: #45556c; }
     .vc-life-toggle:hover { color: #120b0b; }
     .vc-life-toggle .chev { transition: transform .15s; }
     .vc-life.open .vc-life-toggle .chev { transform: rotate(90deg); }
@@ -654,7 +655,7 @@
     .v-stat-action-val { font-size: 16px; font-weight: 600; color: #120b0b; line-height: 1.3; }
     .v-stat-action-sub { font-size: 11.5px; color: #45556c; line-height: 1.5; }
     .v-stat-action-sub b { color: #120b0b; font-weight: 600; }
-    .v-stat-cta { font-size: 11.5px; font-weight: 600; color: #d95b03; background: transparent; border: none; padding: 0; cursor: pointer; font-family: 'Poppins', sans-serif; text-align: left; align-self: flex-start; text-decoration: none; }
+    .v-stat-cta { font-size: 11.5px; font-weight: 600; color: #d95b03; background: transparent; border: none; padding: 0; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; text-align: left; align-self: flex-start; text-decoration: none; }
     .v-stat-cta:hover { text-decoration: underline; }
 
     /* ─── OPEN CONVERSATIONS HEADER (waiting indicators) ─── */
@@ -680,43 +681,35 @@
     .vc-card::before { top: -10px; left: 12px; right: 12px; height: 24px; background: #f3f3f3; border: 1px solid #e4e4e4; }
     .vc-card::after  { top: -19px; left: 26px; right: 26px; height: 24px; background: #f8f8f8; border: 1px solid #e9e9e9; z-index: -2; }
 
-    /* Soft status band on top, clean body below */
-    .vc-head { position: relative; cursor: pointer; display: block; padding: 60px 20px 18px; }
-    .vc-head:hover { background: #fafafa; }
-    .vc-head::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 46px; border-radius: 15px 15px 0 0; background: #f4f4f4; }
-    .vc-card[data-status="good"]       .vc-head::before { background: #dcfce7; }
-    .vc-card[data-status="attn"]       .vc-head::before { background: #ffe8df; }
-    .vc-card[data-status="new"]        .vc-head::before { background: #e7f4ff; }
-    .vc-card[data-status="fraud"]      .vc-head::before,
-    .vc-card[data-status="compliance"] .vc-head::before { background: #fee2e2; }
+    /* Header: name band on top, [logo | meta] row below */
+    .vc-head { cursor: pointer; display: flex; flex-direction: column; border-radius: 16px 16px 0 0; overflow: hidden; }
+    .vc-head::before { display: none; }
 
-    /* ID square → band icon (top-right) */
-    .vc-id-sq { position: absolute; top: 9px; right: 16px; z-index: 1; width: 30px; height: 30px; border-radius: 8px; background: #0f172b; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: -0.3px; }
+    /* Row 1 — name + pill + chevron */
+    .vc-hd-name { display: flex; align-items: center; gap: 8px; padding: 13px 16px 13px 20px; background: #f6f6f6; border-bottom: 1px solid #efefef; }
+    .vc-head:hover .vc-hd-name { background: #f0f0f0; }
+    .vc-hd-name .vc-name { flex: 1; font-size: 15px; font-weight: 600; color: #120b0b; letter-spacing: -0.25px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 0; }
+    .vc-hd-name .vc-side { position: static; height: auto; padding: 0; display: flex; align-items: center; flex-shrink: 0; }
+    .vc-hd-name .vc-side .vc-pill { background: #eaeaea; padding: 2px 8px; border-radius: 5px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #45556c; gap: 5px; }
+    .vc-hd-name .vc-side .vc-pill::before { display: inline-block; }
+    .vc-hd-name .vc-chev { position: static; flex-shrink: 0; color: #adadad; transform: none; transition: transform .2s; }
+    .vc-card.open .vc-hd-name .vc-chev { transform: rotate(180deg); }
 
-    /* Status pill → band label (left), in the design-system status color */
-    .vc-side { position: absolute; top: 0; left: 0; height: 46px; display: flex; align-items: center; padding: 0 20px; z-index: 1; }
-    .vc-side .vc-pill { background: transparent; padding: 0; border-radius: 0; font-size: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; gap: 0; }
-    .vc-side .vc-pill::before { display: none; }
-    .vc-card[data-status="good"]       .vc-side .vc-pill { color: #15803d; }
-    .vc-card[data-status="attn"]       .vc-side .vc-pill { color: #d95b03; }
-    .vc-card[data-status="new"]        .vc-side .vc-pill { color: #155dfc; }
-    .vc-card[data-status="fraud"]      .vc-side .vc-pill,
-    .vc-card[data-status="compliance"] .vc-side .vc-pill { color: #b91c1c; }
+    /* Row 2 — logo left, tag + signals right */
+    .vc-hd-meta { display: flex; align-items: flex-start; gap: 12px; padding: 14px 20px 16px; }
+    .vc-head:hover .vc-hd-meta { background: #fafafa; }
+    .vc-hd-meta .vc-id-sq { position: static; flex-shrink: 0; width: 36px; height: 36px; border-radius: 9px; background: #0f172b; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 600; letter-spacing: -0.3px; }
+    .vc-hd-meta .vc-main { flex: 1; min-width: 0; }
 
-    /* Body — name + identifying info */
-    .vc-top { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; margin-bottom: 6px; }
-    .vc-name { font-size: 20px; font-weight: 600; color: #120b0b; letter-spacing: -0.35px; line-height: 1.2; padding-right: 26px; }
+    /* Meta content */
+    .vc-top { display: flex; flex-direction: column; gap: 1px; margin-bottom: 6px; }
+    .vc-name { font-size: 15px; font-weight: 600; color: #120b0b; letter-spacing: -0.25px; line-height: 1.25; }
     .vc-id { display: none; }
-    .vc-tag { font-size: 12.5px; color: #45556c; line-height: 1.45; }
-    .vc-signals { display: none; }
-
-    /* One-line "what's happening" — no divider, under the tag */
-    .vc-situation { grid-column: auto; margin-top: 10px; padding-top: 0; border-top: none; font-size: 12.5px; }
+    .vc-tag { font-size: 12px; color: #45556c; line-height: 1.45; }
+    .vc-signals { display: flex; align-items: center; gap: 6px 12px; flex-wrap: wrap; margin-top: 5px; }
+    .vc-situation { grid-column: auto; margin-top: 7px; padding-top: 0; border-top: none; font-size: 12px; }
     .vc-card[data-status="fraud"] .vc-situation,
     .vc-card[data-status="compliance"] .vc-situation { color: #120b0b; }
-
-    /* Chevron — points right, aligned with the name */
-    .vc-chev { position: absolute; right: 18px; top: 68px; color: #adadad; transform: rotate(-90deg); transition: transform .2s; }
 
     /* ═══════════════════════════════════════════════════════════ */
     /* VENDOR DETAIL — SLIDE-OVER PANEL                             */
@@ -731,18 +724,8 @@
     /* Header — banded, mirrors the card */
     .vsheet-hd { position: relative; flex-shrink: 0; padding: 70px 22px 18px; border-bottom: 1px solid #ededed; }
     .vsheet-hd::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 56px; background: #f4f4f4; }
-    .vsheet[data-status="good"]       .vsheet-hd::before { background: #dcfce7; }
-    .vsheet[data-status="attn"]       .vsheet-hd::before { background: #ffe8df; }
-    .vsheet[data-status="new"]        .vsheet-hd::before { background: #e7f4ff; }
-    .vsheet[data-status="fraud"]      .vsheet-hd::before,
-    .vsheet[data-status="compliance"] .vsheet-hd::before { background: #fee2e2; }
-    .vsheet-pill { position: absolute; top: 0; left: 22px; height: 56px; display: flex; align-items: center; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; color: #45556c; }
-    .vsheet[data-status="good"]       .vsheet-pill { color: #15803d; }
-    .vsheet[data-status="attn"]       .vsheet-pill { color: #d95b03; }
-    .vsheet[data-status="new"]        .vsheet-pill { color: #155dfc; }
-    .vsheet[data-status="fraud"]      .vsheet-pill,
-    .vsheet[data-status="compliance"] .vsheet-pill { color: #b91c1c; }
-    .vsheet-id { position: absolute; top: 12px; right: 56px; width: 32px; height: 32px; border-radius: 9px; background: #0f172b; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; }
+    .vsheet-pill { position: absolute; top: 0; left: 22px; height: 56px; display: flex; align-items: center; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; color: #45556c; }
+    .vsheet-id { position: absolute; top: 12px; right: 56px; width: 32px; height: 32px; border-radius: 9px; background: #0f172b; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; }
     .vsheet-close { position: absolute; top: 12px; right: 16px; width: 32px; height: 32px; border: none; background: rgba(255,255,255,0.55); border-radius: 9px; color: #0b0d12; font-size: 19px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .vsheet-close:hover { background: #fff; color: #120b0b; }
     .vsheet-name { font-size: 20px; font-weight: 600; color: #120b0b; letter-spacing: -0.3px; line-height: 1.25; }
@@ -831,7 +814,7 @@
     }
     .vendor-callout-body { min-width: 0; }
     .vendor-callout-lbl {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.14em;
@@ -847,7 +830,7 @@
       max-width: 60px;
     }
     .vendor-callout-txt {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       font-size: 17px;
       line-height: 1.45;
       color: #0b0d12;
@@ -862,7 +845,7 @@
       border-radius: 999px;
       font-size: 12.5px;
       font-weight: 600;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       letter-spacing: -0.05px;
       white-space: nowrap;
       text-decoration: none;
@@ -888,6 +871,128 @@
       .vendor-callout-link { grid-column: 2 / 3; justify-self: start; margin-top: 8px; }
       .vendor-callout-txt { font-size: 15px; }
     }
+
+    /* ─── THUMBNAIL CARD REDESIGN ─── */
+    .vc-card { min-height: 0; }
+
+    /* Head is now a column: thumbnail on top, footer below */
+    .vc-head { cursor: pointer; display: flex; flex-direction: column; border-radius: 16px 16px 0 0; overflow: hidden; }
+    .vc-head::before { display: none; }
+
+    /* Screenshot placeholder area */
+    .vc-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .vc-thumb-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Fake browser chrome */
+    .vc-thumb-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 8px;
+      background: rgba(0,0,0,0.22);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+    .vc-thumb-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.3); flex-shrink: 0; }
+    .vc-thumb-url {
+      font-size: 8px;
+      color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      padding: 1px 8px;
+      flex: 1;
+      text-align: center;
+      font-family: 'Inter', system-ui, sans-serif;
+      letter-spacing: 0.02em;
+    }
+
+    /* Page body area — initials centred */
+    .vc-thumb-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Subtle grid lines for "website" feel */
+    .vc-thumb-page::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    /* Skeleton page content — suggests a website screenshot */
+    .vc-thumb-page::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.20) 100%),
+        linear-gradient(rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.11) 100%),
+        linear-gradient(rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.08) 100%),
+        linear-gradient(rgba(255,255,255,0.17) 0%, rgba(255,255,255,0.17) 100%),
+        linear-gradient(rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.05) 100%);
+      background-size: 50% 9px, 33% 6px, 58% 5px, 22% 14px, 36% 55%;
+      background-position: 14px 14px, 14px 31px, 14px 44px, 14px 60px, 58% 10%;
+      background-repeat: no-repeat;
+    }
+
+    /* Status pill badge overlaid on thumbnail */
+    .vc-thumb-badge {
+      position: absolute;
+      top: 34px;
+      right: 10px;
+      z-index: 2;
+    }
+    /* Override pill appearance on thumbnail: semi-opaque frosted look */
+    .vc-thumb-badge .vc-pill { font-size: 10.5px; padding: 3px 9px; }
+
+    /* Vendor-specific thumbnail gradients */
+    .vc-thumb--amazon  { background: linear-gradient(145deg, #1a2940 0%, #232f3e 100%); }
+    .vc-thumb--hudson  { background: linear-gradient(145deg, #5c1a06 0%, #7c2d12 100%); }
+    .vc-thumb--global  { background: linear-gradient(145deg, #1b2c42 0%, #0f172b 100%); }
+    .vc-thumb--apex    { background: linear-gradient(145deg, #7c3400 0%, #c24d00 100%); }
+    .vc-thumb--coastal { background: linear-gradient(145deg, #1d4ed8 0%, #1e3a8a 100%); }
+    .vc-thumb--bright  { background: linear-gradient(145deg, #0d9488 0%, #0a706a 100%); }
+    .vc-thumb--acme    { background: linear-gradient(145deg, #92400e 0%, #d97706 100%); }
+    .vc-thumb--tech    { background: linear-gradient(145deg, #1e3a8a 0%, #155dfc 100%); }
+    .vc-thumb--fast    { background: linear-gradient(145deg, #3b0764 0%, #6b21a8 100%); }
+
+    /* Card footer: name + tagline + chevron */
+    .vc-card-foot {
+      padding: 12px 16px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+    }
+    .vc-head:hover .vc-card-foot { background: #fafafa; }
+    .vc-card-foot-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .vc-card-foot .vc-name {
+      font-size: 14px; font-weight: 600; color: #120b0b; letter-spacing: -0.2px; line-height: 1.3;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .vc-card-foot .vc-tag {
+      font-size: 12px; color: #45556c; line-height: 1.4;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .vc-card-foot .vc-chev { color: #adadad; flex-shrink: 0; transition: transform .2s; }
+    .vc-card.open .vc-card-foot .vc-chev { transform: rotate(180deg); }
   </style>
 </head>
 <body data-chat="rail">
@@ -1016,33 +1121,28 @@
       <!-- ─── Amazon Business — suspected BEC (top priority: payment fraud beats compliance) ─── -->
       <div class="vc-card flag" id="vendor-amazon" data-status="fraud" data-volume="62400" data-name="amazon business">
         <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
-          <div class="vc-id-sq">AB</div>
-          <div class="vc-main">
-            <div class="vc-top">
-              <span class="vc-name">Amazon Business</span>
-              <span class="vc-id">VND-0011</span>
-              <span class="vc-tag">Office &amp; supplies · Net 30 · partnered since Jul 2022</span>
+          <div class="vc-thumb vc-thumb--amazon">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">business.amazon.com</span>
+              </div>
+              <div class="vc-thumb-page"></div>
             </div>
-            <div class="vc-signals">
-              <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">14</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">On-time</span><span class="sig-val green">98%</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">DSO</span><span class="sig-val">24d</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Monthly</span><span class="sig-val">$62.4K</span></span>
-            </div>
-            <div class="vc-situation flag">
-              <span class="sit-icon">⚠</span>
-              <span><b>Bank-change request failed verification</b> · possible vendor email compromise · 14 invoices ($62.4K) paused</span>
-            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill flag">Security hold</span></div>
           </div>
-          <div class="vc-side">
-            <span class="vc-pill flag">Security hold</span>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq">AB</div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Amazon Business</div>
+              <div class="vc-tag">Office &amp; supplies · $62.4K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">14</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
         </div>
         <div class="vc-body">
 
@@ -1212,33 +1312,28 @@
       <!-- ─── Hudson MetalCraft — compliance flag (top priority) ─── -->
       <div class="vc-card flag" id="vendor-hudson" data-status="compliance" data-volume="36800" data-name="hudson metalcraft">
         <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
-          <div class="vc-id-sq">HM</div>
-          <div class="vc-main">
-            <div class="vc-top">
-              <span class="vc-name">Hudson MetalCraft</span>
-              <span class="vc-id">VND-0051</span>
-              <span class="vc-tag">Manufacturing · Net 60 · partnered since Aug 2024</span>
+          <div class="vc-thumb vc-thumb--hudson">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">hudsonmetalcraft.com</span>
+              </div>
+              <div class="vc-thumb-page"></div>
             </div>
-            <div class="vc-signals">
-              <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">2</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">On-time</span><span class="sig-val amber">82%</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">DSO</span><span class="sig-val amber">52d</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">2</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Monthly</span><span class="sig-val">$36.8K</span></span>
-            </div>
-            <div class="vc-situation flag">
-              <span class="sit-icon">⚠</span>
-              <span><b>OFAC possible match</b> flagged this morning · 2 invoices on pay-hold until you clear</span>
-            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill flag">Compliance · OFAC</span></div>
           </div>
-          <div class="vc-side">
-            <span class="vc-pill flag">Compliance · OFAC</span>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq">HM</div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Hudson MetalCraft</div>
+              <div class="vc-tag">Manufacturing · $36.8K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">2</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">2</span></span>
+          </div>
         </div>
 
         <div class="vc-body">
@@ -1392,33 +1487,28 @@
       <!-- ─── Global Industrial — watch · pattern (deepest dossier example) ─── -->
       <div class="vc-card" id="vendor-global" data-status="attn" data-volume="48200" data-name="global industrial">
         <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
-          <div class="vc-id-sq">GI</div>
-          <div class="vc-main">
-            <div class="vc-top">
-              <span class="vc-name">Global Industrial</span>
-              <span class="vc-id">VND-0042</span>
-              <span class="vc-tag">MRO supplier · Net 30 · partnered since Mar 2023</span>
+          <div class="vc-thumb vc-thumb--global">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">globalindustrial.com</span>
+              </div>
+              <div class="vc-thumb-page"></div>
             </div>
-            <div class="vc-signals">
-              <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">7</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">On-time</span><span class="sig-val amber">74%</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">DSO</span><span class="sig-val amber">38d</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val red">4</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Monthly</span><span class="sig-val">$48.2K</span></span>
-            </div>
-            <div class="vc-situation">
-              <span class="sit-icon">✦</span>
-              <span><b>3 invoices blocked</b> on outdated rate card · Lena replied 2h ago<span class="vc-waiting">awaiting your push</span></span>
-            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill watch">Watch · pattern</span></div>
           </div>
-          <div class="vc-side">
-            <span class="vc-pill watch">Watch · pattern</span>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq">GI</div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Global Industrial</div>
+              <div class="vc-tag">MRO supplier · $48.2K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">7</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">4</span></span>
+          </div>
         </div>
         <div class="vc-body">
 
@@ -1663,33 +1753,28 @@
       <!-- ─── Apex Manufacturing — discount window closing ─── -->
       <div class="vc-card" id="vendor-apex" data-status="attn" data-volume="18300" data-name="apex manufacturing">
         <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
-          <div class="vc-id-sq">AM</div>
-          <div class="vc-main">
-            <div class="vc-top">
-              <span class="vc-name">Apex Manufacturing</span>
-              <span class="vc-id">VND-0044</span>
-              <span class="vc-tag">Manufacturing · 2/10 Net 30 · partnered since Feb 2024</span>
+          <div class="vc-thumb vc-thumb--apex">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">apexmfg.com</span>
+              </div>
+              <div class="vc-thumb-page"></div>
             </div>
-            <div class="vc-signals">
-              <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">3</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">On-time</span><span class="sig-val amber">79%</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">DSO</span><span class="sig-val">31d</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">1</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Monthly</span><span class="sig-val">$18.3K</span></span>
-            </div>
-            <div class="vc-situation">
-              <span class="sit-icon">⏰</span>
-              <span><b>2 invoices in 2/10 discount window</b> — closes Thursday · saves ~$340 if cleared</span>
-            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill watch">Discount window</span></div>
           </div>
-          <div class="vc-side">
-            <span class="vc-pill watch">Discount window</span>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq">AM</div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Apex Manufacturing</div>
+              <div class="vc-tag">Manufacturing · $18.3K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">3</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">1</span></span>
+          </div>
         </div>
         <div class="vc-body">
           <!-- ── 1 · WHAT NEEDS YOU — the reason this card was opened ── -->
@@ -1795,31 +1880,28 @@
       <!-- ─── Coastal Office Mart — new vendor, onboarding focus ─── -->
       <div class="vc-card" id="vendor-coastal" data-status="new" data-volume="4100" data-name="coastal office mart">
         <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
-          <div class="vc-id-sq">CO</div>
-          <div class="vc-main">
-            <div class="vc-top">
-              <span class="vc-name">Coastal Office Mart</span>
-              <span class="vc-id">VND-0060</span>
-              <span class="vc-tag">Office · Net 30 · onboarded 14 days ago</span>
+          <div class="vc-thumb vc-thumb--coastal">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">coastalofficemart.com</span>
+              </div>
+              <div class="vc-thumb-page"></div>
             </div>
-            <div class="vc-signals">
-              <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">2</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">On-time</span><span class="sig-val green">93%</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">DSO</span><span class="sig-val">26d</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Monthly</span><span class="sig-val">$4.1K</span></span>
-            </div>
-            <div class="vc-situation">
-              <span class="sit-icon">ⓘ</span>
-              <span><b>Onboarding 80% complete</b> · COI still missing (vendor committed by end of week)</span>
-            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill new">New · 14 days</span></div>
           </div>
-          <div class="vc-side"><span class="vc-pill new">New · 14 days</span></div>
-          <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq">CO</div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Coastal Office Mart</div>
+              <div class="vc-tag">Office supplies · $4.1K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">2</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
         </div>
         <div class="vc-body">
           <!-- Adaptive tray: info (onboarding) -->
@@ -1923,31 +2005,28 @@
       <!-- ─── Brightline Office Supply — good standing ─── -->
       <div class="vc-card" id="vendor-bright" data-status="good" data-volume="12600" data-name="brightline office supply">
         <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
-          <div class="vc-id-sq">BO</div>
-          <div class="vc-main">
-            <div class="vc-top">
-              <span class="vc-name">Brightline Office Supply</span>
-              <span class="vc-id">VND-0018</span>
-              <span class="vc-tag">Office · Net 30 · partnered since Sep 2022</span>
+          <div class="vc-thumb vc-thumb--bright">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">brightlineoffice.com</span>
+              </div>
+              <div class="vc-thumb-page"></div>
             </div>
-            <div class="vc-signals">
-              <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">5</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">On-time</span><span class="sig-val green">96%</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">DSO</span><span class="sig-val">22d</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">1</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Monthly</span><span class="sig-val">$12.6K</span></span>
-            </div>
-            <div class="vc-situation calm">
-              <span class="sit-icon">○</span>
-              <span>All current · 5 active invoices on track</span>
-            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill good">Good standing</span></div>
           </div>
-          <div class="vc-side"><span class="vc-pill good">Good standing</span></div>
-          <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq">BO</div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Brightline Office Supply</div>
+              <div class="vc-tag">Office supplies · $12.6K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">5</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">1</span></span>
+          </div>
         </div>
         <div class="vc-body">
           <div class="vc-sec">
@@ -2012,31 +2091,28 @@
       <!-- ─── Acme Logistics — good standing ─── -->
       <div class="vc-card" id="vendor-acme" data-status="good" data-volume="28400" data-name="acme logistics">
         <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
-          <div class="vc-id-sq">AL</div>
-          <div class="vc-main">
-            <div class="vc-top">
-              <span class="vc-name">Acme Logistics Co.</span>
-              <span class="vc-id">VND-0027</span>
-              <span class="vc-tag">Freight · Net 15 · partnered since Jun 2023</span>
+          <div class="vc-thumb vc-thumb--acme">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">acmelogistics.com</span>
+              </div>
+              <div class="vc-thumb-page"></div>
             </div>
-            <div class="vc-signals">
-              <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">4</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">On-time</span><span class="sig-val green">91%</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">DSO</span><span class="sig-val">14d</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Monthly</span><span class="sig-val">$28.4K</span></span>
-            </div>
-            <div class="vc-situation calm">
-              <span class="sit-icon">○</span>
-              <span>All current · 4 active invoices</span>
-            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill good">Good standing</span></div>
           </div>
-          <div class="vc-side"><span class="vc-pill good">Good standing</span></div>
-          <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq">AL</div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Acme Logistics Co.</div>
+              <div class="vc-tag">Freight &amp; 3PL · $28.4K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">4</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
         </div>
         <div class="vc-body">
           <div class="vc-sec">
@@ -2100,31 +2176,28 @@
       <!-- ─── TechPro Solutions — good standing ─── -->
       <div class="vc-card" id="vendor-tech" data-status="good" data-volume="22000" data-name="techpro solutions">
         <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
-          <div class="vc-id-sq">TP</div>
-          <div class="vc-main">
-            <div class="vc-top">
-              <span class="vc-name">TechPro Solutions</span>
-              <span class="vc-id">VND-0033</span>
-              <span class="vc-tag">IT &amp; SaaS · Net 30 · partnered since Jan 2023</span>
+          <div class="vc-thumb vc-thumb--tech">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">techprosolutions.com</span>
+              </div>
+              <div class="vc-thumb-page"></div>
             </div>
-            <div class="vc-signals">
-              <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">3</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">On-time</span><span class="sig-val green">100%</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">DSO</span><span class="sig-val">18d</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Monthly</span><span class="sig-val">$22.0K</span></span>
-            </div>
-            <div class="vc-situation calm">
-              <span class="sit-icon">○</span>
-              <span>All current · 3 active invoices · 100% on-time this year</span>
-            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill good">Good standing</span></div>
           </div>
-          <div class="vc-side"><span class="vc-pill good">Good standing</span></div>
-          <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq">TP</div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">TechPro Solutions</div>
+              <div class="vc-tag">IT &amp; SaaS · $22K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">3</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
         </div>
         <div class="vc-body">
           <div class="vc-sec">
@@ -2189,31 +2262,28 @@
       <!-- ─── FastFlow Shipping — good standing, low activity ─── -->
       <div class="vc-card" id="vendor-fast" data-status="good" data-volume="6900" data-name="fastflow shipping">
         <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
-          <div class="vc-id-sq">FF</div>
-          <div class="vc-main">
-            <div class="vc-top">
-              <span class="vc-name">FastFlow Shipping</span>
-              <span class="vc-id">VND-0029</span>
-              <span class="vc-tag">Freight · Net 15 · partnered since Oct 2023</span>
+          <div class="vc-thumb vc-thumb--fast">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">fastflowship.com</span>
+              </div>
+              <div class="vc-thumb-page"></div>
             </div>
-            <div class="vc-signals">
-              <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">0</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">On-time</span><span class="sig-val green">94%</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">DSO</span><span class="sig-val">17d</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
-              <span class="sig-sep">·</span>
-              <span class="sig"><span class="sig-lbl">Monthly</span><span class="sig-val">$6.9K</span></span>
-            </div>
-            <div class="vc-situation calm">
-              <span class="sit-icon">○</span>
-              <span>Inactive 18 days · last invoice Apr 12 · $1,840</span>
-            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill good">Good standing</span></div>
           </div>
-          <div class="vc-side"><span class="vc-pill good">Good standing</span></div>
-          <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq">FF</div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">FastFlow Shipping</div>
+              <div class="vc-tag">Freight · $6.9K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">0</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
         </div>
         <div class="vc-body">
           <div class="vc-sec">
@@ -2310,6 +2380,25 @@
     vsheet.querySelector('.vsheet-name').textContent = txt('.vc-name');
     vsheet.querySelector('.vsheet-tag').textContent  = txt('.vc-tag');
     vsheet.setAttribute('data-status', card.getAttribute('data-status') || '');
+
+    // Populate tab badges from vendor signals
+    const sigEls = Array.from(card.querySelectorAll('.vc-signals .sig'));
+    function getSigVal(keyword) {
+      const s = sigEls.find(el => el.querySelector('.sig-lbl')?.textContent.includes(keyword));
+      return s ? parseInt(s.querySelector('.sig-val')?.textContent || '0', 10) : 0;
+    }
+    const dispCount = getSigVal('Disputes');
+    const invCount  = getSigVal('Active');
+    const ctDis = vsheet.querySelector('#vs-ct-dis');
+    const ctInv = vsheet.querySelector('#vs-ct-inv');
+    if (ctDis) { ctDis.textContent = dispCount; ctDis.classList.toggle('zero', dispCount === 0); }
+    if (ctInv) { ctInv.textContent = invCount;  ctInv.classList.toggle('zero', invCount === 0); }
+
+    // Reset tabs to Overview
+    vsheet.querySelectorAll('#vsheet-tabs .vp-tab').forEach(b => b.classList.remove('active'));
+    const ovTab = vsheet.querySelector('#vsheet-tabs [data-tab="overview"]');
+    if (ovTab) ovTab.classList.add('active');
+
     const body = card.querySelector('.vc-body');
     const holder = vsheet.querySelector('.vsheet-body');
     if (body) { vsheet._source = card; holder.appendChild(body); holder.scrollTop = 0; }
@@ -2318,8 +2407,33 @@
   function closeVendor() {
     returnSheetBody();
     document.body.classList.remove('vsheet-open');
+    // Reset tabs
+    const tabs = document.querySelectorAll('#vsheet-tabs .vp-tab');
+    tabs.forEach(b => b.classList.remove('active'));
+    const ov = document.querySelector('#vsheet-tabs [data-tab="overview"]');
+    if (ov) ov.classList.add('active');
   }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVendor(); });
+
+  // Tab navigation: activate tab + scroll to matching section in vsheet body
+  document.querySelectorAll('#vsheet-tabs .vp-tab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#vsheet-tabs .vp-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.tab;
+      const body = document.querySelector('#vsheet .vsheet-body');
+      if (!body) return;
+      if (tab === 'overview') { body.scrollTop = 0; return; }
+      const keyword = { invoices: 'invoice', comms: 'conversation', docs: 'doc' }[tab];
+      if (!keyword) return;
+      const lbls = body.querySelectorAll('.vc-sec-lbl');
+      const match = Array.from(lbls).find(l => l.textContent.toLowerCase().includes(keyword));
+      if (match) {
+        const sec = match.closest('.vc-sec');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
 
   // ── Saved views: predicate filters ───────────────────
   const V_VIEWS = {
@@ -2404,6 +2518,13 @@
     <div class="vsheet-name"></div>
     <div class="vsheet-tag"></div>
   </div>
+  <nav class="vp-tabs" id="vsheet-tabs">
+    <button class="vp-tab active" data-tab="overview">Overview</button>
+    <button class="vp-tab" data-tab="invoices">Invoices <span class="ct zero" id="vs-ct-inv">0</span></button>
+    <button class="vp-tab" data-tab="disputes">Disputes <span class="ct zero" id="vs-ct-dis">0</span></button>
+    <button class="vp-tab" data-tab="comms">Comms</button>
+    <button class="vp-tab" data-tab="docs">Docs</button>
+  </nav>
   <div class="vsheet-body"></div>
 </aside>
 

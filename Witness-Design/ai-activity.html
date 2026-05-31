@@ -60,14 +60,14 @@
     .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; color: white; }
 
     /* ── CONTENT ── */
-    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 40px; }
+    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 40px; max-width: 1400px; min-width: 900px; width: 100%; margin: 0 auto; }
 
     /* ── PAGE HEADER ── */
     .page-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
     .page-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
     .page-title-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--color-black); display: grid; place-items: center; flex-shrink: 0; }
     h1.ptitle { font-family: var(--font-display); font-size: 32px; font-weight: 400; color: var(--color-black); line-height: 1.2; letter-spacing: -0.5px; }
-    .page-sub { font-size: 14px; color: var(--color-cool-grey); line-height: 1.5; max-width: 540px; }
+    .page-sub { font-size: 14px; color: var(--color-cool-grey); line-height: 1.65; max-width: 540px; }
     .page-sub b { color: var(--color-black); font-weight: 600; }
 
     .page-actions { display: flex; gap: 12px; flex-shrink: 0; }
@@ -142,7 +142,7 @@
     .log-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
     .log-title { font-size: 14px; font-weight: 600; color: var(--color-black); line-height: 1.4; }
     .log-time { font-family: var(--font-mono); font-size: 11px; color: var(--color-dark-grey); margin-left: auto; flex-shrink: 0; }
-    .log-desc { font-size: 13px; color: var(--color-cool-grey); line-height: 1.5; margin-bottom: 10px; }
+    .log-desc { font-size: 13px; color: var(--color-cool-grey); line-height: 1.65; margin-bottom: 14px; }
 
     .log-meta-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .actor { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
@@ -172,7 +172,7 @@
     .ld-sec-dot.wrote { background: var(--color-success-500); }
     .ld-sec-dot.skip { background: var(--color-cool-grey); }
 
-    .ld-line { font-size: 12.5px; color: var(--color-cool-grey); padding: 4px 0 4px 18px; line-height: 1.5; }
+    .ld-line { font-size: 12.5px; color: var(--color-cool-grey); padding: 4px 0 4px 18px; line-height: 1.65; }
     .ld-line .arrow { color: var(--color-dark-grey); margin-right: 6px; }
     .ld-line .src { color: var(--color-dark-grey); font-family: var(--font-mono); font-size: 11px; }
     .ld-line strong { color: var(--color-black); font-weight: 600; }
