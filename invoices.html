@@ -8,49 +8,43 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
-    body { font-family: 'Inter', sans-serif; background: #fff; color: #0b0d12; overflow: hidden; --sidebar-w: 258px; --chat-w: 340px; }
-    body:has(.sidebar.collapsed) { --sidebar-w: 72px; }
-    .app-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--chat-w); transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1); }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #0b0d12; display: flex; min-height: 100vh; }
 
     /* ─── SIDEBAR — verbatim from dashboard ─── */
-    .sidebar { position: relative; height: 100%; background: #f4f4f4; display: flex; flex-direction: column; z-index: 20; overflow-y: auto; }
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 257px; background: #f4f4f4; display: flex; flex-direction: column; z-index: 20; overflow-y: auto; }
     .sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .brand-logo { width: 32px; height: 32px; background: #120b0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .brand-logo img { width: 20px; height: 20px; display: block; object-fit: contain; }
     .brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
     .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
     .nav-group { display: flex; flex-direction: column; gap: 12px; }
-    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
     .nav-items { display: flex; flex-direction: column; gap: 2px; }
     .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: #45556c; font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: -0.15px; text-decoration: none; cursor: pointer; }
     .nav-item:hover { background: rgba(0,0,0,0.04); }
     .nav-item.active { background: white; color: #120b0b; padding: 8px 12px; }
     .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
     .nav-badge { margin-left: auto; background: #120b0b; color: white; font-size: 12px; font-weight: 700; line-height: 16px; padding: 2px 8px; border-radius: 999px; }
-    .nav-badge.ai { background: #ff6900; }
-    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
 
     /* ─── MAIN ─── */
-    .main { height: 100%; overflow-y: auto; overflow-x: auto; min-width: 0; display: flex; flex-direction: column; }
+    .main { margin-left: 257px; flex: 1; display: flex; flex-direction: column; }
 
     /* ─── TOPBAR — verbatim from dashboard ─── */
     .topbar { position: sticky; top: 0; z-index: 10; background: white; border-bottom: 1px solid #ededed; display: flex; align-items: center; justify-content: space-between; padding: 23px 24px; flex-shrink: 0; }
     .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
     .topbar-right { display: flex; align-items: center; gap: 24px; }
     .health-chip { display: flex; align-items: center; gap: 8px; background: #dcfce7; border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
-    .health-chip .hdot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
+    .health-chip img { width: 16px; height: 16px; object-fit: contain; }
     .health-chip span { font-size: 14px; font-weight: 500; color: #00a63e; letter-spacing: -0.15px; white-space: nowrap; }
     .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
 
     /* ─── CONTENT — same 52px/58px padding, 52px gap as dashboard ─── */
-    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 52px; }
+    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 52px; max-width: 1400px; min-width: 900px; width: 100%; margin: 0 auto; }
 
-    /* ─── PAGE HEADING — Playfair 32px/400, icon + title row ─── */
-    .page-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    /* ─── PAGE HEADING — Playfair 28px/400 matching .stitle ─── */
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; }
     .page-hd-left { display: flex; flex-direction: column; gap: 6px; }
-    .page-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
-    .page-title-icon { width: 36px; height: 36px; border-radius: 10px; background: #120b0b; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 400; color: #120b0b; line-height: 1.2; letter-spacing: -0.5px; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
     .page-sub { font-size: 14px; font-weight: 400; color: #45556c; line-height: 20px; letter-spacing: -0.15px; }
     .hd-actions { display: flex; align-items: center; gap: 8px; }
 
@@ -73,114 +67,8 @@
     .stat-num.red   { color: #dc2626; }
     .stat-num.amber { color: #e9b44c; }
     .stat-num.green { color: #16a34a; }
-    .stat-lbl { font-size: 12px; font-weight: 600; color: #0b0d12; letter-spacing: 0.6px; line-height: 16px; }
+    .stat-lbl { font-size: 12px; font-weight: 600; color: #0b0d12; text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px; }
     .stat-sub { font-size: 12px; font-weight: 400; color: #45556c; margin-top: 6px; line-height: 16px; }
-
-    /* ─── SAVED VIEWS BAR — smart filter presets, persisted ─── */
-    .views-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px;
-      padding: 16px 18px;
-      background: #fff5f1;                          /* brand orange glare */
-      border: 1.5px solid #ffe8df;                  /* brand orange touch */
-      border-radius: 10px;
-    }
-    .views-bar-left  { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-    .views-bar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .views-label {
-      font-size: 12px; font-weight: 600;
-      color: #45556c;
-      
-      letter-spacing: 0.6px; line-height: 16px;
-      flex-shrink: 0;
-    }
-    .views-scroll {
-      display: flex; align-items: center; gap: 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding: 2px 0;                               /* keep focus rings visible */
-      min-width: 0;
-    }
-    .views-scroll::-webkit-scrollbar { display: none; }
-
-    .view-chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 7px 14px;
-      border-radius: 999px;
-      border: 1.5px solid #e9e9e9;
-      background: white;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 500;
-      color: #0b0d12;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: border-color .15s, background .15s, color .15s;
-    }
-    .view-chip:hover { border-color: #adadad; }
-    .view-chip.active {
-      background: #120b0b;
-      border-color: #120b0b;
-      color: white;
-    }
-    .view-chip .view-spark {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 14px; height: 14px;
-      font-size: 12px; line-height: 1;
-      color: #ff5c1b;                               /* brand orange — the-orange */
-    }
-    .view-chip.active .view-spark { color: #ffd000; } /* brand yellow on dark */
-    .view-chip .view-count {
-      display: inline-flex; align-items: center; justify-content: center;
-      min-width: 20px; height: 18px;
-      padding: 0 6px;
-      border-radius: 999px;
-      background: #f4f4f4;
-      color: #45556c;
-      font-size: 11px; font-weight: 700;
-      letter-spacing: 0.2px;
-    }
-    .view-chip.active .view-count {
-      background: rgba(255,255,255,0.18);
-      color: white;
-    }
-    .view-chip.custom .view-spark { color: #155dfc; } /* brand blue — user-saved */
-
-    .view-save {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 7px 14px;
-      border-radius: 999px;
-      border: 1.5px dashed #ffb299;                 /* brand orange peach */
-      background: transparent;
-      color: #d95b03;                                /* pending-1000 — readable orange */
-      font-family: 'Inter', sans-serif;
-      font-size: 12px; font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background .15s, border-color .15s;
-    }
-    .view-save:hover { background: white; border-color: #ff5c1b; }
-
-    .view-meta {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 12px; font-weight: 400;
-      color: #45556c;
-      line-height: 16px;
-    }
-    .view-meta strong { font-weight: 600; color: #0b0d12; }
-    .view-clear {
-      background: none; border: none; padding: 0;
-      font-family: 'Inter', sans-serif;
-      font-size: 12px; font-weight: 500;
-      color: #45556c;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-    .view-clear:hover { color: #120b0b; }
-    .view-meta-dot {
-      width: 4px; height: 4px; border-radius: 50%;
-      background: #adadad;
-      flex-shrink: 0;
-    }
 
     /* ─── TOOLBAR ─── */
     .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -226,7 +114,7 @@
     table.inv thead tr { background: #f7f7f7; }
     table.inv thead th {
       font-size: 12px; font-weight: 600; color: #0b0d12;
-      letter-spacing: 0.6px; line-height: 16px;
+      text-transform: uppercase; letter-spacing: 0.6px; line-height: 16px;
       text-align: left; padding: 12px 12px; white-space: nowrap;
     }
     table.inv thead th:first-child { padding-left: 16px; }
@@ -296,8 +184,8 @@
     .urg-red    .urg-dot { background: #dc2626; }
     .urg-amber  { background: #fdf2d4; color: #b17728; }
     .urg-amber  .urg-dot { background: #e9b44c; }
-    .urg-green  { background: #f1f1f1; color: #45556c; }
-    .urg-green  .urg-dot { background: #9ca3af; }
+    .urg-green  { background: #dcfce7; color: #15803d; }
+    .urg-green  .urg-dot { background: #16a34a; }
     .urg-blue   { background: #e7f4ff; color: #155dfc; }
     .urg-blue   .urg-dot { background: #155dfc; }
 
@@ -319,7 +207,7 @@
     .ai-insight-badge {
       display: inline-flex; align-items: center; gap: 6px;
       background: white; color: #ff6900;
-      font-size: 12px; font-weight: 600; letter-spacing: 0.6px; 
+      font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase;
       padding: 3px 10px; border-radius: 999px;
       border: 1px solid #ffb088;
       white-space: nowrap; flex-shrink: 0;
@@ -340,42 +228,30 @@
     .pg-btn:hover { border-color: #c8c8c8; color: #0b0d12; }
     .pg-btn.active { background: #120b0b; color: white; border-color: #120b0b; }
     .pg-sep { font-size: 12px; color: #adadad; padding: 0 2px; }
-
-    /* SIDEBAR COLLAPSE */
-    .sidebar { transition: width .2s ease; }
-    .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
-    .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
-    .sidebar-toggle svg { transition: transform .2s; }
-    .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
-    .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
-    .sidebar.collapsed .brand-name { display: none; }
-    .sidebar.collapsed .sidebar-toggle { position: absolute; top: 80px; right: -12px; background: #fff; border: 1.5px solid #e9e9e9; box-shadow: 0 1px 3px rgba(0,0,0,0.06); width: 24px; height: 24px; border-radius: 50%; margin: 0; z-index: 21; }
-    .sidebar.collapsed .sidebar-toggle:hover { background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
-    .sidebar.collapsed .nav-label { display: none; }
-    .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
-    .sidebar.collapsed .nav-item.active { padding: 8px 0; }
-    .sidebar.collapsed .nav-badge { display: none; }
+  /* ── Ask Witness button ── */
+  .ask-witness-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%); color: white; border: none; border-radius: 999px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; padding: 7px 16px; cursor: pointer; flex-shrink: 0; white-space: nowrap; box-shadow: 0 2px 12px rgba(255,105,0,0.4); transition: box-shadow .2s, transform .2s, filter .2s; }
+  .ask-witness-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 20px rgba(255,105,0,0.45); transform: translateY(-1px); }
+  .ask-witness-btn:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(255,105,0,0.4); }
+  .btn-sparkle { display: inline-block; font-size: 13px; line-height: 1; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
   </style>
 </head>
-<body data-chat="rail">
+<body>
 
 <!-- ─── SIDEBAR ─── -->
-<div class="app-grid">
 <aside class="sidebar">
   <div class="sidebar-brand">
     <div class="brand-logo">
-      <img src="witness-logo.svg" alt="" />
+      <img src="https://www.figma.com/api/mcp/asset/70b68d4b-ef8f-4543-a2c3-4a0ba30f1d3e" alt="" />
     </div>
     <span class="brand-name">Witness</span>
-    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-group">
       <div class="nav-label">Main</div>
       <div class="nav-items">
-        <a class="nav-item" href="dashboard.html">
-          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <a class="nav-item" href="#">
+          <img src="https://www.figma.com/api/mcp/asset/0078dabe-156c-4a53-8ee8-14b88f08edd3" alt="" />
           Dashboard
         </a>
       </div>
@@ -383,32 +259,35 @@
     <div class="nav-group">
       <div class="nav-label">Work</div>
       <div class="nav-items">
-        <a class="nav-item active" href="invoices.html">
-          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13z M10 1.5V4h3 M5.5 7.5h5 M5.5 10h5 M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <a class="nav-item active" href="#">
+          <img src="https://www.figma.com/api/mcp/asset/036eeafd-95b9-42ec-8e9e-b11d8ae871e6" alt="" />
           All Invoice
           <span class="nav-badge">26</span>
         </a>
-        <a class="nav-item" href="vendors.html">
-          <svg viewbox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Vendors
-          <span class="nav-badge">8</span>
+        <a class="nav-item" href="#">
+          <img src="https://www.figma.com/api/mcp/asset/fa6e7e9d-f011-45b5-a25d-7c902c02ede2" alt="" />
+          Exceptions
         </a>
-        <a class="nav-item" href="autoflow.html">
-          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-          Autoflow
+        <a class="nav-item" href="#">
+          <img src="https://www.figma.com/api/mcp/asset/15e3ed1a-12d2-46a2-a544-d4c76b6af402" alt="" />
+          Approvals
         </a>
-        <a class="nav-item" href="ai-activity.html">
-          <svg viewbox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-          AI Activity
-          <span class="nav-badge ai">24</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Data</div>
+      <div class="nav-items">
+        <a class="nav-item" href="#">
+          <img src="https://www.figma.com/api/mcp/asset/7ac49f75-1d24-4839-a160-168c688113c5" alt="" />
+          Insights
         </a>
       </div>
     </div>
     <div class="nav-group">
       <div class="nav-label">Settings</div>
       <div class="nav-items">
-        <a class="nav-item" href="settings.html">
-          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v2 M8 12.5v2 M14.5 8h-2 M3.5 8h-2 M12.6 3.4l-1.4 1.4 M4.8 11.2l-1.4 1.4 M12.6 12.6l-1.4-1.4 M4.8 4.8L3.4 3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <a class="nav-item" href="#">
+          <img src="https://www.figma.com/api/mcp/asset/78a18923-bc00-41cf-a369-1310d323404e" alt="" />
           Settings
         </a>
       </div>
@@ -420,13 +299,10 @@
 <div class="main">
 
   <header class="topbar">
-    <div class="topbar-date" data-wt-clock="topbar">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
+    <div class="topbar-date">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
     <div class="topbar-right">
-      <div class="health-chip">
-        <span class="hdot"></span>
-        <span>All systems healthy</span>
-      </div>
-      <div class="avatar">SC</div>
+      <button class="ask-witness-btn" onclick="window.openWitnessChat()"><span class="btn-sparkle">✦</span> Ask Witness</button>
+      <div class="avatar">SM</div>
     </div>
   </header>
 
@@ -435,25 +311,13 @@
     <!-- PAGE HEADING -->
     <div class="page-hd">
       <div class="page-hd-left">
-        <div class="page-title-row">
-          <div class="page-title-icon">
-            <svg width="20" height="20" viewbox="0 0 20 20" fill="none"><path d="M5 2h7l3 3v13H5V2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 2v3h3M8 9h4M8 12h4M8 15h2" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
-          <h1 class="ptitle">All Invoices</h1>
-        </div>
+        <h1 class="ptitle">All Invoices</h1>
         <p class="page-sub">26 invoices · synced from Amazon Business &amp; NetSuite · updated 2 min ago</p>
       </div>
       <div class="hd-actions">
         <button class="btn-outline" id="btn-export">↑ Export CSV</button>
         <button class="btn-solid" id="btn-batch">✦ Run batch match</button>
       </div>
-    </div>
-
-    <!-- VIEW TOGGLE -->
-    <div style="display:flex; gap:8px; align-items:center;">
-      <span style="font-size:12px; font-weight:600; color:#9f9fa6; letter-spacing:0.6px;">View</span>
-      <a href="invoices.html" style="padding:6px 14px; border-radius:999px; border:1.5px solid #120b0b; background:#120b0b; font-size:12px; font-weight:500; color:white; text-decoration:none;">Flat</a>
-      <a href="invoices-grouped.html" style="padding:6px 14px; border-radius:999px; border:1.5px solid #e9e9e9; background:white; font-size:12px; font-weight:500; color:#45556c; text-decoration:none;">Grouped</a>
     </div>
 
     <!-- STAT CARDS — same joined strip as dashboard -->
@@ -479,7 +343,7 @@
       <div class="stat-card">
         <div class="stat-inner">
           <div>
-            <div class="stat-num">8</div>
+            <div class="stat-num amber">8</div>
             <div class="stat-lbl">Pending Approval</div>
             <div class="stat-sub">waiting on approvers</div>
           </div>
@@ -513,47 +377,6 @@
         </div>
       </div>
     </div>
-
-    <!-- SAVED VIEWS / SMART FILTERS — persisted across sessions -->
-    <section class="views-bar" aria-label="Saved views">
-      <div class="views-bar-left">
-        <span class="views-label">Views</span>
-        <div class="views-scroll" id="views-scroll">
-          <button class="view-chip active" data-view="all" onclick="setView(this)">
-            All invoices
-            <span class="view-count" data-count-for="all">26</span>
-          </button>
-          <button class="view-chip" data-view="stuck" onclick="setView(this)">
-            <span class="view-spark" aria-hidden="true">✦</span>
-            Stuck &gt;5 days
-            <span class="view-count" data-count-for="stuck">0</span>
-          </button>
-          <button class="view-chip" data-view="my-approvals" onclick="setView(this)">
-            <span class="view-spark" aria-hidden="true">✦</span>
-            My approvals queue
-            <span class="view-count" data-count-for="my-approvals">0</span>
-          </button>
-          <button class="view-chip" data-view="acme-month" onclick="setView(this)">
-            <span class="view-spark" aria-hidden="true">✦</span>
-            Acme this month
-            <span class="view-count" data-count-for="acme-month">0</span>
-          </button>
-          <button class="view-chip" data-view="discount-risk" onclick="setView(this)">
-            <span class="view-spark" aria-hidden="true">✦</span>
-            Discount at risk
-            <span class="view-count" data-count-for="discount-risk">0</span>
-          </button>
-        </div>
-      </div>
-      <div class="views-bar-right">
-        <div class="view-meta" id="view-meta" style="display:none;">
-          <span class="view-meta-dot"></span>
-          <span><strong id="view-meta-name"></strong> <span id="view-meta-rule"></span></span>
-          <button class="view-clear" type="button" onclick="setViewByKey('all')">Clear</button>
-        </div>
-        <button class="view-save" type="button" id="btn-save-view">+ Save current view</button>
-      </div>
-    </section>
 
     <!-- TOOLBAR -->
     <div class="toolbar">
@@ -609,11 +432,11 @@
             
             <td><span class="inv-id">INV-1062</span><span class="po-id">PO-7704</span></td>
             <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div><div class="issue-ai"><span class="ai-pulse"></span>Pattern detected</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$8,420.00</div><span class="amt-sub">$8.4k highest</span></td>
             <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
             <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Discount in 1d</span></td>
-            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 2 -->
@@ -621,11 +444,11 @@
             
             <td><span class="inv-id">INV-1048</span><span class="po-id">PO-7721</span></td>
             <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div><div class="issue-ai"><span class="ai-pulse"></span>Qty mismatch · freight</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$3,210.45</div><span class="amt-sub">−$280 overbilled</span></td>
             <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
             <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 1d</span></td>
-            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 3 -->
@@ -633,11 +456,11 @@
             
             <td><span class="inv-id">INV-1092</span><span class="po-id">PO-7705</span></td>
             <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div><div class="issue-ai"><span class="ai-pulse"></span>Price variance</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$6,100.45</div><span class="amt-sub">$6.1k pending</span></td>
             <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
             <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>2nd reminder</span></td>
-            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- AI INSIGHT ROW -->
@@ -646,32 +469,7 @@
               <div class="ai-insight-inner">
                 <span class="ai-insight-badge"><span class="ai-insight-badge-dot"></span>✦ Witness AI</span>
                 <span class="ai-insight-txt"><strong>Global Industrial</strong> appears in 3 blocked invoices this week. A vendor rate card issue may be the root cause.</span>
-                <button class="wt-prov-trigger compact" data-trace-prov="invoices-global-pattern" onclick="event.stopPropagation()">
-                  <span class="wt-prov-spark">✦</span> Provenance
-                </button>
                 <span class="ai-insight-link">Investigate pattern →</span>
-              </div>
-              <div hidden id="trace-prov-invoices-global-pattern">
-                <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · Pattern detection</span><button class="wt-pop-close" type="button">✕</button></div>
-                <div class="wt-pop-title">Vendor pattern: Global Industrial</div>
-                <div class="wt-pop-sub">Detected <span data-wt-time="-5m" data-wt-fmt="longdatetime">May 19, 2025 · 8:14 AM</span> · refreshed every 10 min</div>
-                <div class="wt-prov-section">
-                  <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Why this surfaced</div>
-                  <div class="wt-prov-body">
-                    Rule <span class="pill rule">Vendor pattern watcher</span> · flags any vendor with ≥3 blocked invoices in 7 days. Read-only — never contacts vendor.
-                  </div>
-                </div>
-                <div class="wt-prov-section">
-                  <div class="wt-prov-label read"><span class="wt-dot"></span>Read</div>
-                  <ul class="wt-prov-list">
-                    <li><strong>3 blocked invoices</strong> from Global Industrial (INV-1062, INV-1071, INV-1092)</li>
-                    <li><strong>Vendor rate card v4.2</strong> <span class="src">Vendor portal</span></li>
-                    <li><strong>14 historical invoices</strong> last 90 days <span class="src">Witness</span></li>
-                  </ul>
-                </div>
-                <div class="wt-pop-foot">
-                  <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
-                </div>
               </div>
             </td>
           </tr>
@@ -681,11 +479,11 @@
             
             <td><span class="inv-id">INV-1039</span><span class="po-id">PO-7698</span></td>
             <td><div class="vnd-name">Acme Logistics Co.</div><div class="vnd-meta">Freight · Avg 2.1d response</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$12,750.00</div><span class="amt-sub">+$340 variance</span></td>
             <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
             <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 2d</span></td>
-            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 5 -->
@@ -693,11 +491,11 @@
             
             <td><span class="inv-id">INV-1081</span><span class="po-id">PO-7710</span></td>
             <td><div class="vnd-name">TechSupply Inc.</div><div class="vnd-meta">IT Procurement · Last login 1d ago</div><div class="issue-ai"><span class="ai-pulse"></span>Possible duplicate</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$4,890.00</div><span class="amt-sub">$4.9k pending</span></td>
             <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
             <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>3 days</span></td>
-            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 6 -->
@@ -705,11 +503,11 @@
             
             <td><span class="inv-id">INV-1074</span><span class="po-id">PO-7706</span></td>
             <td><div class="vnd-name">Sierra Packaging LLC</div><div class="vnd-meta">Packaging · Avg 4.5d response</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$1,540.20</div><span class="amt-sub">$1.5k pending</span></td>
             <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
             <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>3 days</span></td>
-            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 7 -->
@@ -717,11 +515,11 @@
             
             <td><span class="inv-id">INV-1067</span><span class="po-id">PO-7699</span></td>
             <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$2,200.00</div><span class="amt-sub">GRN pending</span></td>
             <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
             <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>4 days</span></td>
-            <td><div class="action-cell"><button class="btn-ctx followup">Follow up</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx followup">Follow up</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 8 -->
@@ -729,11 +527,11 @@
             
             <td><span class="inv-id">INV-1055</span><span class="po-id">PO-7695</span></td>
             <td><div class="vnd-name">Atlas Freight Services</div><div class="vnd-meta">Freight · Active vendor</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$9,300.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>5 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 9 -->
@@ -741,11 +539,11 @@
             
             <td><span class="inv-id">INV-1043</span><span class="po-id">PO-7690</span></td>
             <td><div class="vnd-name">NovaTech Supplies</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$17,400.00</div><span class="amt-sub">$17.4k highest</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>7 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 10 -->
@@ -753,11 +551,11 @@
             
             <td><span class="inv-id">INV-1101</span><span class="po-id">PO-7730</span></td>
             <td><div class="vnd-name">Global Industrial</div><div class="vnd-meta">High-vol vendor · Avg 3.2d response</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$5,620.00</div><span class="amt-sub">Duplicate risk</span></td>
             <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
             <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 1d</span></td>
-            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 11 -->
@@ -765,11 +563,11 @@
             
             <td><span class="inv-id">INV-1033</span><span class="po-id">PO-7682</span></td>
             <td><div class="vnd-name">Pacific Rim Supplies</div><div class="vnd-meta">Facilities · Active vendor</div><div class="issue-ai"><span class="ai-pulse"></span>Witness flagged</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$3,880.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>8 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 12 -->
@@ -777,11 +575,11 @@
             
             <td><span class="inv-id">INV-1119</span><span class="po-id">PO-7741</span></td>
             <td><div class="vnd-name">Vantage Systems LLC</div><div class="vnd-meta">Software · Avg 1.8d response</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$7,200.00</div><span class="amt-sub">$7.2k pending</span></td>
             <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
             <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>4 days</span></td>
-            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 13 -->
@@ -789,11 +587,11 @@
             
             <td><span class="inv-id">INV-1124</span><span class="po-id">PO-7748</span></td>
             <td><div class="vnd-name">Meridian Freight Co.</div><div class="vnd-meta">Freight · Avg 2.8d response</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$14,500.00</div><span class="amt-sub">PO exceeded</span></td>
             <td><span class="badge blocked"><span class="bdot"></span>Blocked</span></td>
             <td><span class="urg-chip urg-red"><span class="urg-dot"></span>Due in 2d</span></td>
-            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx escalate">Escalate</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 14 -->
@@ -801,11 +599,11 @@
             
             <td><span class="inv-id">INV-1027</span><span class="po-id">PO-7674</span></td>
             <td><div class="vnd-name">Keystone Hardware</div><div class="vnd-meta">Facilities · Active vendor</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$6,750.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>10 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 15 -->
@@ -813,11 +611,11 @@
             
             <td><span class="inv-id">INV-1136</span><span class="po-id">PO-7759</span></td>
             <td><div class="vnd-name">Crestline Interiors</div><div class="vnd-meta">Facilities · GRN pending</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$2,640.00</div><span class="amt-sub">GRN pending</span></td>
             <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
             <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>5 days</span></td>
-            <td><div class="action-cell"><button class="btn-ctx followup">Follow up</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx followup">Follow up</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 16 -->
@@ -825,11 +623,11 @@
             
             <td><span class="inv-id">INV-1021</span><span class="po-id">PO-7668</span></td>
             <td><div class="vnd-name">TechSupply Inc.</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$9,150.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>12 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 17 -->
@@ -837,11 +635,11 @@
             
             <td><span class="inv-id">INV-1143</span><span class="po-id">PO-7766</span></td>
             <td><div class="vnd-name">Orion Packaging</div><div class="vnd-meta">Packaging · Avg 3.0d response</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$1,980.00</div><span class="amt-sub">$1.9k pending</span></td>
             <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
             <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>6 days</span></td>
-            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 18 -->
@@ -849,11 +647,11 @@
             
             <td><span class="inv-id">INV-1016</span><span class="po-id">PO-7661</span></td>
             <td><div class="vnd-name">Atlas Freight Services</div><div class="vnd-meta">Freight · Active vendor</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$11,200.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>14 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 19 -->
@@ -861,11 +659,11 @@
             
             <td><span class="inv-id">INV-1152</span><span class="po-id">PO-7775</span></td>
             <td><div class="vnd-name">Brightline Office Supply</div><div class="vnd-meta">Net 30 · ar@brightline.co</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$4,320.00</div><span class="amt-sub">$4.3k pending</span></td>
             <td><span class="badge pending"><span class="bdot"></span>Pending</span></td>
             <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>7 days</span></td>
-            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx">Nudge</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 20 -->
@@ -873,11 +671,11 @@
             
             <td><span class="inv-id">INV-1009</span><span class="po-id">PO-7654</span></td>
             <td><div class="vnd-name">NovaTech Supplies</div><div class="vnd-meta">IT Procurement · Active vendor</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$8,900.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>15 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 21 -->
@@ -885,11 +683,11 @@
             
             <td><span class="inv-id">INV-1003</span><span class="po-id">PO-7647</span></td>
             <td><div class="vnd-name">Sierra Packaging LLC</div><div class="vnd-meta">Packaging · Active vendor</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$3,100.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>18 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 22 -->
@@ -897,11 +695,11 @@
             
             <td><span class="inv-id">INV-1161</span><span class="po-id">PO-7784</span></td>
             <td><div class="vnd-name">Acme Logistics Co.</div><div class="vnd-meta">Freight · GRN pending</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$5,050.00</div><span class="amt-sub">GRN pending</span></td>
             <td><span class="badge waiting"><span class="bdot"></span>Waiting</span></td>
             <td><span class="urg-chip urg-amber"><span class="urg-dot"></span>9 days</span></td>
-            <td><div class="action-cell"><button class="btn-ctx followup">Follow up</button><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-ctx followup">Follow up</button><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 23 -->
@@ -909,11 +707,11 @@
             
             <td><span class="inv-id">INV-0998</span><span class="po-id">PO-7641</span></td>
             <td><div class="vnd-name">Keystone Hardware</div><div class="vnd-meta">Facilities · Active vendor</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$2,780.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>20 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 24 -->
@@ -921,11 +719,11 @@
             
             <td><span class="inv-id">INV-0991</span><span class="po-id">PO-7633</span></td>
             <td><div class="vnd-name">Vantage Systems LLC</div><div class="vnd-meta">Software · Active vendor</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$16,200.00</div><span class="amt-sub">$16.2k highest</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>22 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 25 -->
@@ -933,11 +731,11 @@
             
             <td><span class="inv-id">INV-0984</span><span class="po-id">PO-7626</span></td>
             <td><div class="vnd-name">Pacific Rim Supplies</div><div class="vnd-meta">Facilities · Active vendor</div></td>
-            <td><span class="src-chip src-amazon wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="Amazon Business" data-trace-doc="Live integration" data-trace-loc="Webhook · POs &amp; invoices" data-trace-url="#amzn" data-trace-fields="Connection|OAuth · org &quot;Acme Ops&quot;;Last sync|2 min ago;Records today|14 POs · 22 invoices;Fields ingested|qty,unit_price,vendor,po_date,line_items"><span class="src-dot"></span>Amazon Business</span></td>
+            <td><span class="src-chip src-amazon"><span class="src-dot"></span>Amazon Business</span></td>
             <td><div class="td-amount">$4,600.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>25 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
           <!-- 26 -->
@@ -945,11 +743,11 @@
             
             <td><span class="inv-id">INV-0977</span><span class="po-id">PO-7619</span></td>
             <td><div class="vnd-name">Meridian Freight Co.</div><div class="vnd-meta">Freight · Active vendor</div></td>
-            <td><span class="src-chip src-erp wt-src no-arrow" onclick="event.stopPropagation()" data-trace-system="NetSuite ERP" data-trace-doc="Live integration" data-trace-loc="REST · AP module" data-trace-url="#erp" data-trace-fields="Connection|API key · prod;Last sync|5 min ago;Records today|31 invoices · 14 GRNs;Fields ingested|qty,line_total,status,gl_code,due_date"><span class="src-dot"></span>NetSuite ERP</span></td>
+            <td><span class="src-chip src-erp"><span class="src-dot"></span>NetSuite ERP</span></td>
             <td><div class="td-amount">$7,840.00</div><span class="amt-sub">Clean match</span></td>
             <td><span class="badge approved"><span class="bdot"></span>Approved</span></td>
             <td><span class="urg-chip urg-green"><span class="urg-dot"></span>28 days</span></td>
-            <td><div class="action-cell"><button class="btn-open" onclick="location.href='invoice-detail.html'">Open</button></div></td>
+            <td><div class="action-cell"><button class="btn-open">Open</button></div></td>
           </tr>
 
         </tbody>
@@ -970,7 +768,6 @@
   let currentPage  = 1;
   let activeFilter = null;
   let activeSearch = '';
-  let activeView   = 'all';
 
   // ── helpers ──────────────────────────────────────────
   function allDataRows() {
@@ -980,116 +777,10 @@
     return document.querySelector('.ai-insight-row');
   }
 
-  // ── saved views / smart filters ──────────────────────
-  // Parse a "days outstanding" value from the urgency chip text.
-  // "Due in 1d" → 1 · "3 days" → 3 · "2nd reminder" → 6 (heuristic: reminders mean stuck)
-  function urgencyDays(tr) {
-    const t = (tr.querySelector('.urg-chip')?.textContent || '').toLowerCase();
-    const m = t.match(/(\d+)\s*(d\b|day)/);
-    if (m) return parseInt(m[1], 10);
-    if (/reminder/.test(t)) return 6;
-    return 0;
-  }
-  function vendorName(tr) {
-    return (tr.querySelector('.vnd-name')?.textContent || '').toLowerCase();
-  }
-  function urgencyText(tr) {
-    return (tr.querySelector('.urg-chip')?.textContent || '').toLowerCase();
-  }
-
-  // Built-in smart views. Each: predicate, display label, rule blurb shown in the meta.
-  const VIEWS = {
-    'all':            { label: 'All invoices',      rule: '',                                       predicate: () => true },
-    'stuck':          { label: 'Stuck >5 days',     rule: 'unresolved · outstanding ≥ 5 days',      predicate: tr => tr.dataset.status !== 'approved' && urgencyDays(tr) >= 5 },
-    'my-approvals':   { label: 'My approvals queue',rule: 'status = pending · assignee = you',      predicate: tr => tr.dataset.status === 'pending' },
-    'acme-month':     { label: 'Acme this month',   rule: 'vendor contains “acme” · current month', predicate: tr => vendorName(tr).includes('acme') },
-    'discount-risk':  { label: 'Discount at risk',  rule: 'urgency mentions “discount”',            predicate: tr => urgencyText(tr).includes('discount') }
-  };
-
-  function setView(btn)            { setViewByKey(btn.dataset.view); }
-  function setViewByKey(key) {
-    if (!VIEWS[key]) key = 'all';
-    activeView = key;
-    document.querySelectorAll('.view-chip').forEach(b => b.classList.toggle('active', b.dataset.view === key));
-
-    // Surface the active rule in the bar — only when not the default
-    const meta = document.getElementById('view-meta');
-    if (key === 'all') {
-      meta.style.display = 'none';
-    } else {
-      meta.style.display = '';
-      document.getElementById('view-meta-name').textContent = VIEWS[key].label;
-      document.getElementById('view-meta-rule').textContent = VIEWS[key].rule ? '· ' + VIEWS[key].rule : '';
-    }
-
-    currentPage = 1;
-    persistState();
-    render();
-  }
-
-  // Refresh the live count on every chip after each render.
-  function refreshViewCounts() {
-    const rows = allDataRows();
-    Object.keys(VIEWS).forEach(key => {
-      const n = rows.filter(VIEWS[key].predicate).length;
-      const el = document.querySelector('[data-count-for="' + key + '"]');
-      if (el) el.textContent = n;
-    });
-  }
-
-  // ── filter persistence (per brief: filters survive navigation) ──
-  const STATE_KEY = 'witness-invoices-state';
-  function persistState() {
-    try {
-      localStorage.setItem(STATE_KEY, JSON.stringify({
-        view:   activeView,
-        filter: activeFilter,
-        search: activeSearch,
-        sort:   document.getElementById('sort-select')?.value || 'due-asc'
-      }));
-    } catch (e) {}
-  }
-  function restoreState() {
-    try {
-      const s = JSON.parse(localStorage.getItem(STATE_KEY) || '{}');
-      if (s.view && VIEWS[s.view]) {
-        activeView = s.view;
-        document.querySelectorAll('.view-chip').forEach(b => b.classList.toggle('active', b.dataset.view === s.view));
-        const meta = document.getElementById('view-meta');
-        if (s.view !== 'all' && meta) {
-          meta.style.display = '';
-          document.getElementById('view-meta-name').textContent = VIEWS[s.view].label;
-          document.getElementById('view-meta-rule').textContent = VIEWS[s.view].rule ? '· ' + VIEWS[s.view].rule : '';
-        }
-      }
-      if (s.filter) {
-        activeFilter = s.filter;
-        document.querySelectorAll('.filter-pill').forEach(b => {
-          const f = b.dataset.filter;
-          const matches = (f === s.filter) || (s.filter === null && (f === 'null' || !f));
-          b.classList.toggle('active', matches);
-        });
-      }
-      if (s.search) {
-        activeSearch = s.search;
-        const input = document.querySelector('.search-input');
-        if (input) input.value = s.search;
-      }
-      if (s.sort) {
-        const sel = document.getElementById('sort-select');
-        if (sel) {
-          sel.value = s.sort;
-          sel.dispatchEvent(new Event('change'));
-        }
-      }
-    } catch (e) {}
-  }
-
   // Returns rows that pass the current filter + search (used by sortedMatchingRows)
 
   // ── render ────────────────────────────────────────────
   function render() {
-    refreshViewCounts();
     const matched   = sortedMatchingRows();
     const total     = matched.length;
     const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
@@ -1186,21 +877,18 @@
       case 'vendor-asc':  activeSortFn = (a,b) => vendorText(a).localeCompare(vendorText(b)); break;
     }
     currentPage = 1;
-    persistState();
     render();
   });
 
   // Patch matchingRows to also sort
   function sortedMatchingRows() {
-    const viewPred = (VIEWS[activeView] || VIEWS.all).predicate;
     return allDataRows().filter(tr => {
       const status      = tr.dataset.status;
       const isAiFlagged = tr.classList.contains('ai-flagged-row');
       const text        = tr.textContent.toLowerCase();
-      const passView    = viewPred(tr);
       const passFilter  = activeFilter === null || (activeFilter === 'ai' ? isAiFlagged : status === activeFilter);
       const passSearch  = activeSearch === '' || text.includes(activeSearch);
-      return passView && passFilter && passSearch;
+      return passFilter && passSearch;
     }).sort(activeSortFn);
   }
 
@@ -1265,7 +953,6 @@
     const f = btn.dataset.filter;
     activeFilter = (f === 'null' || !f) ? null : f;
     currentPage = 1;
-    persistState();
     render();
   }
 
@@ -1273,66 +960,12 @@
   document.querySelector('.search-input').addEventListener('input', function () {
     activeSearch = this.value.toLowerCase().trim();
     currentPage = 1;
-    persistState();
     render();
   });
 
-  // ── save current view as a custom preset ─────────────
-  const CUSTOM_KEY = 'witness-invoices-custom-views';
-  function loadCustomViews() {
-    try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'); }
-    catch (e) { return []; }
-  }
-  function renderCustomViews() {
-    document.querySelectorAll('.view-chip.custom').forEach(el => el.remove());
-    const scroll = document.getElementById('views-scroll');
-    if (!scroll) return;
-    loadCustomViews().forEach(v => {
-      const key = 'custom:' + v.id;
-      VIEWS[key] = {
-        label: v.name,
-        rule: v.rule,
-        predicate: tr => {
-          const isAiFlagged = tr.classList.contains('ai-flagged-row');
-          const text        = tr.textContent.toLowerCase();
-          const passFilter  = v.filter === null || (v.filter === 'ai' ? isAiFlagged : tr.dataset.status === v.filter);
-          const passSearch  = !v.search || text.includes(v.search);
-          return passFilter && passSearch;
-        }
-      };
-      const btn = document.createElement('button');
-      btn.className = 'view-chip custom';
-      btn.dataset.view = key;
-      btn.onclick = () => setViewByKey(key);
-      btn.innerHTML =
-        '<span class="view-spark" aria-hidden="true">★</span>' +
-        v.name.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])) +
-        ' <span class="view-count" data-count-for="' + key + '">0</span>';
-      scroll.appendChild(btn);
-    });
-  }
-  document.getElementById('btn-save-view').addEventListener('click', () => {
-    const filterLabel = activeFilter ? activeFilter : 'all statuses';
-    const searchLabel = activeSearch ? '“' + activeSearch + '”' : '';
-    const suggested   = activeSearch
-      ? activeSearch.charAt(0).toUpperCase() + activeSearch.slice(1)
-      : (activeFilter ? activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1) + ' invoices' : '');
-    const name = (prompt('Name this view:', suggested) || '').trim();
-    if (!name) return;
-    const rule = [filterLabel === 'all statuses' ? '' : 'status = ' + filterLabel, searchLabel && 'search = ' + searchLabel]
-      .filter(Boolean).join(' · ');
-    const list = loadCustomViews();
-    const id   = Date.now().toString(36);
-    list.push({ id, name, rule, filter: activeFilter, search: activeSearch });
-    try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(list)); } catch (e) {}
-    renderCustomViews();
-    setViewByKey('custom:' + id);
-    showToast('✓ View saved — ' + name);
-  });
+  
 
   // ── boot ─────────────────────────────────────────────
-  renderCustomViews();
-  restoreState();
   render();
 </script>
 
@@ -1340,39 +973,6 @@
 <!-- Toast -->
 <div id="toast" style="position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:#120b0b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:10px 20px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap;z-index:100"></div>
 
-<script>
-  document.querySelectorAll('table.inv tbody tr').forEach(tr => {
-    if (tr.classList.contains('ai-insight-row')) return;
-    if (!tr.querySelector('td')) return;
-    tr.style.cursor = 'pointer';
-    tr.addEventListener('click', () => location.href = 'invoice-detail.html');
-  });
-  document.querySelectorAll('.btn-ctx').forEach(btn => {
-    btn.addEventListener('click', e => e.stopPropagation());
-  });
-</script>
-
-<script>
-  (function(){
-    var sb = document.querySelector('.sidebar');
-    var btn = document.querySelector('.sidebar-toggle');
-    if (!sb || !btn) return;
-    if (localStorage.getItem('witness-sidebar') === 'collapsed') sb.classList.add('collapsed');
-    btn.addEventListener('click', function(){
-      sb.classList.toggle('collapsed');
-      localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
-    });
-  })();
-</script>
-
-<!-- ═══════════ Witness chat panel (shared — see witness-chat-panel.{css,js}) ═══════════ -->
-<aside class="chat" id="chat"></aside>
-</div><!-- /.app-grid -->
-
-<link rel="stylesheet" href="witness-chat-panel.css">
-<link rel="stylesheet" href="witness-trace.css">
-<script src="witness-chat-panel.js"></script>
-<script src="witness-trace.js"></script>
-<script src="witness-time.js"></script>
+<script src="witness-chat.js"></script>
 </body>
 </html>
