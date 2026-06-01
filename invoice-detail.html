@@ -39,19 +39,19 @@
       --sidebar-w: 72px;
     }
 
+    /* Layout: fixed sidebar + fixed chat, main fills the middle gap.
+       Chat aside is placed OUTSIDE .app-grid so it defaults to
+       position:fixed from witness-chat-panel.css without interference. */
     .app-grid {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      top: 0; left: 0; right: 0; bottom: 0;
       display: grid;
       grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--chat-w);
-      transition: grid-template-columns .25s cubic-bezier(.4, 0, .2, 1);
+      transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1);
     }
 
 
-    /* ─── SIDEBAR — verbatim from all-invoices ─── */
+    /* ─── SIDEBAR ─── */
     .sidebar {
       position: relative;
       height: 100%;
@@ -145,7 +145,9 @@
     .nav-item.active {
       background: white;
       color: #120b0b;
-      padding: 8px 12px;
+      font-weight: 600;
+      border-radius: 0 8px 8px 0;
+      box-shadow: inset 3px 0 0 #FF6900;
     }
 
     .nav-item img {
@@ -157,17 +159,19 @@
 
     .nav-badge {
       margin-left: auto;
-      background: #120b0b;
-      color: white;
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 16px;
-      padding: 2px 8px;
+      background: #eef0f3;
+      color: #45556c;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1;
+      padding: 3px 7px;
       border-radius: 999px;
+      font-variant-numeric: tabular-nums;
     }
 
     .nav-badge.ai {
-      background: #ff6900;
+      background: #fff0e8;
+      color: #FF6900;
     }
 
     .nav-item svg {
@@ -180,10 +184,10 @@
     .main {
       height: 100%;
       overflow-y: auto;
-      overflow-x: auto;
-      min-width: 0;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
+      background: white;
     }
 
     /* ─── TOPBAR — verbatim from all-invoices ─── */
@@ -249,27 +253,27 @@
     }
 
     .health-chip {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: #dcfce7;
-      border-radius: 10px;
-      padding: 6px 12px 6px 8px;
-      height: 34px;
+      gap: 6px;
+      background: #f4f4f4;
+      border-radius: 999px;
+      padding: 4px 10px;
+      height: 28px;
     }
 
     .health-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: #16a34a;
     }
 
     .health-chip span {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
-      color: #00a63e;
-      letter-spacing: -0.15px;
+      color: #45556c;
+      letter-spacing: -0.1px;
       white-space: nowrap;
     }
 
@@ -293,10 +297,8 @@
       flex-direction: column;
       gap: 24px;
       flex: 1;
-      max-width: 1400px;
-      min-width: 900px;
+      min-width: 0;
       width: 100%;
-      margin: 0 auto;
     }
 
     /* ─── INVOICE HEADER SECTION ─── */
@@ -540,9 +542,10 @@
       background: #ff6900;
     }
 
-    /* ─── STAT CARDS ROW — same strip style as all-invoices ─── */
+    /* ─── STAT CARDS ROW ─── */
     .stat-row {
       display: flex;
+      gap: 0;
     }
 
     .stat-card {
@@ -561,13 +564,13 @@
     .stat-inner {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .stat-num {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 600;
-      color: #0f172b;
+      color: #0b0d12;
       line-height: 1;
     }
 
@@ -576,27 +579,216 @@
     }
 
     .stat-num.amber {
-      color: #e9b44c;
+      color: #0b0d12;
     }
 
-    .stat-num.green {
-      color: #16a34a;
+    .stat-num.muted {
+      font-size: 26px;
+      color: #0b0d12;
     }
 
     .stat-lbl {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
-      color: #0b0d12;
-      letter-spacing: 0.6px;
-      line-height: 16px;
+      color: #9f9fa6;
+      letter-spacing: 0.5px;
+      line-height: 15px;
+      text-transform: uppercase;
     }
 
     .stat-sub {
       font-size: 11px;
       font-weight: 400;
-      color: #45556c;
+      color: #9f9fa6;
       line-height: 14px;
     }
+
+    .stat-was {
+      font-size: 13px;
+      color: #c8c8c8;
+      text-decoration: line-through;
+      font-weight: 400;
+    }
+
+    /* ─── AGENT SUGGESTION CALLOUT (aligned with Vendors page style) ─── */
+    .agent-sug-callout {
+      padding: 24px 28px;
+      background:
+        radial-gradient(circle at top right, rgba(255,105,0,0.10) 0%, rgba(255,105,0,0) 50%),
+        linear-gradient(135deg, #fff8f3 0%, #ffeee0 100%);
+      border: 1px solid #ffc8a3;
+      border-radius: 14px;
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 22px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      animation: vc-breathe 6s ease-in-out infinite;
+    }
+    @keyframes vc-breathe {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,105,0,0); }
+      50%      { box-shadow: 0 0 0 6px rgba(255,105,0,0.06), 0 0 28px rgba(255,105,0,0.10); }
+    }
+    .agent-sug-callout::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: -30%;
+      width: 35%;
+      background: linear-gradient(105deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.30) 50%,
+        rgba(255,255,255,0) 100%);
+      transform: translateX(0);
+      animation: vc-shimmer 7s ease-in-out infinite;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    @keyframes vc-shimmer {
+      0%    { transform: translateX(0);     opacity: 0; }
+      18%   {                                opacity: 1; }
+      55%   { transform: translateX(420%);  opacity: 0; }
+      100%  { transform: translateX(420%);  opacity: 0; }
+    }
+    .agent-sug-callout::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -30px;
+      width: 200px; height: 120px;
+      background: radial-gradient(ellipse, rgba(255,105,0,0.06) 0%, rgba(255,105,0,0) 70%);
+      pointer-events: none;
+    }
+    .agent-sug-icon {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ff7a3d 0%, #ff5c1b 100%);
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 6px 16px rgba(255,105,0,0.28), inset 0 1px 0 rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-start;
+      position: relative;
+      animation: vc-icon-pulse 4s ease-in-out infinite;
+    }
+    @keyframes vc-icon-pulse {
+      0%, 100% {
+        box-shadow: 0 6px 16px rgba(255,105,0,0.28), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 0 rgba(255,105,0,0.35);
+      }
+      50% {
+        box-shadow: 0 6px 16px rgba(255,105,0,0.36), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 10px rgba(255,105,0,0);
+      }
+    }
+    .agent-sug-body { min-width: 0; }
+    .agent-sug-lbl {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: #b34900;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+    }
+    .agent-sug-lbl::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, rgba(179,73,0,0.25), rgba(179,73,0,0));
+      max-width: 60px;
+    }
+    .agent-sug-txt {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #120b0b;
+      font-weight: 400;
+      letter-spacing: -0.15px;
+    }
+    .agent-sug-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .agent-sug-btn-primary {
+      background: #120b0b;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Inter', system-ui, sans-serif;
+      letter-spacing: -0.05px;
+      white-space: nowrap;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background .15s, transform .15s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+    }
+    .agent-sug-btn-primary:hover {
+      background: #45556c;
+      transform: translateY(-1px);
+    }
+    .agent-sug-btn-sec {
+      background: transparent;
+      color: #b34900;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Inter', system-ui, sans-serif;
+      letter-spacing: -0.05px;
+      white-space: nowrap;
+      text-decoration: none;
+      border: 1.5px solid rgba(179,73,0,0.3);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .agent-sug-btn-sec:hover {
+      background: rgba(179,73,0,0.06);
+      border-color: #b34900;
+    }
+
+    /* ─── ASK WITNESS BUTTON (dashboard style) ─── */
+    .ask-witness-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      white-space: nowrap;
+      box-shadow: 0 2px 12px rgba(255,105,0,0.35);
+      transition: box-shadow .2s, transform .2s, filter .2s;
+    }
+
+    .ask-witness-btn:hover {
+      filter: brightness(1.06);
+      box-shadow: 0 6px 20px rgba(255,105,0,0.45);
+      transform: translateY(-1px);
+    }
+
+    .ask-witness-btn:active { transform: translateY(0); }
+
+    .btn-sparkle {
+      display: inline-block;
+      font-size: 13px;
+      line-height: 1;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
 
     /* ─── THREE COLUMN LAYOUT ─── */
     .three-col {
@@ -728,9 +920,10 @@
       align-items: flex-start;
       gap: 10px;
       padding: 10px 12px;
-      background: #fee2e2;
-      border: 1px solid rgba(220, 38, 38, 0.2);
-      border-radius: 10px;
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-left: 3px solid #dc2626;
+      border-radius: 0 8px 8px 0;
     }
 
     .blocker-ico {
@@ -773,12 +966,22 @@
       gap: 6px;
     }
 
+    /* Gemini-style rotating gradient border for AI-suggested steps */
+    @property --grad-angle {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
+    @keyframes grad-spin {
+      from { --grad-angle: 0deg; }
+      to   { --grad-angle: 360deg; }
+    }
+
     .btn-step-primary {
       width: 100%;
       padding: 10px 14px;
       border-radius: 8px;
       border: none;
-      background: #120b0b;
       color: white;
       font-size: 13px;
       font-weight: 500;
@@ -787,19 +990,18 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: background 0.15s;
-    }
-
-    .btn-step-primary:hover {
-      background: #45556c;
+      transition: all 0.15s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 0;
+      isolation: isolate;
+      background: transparent !important;
     }
 
     .btn-step-secondary {
       width: 100%;
       padding: 8px 12px;
       border-radius: 8px;
-      border: 1.5px solid #e9e9e9;
-      background: white;
+      border: 1.5px solid transparent;
       color: #45556c;
       font-size: 12px;
       font-weight: 500;
@@ -808,23 +1010,183 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.12s;
+      transition: all 0.12s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 0;
+      isolation: isolate;
+      background: transparent !important;
     }
 
-    .btn-step-secondary:hover {
+    .btn-step-tertiary {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1.5px solid transparent;
+      color: #45556c;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.12s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 0;
+      isolation: isolate;
+      background: transparent !important;
+    }
+
+    /* Gradient ring — revealed on hover via opacity */
+    .btn-step-primary:not([disabled])::before,
+    .btn-step-secondary:not([disabled])::before,
+    .btn-step-tertiary:not([disabled])::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 10px;
+      background: conic-gradient(
+        from var(--grad-angle),
+        #FF6900 0%,
+        #FFD000 20%,
+        #FFB347 35%,
+        #fff0e0 48%,
+        #FF6900 58%,
+        #FFD000 74%,
+        #FFB347 86%,
+        #fff0e0 94%,
+        #FF6900 100%
+      );
+      animation: grad-spin 4.5s linear infinite;
+      opacity: 0;
+      transition: opacity .3s ease;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* Background punch-out layers */
+    .btn-step-primary:not([disabled])::after,
+    .btn-step-secondary:not([disabled])::after,
+    .btn-step-tertiary:not([disabled])::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      z-index: -1;
+      pointer-events: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    /* Primary button state colors */
+    .btn-step-primary:not([disabled])::after {
+      background: #120b0b;
+    }
+    .btn-step-primary:not([disabled]):hover::after {
+      background: #45556c;
+    }
+
+    /* Secondary button state colors */
+    .btn-step-secondary:not([disabled])::after {
+      background: white;
+      border: 1.5px solid #e9e9e9;
+    }
+    .btn-step-secondary:not([disabled]):hover::after {
       background: #f4f4f4;
+      border-color: transparent;
+    }
+
+    /* Tertiary button state colors */
+    .btn-step-tertiary:not([disabled])::after {
+      background: transparent;
+      border: 1.5px solid transparent;
+    }
+    .btn-step-tertiary:not([disabled]):hover::after {
+      background: #f4f4f4;
+    }
+
+    /* Hover interactions for active states */
+    .btn-step-primary:not([disabled]):hover,
+    .btn-step-secondary:not([disabled]):hover,
+    .btn-step-tertiary:not([disabled]):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 105, 0, 0.12);
+    }
+    .btn-step-primary:not([disabled]):hover::before,
+    .btn-step-secondary:not([disabled]):hover::before,
+    .btn-step-tertiary:not([disabled]):hover::before {
+      opacity: 1;
+    }
+
+    /* Secondary button internal elements */
+    .btn-step-secondary .auto-pill {
+      background: #f4f4f4;
+      color: #45556c;
+      transition: all 0.12s;
+    }
+    .btn-step-secondary:hover .auto-pill {
+      background: #e9e9e9;
       color: #0b0d12;
-      border-color: #c8c8c8;
+    }
+
+    /* Tertiary button internal elements */
+    .btn-step-tertiary .step-num-badge {
+      background: #e4e4e7;
+      color: #71717a;
+      transition: all 0.12s;
+    }
+    .btn-step-tertiary:hover .step-num-badge {
+      background: #cbd5e1;
+      color: #0b0d12;
+    }
+
+    /* Disabled states (completed actions) */
+    .btn-step-primary[disabled],
+    .btn-step-secondary[disabled],
+    .btn-step-tertiary[disabled] {
+      background: #cbd5e1 !important;
+      color: #64748b !important;
+      cursor: not-allowed;
+      border: none !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    .btn-step-primary[disabled]::before,
+    .btn-step-secondary[disabled]::before,
+    .btn-step-tertiary[disabled]::before,
+    .btn-step-primary[disabled]::after,
+    .btn-step-secondary[disabled]::after,
+    .btn-step-tertiary[disabled]::after {
+      display: none !important;
     }
 
     .btn-step-ai {
-      border-color: rgba(22, 163, 74, 0.3);
-      color: #15803d;
-      background: #dcfce7;
+      border-color: #e9e9e9;
+      color: #45556c;
+      background: white;
     }
 
     .btn-step-ai:hover {
-      background: rgba(22, 163, 74, 0.14);
+      background: #f4f4f4;
+      border-color: #c8c8c8;
+    }
+
+    .step-num-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    
+    .btn-step-secondary .step-num-badge {
+      background: #e4e4e7;
+      color: #71717a;
     }
 
     .step-ico {
@@ -1003,22 +1365,22 @@
       gap: 16px;
     }
 
-    .ms-card {
-      border: none;
-      border-radius: 0;
-      overflow: hidden;
+    .ms-section {
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .ms-card-head {
+    .ms-section-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 0 8px;
-      background: transparent;
-      border-bottom: 1px solid #ececec;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
     }
 
-    .ms-card-title {
+    .ms-section-title {
       font-size: 13px;
       font-weight: 600;
       color: #0b0d12;
@@ -1027,26 +1389,30 @@
       gap: 8px;
     }
 
-    .ms-card-status {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 999px;
+    .ms-section-note {
+      font-size: 12px;
+      color: #45556c;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-left: 2.5px solid #cbd5e1;
+      background: transparent;
     }
 
-    .ms-status-match {
-      background: #dcfce7;
-      color: #15803d;
+    .ms-section-note.warn {
+      border-left-color: #e9b44c;
+      color: #b17728;
     }
 
-    .ms-status-mismatch {
-      background: #fee2e2;
+    .ms-section-note.crit {
+      border-left-color: #dc2626;
       color: #b91c1c;
     }
 
-    .ms-status-warn {
-      background: #fdf2d4;
-      color: #b17728;
+    .ms-section-note.ok {
+      border-left-color: #16a34a;
+      color: #15803d;
     }
 
     .ms-table {
@@ -1284,16 +1650,15 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 14px;
-      background: #fee2e2;
-      border-radius: 8px;
-      margin-top: 6px;
+      padding: 14px 0;
+      border-top: 2px solid #f0f0f0;
+      margin-top: 12px;
     }
 
     .fi-total-label {
       font-size: 13px;
       font-weight: 700;
-      color: #b91c1c;
+      color: #0b0d12;
     }
 
     .fi-total-val {
@@ -1520,10 +1885,11 @@
     }
 
     .cm-text.ai {
-      background: #fff5f0;
-      border: 1px solid #ffb088;
-      border-radius: 8px;
-      padding: 10px 12px;
+      background: transparent;
+      border: none;
+      border-left: 2.5px solid #ff6900;
+      border-radius: 0;
+      padding: 4px 0 4px 12px;
     }
 
     .cm-actions {
@@ -1716,10 +2082,11 @@
     /* AI annotation — matches all-invoices ai-insight-row style */
     .tl-ai-annotation {
       margin-top: 8px;
-      padding: 10px 12px;
-      background: #fff5f0;
-      border-left: 2px solid #ffb299;
-      border-radius: 0 8px 8px 0;
+      padding: 6px 0 6px 12px;
+      background: transparent;
+      border: none;
+      border-left: 2.5px solid #ff6900;
+      border-radius: 0;
       font-size: 12px;
       color: #45556c;
       line-height: 1.65;
@@ -1758,10 +2125,11 @@
 
     .tl-action-needed {
       margin-top: 8px;
-      padding: 10px 12px;
-      background: #fee2e2;
-      border: 1px solid rgba(220, 38, 38, 0.2);
-      border-radius: 8px;
+      padding: 6px 0 6px 12px;
+      background: transparent;
+      border: none;
+      border-left: 2.5px solid #dc2626;
+      border-radius: 0;
       font-size: 12px;
       color: #45556c;
       line-height: 1.65;
@@ -2033,8 +2401,8 @@
 
     /* AI insight banner — matching all-invoices */
     .ai-insight-banner {
-      background: #fff5f0;
-      border: 1px solid #ffb088;
+      background: #fafafa;
+      border: 1px solid #e4e4e7;
       border-radius: 10px;
       padding: 12px 14px;
       display: flex;
@@ -2164,7 +2532,7 @@
       background: #45556c;
     }
 
-    .btn-solid-dark.open .dry-run {
+    .btn-solid-dark.open + .dry-run {
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0);
@@ -2381,14 +2749,26 @@
       border: 1px solid #e4e4e7;
       border-radius: 10px;
       overflow: hidden;
+      display: flex;
+    }
+    .right-col-actions {
+      width: 290px;
+      background: #fafafa;
+      border-left: 1px solid #f0f0f0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-shrink: 0;
+      overflow-y: auto;
     }
 
     /* Restructured AI insight banner — structured key-fact grid (replaces paragraph) */
     .ai-insight-banner.structured {
       flex-direction: column;
       align-items: stretch;
-      gap: 0;
-      padding: 14px 16px;
+      gap: 12px;
+      padding: 16px 20px;
     }
 
     .ai-banner-head {
@@ -2464,7 +2844,7 @@
       color: #45556c;
       margin-top: 10px;
       padding-top: 10px;
-      border-top: 1px dashed #ffd5b8;
+      border-top: 1px dashed #e4e4e7;
       line-height: 1.65;
     }
 
@@ -2475,30 +2855,31 @@
     /* Restructured AI annotation inside timeline (compact key-fact strip, not paragraph) */
     .ai-fact-strip {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 6px;
-      margin-top: 6px;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 8px;
     }
 
     .ai-fact {
-      background: white;
-      border: 1px solid #ffd5b8;
-      border-radius: 6px;
-      padding: 6px 8px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
     }
 
     .ai-fact-k {
-      font-size: 9px;
-      font-weight: 700;
-      color: #d95b03;
+      font-size: 10px;
+      font-weight: 600;
+      color: #71717a;
       letter-spacing: 0.4px;
+      text-transform: uppercase;
     }
 
     .ai-fact-v {
       font-size: 12px;
       font-weight: 600;
       color: #0b0d12;
-      margin-top: 2px;
+      margin-top: 4px;
       line-height: 1.3;
     }
 
@@ -2525,6 +2906,38 @@
       margin-top: 10px;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     }
+
+    /* ─── 3-Way Match Visual Connector ─── */
+    .match-connector-wrap { padding: 16px 0 4px; }
+    .mc-doc-row { display: flex; align-items: stretch; gap: 0; }
+    .mc-doc { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .mc-doc-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: #45556c; padding: 0 10px 4px; }
+    .mc-line { font-size: 12px; padding: 6px 10px; border: none; background: transparent; cursor: default; transition: all .15s; line-height: 1.3; font-weight: 500; border-left: 3px solid #cbd5e1; }
+    .mc-line:hover { z-index: 1; background: rgba(0, 0, 0, 0.02); }
+    .mc-line.mc-ok   { border-left-color: #16a34a; color: #15803d; }
+    .mc-line.mc-warn { border-left-color: #d97706; color: #92400e; }
+    .mc-line.mc-crit { border-left-color: #dc2626; color: #b91c1c; }
+    .mc-line.mc-ok:hover   { background: rgba(22, 163, 74, 0.04); }
+    .mc-line.mc-warn:hover { background: rgba(217, 119, 6, 0.04); }
+    .mc-line.mc-crit:hover { background: rgba(220, 38, 38, 0.04); }
+    .mc-line.mc-active { background: rgba(0, 0, 0, 0.03); font-weight: 600; }
+    .mc-svg { flex: 0 0 60px; width: 60px; overflow: visible; }
+    .mc-legend { display: flex; gap: 16px; padding: 10px 0 0; }
+    .mc-leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #45556c; }
+    .mc-leg span { width: 10px; height: 3px; border-radius: 2px; display: inline-block; }
+    .mc-leg.ok   span { background: #16a34a; }
+    .mc-leg.warn span { background: #d97706; }
+    .mc-leg.crit span { background: #dc2626; }
+
+    /* SVG connector paths */
+    .mc-path { fill: none; stroke-width: 1.5; stroke-linecap: round; opacity: 0; transition: opacity .18s; stroke-dasharray: 200; stroke-dashoffset: 200; }
+    .mc-path.visible { opacity: 1; animation: mcDraw .35s ease forwards; }
+    .mc-path.pulse   { animation: mcDraw .35s ease forwards, mcPulse 1.2s ease-in-out 0.35s infinite; }
+    @keyframes mcDraw  { to { stroke-dashoffset: 0; } }
+    @keyframes mcPulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+    .mc-path.ok   { stroke: #16a34a; }
+    .mc-path.warn { stroke: #d97706; }
+    .mc-path.crit { stroke: #dc2626; }
 
     /* Timeline — folded (completed phase) state: neutral gray, minimal */
     .tl-step.tl-folded {
@@ -2634,10 +3047,11 @@
     /* Inline next-steps actions inside the blocked/active timeline step */
     .tl-inline-actions {
       margin-top: 12px;
-      padding: 12px;
-      background: #fafafa;
-      border: 1px solid #e9e9e9;
-      border-radius: 8px;
+      padding: 6px 0 6px 12px;
+      background: transparent;
+      border: none;
+      border-left: 2.5px solid #cbd5e1;
+      border-radius: 0;
     }
 
     .tl-inline-actions-head {
@@ -2657,55 +3071,71 @@
 
     /* AI banner — 3-way match flow (replaces $-duplicating key-grid) */
     .match-flow {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr auto 1fr;
-      gap: 8px;
+      display: flex;
       align-items: stretch;
+      gap: 12px;
       margin-top: 12px;
     }
 
     .mf-doc {
-      background: white;
-      border: 1px solid #ffd5b8;
-      border-radius: 8px;
-      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      padding: 4px 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+
+    .mf-doc:hover {
+      opacity: 0.8;
     }
 
     .mf-doc.warn {
-      border-color: #e9b44c;
-      background: #fef9eb;
+      border: none;
+      background: transparent;
+    }
+
+    .mf-doc.warn:hover {
+      opacity: 0.8;
     }
 
     .mf-doc.crit {
-      border-color: #dc2626;
-      background: #fef2f2;
+      border: none;
+      background: transparent;
+    }
+
+    .mf-doc.crit:hover {
+      opacity: 0.8;
     }
 
     .mf-doc-label {
       font-size: 10px;
       font-weight: 700;
-      color: #d95b03;
+      color: #9f9fa6;
       letter-spacing: 0.5px;
-      margin-bottom: 3px;
+      text-transform: uppercase;
     }
 
     .mf-doc.warn .mf-doc-label {
-      color: #b17728;
+      color: #b34900;
     }
 
     .mf-doc.crit .mf-doc-label {
-      color: #b91c1c;
+      color: #dc2626;
     }
 
     .mf-doc-val {
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 600;
       color: #0b0d12;
       line-height: 1.2;
     }
 
     .mf-doc-val.amber {
-      color: #b17728;
+      color: #b34900;
     }
 
     .mf-doc-val.red {
@@ -2713,17 +3143,18 @@
     }
 
     .mf-doc-sub {
-      font-size: 10px;
-      color: #45556c;
-      margin-top: 4px;
-      line-height: 1.3;
+      font-size: 11px;
+      color: #72727a;
+      line-height: 1.35;
+      margin-top: 2px;
     }
 
     .mf-arrow {
-      font-size: 20px;
-      color: #ffb088;
+      font-size: 16px;
+      color: #adadad;
       align-self: center;
-      font-weight: 700;
+      font-weight: 600;
+      user-select: none;
     }
 
     /* AI banner — signal comparison (for duplicate page) */
@@ -2917,24 +3348,29 @@
             <div class="health-dot"></div>
             <span>All systems healthy</span>
           </div>
-          <button class="btn-outline">✦ Ask Witness</button>
-          <button class="btn-outline">Share</button>
+          <button class="ask-witness-btn" onclick="window.openWitnessChat && window.openWitnessChat()">
+            <span class="btn-sparkle">✦</span>
+            Ask Witness
+          </button>
           <div style="position:relative">
             <button class="btn-solid-dark">
               Take action ▾
-              <div class="dry-run">
-                <div class="dr-label">If you proceed, Witness will:</div>
-                <div class="dr-list">
-                  <div class="dr-item"><span class="dr-num">1.</span><span>Send credit memo request to <strong
-                        style="color:#f0ede8">Brightline</strong> ($280, 2 units)</span></div>
-                  <div class="dr-item"><span class="dr-num">2.</span><span>Nudge <strong style="color:#f0ede8">J.
-                        Park</strong> with attached GRN evidence</span></div>
-                  <div class="dr-item"><span class="dr-num">3.</span><span>Flag $42 freight variance for your
-                      review</span></div>
-                </div>
-                <div class="dr-foot">All actions are reversible · You'll review each before sending</div>
-              </div>
             </button>
+            <div class="dry-run">
+              <div class="dr-label">If you proceed, Witness will:</div>
+              <div class="dr-list">
+                <div class="dr-item"><span class="dr-num">1.</span><span>Send credit memo request to <strong
+                      style="color:#f0ede8">Brightline</strong> ($1,403.34, 2 units)</span></div>
+                <div class="dr-item"><span class="dr-num">2.</span><span>Nudge <strong style="color:#f0ede8">J.
+                      Park</strong> with attached GRN evidence</span></div>
+                <div class="dr-item"><span class="dr-num">3.</span><span>Flag $42 freight variance for your
+                    review</span></div>
+              </div>
+              <button class="btn-step-primary" id="btn-execute-all" style="margin-top: 12px; justify-content: center;">
+                Execute all actions
+              </button>
+              <div class="dr-foot" style="margin-top: 8px;">All actions are reversible · You'll review each before sending</div>
+            </div>
           </div>
           <div class="avatar">SC</div>
         </div>
@@ -2964,11 +3400,12 @@
             <div class="hd-actions">
               <div style="position:relative;display:inline-block;" class="approve-wrap">
                 <button
+                  id="btn-approve-payment"
                   style="background:#f4f4f4;border:1.5px solid #e9e9e9;border-radius:999px;padding:0 20px;height:32px;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:#adadad;cursor:not-allowed;white-space:nowrap;display:flex;align-items:center;gap:6px;"
                   disabled>
                   Approve payment
                 </button>
-                <div class="approve-tooltip">
+                <div class="approve-tooltip" id="approve-tooltip-content">
                   <strong>Cannot approve yet</strong><br>2 match blockers must be resolved before payment can be
                   approved.<br><br>
                   <span style="color:#adadad;">1. Quantity mismatch — credit memo pending<br>2. GRN short-receipt needs
@@ -2981,46 +3418,55 @@
 
         <!-- ─── STAT STRIP ─── -->
         <div class="stat-row">
-          <div class="stat-card">
+          <div class="stat-card" style="flex:1.4">
             <div class="stat-inner">
-              <div class="stat-lbl">Billed amount</div>
-              <div class="stat-num">$8,420</div>
-              <div class="stat-sub">As invoiced · 12 units</div>
+              <div class="stat-lbl">Corrected payable</div>
+              <div style="display:flex;align-items:baseline;gap:10px;">
+                <div class="stat-num" id="stat-corrected">$7,016</div>
+                <div class="stat-was">$8,420</div>
+              </div>
+              <div class="stat-sub">10 of 12 units received · pending credit memo for 2 short units</div>
             </div>
           </div>
           <div class="stat-card">
             <div class="stat-inner">
-              <div class="stat-lbl" style="color:#15803d;">Corrected payable</div>
-              <div class="stat-num green">$7,016</div>
-              <div class="stat-sub">10 units × $701.67 · after credit memo</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-inner">
-              <div class="stat-lbl">Qty mismatch</div>
-              <div class="stat-num red">−$280</div>
-              <div class="stat-sub">2 units billed, not received</div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-inner">
-              <div class="stat-lbl">Freight variance</div>
-              <div class="stat-num amber">$42</div>
-              <div class="stat-sub">Not in PO · needs review</div>
+              <div class="stat-lbl">Match exception</div>
+              <div class="stat-num red" id="stat-mismatch">−$1,403.34</div>
+              <div class="stat-sub">2 units billed, not received (GRN-2043)</div>
             </div>
           </div>
           <div class="stat-card">
             <div class="stat-inner">
               <div class="stat-lbl">Discount at risk</div>
-              <div class="stat-num amber">−$140</div>
-              <div class="stat-sub">2% of $7,016 · expires Apr 30</div>
+              <div class="stat-num" id="stat-discount">−$140</div>
+              <div class="stat-sub">2% early-pay · expires Apr 30</div>
+            </div>
+          </div>
+          <div class="stat-card" style="flex:0.65">
+            <div class="stat-inner">
+              <div class="stat-lbl">Freight variance</div>
+              <div class="stat-num" id="stat-freight">$42</div>
+              <div class="stat-sub">Not in PO · under review</div>
             </div>
           </div>
         </div>
         <div style="font-size:11px;color:#adadad;margin-top:-16px;padding-left:2px;">
-          Net exposure if unresolved by Apr 30: <strong style="color:#dc2626;">−$420.32</strong> &nbsp;=&nbsp; $280
-          overbilling + $140 discount lost + $42 freight &nbsp;·&nbsp; <span
-            style="text-decoration:underline;cursor:pointer;">How is this calculated?</span>
+          Net exposure if unresolved by Apr 30: <strong style="color:#dc2626;" id="exposure-num">−$1,585.67</strong> &nbsp;=&nbsp; <span id="exposure-formula">$1,403.34 overbilling + $140.33 discount lost + $42.00 freight</span>
+        </div>
+
+        <!-- ─── AGENT SUGGESTION: Primary recommended action ─── -->
+        <div class="agent-sug-callout" id="agent-sug-main">
+          <div class="agent-sug-icon">✦</div>
+          <div class="agent-sug-body">
+            <div class="agent-sug-lbl">Witness Recommends</div>
+            <div class="agent-sug-txt">
+              Request a credit memo from Brightline for 2 short units ($1,403.34). This resolves the match exception, unblocks J. Park's approval, and secures your 2% early-pay discount before Apr 30.
+            </div>
+            <div class="agent-sug-actions">
+              <button class="agent-sug-btn-primary" onclick="document.getElementById('btn-request-credit') && document.getElementById('btn-request-credit').click()">Let Witness handle this →</button>
+              <button class="agent-sug-btn-sec" onclick="document.getElementById('btn-confirm-grn') && document.getElementById('btn-confirm-grn').click()">Confirm GRN first</button>
+            </div>
+          </div>
         </div>
 
         <!-- ─── AI HISTORY STRIP (centralised revert lives in AI Activity) ─── -->
@@ -3031,108 +3477,21 @@
           <a class="wt-h-link" href="ai-activity.html">View / revert in Activity ↗</a>
         </div>
 
-        <!-- ─── AI INSIGHT BANNER — 3-way match flow (evidence, not $ amounts) ─── -->
-        <div class="ai-insight-banner structured">
-          <div class="ai-banner-head">
-            <div class="ai-insight-badge">
-              <div class="ai-badge-dot"></div>
-              Witness AI
-            </div>
-            <span class="ai-banner-meta"><strong>2 match exceptions detected</strong> · matched 3 documents in 0.6s ·
-              96% confidence</span>
-            <button class="wt-prov-trigger" data-trace-prov="banner-1048-match" style="margin-left:auto"
-              onclick="event.stopPropagation()">
-              <span class="wt-prov-spark">✦</span> Provenance
-            </button>
-          </div>
 
-          <!-- Provenance content for banner -->
-          <div hidden id="trace-prov-banner-1048-match">
-            <div class="wt-pop-head">
-              <span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · 3-way match</span>
-              <button class="wt-pop-close" type="button">✕</button>
-            </div>
-            <div class="wt-pop-title">Detected 2 exceptions on INV-1048</div>
-            <div class="wt-pop-sub"><span data-wt-time="-4d 09:06" data-wt-fmt="longdatetime">Apr 24, 2025 · 9:06
-                AM</span> · ran in 0.6s</div>
-            <div class="wt-prov-section">
-              <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Why allowed to auto</div>
-              <div class="wt-prov-body">
-                <span class="pill rule">3-way match</span><br>
-                Read-only on PO + GRN + Invoice. Writes only a match result and a hold flag.
-                <em class="muted">Never pays, never contacts vendor without you.</em>
-              </div>
-            </div>
-            <div class="wt-prov-section">
-              <div class="wt-prov-label why-wait"><span class="wt-dot"></span>Why waiting on you</div>
-              <div class="wt-prov-body">
-                Quantity dispute &gt; $250 needs sign-off per your settings. Witness will not request a credit memo or
-                email Brightline until you approve.
-              </div>
-            </div>
-            <div class="wt-prov-section">
-              <div class="wt-prov-label read"><span class="wt-dot"></span>Sources</div>
-              <ul class="wt-prov-list">
-                <li><strong>PO-7721</strong> · 12 units ordered <span class="src">Amazon Business · L4</span></li>
-                <li><strong>GRN-2043</strong> · 10 units received <span class="src">ERP · L7</span></li>
-                <li><strong>INV-1048</strong> · 12 units billed <span class="src">Brightline · L3, L11</span></li>
-              </ul>
-            </div>
-            <div class="wt-pop-foot">
-              <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
-              <button class="wt-pop-btn" data-trace-action="goto-workflow">View rule →</button>
-            </div>
-          </div>
-
-          <div class="match-flow">
-            <div class="mf-doc wt-src" onclick="event.stopPropagation()" data-trace-system="Amazon Business"
-              data-trace-doc="PO-7721.pdf" data-trace-loc="Line 4" data-trace-url="#amzn"
-              data-trace-fields="Item|Monitor Arm Pro;Qty ordered|12;Unit price|$701.67;PO total|$8,420.04;Requester|Nina Lee;PO date|Apr 15, 2025">
-              <div class="mf-doc-label">PO-7721</div>
-              <div class="mf-doc-val">12 ordered</div>
-              <div class="mf-doc-sub"><span data-wt-time="-13d 09:00" data-wt-fmt="date">Apr 15</span> · Nina Lee</div>
-            </div>
-            <div class="mf-arrow">→</div>
-            <div class="mf-doc warn wt-src" onclick="event.stopPropagation()" data-trace-system="ERP"
-              data-trace-doc="GRN-2043.pdf" data-trace-loc="Line 7" data-trace-url="#erp"
-              data-trace-fields="Qty received|10 of 12;Short reason|2 damaged in transit;Signed by|Nina Lee;Received|Apr 23, 2025 · 2:41 PM;Driver|XPO #2241">
-              <div class="mf-doc-label">GRN-2043</div>
-              <div class="mf-doc-val amber">10 received</div>
-              <div class="mf-doc-sub"><span data-wt-time="-5d 14:41" data-wt-fmt="date">Apr 23</span> · 2 damaged in
-                transit</div>
-            </div>
-            <div class="mf-arrow">→</div>
-            <div class="mf-doc crit wt-src" onclick="event.stopPropagation()" data-trace-system="Brightline portal"
-              data-trace-doc="INV-1048.pdf" data-trace-loc="Line 3, Line 11" data-trace-url="#brightline"
-              data-trace-fields="Qty billed|12;Unit price|$701.67;Subtotal|$8,420.04;Freight (L11)|$42.00;Total|$8,420.00;Due|Apr 30, 2025;Discount|2% if paid by Apr 30">
-              <div class="mf-doc-label">INV-1048</div>
-              <div class="mf-doc-val red">12 billed ✕</div>
-              <div class="mf-doc-sub"><span data-wt-time="-4d 09:06" data-wt-fmt="date">Apr 24</span> · overbills by 2
-                units</div>
-            </div>
-          </div>
-          <div class="ai-banner-foot">
-            <strong>Why:</strong> Driver left 2 damaged units at the warehouse; Nina signed for 10. Invoice billed all
-            12 anyway. Freight on line 11 has no PO backing.<br>
-            <strong>Recommended:</strong> Request credit memo for the 2 short units — this unblocks J. Park's approval
-            automatically.
-          </div>
-        </div>
-
-        <!-- ─── MAIN PANEL (full-width, was three-col) ─── -->
+        <!-- ─── MAIN PANEL (two-column layout) ─── -->
         <div class="main-panel">
 
-          <!-- Tabbed panels — full width -->
-          <div class="center-col" style="border-right:none;">
+          <!-- Tabbed panels — flex: 1 -->
+          <div class="center-col" style="flex: 1; border-right: 1px solid #f0f0f0;">
             <div class="center-tabs">
-              <button class="ctab active" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
-              <button class="ctab" data-tab="match" onclick="switchTab(this)">Match summary</button>
+              <button class="ctab" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
+              <button class="ctab active" data-tab="match" onclick="switchTab(this)">Match summary</button>
               <button class="ctab" data-tab="financial" onclick="switchTab(this)">Financial impact</button>
               <button class="ctab" data-tab="comments" onclick="switchTab(this)">Comments (3)</button>
             </div>
 
             <!-- ─── TAB 1: Timeline ─── -->
-            <div class="tab-panel active" id="tab-timeline" style="flex-direction:column;">
+            <div class="tab-panel" id="tab-timeline" style="flex-direction:column;">
               <div class="tl-header">
                 <div class="tl-header-title">PO to Payment Journey</div>
                 <button class="tl-collapse-btn" onclick="collapseAll()">Collapse all ↑</button>
@@ -3199,17 +3558,17 @@
                   <span class="tl-phase-line"></span>
                 </div>
 
-                <div class="tl-step">
+                <div class="tl-step" id="tl-step-match-exception">
                   <div class="tl-line"></div>
                   <div class="tl-dot ai">✦</div>
                   <div class="tl-content" onclick="toggleStep(this)">
                     <div class="tl-main-row">
                       <div>
                         <div class="tl-tags">
-                          <span class="tl-tag tt-issues">2 issues</span>
+                          <span class="tl-tag tt-issues" id="tl-match-issues-tag">2 issues</span>
                           <span class="tl-tag tt-ai">✦ Witness AI</span>
                         </div>
-                        <div class="tl-step-name warn">3-way match exception detected</div>
+                        <div class="tl-step-name warn" id="tl-match-step-name">3-way match exception detected</div>
                         <div class="tl-ai-annotation" style="position:relative;">
                           <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected — 2 exceptions on
                             INV-1048
@@ -3225,15 +3584,24 @@
                             </div>
                             <div class="ai-fact">
                               <div class="ai-fact-k">GRN qty</div>
-                              <div class="ai-fact-v amber">10 received</div>
+                              <div class="ai-fact-v amber ai-fact-grn-v" style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+                                <span>10 received</span>
+                                <span class="step-num-badge" style="background:#fef3c7; color:#b17728; border:1px solid rgba(177,119,40,0.3); font-size:9px; width:12px; height:12px; margin-left:4px;">1</span>
+                              </div>
                             </div>
                             <div class="ai-fact">
                               <div class="ai-fact-k">Invoice qty</div>
-                              <div class="ai-fact-v red">12 billed ✕</div>
+                              <div class="ai-fact-v red ai-fact-inv-v" style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+                                <span>12 billed ✕</span>
+                                <span class="step-num-badge" style="background:#fee2e2; color:#b91c1c; border:1px solid rgba(185,28,28,0.3); font-size:9px; width:12px; height:12px; margin-left:4px;">2</span>
+                              </div>
                             </div>
                             <div class="ai-fact">
                               <div class="ai-fact-k">Freight</div>
-                              <div class="ai-fact-v amber">$42 no PO</div>
+                              <div class="ai-fact-v amber ai-fact-frt-v" style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+                                <span>$42 no PO</span>
+                                <span class="step-num-badge" style="background:#fef3c7; color:#b17728; border:1px solid rgba(177,119,40,0.3); font-size:9px; width:12px; height:12px; margin-left:4px;">4</span>
+                              </div>
                             </div>
                           </div>
                           <div hidden id="trace-prov-tl-step-match">
@@ -3328,13 +3696,16 @@
                   </div>
                 </div>
 
-                <div class="tl-step tl-blocked">
+                <div class="tl-step tl-blocked" id="tl-step-approval">
                   <div class="tl-line"></div>
                   <div class="tl-dot blocked">✕</div>
                   <div class="tl-content" onclick="toggleStep(this)">
                     <div class="tl-main-row">
                       <div>
-                        <div class="tl-tags"><span class="tl-tag tt-waiting">Waiting 3 days</span></div>
+                        <div class="tl-tags">
+                          <span class="tl-tag tt-waiting">Waiting 3 days</span>
+                          <span class="step-num-badge" style="background:#fef3c7; color:#b17728; border:1px solid rgba(177,119,40,0.3); font-size:9px; width:12px; height:12px; display:inline-flex; align-items:center; justify-content:center;">3</span>
+                        </div>
                         <div class="tl-step-name blocked">Awaiting approval — J. Park</div>
                         <div class="tl-step-desc">Downstream of the match exception — approval can't complete until the
                           quantity mismatch resolves. J. Park has not responded since Apr 25.</div>
@@ -3343,26 +3714,8 @@
                           $140.33 in-pocket. Witness can nudge J. Park or reroute to backup approver K. Ito.
                         </div>
                         <div class="tl-inline-actions">
-                          <div class="tl-inline-actions-head">✦ Recommended next steps</div>
-                          <div class="next-steps">
-                            <button class="btn-step-primary">
-                              Confirm GRN with vendor — 2 units
-                              <span class="auto-pill">STEP 1</span>
-                            </button>
-                            <button class="btn-step-primary" style="background:#45556c;">
-                              Request credit memo $280
-                              <span class="auto-pill">AUTO</span>
-                            </button>
-                            <button class="btn-step-secondary btn-step-ai">
-                              <div class="step-ico" style="background:#dcfce7;border-color:rgba(22,163,74,0.3)">✦</div>
-                              Nudge J. Park — discount expires Apr 30
-                              <span class="auto-pill-green">AUTO</span>
-                            </button>
-                            <button class="btn-step-secondary">
-                              <div class="step-ico">📎</div>
-                              Review freight vs. vendor contract
-                            </button>
-                          </div>
+                          <div style="font-size: 11px; font-weight: 600; color: #45556c; margin-bottom: 2px;">✦ Exception resolution actions</div>
+                          <div style="font-size: 12px; color: #71717a;">Recommended actions are pinned to the persistent sidebar on the right of the panel for quick access across all tabs.</div>
                         </div>
                       </div>
                       <div class="tl-step-right">
@@ -3393,87 +3746,110 @@
             </div><!-- /tab-timeline -->
 
             <!-- ─── TAB 2: Match summary ─── -->
-            <div class="tab-panel" id="tab-match">
+            <div class="tab-panel active" id="tab-match">
               <div class="ms-header">
                 <div class="ms-header-title">3-Way Match Results</div>
                 <span class="ms-badge">2 exceptions</span>
               </div>
               <div class="ms-body">
 
-                <!-- AI summary — structured key-fact grid -->
-                <div class="ms-ai-note structured">
+                <!-- ─── AI INSIGHT & VISUAL MAPPING (Unified Component) ─── -->
+                <div class="ai-insight-banner structured" style="margin-bottom: 20px;">
                   <div class="ai-banner-head">
                     <div class="ai-insight-badge">
-                      <div class="ai-badge-dot"></div>Witness AI
+                      <div class="ai-badge-dot"></div>
+                      Witness AI
                     </div>
-                    <span class="ai-banner-meta">Matched <strong>PO-7721 · GRN-2043 · INV-1048</strong> · 96% confidence
-                      · 0.6s</span>
-                    <button class="wt-prov-trigger compact" data-trace-prov="ms-note" onclick="event.stopPropagation()"
-                      style="margin-left:auto;">
+                    <span class="ai-banner-meta"><strong>2 match exceptions detected</strong> · matched 3 documents in 0.6s ·
+                      96% confidence</span>
+                    <button class="wt-prov-trigger" data-trace-prov="banner-1048-match" style="margin-left:auto"
+                      onclick="event.stopPropagation()">
                       <span class="wt-prov-spark">✦</span> Provenance
                     </button>
-                    <div hidden id="trace-prov-ms-note">
-                      <div class="wt-pop-head"><span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI ·
-                          Match summary</span><button class="wt-pop-close" type="button">✕</button></div>
-                      <div class="wt-pop-title">3-way match computation</div>
-                      <div class="wt-pop-sub"><span data-wt-time="-4d 09:06" data-wt-fmt="longdatetime">Apr 24, 2025 ·
-                          9:06 AM</span> · 0.6s · 96% confidence</div>
-                      <div class="wt-prov-section">
-                        <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Why this was computed
-                          automatically</div>
-                        <div class="wt-prov-body">Rule <span class="pill rule">3-way match</span> runs on every invoice
-                          that arrives with a PO + GRN. Confidence 96% &gt; 90% threshold to publish a match summary.
-                        </div>
+                  </div>
+
+                  <!-- Provenance content for banner -->
+                  <div hidden id="trace-prov-banner-1048-match">
+                    <div class="wt-pop-head">
+                      <span class="wt-pop-eyebrow ai"><span class="wt-dot"></span>Witness AI · 3-way match</span>
+                      <button class="wt-pop-close" type="button">✕</button>
+                    </div>
+                    <div class="wt-pop-title">Detected 2 exceptions on INV-1048</div>
+                    <div class="wt-pop-sub"><span data-wt-time="-4d 09:06" data-wt-fmt="longdatetime">Apr 24, 2025 · 9:06
+                        AM</span> · ran in 0.6s</div>
+                    <div class="wt-prov-section">
+                      <div class="wt-prov-label why-auto"><span class="wt-dot"></span>Why allowed to auto</div>
+                      <div class="wt-prov-body">
+                        <span class="pill rule">3-way match</span><br>
+                        Read-only on PO + GRN + Invoice. Writes only a match result and a hold flag.
+                        <em class="muted">Never pays, never contacts vendor without you.</em>
                       </div>
-                      <div class="wt-prov-section">
-                        <div class="wt-prov-label read"><span class="wt-dot"></span>Read</div>
-                        <ul class="wt-prov-list">
-                          <li><strong>PO-7721</strong> from Amazon Business</li>
-                          <li><strong>GRN-2043</strong> from ERP receiving</li>
-                          <li><strong>INV-1048</strong> from Brightline portal</li>
-                        </ul>
+                    </div>
+                    <div class="wt-prov-section">
+                      <div class="wt-prov-label why-wait"><span class="wt-dot"></span>Why waiting on you</div>
+                      <div class="wt-prov-body">
+                        Quantity dispute &gt; $250 needs sign-off per your settings. Witness will not request a credit memo or
+                        email Brightline until you approve.
                       </div>
-                      <div class="wt-pop-foot">
-                        <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity
-                          ↗</button>
-                      </div>
+                    </div>
+                    <div class="wt-prov-section">
+                      <div class="wt-prov-label read"><span class="wt-dot"></span>Sources</div>
+                      <ul class="wt-prov-list">
+                        <li><strong>PO-7721</strong> · 12 units ordered <span class="src">Amazon Business · L4</span></li>
+                        <li><strong>GRN-2043</strong> · 10 units received <span class="src">ERP · L7</span></li>
+                        <li><strong>INV-1048</strong> · 12 units billed <span class="src">Brightline · L3, L11</span></li>
+                      </ul>
+                    </div>
+                    <div class="wt-pop-foot">
+                      <button class="wt-pop-btn primary" data-trace-action="goto-activity">Open in AI Activity ↗</button>
+                      <button class="wt-pop-btn" data-trace-action="goto-workflow">View rule →</button>
                     </div>
                   </div>
-                  <div class="ai-key-grid">
-                    <div class="ai-key-cell">
-                      <div class="ai-key-label">PO</div>
-                      <div class="ai-key-val">12 units · $8,420</div>
-                      <div class="ai-key-sub">Reference document</div>
+
+                  <!-- ─── 3-Way Match Visual Connector (Integrated inside the banner box) ─── -->
+                  <div class="match-connector-wrap" style="margin-top: 16px; margin-bottom: 16px; border: none; background: transparent; padding: 0;">
+                    <div class="mc-doc-row">
+                      <div class="mc-doc" id="mc-po">
+                        <div class="mc-doc-label">PO-7721</div>
+                        <div class="mc-line mc-ok"   data-line="A">Qty 12 units</div>
+                        <div class="mc-line mc-ok"   data-line="B">Unit price $701.67</div>
+                        <div class="mc-line mc-ok"   data-line="C">Freight allowance</div>
+                      </div>
+                      <svg class="mc-svg" id="mc-svg" aria-hidden="true"></svg>
+                      <div class="mc-doc" id="mc-grn">
+                        <div class="mc-doc-label">GRN-2043</div>
+                        <div class="mc-line mc-warn" data-line="A">Qty 10 received</div>
+                        <div class="mc-line mc-ok"   data-line="B">Unit price match</div>
+                        <div class="mc-line mc-ok"   data-line="C">Freight confirmed</div>
+                      </div>
+                      <svg class="mc-svg" id="mc-svg2" aria-hidden="true"></svg>
+                      <div class="mc-doc" id="mc-inv">
+                        <div class="mc-doc-label">INV-1048</div>
+                        <div class="mc-line mc-crit" data-line="A">Qty 12 billed ✕</div>
+                        <div class="mc-line mc-ok"   data-line="B">Unit price $701.67</div>
+                        <div class="mc-line mc-ok"   data-line="C">Freight $42</div>
+                      </div>
                     </div>
-                    <div class="ai-key-cell">
-                      <div class="ai-key-label">GRN-2043</div>
-                      <div class="ai-key-val amber">10 received</div>
-                      <div class="ai-key-sub">2 damaged in transit</div>
-                    </div>
-                    <div class="ai-key-cell">
-                      <div class="ai-key-label">Invoice</div>
-                      <div class="ai-key-val red">12 billed ✕</div>
-                      <div class="ai-key-sub">Overbills by 2 units</div>
-                    </div>
-                    <div class="ai-key-cell" style="background:#f0fdf4;border-color:#bbf7d0;">
-                      <div class="ai-key-label" style="color:#15803d;">✓ Corrected payable</div>
-                      <div class="ai-key-val green">$7,016.70</div>
-                      <div class="ai-key-sub">10 × $701.67 after credit memo</div>
+                    <div class="mc-legend" style="margin-top: 16px; margin-bottom: 0;">
+                      <span class="mc-leg ok"><span></span>Matched</span>
+                      <span class="mc-leg warn"><span></span>Partial</span>
+                      <span class="mc-leg crit"><span></span>Exception</span>
                     </div>
                   </div>
-                  <div class="ai-banner-foot">
-                    <strong>Next:</strong> verify 2 units are not in transit before requesting credit memo. Freight $42
-                    has no PO backing — check vendor contract tolerance before disputing.
+
+                  <div class="ai-banner-foot" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0;">
+                    <strong>Why:</strong> Driver left 2 damaged units at the warehouse; Nina signed for 10. Invoice billed all
+                    12 anyway. Freight on line 11 has no PO backing.
                   </div>
                 </div>
 
                 <!-- GRN — first class document -->
-                <div class="ms-card" style="border-color:#e9b44c;">
-                  <div class="ms-card-head" style="background:#fdf2d4;">
-                    <div class="ms-card-title">
+                <div class="ms-section">
+                  <div class="ms-section-head">
+                    <div class="ms-section-title">
                       <span style="font-size:15px">📋</span> Goods Receipt Note (GRN-2043) — key document
                     </div>
-                    <span class="ms-card-status ms-status-warn">Partial receipt</span>
+                    <span class="badge waiting"><span class="bdot"></span>Partial receipt</span>
                   </div>
                   <table class="ms-table">
                     <thead>
@@ -3516,19 +3892,18 @@
                       </tr>
                     </tbody>
                   </table>
-                  <div class="ms-conf-row" style="background:#fdf2d4;">
-                    <span class="ms-conf-label">GRN is an auditable legal document — any amendment requires signatory
-                      and timestamp</span>
+                  <div class="ms-section-note warn">
+                    GRN is an auditable legal document — any amendment requires signatory and timestamp
                   </div>
                 </div>
 
                 <!-- Quantity check -->
-                <div class="ms-card">
-                  <div class="ms-card-head">
-                    <div class="ms-card-title">
+                <div class="ms-section">
+                  <div class="ms-section-head">
+                    <div class="ms-section-title">
                       <span style="font-size:15px">📦</span> Quantity check — PO vs GRN vs Invoice
                     </div>
-                    <span class="ms-card-status ms-status-mismatch">Mismatch ✕</span>
+                    <span class="badge blocked"><span class="bdot"></span>Mismatch ✕</span>
                   </div>
                   <table class="ms-table">
                     <thead>
@@ -3564,24 +3939,21 @@
                       </tr>
                     </tbody>
                   </table>
-                  <div class="ms-conf-row" style="background:#f0fdf4;border-top-color:#bbf7d0;">
-                    <span class="ms-conf-label" style="color:#15803d;font-weight:600;">Corrected invoice amount:</span>
-                    <span class="ms-conf-val" style="color:#16a34a;font-size:14px;">$7,016.70 &nbsp;(10 ×
-                      $701.67)</span>
+                  <div class="ms-section-note ok">
+                    <strong>Corrected payable:</strong> &nbsp; $7,016.70 &nbsp; (10 × $701.67)
                   </div>
-                  <div class="ms-conf-row">
-                    <span class="ms-conf-label">Overbilling</span>
-                    <span class="ms-conf-val" style="color:#dc2626;">−$280.00 to recover via credit memo</span>
+                  <div class="ms-section-note crit" style="margin-top: 4px;">
+                    <strong>Overbilling:</strong> &nbsp; −$1,403.34 to recover via credit memo
                   </div>
                 </div>
 
                 <!-- Price check -->
-                <div class="ms-card">
-                  <div class="ms-card-head">
-                    <div class="ms-card-title">
+                <div class="ms-section">
+                  <div class="ms-section-head">
+                    <div class="ms-section-title">
                       <span style="font-size:15px">💲</span> Unit price check
                     </div>
-                    <span class="ms-card-status ms-status-match">Match ✓</span>
+                    <span class="badge approved"><span class="bdot"></span>Match ✓</span>
                   </div>
                   <table class="ms-table">
                     <thead>
@@ -3601,19 +3973,18 @@
                       </tr>
                     </tbody>
                   </table>
-                  <div class="ms-conf-row">
-                    <span class="ms-conf-label">Unit price correct — dispute is quantity only, not pricing</span>
-                    <span class="ms-conf-val" style="color:#16a34a;">Clean ✓</span>
+                  <div class="ms-section-note ok">
+                    Unit price correct — dispute is quantity only, not pricing
                   </div>
                 </div>
 
                 <!-- Freight — reframed -->
-                <div class="ms-card">
-                  <div class="ms-card-head">
-                    <div class="ms-card-title">
+                <div class="ms-section">
+                  <div class="ms-section-head">
+                    <div class="ms-section-title">
                       <span style="font-size:15px">🚚</span> Freight &amp; additional charges
                     </div>
-                    <span class="ms-card-status ms-status-warn">Check contract</span>
+                    <span class="badge waiting"><span class="bdot"></span>Check contract</span>
                   </div>
                   <table class="ms-table">
                     <thead>
@@ -3633,16 +4004,15 @@
                       </tr>
                     </tbody>
                   </table>
-                  <div class="ms-conf-row" style="background:#fdf2d4;">
-                    <span class="ms-conf-label" style="color:#b17728;">Do not dispute until contract terms confirmed —
-                      many agreements include ±3–5% or fixed freight allowance</span>
+                  <div class="ms-section-note warn">
+                    Do not dispute until contract terms confirmed — many agreements include ±3–5% or fixed freight allowance
                   </div>
                 </div>
 
                 <!-- Source documents -->
-                <div class="ms-card">
-                  <div class="ms-card-head">
-                    <div class="ms-card-title">
+                <div class="ms-section">
+                  <div class="ms-section-head">
+                    <div class="ms-section-title">
                       <span style="font-size:15px">📄</span> Source documents
                     </div>
                     <span style="font-size:11px;color:#adadad;"><span data-wt-time="-4d 09:06"
@@ -3723,7 +4093,7 @@
                   </div>
                   <div class="fi-sum-cell">
                     <div class="fi-sum-label" style="color:#b91c1c;">Max exposure</div>
-                    <div class="fi-sum-val red">−$422.33</div>
+                    <div class="fi-sum-val red" id="fi-exposure-val">−$1,585.67</div>
                     <div class="fi-sum-sub">If unresolved by Apr 30</div>
                   </div>
                 </div>
@@ -3736,7 +4106,7 @@
                   <div class="fi-row">
                     <div class="fi-row-label"><span class="fi-row-ico">📦</span> Quantity overbilling — 2 units not
                       received (2 × $701.67)</div>
-                    <div class="fi-row-val red">−$280.00 <span style="font-size:10px;color:#adadad;font-weight:400;">to
+                    <div class="fi-row-val red" id="fi-overbilling-val">−$1,403.34 <span style="font-size:10px;color:#adadad;font-weight:400;">to
                         claim back</span></div>
                   </div>
                   <div class="fi-row">
@@ -3757,8 +4127,8 @@
                   </div>
                   <div class="fi-total-row">
                     <div class="fi-total-label">Maximum exposure if fully unresolved by Apr 30</div>
-                    <div class="fi-total-val">−$422.33 <span style="font-size:11px;font-weight:400;color:#b91c1c;">(=
-                        $280 + $140.33 + $42 freight if valid)</span></div>
+                    <div class="fi-total-val" id="fi-total-exposure-val">−$1,585.67 <span style="font-size:11px;font-weight:400;color:#b91c1c;">(=
+                        $1,403.34 + $140.33 + $42.00 freight if valid)</span></div>
                   </div>
                 </div>
 
@@ -3770,12 +4140,12 @@
                     <div class="scenario-dot" style="background:#16a34a"></div>
                     <div style="flex:1">
                       <div class="fi-scenario-label">✦ Best case: Resolve today + approve freight</div>
-                      <div class="fi-scenario-desc">Confirm GRN short receipt with Brightline, get $280 credit memo,
+                      <div class="fi-scenario-desc">Confirm GRN short receipt with Brightline, get $1,403.34 credit memo,
                         approve $42 freight, pay $7,058.70 by Apr 30 to capture 2% discount ($140.33 saved).</div>
                     </div>
                     <div class="fi-scenario-outcome">
-                      <div class="val green">Pay $6,876.37</div>
-                      <div class="sub">$7,016.70 − $140.33 discount</div>
+                      <div class="val green" id="fi-best-pay">Pay $6,918.37</div>
+                      <div class="sub" id="fi-best-sub">$7,058.70 − $140.33 discount</div>
                     </div>
                   </div>
 
@@ -3797,11 +4167,11 @@
                     <div style="flex:1">
                       <div class="fi-scenario-label">Dispute freight, miss discount, no credit memo</div>
                       <div class="fi-scenario-desc">Pay full invoice $8,420 without credit memo. Freight dispute open.
-                        Discount window missed. Overpayment risk of $280 + possible vendor dispute.</div>
+                        Discount window missed. Overpayment risk of $1,403.34 + possible vendor dispute.</div>
                     </div>
                     <div class="fi-scenario-outcome">
                       <div class="val red">Pay $8,420.00</div>
-                      <div class="sub">$280 overpaid + $140 lost</div>
+                      <div class="sub">$1,403.34 overpaid + $140.33 lost</div>
                     </div>
                   </div>
 
@@ -3838,7 +4208,7 @@
                         data-trace-doc="GRN-2043.pdf" data-trace-loc="Line 7" data-trace-url="#erp"
                         data-trace-fields="Qty received|10;Reason|2 damaged in transit;Signed by|Nina Lee">GRN-2043</span>.
                       <strong>Freight variance:</strong> $42 charge on invoice line 11 has no corresponding PO line.
-                      Recommended action: request credit memo for $280 and flag freight for approver review.
+                      Recommended action: request credit memo for $1,403.34 and flag freight for approver review.
                     </div>
                     <div class="cm-actions">
                       <button class="cm-action-btn">Reply</button>
@@ -3930,6 +4300,69 @@
 
           </div><!-- /center-col -->
 
+          <!-- ─── RIGHT PERSISTENT PANEL: Action & Blockers Checklist ─── -->
+          <div class="right-col-actions">
+            <div style="font-size: 11px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.6px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+              Steps
+            </div>
+            <div style="font-size: 11px; font-style: italic; color: #71717a; margin-top: -8px; line-height: 1.4; margin-bottom: 4px;">
+              Perform these action steps to clear active blockers in the PO to Payment timeline.
+            </div>
+            <div class="next-steps" style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="btn-step-primary" id="btn-confirm-grn" onclick="simConfirmGRN()">
+                <span class="step-num-badge">1</span>
+                Confirm GRN with vendor — 2 units
+                <span class="auto-pill" style="margin-left: auto;">1</span>
+              </button>
+              <button class="btn-step-secondary" id="btn-request-credit" onclick="simRequestCredit()">
+                <span class="step-num-badge">2</span>
+                Request credit memo $1,403.34
+                <span class="auto-pill" style="margin-left: auto;">AUTO</span>
+              </button>
+              <button class="btn-step-secondary btn-step-ai" id="btn-nudge-park" onclick="simNudgePark()">
+                <span class="step-num-badge">3</span>
+                Nudge J. Park — discount risk
+                <span class="auto-pill" style="margin-left: auto;">AUTO</span>
+              </button>
+              <button class="btn-step-tertiary" id="btn-review-freight" onclick="simReviewFreight()">
+                <span class="step-num-badge">4</span>
+                Review freight contract tolerance
+              </button>
+            </div>
+            
+            <div style="margin-top: 10px; padding-top: 16px; border-top: 1px dashed #e4e4e7;">
+              <div style="font-size: 11px; font-weight: 600; color: #71717a; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.4px;">Blockers checklist</div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #b91c1c;" id="chk-qty">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="chk-status-icon" style="font-weight: bold; width: 14px; text-align: center;">✕</span>
+                    <span>Qty mismatch ($1,403.34)</span>
+                  </div>
+                  <span style="font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #fee2e2; color: #b91c1c; white-space: nowrap; transition: all 0.2s ease;">Steps 1 & 2</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #b17728;" id="chk-freight">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="chk-status-icon" style="font-weight: bold; width: 14px; text-align: center;">⚠</span>
+                    <span>Freight variance ($42.00)</span>
+                  </div>
+                  <span style="font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #fef3c7; color: #b17728; white-space: nowrap; transition: all 0.2s ease;">Step 4</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #b17728;" id="chk-approval">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="chk-status-icon" style="font-weight: bold; width: 14px; text-align: center;">○</span>
+                    <span>J. Park approval pending</span>
+                  </div>
+                  <span style="font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #fef3c7; color: #b17728; white-space: nowrap; transition: all 0.2s ease;">Step 3</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="sim-toast" style="margin-top: auto; padding: 10px; background: #f4f4f4; border: 1px solid #e9e9e9; border-radius: 6px; color: #45556c; font-size: 11px; display: none; line-height: 1.4; align-items: flex-start; gap: 6px; transition: opacity 0.3s ease;">
+              <span style="color:#ff6900; font-weight: bold;">✦</span>
+              <span id="sim-toast-msg"></span>
+            </div>
+          </div><!-- /right-col-actions -->
+
         </div><!-- /main-panel -->
 
       </main>
@@ -3956,6 +4389,13 @@
       }
     </script>
     <script>
+      /* Cap chat panel width so a previously dragged-wide chat doesn't crush the main column */
+      (function () {
+        var stored = parseInt(localStorage.getItem('witness-chat-width'), 10);
+        if (!stored || stored > 400) localStorage.setItem('witness-chat-width', '340');
+      })();
+    </script>
+    <script>
       (function () {
         var sb = document.querySelector('.sidebar');
         var btn = document.querySelector('.sidebar-toggle');
@@ -3971,7 +4411,7 @@
       (function () {
         var actionBtn = document.querySelector('.btn-solid-dark');
         if (!actionBtn) return;
-        var bubble = actionBtn.querySelector('.dry-run');
+        var bubble = actionBtn.nextElementSibling;
         if (bubble) bubble.addEventListener('click', function (e) { e.stopPropagation(); });
         actionBtn.addEventListener('click', function (e) {
           actionBtn.classList.toggle('open');
@@ -3982,10 +4422,540 @@
         });
       })();
     </script>
+    <script>
+      (function () {
+        // State tracking
+        let grnConfirmed = false;
+        let creditRequested = false;
+        let parkNudged = false;
+        let freightApproved = false;
 
-    <!-- ═══════════ Witness chat panel (shared — see witness-chat-panel.{css,js}) ═══════════ -->
-    <aside class="chat" id="chat"></aside>
+        function showToast(message) {
+          const toast = document.getElementById('sim-toast');
+          const toastMsg = document.getElementById('sim-toast-msg');
+          if (toast && toastMsg) {
+            toastMsg.innerText = message;
+            toast.style.display = 'flex';
+            toast.style.opacity = '1';
+            setTimeout(() => {
+              toast.style.opacity = '0';
+              setTimeout(() => {
+                toast.style.display = 'none';
+              }, 300);
+            }, 4000);
+          }
+        }
+
+        function addComment(author, role, text, isAi = false, avatarColor = '#45556c', avatarText = 'SC') {
+          const cmBody = document.querySelector('.cm-body');
+          if (!cmBody) return;
+          
+          const commentDiv = document.createElement('div');
+          commentDiv.className = 'comment-item';
+          commentDiv.innerHTML = `
+            <div class="cm-av" style="background:${avatarColor}; font-size:${isAi ? '11px' : '12px'}">${avatarText}</div>
+            <div class="cm-bubble">
+              <div class="cm-meta">
+                <span class="cm-author">${author}</span>
+                <span class="cm-role">${role}</span>
+                <span class="cm-time">Just now</span>
+              </div>
+              <div class="cm-text ${isAi ? 'ai' : ''}">
+                ${text}
+              </div>
+            </div>
+          `;
+          cmBody.appendChild(commentDiv);
+          
+          // Update comment count badges
+          const commentCountBadge = document.querySelector('.center-tabs button[data-tab="comments"]');
+          if (commentCountBadge) {
+            const currentCount = cmBody.querySelectorAll('.comment-item').length;
+            commentCountBadge.innerText = `Comments (${currentCount})`;
+          }
+        }
+
+        window.simConfirmGRN = function() {
+          if (grnConfirmed) return;
+          grnConfirmed = true;
+          
+          // Update sidebar button
+          const btn = document.getElementById('btn-confirm-grn');
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = 'GRN confirmed with vendor ✓ <span class="auto-pill" style="background:#94a3b8; color:white;">DONE</span>';
+          }
+          
+          // Update checklist
+          const chkQty = document.getElementById('chk-qty');
+          if (chkQty) {
+            chkQty.style.color = '#b17728';
+            chkQty.querySelector('.chk-status-icon').innerHTML = '⚠';
+            chkQty.querySelector('span:not(.chk-status-icon)').innerText = 'Credit memo requested (Pending)';
+            const badge = chkQty.querySelector('span[style*="font-size: 9px"]');
+            if (badge) {
+              badge.style.background = '#fef3c7';
+              badge.style.color = '#b17728';
+              badge.innerText = 'Step 2 Auto';
+            }
+          }
+          
+          updateMatchExceptionTimeline();
+          showToast('GRN confirmed with Brightline rep. Mismatch acknowledged.');
+          addComment('Sarah Chen', 'AP Analyst · Finance', 'Called Brightline Office Supply. They confirmed driver reported 2 damaged units. Requesting credit memo now.', false, '#155dfc', 'SC');
+        }
+ 
+        window.simRequestCredit = function() {
+          if (creditRequested) return;
+          creditRequested = true;
+          
+          // Auto confirm GRN first if not done
+          if (!grnConfirmed) {
+            simConfirmGRN();
+          }
+ 
+          // Update sidebar button
+          const btn = document.getElementById('btn-request-credit');
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = 'Credit memo requested ✓ <span class="auto-pill" style="background:#94a3b8; color:white;">DONE</span>';
+          }
+          
+          // Update checklist
+          const chkQty = document.getElementById('chk-qty');
+          if (chkQty) {
+            chkQty.style.color = '#15803d';
+            chkQty.querySelector('.chk-status-icon').innerHTML = '✓';
+            chkQty.querySelector('span:not(.chk-status-icon)').innerText = 'Credit memo $1,403.34 applied';
+            const badge = chkQty.querySelector('span[style*="font-size: 9px"]');
+            if (badge) {
+              badge.style.background = '#dcfce7';
+              badge.style.color = '#15803d';
+              badge.innerText = 'Resolved';
+            }
+          }
+ 
+          // Update main stat mismatch card and exposure calculations
+          const statMismatch = document.getElementById('stat-mismatch');
+          if (statMismatch) {
+            statMismatch.style.color = '#15803d';
+            statMismatch.style.fontSize = '26px';
+            statMismatch.innerText = '✓ $0';
+            if (statMismatch.nextElementSibling) statMismatch.nextElementSibling.innerText = 'Resolved via credit memo';
+          }
+          // Dismiss the agent suggestion strip since action is taken
+          const agSug = document.getElementById('agent-sug-main');
+          if (agSug) { agSug.style.opacity = '0.4'; agSug.style.pointerEvents = 'none'; }
+ 
+          updateExposure();
+          updateMatchExceptionTimeline();
+          updateTimelineStep();
+          showToast('Witness AI sent credit memo request to Brightline API.');
+          addComment('Witness AI', 'Automated action', '✦ Credit memo request of <strong>$1,403.34</strong> sent to Brightline (2 short units × $701.67). Mismatch resolved.', true, '#ff6900', '✦');
+        }
+ 
+        window.simNudgePark = function() {
+          if (parkNudged) return;
+          parkNudged = true;
+          
+          // Update sidebar button
+          const btn = document.getElementById('btn-nudge-park');
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = 'J. Park nudged ✓ <span class="auto-pill" style="background:#94a3b8; color:white;">SENT</span>';
+          }
+          
+          // Update checklist
+          const chkAppr = document.getElementById('chk-approval');
+          if (chkAppr) {
+            chkAppr.style.color = '#b17728';
+            chkAppr.querySelector('.chk-status-icon').innerHTML = '⚡';
+            chkAppr.querySelector('span:not(.chk-status-icon)').innerText = 'J. Park nudged (Slack sent)';
+            const badge = chkAppr.querySelector('span[style*="font-size: 9px"]');
+            if (badge) {
+              badge.style.background = '#fef3c7';
+              badge.style.color = '#b17728';
+              badge.innerText = 'Awaiting reply';
+            }
+          }
+          
+          showToast('Nudge notification sent to J. Park via Slack and Email.');
+          addComment('Witness AI', 'Automated action', '✦ Slack notification sent to J. Park: "INV-1048 discount deadline is in 2 days. Quick approval requested."', true, '#ff6900', '✦');
+          updateExposure();
+          updateTimelineStep();
+        }
+ 
+        window.simReviewFreight = function() {
+          if (freightApproved) return;
+          freightApproved = true;
+          
+          // Update sidebar button
+          const btn = document.getElementById('btn-review-freight');
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = 'Freight variance resolved ✓ <span class="auto-pill" style="background:#94a3b8; color:white;">DONE</span>';
+          }
+          
+          // Update checklist
+          const chkFr = document.getElementById('chk-freight');
+          if (chkFr) {
+            chkFr.style.color = '#15803d';
+            chkFr.querySelector('.chk-status-icon').innerHTML = '✓';
+            chkFr.querySelector('span:not(.chk-status-icon)').innerText = 'Freight $42.00 approved';
+            const badge = chkFr.querySelector('span[style*="font-size: 9px"]');
+            if (badge) {
+              badge.style.background = '#dcfce7';
+              badge.style.color = '#15803d';
+              badge.innerText = 'Resolved';
+            }
+          }
+
+          // Update freight stat card
+          const statFrt = document.getElementById('stat-freight');
+          if (statFrt) {
+            statFrt.classList.remove('muted');
+            statFrt.style.color = '#15803d';
+            statFrt.style.fontSize = '26px';
+            statFrt.innerText = '✓ $42';
+            if (statFrt.nextElementSibling) statFrt.nextElementSibling.innerText = 'Approved (within tolerance)';
+          }
+
+          updateExposure();
+          updateMatchExceptionTimeline();
+          updateTimelineStep();
+          showToast('Contract tolerance check: $42.00 freight is within the 0.5% tolerance window. Approved.');
+          addComment('Sarah Chen', 'AP Analyst · Finance', 'Reviewed Brightline contract clause 4.2. Freight charges up to $50 are acceptable for non-standard deliveries. Approved.', false, '#155dfc', 'SC');
+        }
+
+        function updateExposure() {
+          let overbilling = creditRequested ? 0 : 1403.34;
+          let freight = freightApproved ? 0 : 42.00;
+          let discount = 140.33;
+          
+          let net = overbilling + freight + (parkNudged && creditRequested ? 0 : discount);
+          
+          const expNum = document.getElementById('exposure-num');
+          const expFormula = document.getElementById('exposure-formula');
+          
+          if (expNum) {
+            if (net === 0) {
+              expNum.style.color = '#15803d';
+              expNum.innerText = '$0.00';
+              if (expFormula) expFormula.innerText = 'All exceptions resolved!';
+            } else {
+              expNum.innerText = `−$${net.toFixed(2)}`;
+              if (expFormula) {
+                let parts = [];
+                if (overbilling > 0) parts.push(`$${overbilling.toFixed(2)} overbilling`);
+                if (freight > 0) parts.push(`$${freight.toFixed(2)} freight`);
+                if (!parkNudged || !creditRequested) parts.push(`$${discount.toFixed(2)} discount lost`);
+                expFormula.innerText = parts.join(' + ');
+              }
+            }
+          }
+
+          // Update Exposure values in Financial Impact Tab
+          const fiExpVal = document.getElementById('fi-exposure-val');
+          const fiTotExpVal = document.getElementById('fi-total-exposure-val');
+          if (fiExpVal) fiExpVal.innerText = net === 0 ? '$0.00' : `−$${net.toFixed(2)}`;
+          if (fiTotExpVal) {
+            if (net === 0) {
+              fiTotExpVal.innerText = '$0.00';
+            } else {
+              let formulaParts = [];
+              if (overbilling > 0) formulaParts.push(`$${overbilling.toFixed(2)}`);
+              if (freight > 0) formulaParts.push(`$42.00 freight if valid`);
+              if (!parkNudged || !creditRequested) formulaParts.push(`$${discount.toFixed(2)}`);
+              fiTotExpVal.innerHTML = `−$${net.toFixed(2)} <span style="font-size:11px;font-weight:400;color:#b91c1c;">(= ${formulaParts.join(' + ')})</span>`;
+            }
+          }
+
+          checkAllApproved();
+        }
+
+        function checkAllApproved() {
+          if (creditRequested && freightApproved) {
+            // Enable approval button
+            const btn = document.getElementById('btn-approve-payment');
+            if (btn) {
+              btn.removeAttribute('disabled');
+              btn.style.background = '#120b0b';
+              btn.style.color = 'white';
+              btn.style.cursor = 'pointer';
+              btn.style.border = 'none';
+            }
+            // Update tooltip
+            const tooltip = document.getElementById('approve-tooltip-content');
+            if (tooltip) {
+              tooltip.innerHTML = '<strong>Ready for approval</strong><br>All match blockers resolved via credit memo and contract tolerance check.';
+            }
+            // Update page header sub
+            const pageSub = document.querySelector('.page-sub');
+            if (pageSub) {
+              pageSub.innerHTML = 'Match exceptions resolved &nbsp;·&nbsp; PO-7721 &nbsp;·&nbsp; Amazon Business &nbsp;·&nbsp; Due Apr 30, 2025';
+            }
+            
+            // Update J. Park blocker checklist when nudged & mismatch resolved
+            const chkAppr = document.getElementById('chk-approval');
+            if (chkAppr && parkNudged) {
+              chkAppr.style.color = '#15803d';
+              chkAppr.querySelector('.chk-status-icon').innerHTML = '✓';
+              chkAppr.querySelector('span:not(.chk-status-icon)').innerText = 'J. Park nudged & approved';
+              const badge = chkAppr.querySelector('span[style*="font-size: 9px"]');
+              if (badge) {
+                badge.style.background = '#dcfce7';
+                badge.style.color = '#15803d';
+                badge.innerText = 'Resolved';
+              }
+            }
+            
+            updateTimelineStep();
+          }
+        }
+
+        function updateMatchExceptionTimeline() {
+          const step = document.getElementById('tl-step-match-exception');
+          if (!step) return;
+          
+          const factGrn = step.querySelector('.ai-fact-grn-v');
+          const factInv = step.querySelector('.ai-fact-inv-v');
+          const factFrt = step.querySelector('.ai-fact-frt-v');
+          
+          if (grnConfirmed && factGrn) {
+            factGrn.classList.remove('amber');
+            factGrn.classList.add('ok');
+            factGrn.style.color = '#15803d';
+            factGrn.innerHTML = '<span>10 received (confirmed)</span><span class="step-num-badge" style="background:#dcfce7; color:#15803d; border:1px solid rgba(22,163,74,0.3); font-size:9px; width:12px; height:12px; margin-left:4px; display:inline-flex; align-items:center; justify-content:center;">✓</span>';
+          }
+          if (creditRequested && factInv) {
+            factInv.classList.remove('red');
+            factInv.classList.add('ok');
+            factInv.style.color = '#15803d';
+            factInv.innerHTML = '<span>CM applied ($0 mismatch)</span><span class="step-num-badge" style="background:#dcfce7; color:#15803d; border:1px solid rgba(22,163,74,0.3); font-size:9px; width:12px; height:12px; margin-left:4px; display:inline-flex; align-items:center; justify-content:center;">✓</span>';
+          }
+          if (freightApproved && factFrt) {
+            factFrt.classList.remove('amber');
+            factFrt.classList.add('ok');
+            factFrt.style.color = '#15803d';
+            factFrt.innerHTML = '<span>$42 approved</span><span class="step-num-badge" style="background:#dcfce7; color:#15803d; border:1px solid rgba(22,163,74,0.3); font-size:9px; width:12px; height:12px; margin-left:4px; display:inline-flex; align-items:center; justify-content:center;">✓</span>';
+          }
+          
+          // Update the visual connector diagram lines & classes!
+          const mcGrnLine = document.querySelector('#mc-grn .mc-line[data-line="A"]');
+          if (grnConfirmed && mcGrnLine) {
+            mcGrnLine.classList.remove('mc-warn');
+            mcGrnLine.classList.add('mc-ok');
+            mcGrnLine.style.color = '#15803d';
+            mcGrnLine.innerText = 'Qty 10 received (confirmed)';
+          }
+          const mcInvLine = document.querySelector('#mc-inv .mc-line[data-line="A"]');
+          if (creditRequested && mcInvLine) {
+            mcInvLine.classList.remove('mc-crit');
+            mcInvLine.classList.add('mc-ok');
+            mcInvLine.style.color = '#15803d';
+            mcInvLine.innerText = 'Qty 12 billed (CM applied)';
+          }
+          
+          // Also update the banner metadata exceptions count
+          const bannerMeta = document.querySelector('.ai-banner-meta');
+          if (bannerMeta) {
+            let exceptions = 2;
+            if (grnConfirmed) exceptions--;
+            if (creditRequested) exceptions--;
+            if (exceptions === 0) {
+              bannerMeta.innerHTML = '<strong>0 match exceptions detected</strong> · matched 3 documents in 0.6s · 96% confidence';
+            } else if (exceptions === 1) {
+              bannerMeta.innerHTML = '<strong>1 match exception detected</strong> · matched 3 documents in 0.6s · 96% confidence';
+            }
+          }
+          
+          if (typeof window.drawAllMatchLines === 'function') {
+            window.drawAllMatchLines();
+          }
+          
+          if (creditRequested && freightApproved) {
+            step.classList.remove('tl-blocked');
+            const dot = step.querySelector('.tl-dot');
+            if (dot) {
+              dot.classList.remove('ai');
+              dot.classList.add('done');
+              dot.innerText = '✓';
+            }
+            const name = document.getElementById('tl-match-step-name');
+            if (name) {
+              name.classList.remove('warn');
+              name.classList.add('ok');
+              name.innerText = '3-way match exceptions resolved';
+            }
+            const issuesTag = document.getElementById('tl-match-issues-tag');
+            if (issuesTag) {
+              issuesTag.classList.remove('tt-issues');
+              issuesTag.classList.add('tt-done');
+              issuesTag.innerText = 'Done';
+              issuesTag.style.background = '#dcfce7';
+              issuesTag.style.color = '#15803d';
+            }
+          }
+        }
+
+        function updateTimelineStep() {
+          const step = document.getElementById('tl-step-approval');
+          if (!step) return;
+          
+          if (creditRequested && parkNudged) {
+            step.classList.remove('tl-blocked');
+            step.classList.add('tl-done');
+            const dot = step.querySelector('.tl-dot');
+            if (dot) {
+              dot.classList.remove('blocked');
+              dot.classList.add('done');
+              dot.innerText = '✓';
+            }
+            const name = step.querySelector('.tl-step-name');
+            if (name) {
+              name.classList.remove('blocked');
+              name.innerText = 'Approved — J. Park';
+            }
+            const desc = step.querySelector('.tl-step-desc');
+            if (desc) {
+              desc.innerText = 'Approved following J. Park nudge and credit memo application.';
+            }
+            const tags = step.querySelector('.tl-tags');
+            if (tags) {
+              tags.innerHTML = '<span class="tl-tag tt-done" style="background:#dcfce7; color:#15803d;">Done</span>';
+            }
+            
+            // Also update J. Park blocker checklist when nudged & mismatch resolved (for cases when updateTimelineStep is called directly)
+            const chkAppr = document.getElementById('chk-approval');
+            if (chkAppr) {
+              chkAppr.style.color = '#15803d';
+              chkAppr.querySelector('.chk-status-icon').innerHTML = '✓';
+              chkAppr.querySelector('span:not(.chk-status-icon)').innerText = 'J. Park nudged & approved';
+              const badge = chkAppr.querySelector('span[style*="font-size: 9px"]');
+              if (badge) {
+                badge.style.background = '#dcfce7';
+                badge.style.color = '#15803d';
+                badge.innerText = 'Resolved';
+              }
+            }
+          } else if (parkNudged) {
+            const desc = step.querySelector('.tl-step-desc');
+            if (desc) {
+              desc.innerText = 'Nudge sent. Awaiting J. Park sign-off (pending credit memo resolution).';
+            }
+            const tags = step.querySelector('.tl-tags');
+            if (tags) {
+              tags.innerHTML = '<span class="tl-tag tt-waiting">Nudge sent</span><span class="step-num-badge" style="background:#fef3c7; color:#b17728; border:1px solid rgba(177,119,40,0.3); font-size:9px; width:12px; height:12px; display:inline-flex; align-items:center; justify-content:center;">3</span>';
+            }
+          }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+          const executeAllBtn = document.getElementById('btn-execute-all');
+          if (executeAllBtn) {
+            executeAllBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              simConfirmGRN();
+              setTimeout(simRequestCredit, 600);
+              setTimeout(simReviewFreight, 1200);
+              setTimeout(simNudgePark, 1800);
+              
+              // Close the dropdown
+              const actionBtn = document.querySelector('.btn-solid-dark');
+              if (actionBtn) actionBtn.classList.remove('open');
+            });
+          }
+        });
+      })();
+    </script>
+
+    <script>
+    /* ─── 3-Way Match SVG Connector lines ─── */
+    (function(){
+      var LINE_COLORS = { ok: '#16a34a', warn: '#d97706', crit: '#dc2626' };
+      var lineTypes = { A: 'crit', B: 'ok', C: 'ok' };
+
+      function getLineClass(el) {
+        if (el.classList.contains('mc-ok'))   return 'ok';
+        if (el.classList.contains('mc-warn')) return 'warn';
+        if (el.classList.contains('mc-crit')) return 'crit';
+        return 'ok';
+      }
+
+      function drawConnector(svg, x1, y1, x2, y2, cls, pulse) {
+        var ns = 'http://www.w3.org/2000/svg';
+        var path = document.createElementNS(ns, 'path');
+        var mx = (x1 + x2) / 2;
+        path.setAttribute('d', 'M'+x1+','+y1+' C'+mx+','+y1+' '+mx+','+y2+' '+x2+','+y2);
+        path.setAttribute('class', 'mc-path ' + cls + (pulse ? ' pulse' : ' visible'));
+        svg.appendChild(path);
+        return path;
+      }
+
+      function clearSvg(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
+
+      function drawAll() {
+        var poDocs  = document.querySelectorAll('#mc-po .mc-line');
+        var grnDocs = document.querySelectorAll('#mc-grn .mc-line');
+        var invDocs = document.querySelectorAll('#mc-inv .mc-line');
+        var svg1 = document.getElementById('mc-svg');
+        var svg2 = document.getElementById('mc-svg2');
+        if (!svg1 || !svg2 || !poDocs.length) return;
+        clearSvg(svg1); clearSvg(svg2);
+
+        var r1 = svg1.getBoundingClientRect();
+        var r2 = svg2.getBoundingClientRect();
+
+        poDocs.forEach(function(poLine, i){
+          var grnLine = grnDocs[i]; var invLine = invDocs[i];
+          if (!grnLine || !invLine) return;
+          var poR  = poLine.getBoundingClientRect();
+          var grnR = grnLine.getBoundingClientRect();
+          var invR = invLine.getBoundingClientRect();
+          var cls  = getLineClass(invLine) !== 'ok' ? getLineClass(invLine) : getLineClass(grnLine);
+          var pulse = cls !== 'ok';
+
+          // PO → GRN (svg1)
+          var y1a = poR.top  + poR.height/2  - r1.top;
+          var y1b = grnR.top + grnR.height/2 - r1.top;
+          drawConnector(svg1, 0, y1a, 60, y1b, cls, pulse);
+
+          // GRN → INV (svg2)
+          var y2a = grnR.top + grnR.height/2 - r2.top;
+          var y2b = invR.top + invR.height/2  - r2.top;
+          drawConnector(svg2, 0, y2a, 60, y2b, cls, pulse);
+        });
+      }
+
+      // Draw once on load + redraw on resize; also redraw when match tab becomes active
+      window.addEventListener('load', function(){ setTimeout(drawAll, 120); });
+      window.addEventListener('resize', drawAll);
+
+      var orig = window.switchTab;
+      window.switchTab = function(btn){
+        if (orig) orig(btn);
+        if (btn && btn.dataset.tab === 'match') setTimeout(drawAll, 60);
+      };
+
+      // Hover highlight: activate matching lines across all 3 docs
+      document.querySelectorAll('.mc-line').forEach(function(line){
+        line.addEventListener('mouseenter', function(){
+          var key = line.dataset.line;
+          document.querySelectorAll('.mc-line[data-line="'+key+'"]').forEach(function(l){ l.classList.add('mc-active'); });
+        });
+        line.addEventListener('mouseleave', function(){
+          document.querySelectorAll('.mc-line.mc-active').forEach(function(l){ l.classList.remove('mc-active'); });
+        });
+      });
+      // Expose globally to redraw SVG lines when simulated steps resolve them
+      window.drawAllMatchLines = drawAll;
+    })();
+    </script>
+
   </div><!-- /.app-grid -->
+
+  <!-- ═══════════ Witness chat panel — outside grid so it uses position:fixed naturally ═══════════ -->
+  <aside class="chat" id="chat"></aside>
 
   <link rel="stylesheet" href="witness-chat-panel.css">
   <link rel="stylesheet" href="witness-trace.css">

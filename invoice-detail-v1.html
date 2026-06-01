@@ -187,6 +187,22 @@
     .ms-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
     .ms-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #fee2e2; color: #b91c1c; }
     .ms-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .mc-line { font-size: 12px; padding: 7px 10px; border-radius: 6px; border: 1.5px solid #ededed; background: white; cursor: default; transition: border-color .15s, box-shadow .15s; line-height: 1.3; font-weight: 500; }
+    .mc-line.mc-ok   { border-color: #b9f5cf; color: #15803d; background: #f0fdf4; }
+    .mc-line.mc-warn { border-color: #fcd34d; color: #92400e; background: #fffbeb; }
+    .mc-line.mc-crit { border-color: #fca5a5; color: #b91c1c; background: #fef2f2; }
+    .mc-line.mc-ok:hover   { border-color: #86d9a5; box-shadow: 0 0 0 3px rgba(134,217,165,0.25); }
+    .mc-line.mc-warn:hover { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.2); }
+    .mc-line.mc-crit:hover { border-color: #f87171; box-shadow: 0 0 0 3px rgba(248,113,113,0.2); }
+    .mc-line.mc-active { outline: 2px solid currentColor; outline-offset: 1px; }
+    .mc-path { fill: none; stroke-width: 1.5; stroke-linecap: round; opacity: 0; transition: opacity .18s; stroke-dasharray: 200; stroke-dashoffset: 200; }
+    .mc-path.visible { opacity: 1; animation: mcDraw .35s ease forwards; }
+    .mc-path.pulse   { animation: mcDraw .35s ease forwards, mcPulse 1.2s ease-in-out 0.35s infinite; }
+    @keyframes mcDraw  { to { stroke-dashoffset: 0; } }
+    @keyframes mcPulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+    .mc-path.ok   { stroke: #16a34a; }
+    .mc-path.warn { stroke: #d97706; }
+    .mc-path.crit { stroke: #dc2626; }
     .ms-card { border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
     .ms-card-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; }
     .ms-card-title { font-size: 13px; font-weight: 600; color: #0b0d12; display: flex; align-items: center; gap: 8px; }
@@ -701,14 +717,14 @@
       <!-- CENTER: Tabbed panels -->
       <div class="center-col">
         <div class="center-tabs">
-          <button class="ctab active" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
-          <button class="ctab" data-tab="match" onclick="switchTab(this)">Match summary</button>
+          <button class="ctab" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
+          <button class="ctab active" data-tab="match" onclick="switchTab(this)">Match summary</button>
           <button class="ctab" data-tab="financial" onclick="switchTab(this)">Financial impact</button>
           <button class="ctab" data-tab="comments" onclick="switchTab(this)">Comments (3)</button>
         </div>
 
         <!-- ─── TAB 1: Timeline ─── -->
-        <div class="tab-panel active" id="tab-timeline" style="flex-direction:column;">
+        <div class="tab-panel" id="tab-timeline" style="flex-direction:column;">
           <div class="tl-header">
             <div class="tl-header-title">PO to Payment Journey</div>
             <button class="tl-collapse-btn" onclick="collapseAll()">Collapse all ↑</button>
@@ -891,7 +907,7 @@
         </div><!-- /tab-timeline -->
 
         <!-- ─── TAB 2: Match summary ─── -->
-        <div class="tab-panel" id="tab-match">
+        <div class="tab-panel active" id="tab-match">
           <div class="ms-header">
             <div class="ms-header-title">3-Way Match Results</div>
             <span class="ms-badge">2 exceptions</span>
@@ -903,6 +919,37 @@
               <div style="flex-shrink:0;font-size:14px">✦</div>
               <div class="ai-insight-txt">
                 <strong>Witness matched PO-7721 · GRN-2043 · INV-1048.</strong> Quantity exception: vendor invoiced 12 units, GRN confirms only 10 received. Corrected payable is <strong>$7,016.70</strong>. Verify whether 2 units are in transit before requesting credit memo. Freight $42 has no PO backing — check contract tolerance before disputing.
+              </div>
+            </div>
+
+            <!-- ─── 3-Way Match Visual Connector ─── -->
+            <div class="match-connector-wrap" style="padding:14px 0 4px;">
+              <div style="display:flex;align-items:stretch;gap:0;">
+                <div id="v1-mc-po" style="flex:1;display:flex;flex-direction:column;gap:2px;">
+                  <div style="font-family:monospace;font-size:9px;font-weight:700;letter-spacing:.1em;color:#45556c;padding:0 10px 6px;">PO-7721</div>
+                  <div class="mc-line mc-ok"   data-line="A">Qty 12 units</div>
+                  <div class="mc-line mc-ok"   data-line="B">Unit price $701.67</div>
+                  <div class="mc-line mc-ok"   data-line="C">Freight terms</div>
+                </div>
+                <svg id="v1-mc-svg1" style="flex:0 0 60px;width:60px;overflow:visible;" aria-hidden="true"></svg>
+                <div id="v1-mc-grn" style="flex:1;display:flex;flex-direction:column;gap:2px;">
+                  <div style="font-family:monospace;font-size:9px;font-weight:700;letter-spacing:.1em;color:#45556c;padding:0 10px 6px;">GRN-2043</div>
+                  <div class="mc-line mc-warn" data-line="A">Qty 10 received</div>
+                  <div class="mc-line mc-ok"   data-line="B">Unit price match</div>
+                  <div class="mc-line mc-ok"   data-line="C">Freight confirmed</div>
+                </div>
+                <svg id="v1-mc-svg2" style="flex:0 0 60px;width:60px;overflow:visible;" aria-hidden="true"></svg>
+                <div id="v1-mc-inv" style="flex:1;display:flex;flex-direction:column;gap:2px;">
+                  <div style="font-family:monospace;font-size:9px;font-weight:700;letter-spacing:.1em;color:#45556c;padding:0 10px 6px;">INV-1048</div>
+                  <div class="mc-line mc-crit" data-line="A">Qty 12 billed ✕</div>
+                  <div class="mc-line mc-ok"   data-line="B">Unit price $701.67</div>
+                  <div class="mc-line mc-ok"   data-line="C">Freight $42</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:16px;padding:10px 0 0;">
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#45556c;"><span style="width:10px;height:3px;background:#16a34a;border-radius:2px;display:inline-block;"></span>Matched</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#45556c;"><span style="width:10px;height:3px;background:#d97706;border-radius:2px;display:inline-block;"></span>Partial</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#45556c;"><span style="width:10px;height:3px;background:#dc2626;border-radius:2px;display:inline-block;"></span>Exception</span>
               </div>
             </div>
 
@@ -1297,6 +1344,57 @@
       localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
     });
   })();
+</script>
+
+<script>
+(function(){
+  function getLineClass(el) {
+    if (el.classList.contains('mc-ok'))   return 'ok';
+    if (el.classList.contains('mc-warn')) return 'warn';
+    if (el.classList.contains('mc-crit')) return 'crit';
+    return 'ok';
+  }
+  function drawConnector(svg, x1, y1, x2, y2, cls, pulse) {
+    var ns = 'http://www.w3.org/2000/svg';
+    var path = document.createElementNS(ns, 'path');
+    var mx = (x1 + x2) / 2;
+    path.setAttribute('d', 'M'+x1+','+y1+' C'+mx+','+y1+' '+mx+','+y2+' '+x2+','+y2);
+    path.setAttribute('class', 'mc-path ' + cls + (pulse ? ' pulse' : ' visible'));
+    svg.appendChild(path); return path;
+  }
+  function clearSvg(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function drawAll() {
+    var poLines  = document.querySelectorAll('#v1-mc-po .mc-line');
+    var grnLines = document.querySelectorAll('#v1-mc-grn .mc-line');
+    var invLines = document.querySelectorAll('#v1-mc-inv .mc-line');
+    var svg1 = document.getElementById('v1-mc-svg1');
+    var svg2 = document.getElementById('v1-mc-svg2');
+    if (!svg1 || !svg2 || !poLines.length) return;
+    clearSvg(svg1); clearSvg(svg2);
+    var r1 = svg1.getBoundingClientRect(); var r2 = svg2.getBoundingClientRect();
+    poLines.forEach(function(poL, i){
+      var grnL = grnLines[i]; var invL = invLines[i];
+      if (!grnL || !invL) return;
+      var poR = poL.getBoundingClientRect(); var grnR = grnL.getBoundingClientRect(); var invR = invL.getBoundingClientRect();
+      var cls  = getLineClass(invL) !== 'ok' ? getLineClass(invL) : getLineClass(grnL);
+      var pulse = cls !== 'ok';
+      drawConnector(svg1, 0, poR.top + poR.height/2 - r1.top, 60, grnR.top + grnR.height/2 - r1.top, cls, pulse);
+      drawConnector(svg2, 0, grnR.top + grnR.height/2 - r2.top, 60, invR.top + invR.height/2 - r2.top, cls, pulse);
+    });
+  }
+  window.addEventListener('load', function(){ setTimeout(drawAll, 120); });
+  window.addEventListener('resize', drawAll);
+  var origSwitchTab = window.switchTab;
+  window.switchTab = function(btn){ if (origSwitchTab) origSwitchTab(btn); if (btn && btn.dataset.tab === 'match') setTimeout(drawAll, 60); };
+  document.querySelectorAll('.mc-line').forEach(function(line){
+    line.addEventListener('mouseenter', function(){
+      document.querySelectorAll('.mc-line[data-line="'+line.dataset.line+'"]').forEach(function(l){ l.classList.add('mc-active'); });
+    });
+    line.addEventListener('mouseleave', function(){
+      document.querySelectorAll('.mc-line.mc-active').forEach(function(l){ l.classList.remove('mc-active'); });
+    });
+  });
+})();
 </script>
 
 <!-- ═══════════ Witness chat panel (shared — see witness-chat-panel.{css,js}) ═══════════ -->
