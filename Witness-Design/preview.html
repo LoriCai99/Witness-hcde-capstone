@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Witness · Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --orange: #FF5C1B;
+    --orange-soft: #FFF5F1;
+    --orange-touch: #FFE8DF;
+    --blue: #155DFC;
+    --blue-soft: #E7F4FF;
+    --green: #16A34A;
+    --green-soft: #DCFCE7;
+    --amber: #E9B44C;
+    --amber-soft: #FDF2D4;
+    --ink: #120B0B;
+    --ink-2: #45556C;
+    --ink-3: #9F9FA6;
+    --bg: #FFFFFF;
+    --surface: #FFFFFF;
+    --line: #E9E9E9;
+    --line-soft: #F0F0F0;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #FAFAFA;
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 64px clamp(24px, 4vw, 58px) 96px; }
+
+  /* HEADER */
+  .header { display: flex; flex-direction: column; gap: 16px; margin-bottom: 48px; }
+  .header-top { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--ink);
+    display: grid; place-items: center;
+    color: white; font-weight: 700; font-size: 14px;
+    font-family: 'Playfair Display', serif;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 400;
+    color: var(--ink); line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+  .sub {
+    font-size: 16px; color: var(--ink-2);
+    max-width: 640px;
+  }
+  .meta {
+    display: flex; align-items: center; gap: 16px;
+    font-size: 13px; color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--ink-3); }
+
+  /* SECTION */
+  .section { margin-top: 48px; }
+  .section-hd {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-bar { width: 4px; height: 16px; border-radius: 2px; background: var(--ink); }
+  .section-bar.orange { background: var(--orange); }
+  .section-bar.blue { background: var(--blue); }
+  .section-bar.amber { background: var(--amber); }
+  .section-bar.green { background: var(--green); }
+  .section-title {
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-2);
+  }
+  .section-count {
+    margin-left: auto;
+    font-size: 12px; color: var(--ink-3);
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    display: flex; flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--ink);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .card.orange::before { background: var(--orange); }
+  .card.blue::before { background: var(--blue); }
+  .card.amber::before { background: var(--amber); }
+  .card.green::before { background: var(--green); }
+  .card:hover {
+    border-color: #d4d4d4;
+    box-shadow: 0 4px 16px rgba(18,11,11,0.06);
+    transform: translateY(-1px);
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .card-icon svg { width: 18px; height: 18px; }
+  .card-icon.orange { background: var(--orange-soft); color: var(--orange); }
+  .card-icon.blue { background: var(--blue-soft); color: var(--blue); }
+  .card-icon.amber { background: var(--amber-soft); color: #b17728; }
+  .card-icon.green { background: var(--green-soft); color: var(--green); }
+  .card-icon.ink { background: #F4F4F4; color: var(--ink); }
+
+  .card-tag {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 3px 8px; border-radius: 999px;
+    background: #F4F4F4; color: var(--ink-2);
+  }
+  .card-tag.new { background: var(--orange-soft); color: var(--orange); }
+  .card-tag.v2 { background: var(--blue-soft); color: var(--blue); }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 400;
+    color: var(--ink); line-height: 1.25;
+    margin-bottom: 6px;
+  }
+  .card-desc {
+    font-size: 13px; color: var(--ink-2);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    flex: 1;
+  }
+  .card-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .card-file {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px; color: var(--ink-3);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .card-arrow {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; font-weight: 500; color: var(--ink-2);
+    flex-shrink: 0;
+  }
+  .card-arrow svg { width: 12px; height: 12px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .wrap { padding: 32px 20px 64px; }
+    h1 { font-size: 26px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-top">
+        <div class="brand-mark">W</div>
+        <h1>Witness Prototype Index</h1>
+      </div>
+      <p class="sub">All screens in the current capstone build. Click any card to open the full HTML prototype.</p>
+      <div class="meta">
+        <span>15 pages</span>
+        <span class="meta-dot"></span>
+        <span>Last updated May 31, 2026</span>
+      </div>
+    </header>
+
+    <!-- CORE WORKSPACE -->
+    <section class="section">
+      <div class="section-hd">
+        <span class="section-bar orange"></span>
+        <span class="section-title">Core Workspace</span>
+        <span class="section-count">5 pages</span>
+      </div>
+      <div class="grid">
+
+        <a class="card orange" href="witness-dashboard-final_v2.html">
+          <div class="card-head">
+            <div class="card-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+            </div>
+            <span class="card-tag entry">Final</span>
+          </div>
+          <h2 class="card-title">Dashboard · Final v2</h2>
+          <p class="card-desc">Latest iteration of the main dashboard — risk donut, flow chart, KPI metrics, and the live invoice table.</p>
+          <div class="card-foot">
+            <span class="card-file">witness-dashboard-final_v2.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card orange" href="witness-dashboard (1).html">
+          <div class="card-head">
+            <div class="card-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+            </div>
+            <span class="card-tag">Home</span>
+          </div>
+          <h2 class="card-title">Dashboard</h2>
+          <p class="card-desc">Main entry point. Risk donut, flow chart, KPI metrics, and the live invoice table.</p>
+          <div class="card-foot">
+            <span class="card-file">witness-dashboard (1).html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card orange" href="brief.html">
+          <div class="card-head">
+            <div class="card-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <span class="card-tag">Daily</span>
+          </div>
+          <h2 class="card-title">Daily Brief</h2>
+          <p class="card-desc">Morning summary of what shifted overnight — what Witness handled and what needs your attention.</p>
+          <div class="card-foot">
+            <span class="card-file">brief.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card amber" href="waiting-hub.html">
+          <div class="card-head">
+            <div class="card-icon amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <span class="card-tag">Queue</span>
+          </div>
+          <h2 class="card-title">Waiting Hub</h2>
+          <p class="card-desc">Everything Witness is currently waiting on — approvals, replies, supplier responses.</p>
+          <div class="card-foot">
+            <span class="card-file">waiting-hub.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card orange" href="../ai-activity.html">
+          <div class="card-head">
+            <div class="card-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </div>
+            <span class="card-tag">AI</span>
+          </div>
+          <h2 class="card-title">AI Activity</h2>
+          <p class="card-desc">Audit trail of every action Witness has taken on your behalf — decisions, drafts, sends.</p>
+          <div class="card-foot">
+            <span class="card-file">ai-activity.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- INVOICES -->
+    <section class="section">
+      <div class="section-hd">
+        <span class="section-bar blue"></span>
+        <span class="section-title">Invoices</span>
+        <span class="section-count">4 pages</span>
+      </div>
+      <div class="grid">
+
+        <a class="card blue" href="all-invoices-pages.html">
+          <div class="card-head">
+            <div class="card-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            <span class="card-tag">List</span>
+          </div>
+          <h2 class="card-title">All Invoices</h2>
+          <p class="card-desc">Flat list of every invoice in the system with filters, status chips, and bulk actions.</p>
+          <div class="card-foot">
+            <span class="card-file">all-invoices-pages.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card blue" href="all-invoices-pages-grouped_option 2.html">
+          <div class="card-head">
+            <div class="card-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg>
+            </div>
+            <span class="card-tag">Grouped</span>
+          </div>
+          <h2 class="card-title">All Invoices · Grouped</h2>
+          <p class="card-desc">Same data, grouped by host / status. Alternate option for navigating high-volume queues.</p>
+          <div class="card-foot">
+            <span class="card-file">all-invoices-pages-grouped_option 2.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card blue" href="../invoice-detail.html">
+          <div class="card-head">
+            <div class="card-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+            </div>
+            <span class="card-tag entry">Detail</span>
+          </div>
+          <h2 class="card-title">Invoice Detail</h2>
+          <p class="card-desc">Single-invoice view (INV-1048). Line items, AI summary, action timeline, supplier metadata.</p>
+          <div class="card-foot">
+            <span class="card-file">invoice-detail.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card blue" href="../invoice-detail-duplicate.html">
+          <div class="card-head">
+            <div class="card-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </div>
+            <span class="card-tag">Duplicate</span>
+          </div>
+          <h2 class="card-title">Invoice Detail — Duplicate</h2>
+          <p class="card-desc">Duplicate invoice detection scenario (INV-1027). Match comparison and human decision interface.</p>
+          <div class="card-foot">
+            <span class="card-file">invoice-detail-duplicate.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- AUTOMATION & SYSTEM -->
+    <section class="section">
+      <div class="section-hd">
+        <span class="section-bar green"></span>
+        <span class="section-title">Automation &amp; System</span>
+        <span class="section-count">4 pages</span>
+      </div>
+      <div class="grid">
+
+        <a class="card green" href="../autoflow.html">
+          <div class="card-head">
+            <div class="card-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M10 20H4v-6"/><path d="M20 4l-7 7"/><path d="M4 20l7-7"/></svg>
+            </div>
+            <span class="card-tag">Rules</span>
+          </div>
+          <h2 class="card-title">Autoflow</h2>
+          <p class="card-desc">Configured automations — what Witness will handle without asking, and the guardrails.</p>
+          <div class="card-foot">
+            <span class="card-file">autoflow.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card green" href="../vendors.html">
+          <div class="card-head">
+            <div class="card-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <span class="card-tag">Vendors</span>
+          </div>
+          <h2 class="card-title">Vendors</h2>
+          <p class="card-desc">Vendor card view with slide-out detail panel. Risk scores, invoice history, and contact info.</p>
+          <div class="card-foot">
+            <span class="card-file">vendors.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card green" href="cross-host.html">
+          <div class="card-head">
+            <div class="card-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><path d="M6 9v3a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V9"/><path d="M12 15v0"/></svg>
+            </div>
+            <span class="card-tag">MCP</span>
+          </div>
+          <h2 class="card-title">MCP Cross-Host</h2>
+          <p class="card-desc">How Witness connects across procurement hosts (Amazon Business, Costco, etc.) through MCP.</p>
+          <div class="card-foot">
+            <span class="card-file">cross-host.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+        <a class="card green" href="settings.html">
+          <div class="card-head">
+            <div class="card-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+            <span class="card-tag">Config</span>
+          </div>
+          <h2 class="card-title">Settings</h2>
+          <p class="card-desc">Account, connected hosts, AI behavior, notification preferences, and team permissions.</p>
+          <div class="card-foot">
+            <span class="card-file">settings.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- DESIGN SYSTEM -->
+    <section class="section">
+      <div class="section-hd">
+        <span class="section-bar"></span>
+        <span class="section-title">Reference</span>
+        <span class="section-count">1 page</span>
+      </div>
+      <div class="grid">
+
+        <a class="card" href="design-system-preview.html">
+          <div class="card-head">
+            <div class="card-icon ink">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="13.5" r="2.5"/><circle cx="8.5" cy="17.5" r="2.5"/><circle cx="6.5" cy="9.5" r="2.5"/></svg>
+            </div>
+            <span class="card-tag">Tokens</span>
+          </div>
+          <h2 class="card-title">Design System</h2>
+          <p class="card-desc">Color tokens, typography, spacing, and component reference for the Witness build.</p>
+          <div class="card-foot">
+            <span class="card-file">design-system-preview.html</span>
+            <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

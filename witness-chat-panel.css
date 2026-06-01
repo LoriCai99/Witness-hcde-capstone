@@ -726,4 +726,52 @@ body.chat-padded[data-chat="float"] { padding-right: 0; }
 @keyframes wcpTwBlink { 50% { opacity: 0; } }
 .typing .tw-cursor { background: #e6e1d6; }
 
+/* ═══════════════════════════════════════════════════════════════
+   Topbar "✦ Ask Witness" button
+   Injected into .topbar-right by witness-chat-panel.js so every
+   page with a topbar gets a consistent agent entry point — matching
+   the design in Apoorva's brief.html (orange-soft pill, top of page).
+   ═══════════════════════════════════════════════════════════════ */
+.topbar-ask-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #ff6900;
+  background: #fff5f1;
+  border: 1px solid #ffb299;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.topbar-ask-btn:hover {
+  background: #ffe8df;
+  border-color: #ff6900;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Sidebar active-item normalization
+   Apoorva's design: inverted pill — dark ink background, white text.
+   This file loads after each page's inline <style>, so it wins
+   the cascade for equal-specificity rules without !important.
+   Affects: dashboard, invoices, vendors, ai-activity, autoflow,
+            invoice-detail, settings, and all other pages that load
+            witness-chat-panel.css and have a sidebar.
+   ═══════════════════════════════════════════════════════════════ */
+.nav-item.active {
+  background: #120b0b;
+  color: #ffffff;
+  box-shadow: none;
+}
+.nav-item.active .nav-badge {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
 .chat .hidden { display: none !important; }

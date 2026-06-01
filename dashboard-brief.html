@@ -216,11 +216,12 @@
     position: sticky; top: 0; z-index: 10;
     background: var(--surface);
     border-bottom: 1px solid var(--line);
-    display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+    display: flex; align-items: center; justify-content: flex-end;
     padding: 12px var(--spacing-7);
     height: 56px;
     flex-shrink: 0;
   }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 7px 12px;
@@ -250,7 +251,8 @@
   /* Page */
   .page {
     padding: var(--spacing-7) var(--spacing-7) var(--spacing-9);
-    max-width: none;
+    max-width: 1400px;
+    min-width: 900px;
     margin: 0 auto;
     width: 100%;
   }
@@ -922,9 +924,11 @@
 
     <!-- Topbar -->
     <div class="topbar">
-      <button class="btn ghost">↻ Refresh</button>
-      <button class="btn">↗ Export</button>
-      <button class="btn primary">+ New follow-up</button>
+      <div class="topbar-right">
+        <button class="btn ghost">↻ Refresh</button>
+        <button class="btn">↗ Export</button>
+        <button class="btn primary">+ New follow-up</button>
+      </div>
     </div>
 
     <div class="page">

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Witness · Prototype Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --orange: #FF5C1B;
+    --orange-soft: #FFF5F1;
+    --orange-touch: #FFE8DF;
+    --blue: #155DFC;
+    --blue-soft: #E7F4FF;
+    --green: #16A34A;
+    --green-soft: #DCFCE7;
+    --amber: #E9B44C;
+    --amber-soft: #FDF2D4;
+    --purple: #7C3AED;
+    --purple-soft: #F5F3FF;
+    --ink: #120B0B;
+    --ink-2: #45556C;
+    --ink-3: #9F9FA6;
+    --bg: #FAFAFA;
+    --surface: #FFFFFF;
+    --line: #E9E9E9;
+    --line-soft: #F0F0F0;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 64px clamp(24px, 4vw, 56px) 96px; }
+
+  /* HEADER */
+  .header { margin-bottom: 52px; }
+  .header-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: var(--ink);
+    display: grid; place-items: center;
+    color: white; font-weight: 700; font-size: 15px;
+    font-family: 'Playfair Display', serif;
+    flex-shrink: 0;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px; font-weight: 400;
+    color: var(--ink); letter-spacing: -0.4px;
+  }
+  .sub { font-size: 15px; color: var(--ink-2); max-width: 560px; margin-bottom: 12px; }
+  .meta { display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--ink-3); }
+  .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-3); }
+
+  /* WALKTHROUGH BANNER */
+  .walkthrough {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 52px;
+  }
+  .walkthrough-hd {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .walkthrough-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: var(--orange-soft);
+    display: grid; place-items: center;
+    color: var(--orange);
+    flex-shrink: 0;
+  }
+  .walkthrough-icon svg { width: 14px; height: 14px; }
+  .walkthrough-label {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-2);
+  }
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .step {
+    display: flex; align-items: flex-start; gap: 14px;
+    font-size: 13.5px; color: var(--ink-2);
+  }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--ink); color: white;
+    font-size: 11px; font-weight: 700;
+    display: grid; place-items: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step a {
+    color: var(--blue); text-decoration: none; font-weight: 500;
+  }
+  .step a:hover { text-decoration: underline; }
+  .step-arrow { color: var(--ink-3); margin: 0 2px; }
+
+  /* SECTION */
+  .section { margin-top: 44px; }
+  .section-hd {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-bar { width: 4px; height: 16px; border-radius: 2px; }
+  .section-bar.orange { background: var(--orange); }
+  .section-bar.blue { background: var(--blue); }
+  .section-bar.green { background: var(--green); }
+  .section-bar.amber { background: var(--amber); }
+  .section-bar.purple { background: var(--purple); }
+  .section-bar.ink { background: var(--ink); }
+  .section-title {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.09em;
+    color: var(--ink-2);
+  }
+  .section-count { margin-left: auto; font-size: 11px; color: var(--ink-3); }
+
+  /* GRID */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+
+  .card {
+    display: flex; flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .card.orange::before { background: var(--orange); }
+  .card.blue::before   { background: var(--blue); }
+  .card.green::before  { background: var(--green); }
+  .card.amber::before  { background: var(--amber); }
+  .card.purple::before { background: var(--purple); }
+  .card.ink::before    { background: var(--ink); }
+  .card:hover {
+    border-color: #ccc;
+    box-shadow: 0 4px 16px rgba(18,11,11,0.07);
+    transform: translateY(-1px);
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 10px; margin-bottom: 10px;
+  }
+  .card-icon {
+    width: 34px; height: 34px; border-radius: 9px;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .card-icon svg { width: 17px; height: 17px; }
+  .card-icon.orange { background: var(--orange-soft); color: var(--orange); }
+  .card-icon.blue   { background: var(--blue-soft);   color: var(--blue); }
+  .card-icon.green  { background: var(--green-soft);  color: var(--green); }
+  .card-icon.amber  { background: var(--amber-soft);  color: #b17728; }
+  .card-icon.purple { background: var(--purple-soft); color: var(--purple); }
+  .card-icon.ink    { background: #F2F2F2;             color: var(--ink); }
+
+  .card-tag {
+    font-size: 9.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 3px 8px; border-radius: 999px;
+    background: #F2F2F2; color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .card-tag.entry  { background: var(--orange-soft);  color: var(--orange); }
+  .card-tag.arch   { background: #F2F2F2;              color: var(--ink-3); }
+
+  .card-title {
+    font-size: 15px; font-weight: 600;
+    color: var(--ink); line-height: 1.3;
+    margin-bottom: 5px;
+  }
+  .card-desc {
+    font-size: 12.5px; color: var(--ink-2); line-height: 1.55;
+    flex: 1; margin-bottom: 14px;
+  }
+  .card-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding-top: 12px; border-top: 1px solid var(--line-soft);
+  }
+  .card-file {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px; color: var(--ink-3);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .card-arrow {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11.5px; font-weight: 500; color: var(--ink-2); flex-shrink: 0;
+  }
+  .card-arrow svg { width: 11px; height: 11px; }
+
+  /* ARCHIVED */
+  .archived { opacity: 0.6; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 32px 20px 64px; }
+    h1 { font-size: 24px; }
+    .grid { grid-template-columns: 1fr; }
+    .walkthrough { padding: 18px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-top">
+      <div class="brand-mark">W</div>
+      <h1>Witness — Prototype Index</h1>
+    </div>
+    <p class="sub">All screens in the current build. Click any card to open the full prototype page.</p>
+    <div class="meta">
+      <span>12 pages</span>
+      <span class="meta-dot"></span>
+      <span>Updated May 30, 2026</span>
+      <span class="meta-dot"></span>
+      <span>Local build</span>
+    </div>
+  </header>
+
+  <!-- WALKTHROUGH -->
+  <div class="walkthrough">
+    <div class="walkthrough-hd">
+      <div class="walkthrough-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <span class="walkthrough-label">Suggested Walkthrough</span>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">1</span>
+        <span><a href="dashboard.html" target="_blank">Dashboard</a> <span class="step-arrow">→</span> 点击 "Handled by AI" 卡片上的 <strong>✦ Trace</strong></span>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <span><a href="ai-activity.html" target="_blank">AI Activity</a> <span class="step-arrow">→</span> 展开 INV-1048 卡片，然后在 payment-batch 条目上试 <strong>↩ Revert batch</strong></span>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <span><a href="invoice-detail.html" target="_blank">Invoice Detail</a> <span class="step-arrow">→</span> 顶部提示条 + AI banner 上的 <strong>✦ Provenance</strong> + 点击 PO / GRN / INV 卡片</span>
+      </div>
+      <div class="step">
+        <span class="step-num">4</span>
+        <span><a href="autoflow.html" target="_blank">Autoflow</a> <span class="step-arrow">→</span> 每条权限栏上的 <strong>✦ Why auto</strong></span>
+      </div>
+      <div class="step">
+        <span class="step-num">5</span>
+        <span><a href="invoice-detail-duplicate.html" target="_blank">Invoice Detail (Duplicate)</a> <span class="step-arrow">→</span> 查看重复发票处理场景 INV-1027</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENTRY -->
+  <section class="section">
+    <div class="section-hd">
+      <span class="section-bar purple"></span>
+      <span class="section-title">Entry</span>
+      <span class="section-count">2 pages</span>
+    </div>
+    <div class="grid">
+
+      <a class="card purple" href="witness-intro.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <span class="card-tag entry">Splash</span>
+        </div>
+        <p class="card-title">Witness Intro</p>
+        <p class="card-desc">产品介绍落地页 — 第一印象，价值主张。</p>
+        <div class="card-foot">
+          <span class="card-file">witness-intro.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card purple" href="onboarding.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <span class="card-tag">Setup</span>
+        </div>
+        <p class="card-title">Onboarding</p>
+        <p class="card-desc">新用户引导流程 — 连接采购主机、配置 AI 权限。</p>
+        <div class="card-foot">
+          <span class="card-file">onboarding.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- CORE WORKSPACE -->
+  <section class="section">
+    <div class="section-hd">
+      <span class="section-bar orange"></span>
+      <span class="section-title">Core Workspace</span>
+      <span class="section-count">3 pages</span>
+    </div>
+    <div class="grid">
+
+      <a class="card orange" href="dashboard.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          </div>
+          <span class="card-tag entry">Home</span>
+        </div>
+        <p class="card-title">Dashboard</p>
+        <p class="card-desc">主入口。风险环形图、流程图、KPI 指标，以及实时发票表格。从这里开始。</p>
+        <div class="card-foot">
+          <span class="card-file">dashboard.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card amber" href="dashboard-brief.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <span class="card-tag">Daily</span>
+        </div>
+        <p class="card-title">Morning Brief</p>
+        <p class="card-desc">每日早晨摘要 — 昨晚发生了什么，Witness 处理了什么，哪些需要你关注。</p>
+        <div class="card-foot">
+          <span class="card-file">dashboard-brief.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card orange" href="ai-activity.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+          <span class="card-tag">AI Log</span>
+        </div>
+        <p class="card-title">AI Activity</p>
+        <p class="card-desc">Witness 代表你所有操作的完整审计日志 — 决策、草稿、发送，以及回溯。</p>
+        <div class="card-foot">
+          <span class="card-file">ai-activity.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- INVOICES -->
+  <section class="section">
+    <div class="section-hd">
+      <span class="section-bar blue"></span>
+      <span class="section-title">Invoices</span>
+      <span class="section-count">4 pages</span>
+    </div>
+    <div class="grid">
+
+      <a class="card blue" href="invoices.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </div>
+          <span class="card-tag">List</span>
+        </div>
+        <p class="card-title">All Invoices</p>
+        <p class="card-desc">系统内所有发票的平铺列表，带筛选器、状态标签和批量操作。</p>
+        <div class="card-foot">
+          <span class="card-file">invoices.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card blue" href="invoices-grouped.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg>
+          </div>
+          <span class="card-tag">Grouped</span>
+        </div>
+        <p class="card-title">All Invoices · Grouped</p>
+        <p class="card-desc">按主机 / 状态分组的同一数据集，高容量队列的替代导航方式。</p>
+        <div class="card-foot">
+          <span class="card-file">invoices-grouped.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card blue" href="invoice-detail.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+          </div>
+          <span class="card-tag entry">Detail</span>
+        </div>
+        <p class="card-title">Invoice Detail — INV-1048</p>
+        <p class="card-desc">单张发票详情（主场景）。行项目、AI 摘要、操作时间线、供应商元数据、溯源面板。</p>
+        <div class="card-foot">
+          <span class="card-file">invoice-detail.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card blue" href="invoice-detail-duplicate.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <span class="card-tag">Duplicate</span>
+        </div>
+        <p class="card-title">Invoice Detail — INV-1027</p>
+        <p class="card-desc">重复发票处理场景。Witness 检测到潜在重复，呈现匹配对比与人工决策界面。</p>
+        <div class="card-foot">
+          <span class="card-file">invoice-detail-duplicate.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- VENDORS & AUTOMATION -->
+  <section class="section">
+    <div class="section-hd">
+      <span class="section-bar green"></span>
+      <span class="section-title">Vendors &amp; Automation</span>
+      <span class="section-count">3 pages</span>
+    </div>
+    <div class="grid">
+
+      <a class="card green" href="vendors.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <span class="card-tag">Vendors</span>
+        </div>
+        <p class="card-title">Vendors</p>
+        <p class="card-desc">供应商卡片视图，带侧滑详情面板。风险评分、历史发票、联系方式。</p>
+        <div class="card-foot">
+          <span class="card-file">vendors.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card green" href="autoflow.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M10 20H4v-6"/><path d="M20 4l-7 7"/><path d="M4 20l7-7"/></svg>
+          </div>
+          <span class="card-tag entry">Rules</span>
+        </div>
+        <p class="card-title">Autoflow</p>
+        <p class="card-desc">阶段式自动化规则配置 — Witness 自动处理什么，触发条件，以及权限边界。</p>
+        <div class="card-foot">
+          <span class="card-file">autoflow.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card green" href="autoflow-editor.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <span class="card-tag">Editor</span>
+        </div>
+        <p class="card-title">Autoflow Editor</p>
+        <p class="card-desc">自动化规则的编辑界面 — 条件、动作、测试运行。</p>
+        <div class="card-foot">
+          <span class="card-file">autoflow-editor.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="section">
+    <div class="section-hd">
+      <span class="section-bar ink"></span>
+      <span class="section-title">System</span>
+      <span class="section-count">1 page</span>
+    </div>
+    <div class="grid">
+
+      <a class="card ink" href="settings.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon ink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <span class="card-tag">Config</span>
+        </div>
+        <p class="card-title">Settings</p>
+        <p class="card-desc">账户设置、已连接主机、AI 行为配置、通知偏好和团队权限管理。</p>
+        <div class="card-foot">
+          <span class="card-file">settings.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ARCHIVED -->
+  <section class="section">
+    <div class="section-hd">
+      <span class="section-bar ink"></span>
+      <span class="section-title">Archived — Pre-Revision</span>
+      <span class="section-count">2 pages</span>
+    </div>
+    <div class="grid">
+
+      <a class="card ink archived" href="invoice-detail-v1.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon ink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+          </div>
+          <span class="card-tag arch">v1</span>
+        </div>
+        <p class="card-title">Invoice Detail v1 — INV-1048</p>
+        <p class="card-desc">修订前的发票详情页，供版本对比参考。</p>
+        <div class="card-foot">
+          <span class="card-file">invoice-detail-v1.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card ink archived" href="invoice-detail-duplicate-v1.html" target="_blank">
+        <div class="card-head">
+          <div class="card-icon ink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+          </div>
+          <span class="card-tag arch">v1</span>
+        </div>
+        <p class="card-title">Invoice Duplicate v1 — INV-1027</p>
+        <p class="card-desc">修订前的重复发票场景，供版本对比参考。</p>
+        <div class="card-foot">
+          <span class="card-file">invoice-detail-duplicate-v1.html</span>
+          <span class="card-arrow">Open <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
