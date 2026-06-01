@@ -52,7 +52,8 @@ body.chat-padded[data-chat="float"] { padding-right: 0; }
 /* SLIM state — 56px vertical rail */
 [data-chat="slim"] .chat {
   align-items: center;
-  cursor: pointer;
+  cursor: default;
+  pointer-events: none;
 }
 [data-chat="slim"] .chat-grip { display: none; }
 [data-chat="slim"] .chat-head {

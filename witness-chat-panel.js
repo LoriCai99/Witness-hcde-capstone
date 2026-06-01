@@ -344,7 +344,7 @@
     chat.innerHTML =
       '<div class="chat-grip" id="chatGrip" title="Drag to resize"></div>' +
       '<div class="slim-cta">Chat · Witness</div>' +
-      '<div class="chat-head" onclick="expandFromSlim()">' +
+      '<div class="chat-head">' +
         '<div class="chat-mark" id="chatMark">W</div>' +
         '<div class="chat-head-info">' +
           '<div class="chat-title">Witness</div>' +
