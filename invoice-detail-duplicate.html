@@ -25,51 +25,36 @@
     .nav-items { display: flex; flex-direction: column; gap: 2px; }
     .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: #45556c; font-size: 14px; font-weight: 500; line-height: 20px; letter-spacing: -0.15px; text-decoration: none; cursor: pointer; }
     .nav-item:hover { background: rgba(0,0,0,0.04); }
-    .nav-item.active { background: white; color: #120b0b; padding: 8px 12px; }
+    .nav-item.active { background: white; color: #120b0b; font-weight: 600; border-radius: 0 8px 8px 0; box-shadow: inset 3px 0 0 #FF6900; }
     .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
-    .nav-badge { margin-left: auto; background: #120b0b; color: white; font-size: 12px; font-weight: 700; line-height: 16px; padding: 2px 8px; border-radius: 999px; }
-    .nav-badge.ai { background: #ff6900; }
+    .nav-badge { margin-left: auto; background: #eef0f3; color: #45556c; font-size: 11px; font-weight: 600; line-height: 1; padding: 3px 7px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+    .nav-badge.ai { background: #fff0e8; color: #FF6900; }
     .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
 
     /* ─── MAIN ─── */
     .main { height: 100%; overflow-y: auto; overflow-x: auto; min-width: 0; display: flex; flex-direction: column; }
 
-    /* ─── TOPBAR — unified Witness AI theme (black + orange accent) ─── */
+    /* ─── TOPBAR ─── */
     .topbar {
-      position: sticky; top: 0; z-index: 50;
-      height: 56px; flex-shrink: 0;
-      background: #120b0b;
-      border-bottom: 2px solid #ff6900;
+      position: sticky; top: 0; z-index: 10;
+      background: white;
+      border-bottom: 1px solid #ededed;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px;
-      color: white;
+      padding: 23px 24px;
+      flex-shrink: 0;
     }
-    .topbar-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
     .topbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,0.45); }
-    .breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; cursor: pointer; font-weight: 500; }
-    .breadcrumb a:hover { color: white; }
-    .bc-sep { opacity: 0.5; font-size: 14px; }
-    .bc-cur { color: white; font-weight: 600; }
-    .health-chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); }
-    .health-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.22); }
-    .health-chip span { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.75); letter-spacing: -0.1px; white-space: nowrap; }
-    .avatar { width: 28px; height: 28px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #120b0b; }
-    /* Primary CTA in topbar */
-    .tb-cta {
-      display: inline-flex; align-items: center; gap: 8px;
-      height: 34px; padding: 0 16px;
-      border-radius: 8px;
-      background: #ff6900; border: none;
-      color: white;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 600; letter-spacing: -0.1px;
-      cursor: pointer; white-space: nowrap;
-      transition: background .15s;
-      position: relative;
-    }
-    .tb-cta:hover { background: #d95b03; }
-    .tb-cta .arrow { font-size: 13px; opacity: 0.9; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #adadad; }
+    .breadcrumb a { color: #45556c; text-decoration: none; cursor: pointer; font-weight: 500; }
+    .breadcrumb a:hover { color: #0b0d12; }
+    .bc-sep { opacity: 0.4; font-size: 16px; }
+    .bc-cur { color: #0b0d12; font-weight: 600; }
+    .health-chip { display: inline-flex; align-items: center; gap: 6px; background: #f4f4f4; border-radius: 999px; padding: 4px 10px; height: 28px; }
+    .health-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; }
+    .health-chip span { font-size: 12px; font-weight: 500; color: #45556c; letter-spacing: -0.1px; white-space: nowrap; }
+    .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
 
     /* ─── CONTENT AREA ─── */
     .content { padding: 32px 40px 52px; display: flex; flex-direction: column; gap: 24px; flex: 1; max-width: 1400px; min-width: 900px; width: 100%; margin: 0 auto; }
@@ -175,12 +160,213 @@
 
     /* Next steps */
     .next-steps { display: flex; flex-direction: column; gap: 6px; }
-    .btn-step-primary { width: 100%; padding: 10px 14px; border-radius: 8px; border: none; background: #120b0b; color: white; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px; transition: background 0.15s; }
-    .btn-step-primary:hover { background: #45556c; }
-    .btn-step-secondary { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid #e9e9e9; background: white; color: #45556c; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.12s; }
-    .btn-step-secondary:hover { background: #f4f4f4; color: #0b0d12; border-color: #c8c8c8; }
-    .btn-step-ai { border-color: rgba(22,163,74,0.3); color: #15803d; background: #dcfce7; }
-    .btn-step-ai:hover { background: rgba(22,163,74,0.14); }
+    /* Gemini-style rotating gradient border for AI-suggested steps */
+    @property --grad-angle {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
+    @keyframes grad-spin {
+      from { --grad-angle: 0deg; }
+      to   { --grad-angle: 360deg; }
+    }
+
+    .btn-step-primary {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      color: white;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 0;
+      isolation: isolate;
+      background: transparent !important;
+    }
+
+    .btn-step-secondary {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1.5px solid transparent;
+      color: #45556c;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.12s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 0;
+      isolation: isolate;
+      background: transparent !important;
+    }
+
+    .btn-step-tertiary {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1.5px solid transparent;
+      color: #45556c;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.12s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 0;
+      isolation: isolate;
+      background: transparent !important;
+    }
+
+    /* Gradient ring — revealed on hover via opacity */
+    .btn-step-primary:not([disabled])::before,
+    .btn-step-secondary:not([disabled])::before,
+    .btn-step-tertiary:not([disabled])::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 10px;
+      background: conic-gradient(
+        from var(--grad-angle),
+        #FF6900 0%,
+        #FFD000 20%,
+        #FFB347 35%,
+        #fff0e0 48%,
+        #FF6900 58%,
+        #FFD000 74%,
+        #FFB347 86%,
+        #fff0e0 94%,
+        #FF6900 100%
+      );
+      animation: grad-spin 4.5s linear infinite;
+      opacity: 0;
+      transition: opacity .3s ease;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* Background punch-out layers */
+    .btn-step-primary:not([disabled])::after,
+    .btn-step-secondary:not([disabled])::after,
+    .btn-step-tertiary:not([disabled])::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      z-index: -1;
+      pointer-events: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    /* Primary button state colors */
+    .btn-step-primary:not([disabled])::after {
+      background: #120b0b;
+    }
+    .btn-step-primary:not([disabled]):hover::after {
+      background: #120b0b;
+    }
+
+    /* Secondary button state colors */
+    .btn-step-secondary:not([disabled])::after {
+      background: white;
+      border: 1.5px solid #e9e9e9;
+    }
+    .btn-step-secondary:not([disabled]):hover::after {
+      background: #f4f4f4;
+      border-color: transparent;
+    }
+
+    /* Tertiary button state colors */
+    .btn-step-tertiary:not([disabled])::after {
+      background: transparent;
+      border: 1.5px solid transparent;
+    }
+    .btn-step-tertiary:not([disabled]):hover::after {
+      background: #f4f4f4;
+    }
+
+    /* Hover interactions for active states */
+    .btn-step-primary:not([disabled]):hover,
+    .btn-step-secondary:not([disabled]):hover,
+    .btn-step-tertiary:not([disabled]):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 105, 0, 0.12);
+    }
+    .btn-step-primary:not([disabled]):hover::before,
+    .btn-step-secondary:not([disabled]):hover::before,
+    .btn-step-tertiary:not([disabled]):hover::before {
+      opacity: 1;
+    }
+
+    /* Secondary button internal elements */
+    .btn-step-secondary .auto-pill {
+      background: #f4f4f4;
+      color: #45556c;
+      transition: all 0.12s;
+    }
+    .btn-step-secondary:hover .auto-pill {
+      background: #e9e9e9;
+      color: #0b0d12;
+    }
+
+    /* Specialized AI suggested button (greenish style) */
+    .btn-step-secondary.btn-step-ai:not([disabled])::after {
+      background: #dcfce7;
+      border: 1.5px solid rgba(22, 163, 74, 0.3);
+    }
+    .btn-step-secondary.btn-step-ai:not([disabled]):hover::after {
+      background: rgba(22, 163, 74, 0.14);
+      border-color: transparent;
+    }
+    .btn-step-secondary.btn-step-ai {
+      color: #15803d;
+    }
+
+    /* Specialized Override button (reddish danger style) */
+    .btn-step-secondary.btn-step-danger:not([disabled])::after {
+      background: white;
+      border: 1.5px solid rgba(220, 38, 38, 0.35);
+    }
+    .btn-step-secondary.btn-step-danger:not([disabled]):hover::after {
+      background: #fef2f2;
+      border-color: transparent;
+    }
+    .btn-step-secondary.btn-step-danger {
+      color: #b91c1c;
+    }
+
+    /* Disabled states (completed actions) */
+    .btn-step-primary[disabled],
+    .btn-step-secondary[disabled],
+    .btn-step-tertiary[disabled] {
+      background: #cbd5e1 !important;
+      color: #64748b !important;
+      cursor: not-allowed;
+      border: none !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    .btn-step-primary[disabled]::before,
+    .btn-step-secondary[disabled]::before,
+    .btn-step-tertiary[disabled]::before,
+    .btn-step-primary[disabled]::after,
+    .btn-step-secondary[disabled]::after,
+    .btn-step-tertiary[disabled]::after {
+      display: none !important;
+    }
     .step-ico { width: 20px; height: 20px; border-radius: 6px; background: #f4f4f4; border: 1px solid #e9e9e9; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
     .auto-pill { margin-left: auto; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.15); color: white; }
     .auto-pill-green { margin-left: auto; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #dcfce7; color: #15803d; border: 1px solid rgba(22,163,74,0.3); }
@@ -207,13 +393,13 @@
     .ms-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
     .ms-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #fee2e2; color: #b91c1c; }
     .ms-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-    .ms-card { border: none; border-radius: 0; overflow: hidden; }
-    .ms-card-head { display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px; background: transparent; border-bottom: 1px solid #ececec; }
-    .ms-card-title { font-size: 13px; font-weight: 600; color: #0b0d12; display: flex; align-items: center; gap: 8px; }
-    .ms-card-status { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; }
-    .ms-status-match { background: #dcfce7; color: #15803d; }
-    .ms-status-mismatch { background: #fee2e2; color: #b91c1c; }
-    .ms-status-warn { background: #fdf2d4; color: #b17728; }
+    .ms-section { margin-bottom: 28px; display: flex; flex-direction: column; gap: 12px; }
+    .ms-section-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+    .ms-section-title { font-size: 13px; font-weight: 600; color: #0b0d12; display: flex; align-items: center; gap: 8px; }
+    .ms-section-note { font-size: 12px; color: #45556c; padding: 8px 12px; display: flex; align-items: center; gap: 6px; border-left: 2.5px solid #cbd5e1; background: transparent; }
+    .ms-section-note.warn { border-left-color: #e9b44c; color: #b17728; }
+    .ms-section-note.crit { border-left-color: #dc2626; color: #b91c1c; }
+    .ms-section-note.ok { border-left-color: #16a34a; color: #15803d; }
     .ms-table { width: 100%; border-collapse: collapse; }
     .ms-table th { font-size: 11px; font-weight: 600; color: #adadad; letter-spacing: 0.5px; padding: 8px 14px; text-align: left; border-bottom: 1px solid #f0f0f0; }
     .ms-table td { font-size: 13px; padding: 9px 14px; border-bottom: 1px solid #f7f7f7; color: #0b0d12; }
@@ -378,8 +564,8 @@
 
     /* AI insight banner — matching all-invoices */
     .ai-insight-banner {
-      background: #fff5f0;
-      border: 1px solid #ffb088;
+      background: #fafafa;
+      border: 1px solid #e4e4e7;
       border-radius: 10px;
       padding: 12px 14px;
       display: flex; align-items: flex-start; gap: 10px;
@@ -406,7 +592,7 @@
     /* Dry-run tooltip */
     .dry-run { position: absolute; top: calc(100% + 8px); right: 0; background: #120b0b; color: #f0ede8; border-radius: 10px; padding: 14px 16px; width: 268px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transform: translateY(-4px); transition: all 0.18s; z-index: 50; text-align: left; white-space: normal; }
     .btn-solid-dark.open .dry-run,
-    .tb-cta.open .dry-run { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    div.open .dry-run { opacity: 1; pointer-events: auto; transform: translateY(0); }
     .tb-cta.open { background: #d95b03; }
     .dr-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: rgba(240,237,232,0.4); margin-bottom: 10px; }
     .dr-list { display: flex; flex-direction: column; gap: 6px; }
@@ -442,7 +628,8 @@
     .sidebar.collapsed .nav-badge { display: none; }
 
     /* ═══════════ REVISION: single-panel main + restructured AI blocks + folded timeline ═══════════ */
-    .main-panel { background: white; border: 1px solid #e4e4e7; border-radius: 10px; overflow: hidden; }
+    .main-panel { background: white; border: 1px solid #e4e4e7; border-radius: 10px; overflow: hidden; display: flex; }
+    .right-col-actions { width: 290px; background: #fafafa; border-left: 1px solid #f0f0f0; padding: 20px; display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; overflow-y: auto; }
     .ai-insight-banner.structured { flex-direction: column; align-items: stretch; gap: 0; padding: 14px 16px; }
     .ai-banner-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .ai-banner-meta { font-size: 11px; color: #45556c; }
@@ -510,7 +697,9 @@
 
     /* AI banner — signal comparison */
     .signal-compare { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-top: 12px; }
-    .sc-col { background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 10px 12px; }
+    .sc-col { background: transparent; border: none; border-left: 3px solid #cbd5e1; border-radius: 0; padding: 4px 0 4px 12px; }
+    .sc-col.ok { border-left-color: #16a34a; }
+    .sc-col.warn { border-left-color: #e9b44c; }
     .sc-head { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; }
     .sc-head.ok { color: #15803d; }
     .sc-head.warn { color: #b17728; }
@@ -527,6 +716,36 @@
       .signal-compare { grid-template-columns: 1fr; }
       .sc-list { grid-template-columns: 1fr; }
     }
+
+    /* ─── Ask Witness button ─── */
+    .ask-witness-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%); color: white; border: none; border-radius: 999px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 7px 16px; cursor: pointer; flex-shrink: 0; white-space: nowrap; box-shadow: 0 2px 12px rgba(255,105,0,0.35); transition: box-shadow .2s, transform .2s, filter .2s; }
+    .ask-witness-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 20px rgba(255,105,0,0.45); transform: translateY(-1px); }
+    .ask-witness-btn:active { transform: translateY(0); }
+    .btn-sparkle { display: inline-block; font-size: 13px; line-height: 1; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
+
+    /* ─── Agent suggestion callout ─── */
+    .agent-sug-callout { padding: 24px 28px; background: radial-gradient(circle at top right, rgba(255,105,0,0.10) 0%, rgba(255,105,0,0) 50%), linear-gradient(135deg, #fff8f3 0%, #ffeee0 100%); border: 1px solid #ffc8a3; border-radius: 14px; display: grid; grid-template-columns: 52px 1fr; gap: 22px; align-items: center; position: relative; overflow: hidden; animation: vc-breathe 6s ease-in-out infinite; }
+    @keyframes vc-breathe { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,105,0,0); } 50% { box-shadow: 0 0 0 6px rgba(255,105,0,0.06), 0 0 28px rgba(255,105,0,0.10); } }
+    .agent-sug-callout::before { content: ''; position: absolute; top: 0; bottom: 0; left: -30%; width: 35%; background: linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.30) 50%, rgba(255,255,255,0) 100%); animation: vc-shimmer 7s ease-in-out infinite; pointer-events: none; mix-blend-mode: screen; }
+    @keyframes vc-shimmer { 0% { transform: translateX(0); opacity: 0; } 18% { opacity: 1; } 55% { transform: translateX(420%); opacity: 0; } 100% { transform: translateX(420%); opacity: 0; } }
+    .agent-sug-icon { width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #ff7a3d 0%, #ff5c1b 100%); color: white; font-size: 24px; box-shadow: 0 6px 16px rgba(255,105,0,0.28), inset 0 1px 0 rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; align-self: flex-start; position: relative; animation: vc-icon-pulse 4s ease-in-out infinite; }
+    @keyframes vc-icon-pulse { 0%, 100% { box-shadow: 0 6px 16px rgba(255,105,0,0.28), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 0 rgba(255,105,0,0.35); } 50% { box-shadow: 0 6px 16px rgba(255,105,0,0.36), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 10px rgba(255,105,0,0); } }
+    .agent-sug-body { min-width: 0; }
+    .agent-sug-lbl { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; color: #b34900; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+    .agent-sug-lbl::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, rgba(179,73,0,0.25), rgba(179,73,0,0)); max-width: 60px; }
+    .agent-sug-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: #120b0b; font-weight: 400; letter-spacing: -0.15px; }
+    .agent-sug-actions { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+    .agent-sug-btn-primary { background: #120b0b; color: white; padding: 10px 20px; border-radius: 999px; font-size: 12px; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; letter-spacing: -0.05px; white-space: nowrap; border: none; cursor: pointer; transition: transform .15s; box-shadow: 0 2px 6px rgba(0,0,0,0.10); }
+    .agent-sug-btn-primary:hover { transform: translateY(-1px); }
+    .agent-sug-btn-sec { background: transparent; color: #b34900; padding: 9px 18px; border-radius: 999px; font-size: 12px; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; letter-spacing: -0.05px; white-space: nowrap; border: 1.5px solid rgba(179,73,0,0.3); cursor: pointer; transition: all .15s; }
+    .agent-sug-btn-sec:hover { background: rgba(179,73,0,0.06); border-color: #b34900; }
+
+    /* ─── AI activity history strip ─── */
+    .wt-history-strip { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fafafa; border: 1px solid #e9e9e9; border-radius: 8px; font-size: 12px; color: #45556c; line-height: 1.5; }
+    .wt-h-icon { color: #ff6900; font-size: 13px; flex-shrink: 0; }
+    .wt-h-link { margin-left: auto; font-size: 11px; font-weight: 500; color: #ff6900; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+    .wt-h-link:hover { text-decoration: underline; }
   </style>
 </head>
 <body data-chat="rail">
@@ -593,14 +812,24 @@
   <header class="topbar">
     <div class="topbar-left">
       <nav class="breadcrumb">
-        <a href="dashboard.html">Dashboard</a>
+        <a href="invoices.html">All Invoices</a>
         <span class="bc-sep">›</span>
         <span class="bc-cur">INV-1027</span>
       </nav>
     </div>
     <div class="topbar-right">
-      <button class="tb-cta">
-        ✦ Confirm hold &amp; notify Praxis <span class="arrow">→</span>
+      <div class="health-chip">
+        <div class="health-dot"></div>
+        <span>All systems healthy</span>
+      </div>
+      <button class="ask-witness-btn" onclick="window.openWitnessChat && window.openWitnessChat()">
+        <span class="btn-sparkle">✦</span>
+        Ask Witness
+      </button>
+      <div style="position:relative">
+        <button class="btn-solid-dark" id="topbar-action-btn">
+          Take action ▾
+        </button>
         <div class="dry-run">
           <div class="dr-label">If you proceed, Witness will:</div>
           <div class="dr-list">
@@ -610,10 +839,6 @@
           </div>
           <div class="dr-foot">All actions are reversible · You'll review each before sending</div>
         </div>
-      </button>
-      <div class="health-chip">
-        <div class="health-dot"></div>
-        <span>All systems healthy</span>
       </div>
       <div class="avatar">SC</div>
     </div>
@@ -690,46 +915,33 @@
       Witness auto-held this at <strong style="color:#0b0d12;"><span data-wt-time="today 02:14" data-wt-fmt="time">2:14 AM</span></strong> — payment will not go out unless you override. Confirm the hold or release to AP queue. &nbsp;·&nbsp; <span style="text-decoration:underline;cursor:pointer;">How was this detected?</span>
     </div>
 
-    <!-- ─── AI INSIGHT BANNER — signal evidence (not $ amounts) ─── -->
-    <div class="ai-insight-banner structured">
-      <div class="ai-banner-head">
-        <div class="ai-insight-badge">
-          <div class="ai-badge-dot"></div>
-          Witness AI
+    <!-- ─── AGENT SUGGESTION ─── -->
+    <div class="agent-sug-callout">
+      <div class="agent-sug-icon">✦</div>
+      <div class="agent-sug-body">
+        <div class="agent-sug-lbl">Witness Recommends</div>
+        <div class="agent-sug-txt">
+          Confirm the hold and send Praxis a retract request. Both prior Praxis duplicates resolved within 24h with the same script. PO-7718 is already marked fully invoiced — no payment risk while held.
         </div>
-        <span class="ai-banner-meta"><strong>Matched 6 of 7 fingerprint fields against INV-1024</strong> · auto-held 1 min after intake · 98% confidence</span>
-      </div>
-      <div class="signal-compare">
-        <div class="sc-col">
-          <div class="sc-head ok">✓ Identical fields — 6</div>
-          <div class="sc-list">
-            <div class="sc-item">PO reference</div>
-            <div class="sc-item">Vendor</div>
-            <div class="sc-item">Shipment ref</div>
-            <div class="sc-item">Tax amount</div>
-            <div class="sc-item">Total amount</div>
-            <div class="sc-item">Bill-to address</div>
-          </div>
+        <div class="agent-sug-actions">
+          <button class="agent-sug-btn-primary">Confirm hold &amp; notify Praxis →</button>
+          <button class="agent-sug-btn-sec">View duplicate evidence</button>
         </div>
-        <div class="sc-col" style="background:#fef9eb;border-color:#e9b44c;">
-          <div class="sc-head warn">⚠ Differing fields — 2</div>
-          <div class="sc-list">
-            <div class="sc-item warn">Invoice number</div>
-            <div class="sc-item warn">Submission channel</div>
-          </div>
-        </div>
-      </div>
-      <div class="ai-banner-foot">
-        <strong>Why this read:</strong> the new invoice number (INV-1027) and the channel switch point to a billing-system re-emission — likely Praxis's portal sync caught up after INV-1024 was paid via email.<br>
-        <strong>Recommended:</strong> ask Praxis to retract — both prior Praxis duplicates confirmed within 24h. PO-7718 is already marked fully invoiced.
       </div>
     </div>
 
-    <!-- ─── MAIN PANEL (full-width, was three-col) ─── -->
+    <!-- ─── AI HISTORY STRIP ─── -->
+    <div class="wt-history-strip">
+      <span class="wt-h-icon">✦</span>
+      <span>Witness AI has taken <strong>1 action</strong> on this invoice — auto-held as duplicate 1 min after intake. All actions are revertable.</span>
+      <a class="wt-h-link" href="ai-activity.html">View / revert in Activity ↗</a>
+    </div>
+
+    <!-- ─── MAIN PANEL ─── -->
     <div class="main-panel">
 
-      <!-- Tabbed panels — full width -->
-      <div class="center-col" style="border-right:none;">
+      <!-- Tabbed panels -->
+      <div class="center-col" style="flex:1; border-right: 1px solid #f0f0f0;">
         <div class="center-tabs">
           <button class="ctab active" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
           <button class="ctab" data-tab="match" onclick="switchTab(this)">Duplicate comparison</button>
@@ -908,11 +1120,11 @@
                           Ask vendor: re-bill or genuine reissue?
                           <span class="auto-pill-green">AUTO</span>
                         </button>
-                        <button class="btn-step-secondary">
+                        <button class="btn-step-tertiary">
                           <div class="step-ico">📎</div>
                           Open INV-1024 side-by-side
                         </button>
-                        <button class="btn-step-secondary" style="border-color:rgba(220,38,38,0.35);color:#b91c1c;">
+                        <button class="btn-step-secondary btn-step-danger">
                           <div class="step-ico" style="background:#fee2e2;border-color:rgba(220,38,38,0.25);color:#dc2626;">⚠</div>
                           Override hold — release for payment
                         </button>
@@ -937,46 +1149,48 @@
           </div>
           <div class="ms-body">
 
-            <!-- AI summary — structured key-fact grid -->
-            <div class="ms-ai-note structured">
+            <!-- ─── AI INSIGHT BANNER — signal evidence (not $ amounts) ─── -->
+            <div class="ai-insight-banner structured" style="margin-bottom: 20px;">
               <div class="ai-banner-head">
-                <div class="ai-insight-badge"><div class="ai-badge-dot"></div>Witness AI</div>
-                <span class="ai-banner-meta">Compared <strong>INV-1024 vs INV-1027</strong> · 98% confidence · 0.3s</span>
+                <div class="ai-insight-badge">
+                  <div class="ai-badge-dot"></div>
+                  Witness AI
+                </div>
+                <span class="ai-banner-meta"><strong>Matched 6 of 7 fingerprint fields against INV-1024</strong> · auto-held 1 min after intake · 98% confidence</span>
               </div>
-              <div class="ai-key-grid">
-                <div class="ai-key-cell">
-                  <div class="ai-key-label">Signals identical</div>
-                  <div class="ai-key-val amber">6 of 7</div>
-                  <div class="ai-key-sub">PO · shipment · total · tax · vendor · bill-to</div>
+              <div class="signal-compare">
+                <div class="sc-col ok">
+                  <div class="sc-head ok">✓ Identical fields — 6</div>
+                  <div class="sc-list">
+                    <div class="sc-item">PO reference</div>
+                    <div class="sc-item">Vendor</div>
+                    <div class="sc-item">Shipment ref</div>
+                    <div class="sc-item">Tax amount</div>
+                    <div class="sc-item">Total amount</div>
+                    <div class="sc-item">Bill-to address</div>
+                  </div>
                 </div>
-                <div class="ai-key-cell">
-                  <div class="ai-key-label">Differences</div>
-                  <div class="ai-key-val">2 fields only</div>
-                  <div class="ai-key-sub">Invoice # + submission channel</div>
-                </div>
-                <div class="ai-key-cell" style="background:#f0fdf4;border-color:#bbf7d0;">
-                  <div class="ai-key-label" style="color:#15803d;">PO-7718 status</div>
-                  <div class="ai-key-val green">Fully invoiced</div>
-                  <div class="ai-key-sub">Closed by INV-1024 on Apr 26</div>
-                </div>
-                <div class="ai-key-cell">
-                  <div class="ai-key-label">Vendor pattern</div>
-                  <div class="ai-key-val">2 prior dupes</div>
-                  <div class="ai-key-sub">Both retracted within 24h</div>
+                <div class="sc-col warn">
+                  <div class="sc-head warn">⚠ Differing fields — 2</div>
+                  <div class="sc-list">
+                    <div class="sc-item warn">Invoice number</div>
+                    <div class="sc-item warn">Submission channel</div>
+                  </div>
                 </div>
               </div>
               <div class="ai-banner-foot">
-                <strong>Most likely:</strong> Praxis's billing system re-emitted the invoice when the portal sync caught up — INV-1027 arrived 2 days after INV-1024 was paid via email. One message resolves this.
+                <strong>Why this read:</strong> the new invoice number (INV-1027) and the channel switch point to a billing-system re-emission — likely Praxis's portal sync caught up after INV-1024 was paid via email.<br>
+                <strong>Recommended:</strong> ask Praxis to retract — both prior Praxis duplicates confirmed within 24h. PO-7718 is already marked fully invoiced.
               </div>
             </div>
 
             <!-- Field comparison — the main card -->
-            <div class="ms-card" style="border-color:#dc2626;">
-              <div class="ms-card-head" style="background:#fee2e2;">
-                <div class="ms-card-title">
+            <div class="ms-section">
+              <div class="ms-section-head">
+                <div class="ms-section-title">
                   <span style="font-size:15px">📋</span> Field-by-field comparison
                 </div>
-                <span class="ms-card-status ms-status-mismatch">Likely duplicate</span>
+                <span class="badge blocked"><span class="bdot"></span>Likely duplicate</span>
               </div>
               <table class="ms-table">
                 <thead><tr><th>Field</th><th>INV-1024 · paid</th><th>INV-1027 · held</th><th>Match</th></tr></thead>
@@ -992,19 +1206,18 @@
                   <tr><td class="label">Payment status</td><td class="ok">Paid · Apr 26 · ACH</td><td class="crit">⏳ Held by Witness</td><td>—</td></tr>
                 </tbody>
               </table>
-              <div class="ms-conf-row" style="background:#fee2e2;border-top-color:rgba(220,38,38,0.2);">
-                <span class="ms-conf-label" style="color:#b91c1c;font-weight:600;">If released in error:</span>
-                <span class="ms-conf-val" style="color:#dc2626;font-size:14px;">−$890.40 paid twice for the same shipment</span>
+              <div class="ms-section-note crit">
+                <strong>If released in error:</strong> &nbsp; −$890.40 paid twice for the same shipment
               </div>
             </div>
 
             <!-- Why might be legitimate -->
-            <div class="ms-card" style="border-color:#e9b44c;">
-              <div class="ms-card-head" style="background:#fdf2d4;">
-                <div class="ms-card-title">
+            <div class="ms-section">
+              <div class="ms-section-head">
+                <div class="ms-section-title">
                   <span style="font-size:15px">⚖</span> The 2% — why this could still be legitimate
                 </div>
-                <span class="ms-card-status ms-status-warn">Worth a check</span>
+                <span class="badge waiting"><span class="bdot"></span>Worth a check</span>
               </div>
               <table class="ms-table">
                 <thead><tr><th>Signal that differs</th><th>What it could mean</th></tr></thead>
@@ -1014,18 +1227,18 @@
                   <tr><td class="label">2 days between invoices</td><td>Could be a corrected reissue (e.g., changed remit-to bank). Worth one message to confirm.</td></tr>
                 </tbody>
               </table>
-              <div class="ms-conf-row" style="background:#fdf2d4;">
-                <span class="ms-conf-label" style="color:#b17728;">→ One message to Praxis resolves this in &lt; 1 day. AP-side script is pre-drafted.</span>
+              <div class="ms-section-note warn">
+                One message to Praxis resolves this in &lt; 1 day. AP-side script is pre-drafted.
               </div>
             </div>
 
             <!-- Vendor history -->
-            <div class="ms-card">
-              <div class="ms-card-head">
-                <div class="ms-card-title">
+            <div class="ms-section">
+              <div class="ms-section-head">
+                <div class="ms-section-title">
                   <span style="font-size:15px">📊</span> Praxis Logistics — 12-month pattern
                 </div>
-                <span class="ms-card-status ms-status-match">Vendor responds quickly</span>
+                <span class="badge approved"><span class="bdot"></span>Vendor responds quickly</span>
               </div>
               <table class="ms-table">
                 <thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead>
@@ -1036,15 +1249,15 @@
                   <tr><td class="label">Avg vendor response</td><td class="ok">14h</td><td>From hold to retract confirmation</td></tr>
                 </tbody>
               </table>
-              <div class="ms-conf-row" style="background:#f0fdf4;border-top-color:#bbf7d0;">
-                <span class="ms-conf-label" style="color:#15803d;">Both prior Praxis dupes were billing-system errors — no dispute, no escalation</span>
+              <div class="ms-section-note ok">
+                Both prior Praxis dupes were billing-system errors — no dispute, no escalation
               </div>
             </div>
 
             <!-- Source documents -->
-            <div class="ms-card">
-              <div class="ms-card-head">
-                <div class="ms-card-title">
+            <div class="ms-section">
+              <div class="ms-section-head">
+                <div class="ms-section-title">
                   <span style="font-size:15px">📄</span> Source documents
                 </div>
                 <span style="font-size:11px;color:#adadad;"><span data-wt-time="today 02:14" data-wt-fmt="datetimeN">Apr 28 · 2:14 AM</span> · 98% confidence · 0.3s</span>
@@ -1229,6 +1442,50 @@
 
       </div><!-- /center-col -->
 
+      <!-- ─── RIGHT PERSISTENT PANEL: Action Steps ─── -->
+      <div class="right-col-actions">
+        <div style="font-size: 11px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.6px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+          Steps
+        </div>
+        <div style="font-size: 11px; font-style: italic; color: #71717a; margin-top: -8px; line-height: 1.4; margin-bottom: 4px;">
+          Perform these steps to resolve the duplicate hold.
+        </div>
+        <div class="next-steps" style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn-step-primary" id="btn-confirm-hold">
+            Confirm hold &amp; notify Praxis
+          </button>
+          <button class="btn-step-secondary" id="btn-ask-vendor">
+            Ask Praxis: re-bill or reissue?
+          </button>
+          <button class="btn-step-tertiary" id="btn-open-side">
+            Open INV-1024 side-by-side
+          </button>
+          <button class="btn-step-secondary btn-step-danger" id="btn-override-hold">
+            Override hold — release for payment
+          </button>
+        </div>
+
+        <div style="margin-top: 10px; padding-top: 16px; border-top: 1px dashed #e4e4e7;">
+          <div style="font-size: 11px; font-weight: 600; color: #71717a; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.4px;">Blockers checklist</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #b91c1c;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-weight: bold; width: 14px; text-align: center;">✕</span>
+                <span>Duplicate of INV-1024 ($890.40)</span>
+              </div>
+              <span style="font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #fee2e2; color: #b91c1c; white-space: nowrap;">Steps 1 &amp; 2</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #b17728;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-weight: bold; width: 14px; text-align: center;">○</span>
+                <span>Vendor retraction pending</span>
+              </div>
+              <span style="font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #fef3c7; color: #b17728; white-space: nowrap;">Step 2</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /right-col-actions -->
+
     </div><!-- /main-panel -->
 
   </main>
@@ -1268,16 +1525,17 @@
 </script>
 <script>
   (function(){
-    var actionBtn = document.querySelector('.tb-cta');
+    var actionBtn = document.getElementById('topbar-action-btn');
     if (!actionBtn) return;
-    var bubble = actionBtn.querySelector('.dry-run');
+    var wrap = actionBtn.parentElement;
+    var bubble = wrap.querySelector('.dry-run');
     if (bubble) bubble.addEventListener('click', function(e){ e.stopPropagation(); });
     actionBtn.addEventListener('click', function(e){
-      actionBtn.classList.toggle('open');
+      wrap.classList.toggle('open');
       e.stopPropagation();
     });
     document.addEventListener('click', function(){
-      actionBtn.classList.remove('open');
+      wrap.classList.remove('open');
     });
   })();
 </script>
