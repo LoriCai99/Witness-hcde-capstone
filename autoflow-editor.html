@@ -50,13 +50,11 @@
     .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--color-neutral-white); }
 
     /* EDITOR TOOLBAR */
-    .ed-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 24px 32px; gap: 24px; background: var(--color-neutral-white); border-bottom: 1px solid var(--color-neutral-lotion); flex-shrink: 0; }
-    .ed-title-block { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-    .ed-title-row { display: flex; align-items: center; gap: 12px; }
-    .ed-title-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--color-neutral-black); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .ed-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 400; color: var(--color-neutral-black); border: none; outline: none; padding: 4px 6px; margin-left: -6px; border-radius: 6px; background: transparent; letter-spacing: -0.5px; line-height: 1.2; }
-    .ed-title:hover { background: var(--color-neutral-grey); }
-    .ed-title:focus { background: var(--color-brand-primary-orange-glare); box-shadow: 0 0 0 1.5px var(--color-brand-primary-orange-the-orange); }
+    .ed-toolbar { display: flex; align-items: flex-end; justify-content: space-between; padding: 32px 40px; gap: 24px; background: var(--color-neutral-white); border-bottom: 1px solid var(--color-neutral-lotion); flex-shrink: 0; }
+    .ed-title-block { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .ed-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: var(--color-neutral-black); border: none; outline: none; padding: 0; border-radius: 6px; background: transparent; line-height: 1.4; }
+    .ed-title:hover { background: var(--color-neutral-grey); padding: 2px 6px; margin-left: -6px; }
+    .ed-title:focus { background: var(--color-brand-primary-orange-glare); box-shadow: 0 0 0 1.5px var(--color-brand-primary-orange-the-orange); padding: 2px 6px; margin-left: -6px; }
     .ed-meta { font-size: 14px; color: var(--color-neutral-cool-grey); display: flex; align-items: center; gap: 8px; }
     .ed-meta .saved-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-semantic-success-500); }
     .ed-actions { display: flex; gap: 8px; flex-shrink: 0; }
@@ -307,12 +305,7 @@
   <!-- Editor toolbar -->
   <div class="ed-toolbar">
     <div class="ed-title-block">
-      <div class="ed-title-row">
-        <div class="ed-title-icon">
-          <svg width="18" height="18" viewbox="0 0 20 20" fill="none"><path d="M11 2L4 11h5l-1 7 7-9h-5l1-7z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg>
-        </div>
-        <input class="ed-title" value="Invoice approval flow" spellcheck="false" />
-      </div>
+      <input class="ed-title" value="Invoice approval flow" spellcheck="false" />
       <div class="ed-meta">
         <span class="saved-dot"></span>
         <span>Saved 4 minutes ago · 23 runs this week · 95% successful</span>

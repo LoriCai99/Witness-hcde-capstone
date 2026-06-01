@@ -58,14 +58,13 @@
     .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
 
     /* CONTENT */
-    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 40px; max-width: 1400px; min-width: 900px; width: 100%; margin: 0 auto; }
+    .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 52px; max-width: 1400px; min-width: 900px; width: 100%; margin: 0 auto; }
 
     /* PAGE HEADER */
-    .page-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-    .page-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .page-title-icon { width: 36px; height: 36px; border-radius: 10px; background: #120b0b; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 400; color: #120b0b; line-height: 1.2; letter-spacing: -0.5px; }
-    .page-sub { font-size: 14px; color: #45556c; line-height: 1.65; max-width: 540px; }
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .page-hd-left { display: flex; flex-direction: column; gap: 6px; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+    .page-sub { font-size: 14px; color: #45556c; line-height: 20px; letter-spacing: -0.15px; max-width: 540px; }
     .page-sub b { color: #120b0b; font-weight: 600; }
     .page-actions { display: flex; gap: 12px; flex-shrink: 0; }
     .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; border: 1px solid rgba(69,85,108,0.24); background: white; color: #120b0b; cursor: pointer; transition: all .15s; }
@@ -444,13 +443,8 @@
 
     <!-- PAGE HEADER -->
     <div class="page-hd">
-      <div>
-        <div class="page-title-row">
-          <div class="page-title-icon">
-            <svg width="20" height="20" viewbox="0 0 20 20" fill="none"><path d="M10 2L12 7L17 7.5L13.3 11L14.5 16L10 13.5L5.5 16L6.7 11L3 7.5L8 7L10 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          </div>
-          <h1 class="ptitle">AI Activity</h1>
-        </div>
+      <div class="page-hd-left">
+        <h1 class="ptitle">AI Activity</h1>
         <p class="page-sub">The full history of every invoice — <b>who did each step, and what you can still take back.</b> AI actions are reversible; auto-sent items link to the rule that authorized them.</p>
       </div>
       <div class="page-actions">
