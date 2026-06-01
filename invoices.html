@@ -236,7 +236,7 @@
   .ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
   </style>
 </head>
-<body>
+<body data-chat="slim">
 
 <!-- ─── SIDEBAR ─── -->
 <aside class="sidebar">
@@ -973,6 +973,11 @@
 <!-- Toast -->
 <div id="toast" style="position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:#120b0b;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:10px 20px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap;z-index:100"></div>
 
-<script src="witness-chat.js"></script>
+<!-- ═══════════ Witness chat panel (shared — see witness-chat-panel.{css,js}) ═══════════ -->
+<aside class="chat" id="chat"></aside>
+
+<link rel="stylesheet" href="witness-chat-panel.css">
+<script src="witness-chat-panel.js"></script>
+<script src="witness-time.js"></script>
 </body>
 </html>
