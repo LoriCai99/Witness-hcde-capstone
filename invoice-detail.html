@@ -999,11 +999,11 @@
 
     .btn-step-secondary {
       width: 100%;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border-radius: 8px;
       border: 1.5px solid transparent;
       color: #45556c;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
@@ -1019,11 +1019,11 @@
 
     .btn-step-tertiary {
       width: 100%;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border-radius: 8px;
       border: 1.5px solid transparent;
       color: #45556c;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
@@ -1082,7 +1082,7 @@
       background: #120b0b;
     }
     .btn-step-primary:not([disabled]):hover::after {
-      background: #45556c;
+      background: #120b0b;
     }
 
     /* Secondary button state colors */
@@ -4310,22 +4310,15 @@
             </div>
             <div class="next-steps" style="display: flex; flex-direction: column; gap: 8px;">
               <button class="btn-step-primary" id="btn-confirm-grn" onclick="simConfirmGRN()">
-                <span class="step-num-badge">1</span>
                 Confirm GRN with vendor — 2 units
-                <span class="auto-pill" style="margin-left: auto;">1</span>
               </button>
               <button class="btn-step-secondary" id="btn-request-credit" onclick="simRequestCredit()">
-                <span class="step-num-badge">2</span>
                 Request credit memo $1,403.34
-                <span class="auto-pill" style="margin-left: auto;">AUTO</span>
               </button>
               <button class="btn-step-secondary btn-step-ai" id="btn-nudge-park" onclick="simNudgePark()">
-                <span class="step-num-badge">3</span>
                 Nudge J. Park — discount risk
-                <span class="auto-pill" style="margin-left: auto;">AUTO</span>
               </button>
               <button class="btn-step-tertiary" id="btn-review-freight" onclick="simReviewFreight()">
-                <span class="step-num-badge">4</span>
                 Review freight contract tolerance
               </button>
             </div>
