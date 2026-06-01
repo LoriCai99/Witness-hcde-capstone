@@ -70,7 +70,7 @@
   .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; color: white; }
 
   /* ── CONTENT ── */
-  .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 32px; }
+  .content { padding: 52px 58px; display: flex; flex-direction: column; gap: 32px; max-width: 1100px; min-width: 900px; width: 100%; margin: 0 auto; }
 
   /* ── PAGE HEADER ── */
   .page-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-bottom: 8px; }
@@ -189,6 +189,12 @@
     .content { padding: 32px 28px; }
     .wf-row { grid-template-columns: 1fr; gap: 18px; }
   }
+/* ── Ask Witness button ── */
+.ask-witness-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%); color: white; border: none; border-radius: 999px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; padding: 7px 16px; cursor: pointer; flex-shrink: 0; white-space: nowrap; box-shadow: 0 2px 12px rgba(255,105,0,0.4); transition: box-shadow .2s, transform .2s, filter .2s; }
+.ask-witness-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 20px rgba(255,105,0,0.45); transform: translateY(-1px); }
+.ask-witness-btn:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(255,105,0,0.4); }
+.btn-sparkle { display: inline-block; font-size: 13px; line-height: 1; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
 </style>
 </head>
 <body>
@@ -260,6 +266,7 @@
       <span class="here">Agent Behavior</span>
     </div>
     <div class="topbar-right">
+      <button class="ask-witness-btn" onclick="window.openWitnessChat()"><span class="btn-sparkle">✦</span> Ask Witness</button>
       <span class="saved-pill" id="saveStatus">All changes saved</span>
       <div class="avatar">SM</div>
     </div>
@@ -768,5 +775,6 @@
   }
 </script>
 
+<script src="witness-chat.js"></script>
 </body>
 </html>

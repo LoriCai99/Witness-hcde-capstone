@@ -773,6 +773,15 @@
     if (document.body.getAttribute('data-chat') === 'slim') setChatMode('rail');
   };
 
+  window.openWitnessChat = function () {
+    if (typeof window.resetConvo === 'function') window.resetConvo();
+    setChatMode('rail', { persist: true });
+    setTimeout(function () {
+      var input = document.querySelector('.chat-input');
+      if (input) input.focus();
+    }, 250);
+  };
+
   // Focus the chat input with a prefilled prompt and a mode tag. Used by
   // the "Tell me what happened" link at the foot of a Suggest response so the
   // user can describe what didn't work instead of being handed yet another
@@ -943,6 +952,7 @@
       }
     });
   }
+
 
   /* ─────────── Boot ─────────── */
   function boot() {

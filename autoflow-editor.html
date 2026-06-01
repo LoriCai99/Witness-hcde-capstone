@@ -142,6 +142,26 @@
     .add-step-btn .plus { width: 16px; height: 16px; border-radius: 50%; background: var(--color-neutral-grey); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
     .add-step-btn:hover .plus { background: var(--color-brand-primary-orange-the-orange); color: white; }
 
+    /* ACTION PALETTE */
+    .palette-overlay { position: fixed; inset: 0; background: rgba(15,23,43,0.45); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .palette-overlay.open { opacity: 1; pointer-events: all; }
+    .palette { background: var(--color-neutral-white); border-radius: 16px; box-shadow: 0 24px 64px rgba(0,0,0,0.18); width: 540px; max-width: calc(100vw - 48px); overflow: hidden; transform: translateY(10px) scale(0.98); transition: transform .2s; }
+    .palette-overlay.open .palette { transform: translateY(0) scale(1); }
+    .palette-hd { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--color-neutral-lotion); }
+    .palette-hd-title { font-size: 15px; font-weight: 600; color: var(--color-neutral-black); letter-spacing: -0.2px; }
+    .palette-hd-sub { font-size: 12px; color: var(--color-neutral-cool-grey); margin-top: 2px; }
+    .palette-close { width: 28px; height: 28px; border-radius: 8px; border: none; background: var(--color-neutral-grey); color: var(--color-neutral-cool-grey); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .palette-close:hover { background: var(--color-neutral-lotion); color: var(--color-neutral-black); }
+    .palette-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 16px 24px 24px; }
+    .palette-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; border: 1.5px solid var(--color-neutral-lotion); cursor: pointer; transition: all .15s; background: var(--color-neutral-white); text-align: left; font-family: 'Inter', sans-serif; }
+    .palette-card:hover { border-color: var(--color-brand-primary-orange-the-orange); background: var(--color-brand-primary-orange-glare); box-shadow: 0 2px 8px rgba(255,92,27,0.08); }
+    .palette-card-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--color-neutral-grey); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; transition: background .15s; }
+    .palette-card:hover .palette-card-icon { background: var(--color-brand-primary-orange-touch); }
+    .palette-card-name { font-size: 13px; font-weight: 600; color: var(--color-neutral-black); letter-spacing: -0.1px; margin-bottom: 3px; }
+    .palette-card-desc { font-size: 11px; color: var(--color-neutral-cool-grey); line-height: 15px; }
+    @keyframes nodeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .node.new-node { animation: nodeIn .25s ease forwards; }
+
     /* SIDE PANEL */
     .side-panel { width: 380px; background: var(--color-neutral-white); border-left: 1px solid var(--color-neutral-lotion); flex-shrink: 0; display: flex; flex-direction: column; transform: translateX(100%); transition: transform .25s ease; position: absolute; right: 0; top: 0; bottom: 0; box-shadow: -4px 0 24px rgba(0,0,0,0.04); }
     .side-panel.open { transform: translateX(0); }
@@ -202,6 +222,12 @@
     .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
     .sidebar.collapsed .nav-item.active { padding: 8px 0; }
     .sidebar.collapsed .nav-badge { display: none; }
+  /* ── Ask Witness button ── */
+  .ask-witness-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%); color: white; border: none; border-radius: 999px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; padding: 7px 16px; cursor: pointer; flex-shrink: 0; white-space: nowrap; box-shadow: 0 2px 12px rgba(255,105,0,0.4); transition: box-shadow .2s, transform .2s, filter .2s; }
+  .ask-witness-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 20px rgba(255,105,0,0.45); transform: translateY(-1px); }
+  .ask-witness-btn:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(255,105,0,0.4); }
+  .btn-sparkle { display: inline-block; font-size: 13px; line-height: 1; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
   </style>
 </head>
 <body data-chat="rail">
@@ -273,10 +299,7 @@
       </nav>
     </div>
     <div class="topbar-right">
-      <div class="health-chip">
-        <span class="hdot"></span>
-        <span>All systems healthy</span>
-      </div>
+      <button class="ask-witness-btn" onclick="window.openWitnessChat && window.openWitnessChat()"><span class="btn-sparkle">✦</span> Ask Witness</button>
       <div class="avatar">SC</div>
     </div>
   </header>
@@ -428,6 +451,63 @@
 
       </div>
     </main>
+
+    <!-- Action palette overlay -->
+    <div class="palette-overlay" id="paletteOverlay">
+      <div class="palette">
+        <div class="palette-hd">
+          <div>
+            <div class="palette-hd-title">Add a step</div>
+            <div class="palette-hd-sub">Choose what this step should do</div>
+          </div>
+          <button class="palette-close" id="paletteClose">×</button>
+        </div>
+        <div class="palette-grid">
+          <button class="palette-card" data-step="check">
+            <div class="palette-card-icon">◎</div>
+            <div>
+              <div class="palette-card-name">Check / Validate</div>
+              <div class="palette-card-desc">Run a data check, match, or validation rule.</div>
+            </div>
+          </button>
+          <button class="palette-card" data-step="notify">
+            <div class="palette-card-icon">✉</div>
+            <div>
+              <div class="palette-card-name">Notify</div>
+              <div class="palette-card-desc">Send a message, email, or Slack alert.</div>
+            </div>
+          </button>
+          <button class="palette-card" data-step="approve">
+            <div class="palette-card-icon">✓</div>
+            <div>
+              <div class="palette-card-name">Request approval</div>
+              <div class="palette-card-desc">Pause and wait for a human to approve before continuing.</div>
+            </div>
+          </button>
+          <button class="palette-card" data-step="update">
+            <div class="palette-card-icon">✎</div>
+            <div>
+              <div class="palette-card-name">Update a record</div>
+              <div class="palette-card-desc">Write or update data in a connected system.</div>
+            </div>
+          </button>
+          <button class="palette-card" data-step="wait">
+            <div class="palette-card-icon">⏱</div>
+            <div>
+              <div class="palette-card-name">Wait / Delay</div>
+              <div class="palette-card-desc">Pause until a condition is met or a time passes.</div>
+            </div>
+          </button>
+          <button class="palette-card" data-step="custom">
+            <div class="palette-card-icon">✦</div>
+            <div>
+              <div class="palette-card-name">Custom step</div>
+              <div class="palette-card-desc">Start from a blank step and define it yourself.</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Side panel -->
     <aside class="side-panel" id="sidePanel">
@@ -659,10 +739,109 @@
   // Esc closes panel
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
 
-  // Add step button placeholder
-  document.querySelector('.add-step-btn').addEventListener('click', () => {
-    alert('Prototype: this would open the action palette to insert a new step.');
+  // ────────────── Action palette ──────────────
+  const stepTemplates = {
+    check: {
+      type: 'Action', title: 'New validation check',
+      desc: 'Define a validation rule or data check.',
+      aiCanDo: ['Read data from connected systems', 'Compare values against your rules', 'Flag mismatches for review'],
+      fallback: 'Route to manual review if the check cannot complete.',
+    },
+    notify: {
+      type: 'Action', title: 'Send notification',
+      desc: 'Notify a person, team, or system.',
+      aiCanDo: ['Draft the message using invoice data', 'Send to Slack, email, or in-app', 'Log the notification in the run history'],
+    },
+    approve: {
+      type: 'Action', title: 'Request approval',
+      desc: 'Hold the flow until a human approves.',
+      aiCanDo: ['Pre-fill the approval card with context', 'Surface similar past approvals', 'Send a reminder if no response after 4 hours'],
+      fallback: 'Escalate to backup approver if primary is unavailable.',
+    },
+    update: {
+      type: 'Action', title: 'Update record',
+      desc: 'Write data back to a connected system.',
+      aiCanDo: ['Update the record in your ERP', 'Write to spreadsheets or databases', 'Confirm the write succeeded'],
+      fallback: 'If the write fails, retry 3 times then alert the team.',
+    },
+    wait: {
+      type: 'Action', title: 'Wait',
+      desc: 'Pause the flow until a condition is met or time passes.',
+      aiCanDo: ['Monitor for the condition', 'Resume automatically when ready', 'Time out and escalate if waiting too long'],
+    },
+    custom: {
+      type: 'Action', title: 'New step',
+      desc: 'Describe what this step does.',
+      aiCanDo: [],
+    },
+  };
+
+  const paletteOverlay = document.getElementById('paletteOverlay');
+
+  function openPalette() { paletteOverlay.classList.add('open'); }
+  function closePalette() { paletteOverlay.classList.remove('open'); }
+
+  document.getElementById('paletteClose').addEventListener('click', closePalette);
+  paletteOverlay.addEventListener('click', e => { if (e.target === paletteOverlay) closePalette(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && paletteOverlay.classList.contains('open')) closePalette(); });
+
+  document.querySelectorAll('.palette-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const template = stepTemplates[card.dataset.step];
+      const newId = 'step_' + Date.now();
+
+      nodeData[newId] = { ...template };
+
+      const connectorEl = document.createElement('div');
+      connectorEl.className = 'connector';
+
+      const nodeEl = document.createElement('div');
+      nodeEl.className = 'node new-node';
+      nodeEl.dataset.node = newId;
+      nodeEl.dataset.perm = 'suggest';
+      nodeEl.innerHTML = `
+        <div class="node-hd"><span class="node-type">${template.type}</span></div>
+        <div class="node-title">${template.title}</div>
+        <div class="perm-toggle" data-target="${newId}">
+          <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+          <button class="perm-opt active" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+          <button class="perm-opt" data-perm="auto"><span class="pdot"></span>Auto</button>
+        </div>
+        <div class="node-desc">${template.desc}</div>
+      `;
+
+      nodeEl.querySelectorAll('.perm-opt').forEach(opt => {
+        opt.addEventListener('click', e => {
+          e.stopPropagation();
+          const newPerm = opt.dataset.perm;
+          const toggle = opt.closest('.perm-toggle');
+          toggle.querySelectorAll('.perm-opt').forEach(b => b.classList.remove('active'));
+          opt.classList.add('active');
+          nodeEl.dataset.perm = newPerm;
+          if (panel.classList.contains('open') && panel.dataset.current === newId) {
+            renderPanel(newId, newPerm);
+          }
+        });
+      });
+
+      nodeEl.addEventListener('click', e => {
+        if (e.target.closest('.perm-toggle')) return;
+        openPanelFor(newId);
+      });
+
+      const addBtn = document.querySelector('.add-step-btn');
+      addBtn.parentNode.insertBefore(connectorEl, addBtn);
+      addBtn.parentNode.insertBefore(nodeEl, addBtn);
+
+      closePalette();
+      setTimeout(() => {
+        nodeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        openPanelFor(newId);
+      }, 50);
+    });
   });
+
+  document.querySelector('.add-step-btn').addEventListener('click', openPalette);
 </script>
 
 <script>
