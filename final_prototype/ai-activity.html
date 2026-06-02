@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Witness – AI Activity</title>
+  <style>
+    @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; src: url('https://raw.githubusercontent.com/rsms/inter/master/docs/font-files/Inter-Regular.woff2') format('woff2'); }
+    @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; src: url('https://raw.githubusercontent.com/rsms/inter/master/docs/font-files/Inter-Medium.woff2') format('woff2'); }
+    @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; src: url('https://raw.githubusercontent.com/rsms/inter/master/docs/font-files/Inter-SemiBold.woff2') format('woff2'); }
+    @font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; src: url('https://raw.githubusercontent.com/rsms/inter/master/docs/font-files/Inter-Bold.woff2') format('woff2'); }
+    @font-face { font-family: 'Playfair Display'; font-style: normal; font-weight: 400; src: url('https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvXDXbtY.woff2') format('woff2'); }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; src: url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/fonts/webfonts/JetBrainsMono-Regular.woff2') format('woff2'); }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; src: url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/fonts/webfonts/JetBrainsMono-Medium.woff2') format('woff2'); }
+    @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; src: url('https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/fonts/webfonts/JetBrainsMono-SemiBold.woff2') format('woff2'); }
+  </style>
+  <style>
+    :root {
+      --color-neutral-white: #ffffff;
+      --color-neutral-black: #120b0b;
+      --color-neutral-grey: #f4f4f4;
+      --color-neutral-lotion: #f0f0f0;
+      --color-neutral-cool-grey: #45556c;
+      --color-neutral-dark-grey: #9f9fa6;
+      --color-brand-primary-orange-the-orange: #FF6900;
+      --color-semantic-success-100: #dcfce7;
+      --color-semantic-success-500: #16a34a;
+      --color-semantic-success-1000: #15803d;
+    }
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    button, input, select, textarea { font: inherit; }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #fff; color: #0b0d12; overflow: hidden; --sidebar-w: 258px; --chat-w: 340px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body:has(.sidebar.collapsed) { --sidebar-w: 72px; }
+    body[data-chat="float"] { --chat-w: 0px; }
+    body[data-chat="slim"]  { --chat-w: 0px; }
+    .app-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--chat-w); transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1); }
+
+    /* SIDEBAR (matches dashboard.html) */
+    .sidebar { position: relative; height: 100%; background: #f4f4f4; display: flex; flex-direction: column; overflow-y: auto; overflow-x: visible; transition: width .2s ease; }
+    .sidebar.collapsed { overflow: visible; }
+    .sidebar.collapsed .sidebar-nav { overflow: visible; }
+    .sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .brand-logo { width: 32px; height: 32px; background: #120b0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .brand-logo img { width: 20px; height: 20px; display: block; object-fit: contain; }
+    .brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
+    .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+    .nav-group { display: flex; flex-direction: column; gap: 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-items { display: flex; flex-direction: column; gap: 1px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: #6b7a92; font-size: 13.5px; font-weight: 500; line-height: 20px; letter-spacing: -0.1px; text-decoration: none; cursor: pointer; transition: background .12s, color .12s; }
+    .nav-item:hover { background: rgba(0,0,0,0.045); color: #120b0b; }
+    .nav-item.active { background: white; color: #120b0b; font-weight: 600; border-radius: 0 8px 8px 0; box-shadow: inset 3px 0 0 #FF6900; }
+    .nav-item.active svg { color: #120b0b; }
+    .nav-item img, .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; color: inherit; transition: color .12s; }
+    .nav-badge { margin-left: auto; background: #eef0f3; color: #45556c; font-size: 11px; font-weight: 600; line-height: 1; padding: 3px 7px; border-radius: 999px; font-variant-numeric: tabular-nums; transition: background .12s, color .12s; }
+    .nav-badge.ai { background: #fff0e8; color: #FF6900; }
+    .nav-item.active .nav-badge { background: #FFE8DF; color: #FF6900; }
+    .nav-item.active .nav-badge.ai { background: #FFE8DF; color: #FF6900; }
+    .nav-item[data-tip="AI Activity"].active .nav-badge { background: #FFE8DF; color: #FF6900; }
+
+    /* sidebar collapse */
+    .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
+    .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
+    .sidebar-toggle svg { transition: transform .2s; }
+    .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+    .sidebar.collapsed .brand-name { display: none; }
+    .sidebar.collapsed .sidebar-toggle { position: fixed; top: 80px; right: -14px; background: #fff; border: 1.5px solid #e9e9e9; box-shadow: 0 2px 8px rgba(0,0,0,0.12); width: 28px; height: 28px; border-radius: 50%; margin: 0; z-index: 35; }
+    .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+    .sidebar.collapsed .nav-label { display: none; }
+    .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: visible; }
+    .sidebar.collapsed .nav-item.active { padding: 8px 0; }
+    .sidebar.collapsed .nav-badge { display: none; }
+
+    /* TOPBAR */
+    .main { height: 100%; overflow-y: auto; overflow-x: auto; min-width: 0; display: flex; flex-direction: column; }
+    .topbar { position: sticky; top: 0; z-index: 10; background: white; border-bottom: 1px solid #ededed; display: flex; align-items: center; justify-content: space-between; padding: 23px 24px; flex-shrink: 0; }
+    .crumbs { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #45556c; letter-spacing: -0.15px; }
+    .crumbs a { color: #45556c; text-decoration: none; cursor: pointer; }
+    .crumbs a:hover { color: #120b0b; }
+    .crumbs .sep { color: #c8d0db; }
+    .crumbs .here { color: #120b0b; font-weight: 600; }
+    .topbar-right { display: flex; align-items: center; gap: 24px; }
+    .health-chip { display: flex; align-items: center; gap: 8px; background: #dcfce7; border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
+    .health-chip .hdot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
+    .health-chip span { font-size: 14px; font-weight: 500; color: #00a63e; letter-spacing: -0.15px; white-space: nowrap; }
+    .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+
+    /* GREETING HEADER */
+    .greeting { display: flex; flex-direction: column; gap: 24px; }
+    .greeting-title-row { display: flex; align-items: center; gap: 12px; }
+    .greeting-title-row .gclock { margin-left: auto; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #45556c; letter-spacing: -0.1px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; background: #f6f6f6; border-radius: 999px; padding: 6px 12px; }
+    h1.gtitle { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 400; color: #120b0b; line-height: 1.3; }
+    p.gsub { font-size: 22px; line-height: 32px; color: #120b0b; letter-spacing: 0.07px; }
+    p.gsub b { font-weight: 600; }
+    .hd-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .btn-outline { background: #fff5f1; border: 1.5px solid #ffd7c2; border-radius: 8px; padding: 0 16px; height: 34px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 700; color: #FF6900; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: background .12s, border-color .12s; }
+    .btn-outline:hover { background: #ffe8df; border-color: #FF6900; }
+    .btn-solid { background: #fff5f1; border: 1.5px solid #ffd7c2; border-radius: 8px; padding: 0 16px; height: 34px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 700; color: #FF6900; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; text-decoration: none; transition: background .12s, border-color .12s; }
+    .btn-solid:hover { background: #ffe8df; border-color: #FF6900; }
+    /* Ask Witness button */
+    .ask-witness-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%); color: white; border: none; border-radius: 999px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; padding: 7px 16px; cursor: pointer; flex-shrink: 0; white-space: nowrap; box-shadow: 0 2px 12px rgba(255,105,0,0.4); transition: box-shadow .2s, transform .2s, filter .2s; }
+    .ask-witness-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 20px rgba(255,105,0,0.45); transform: translateY(-1px); }
+    .ask-witness-btn:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(255,105,0,0.4); }
+    .btn-sparkle { display: inline-block; font-size: 13px; line-height: 1; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
+
+    /* CONTENT */
+    .content { padding: 32px 32px; display: flex; flex-direction: column; gap: 32px; width: 100%; }
+
+    /* PAGE HEADER */
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .page-hd-left { display: flex; flex-direction: column; gap: 6px; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+    .page-sub { font-size: 14px; color: #45556c; line-height: 20px; letter-spacing: -0.15px; max-width: 540px; }
+    .page-sub b { color: #120b0b; font-weight: 600; }
+    .page-actions { display: flex; gap: 12px; flex-shrink: 0; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 500; border: 1px solid rgba(69,85,108,0.24); background: white; color: #120b0b; cursor: pointer; transition: all .15s; }
+    .btn:hover { background: #f4f4f4; }
+    .btn.solid { background: #120b0b; color: white; border-color: #120b0b; }
+    .btn.solid:hover { background: #45556c; }
+
+    /* PERIOD SELECTOR (compact, lives inside filter-bar) */
+    .period-select { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px 7px 10px; background: white; border: 1px solid rgba(69,85,108,0.24); border-radius: 8px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 500; color: #120b0b; cursor: pointer; }
+    .period-select:hover { background: #f4f4f4; }
+    .period-select .pulse { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; animation: pls 2s ease-in-out infinite; flex-shrink: 0; }
+    .period-select .period-current { font-weight: 600; }
+    .period-select .period-range-mini { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; color: #adadad; padding-left: 8px; border-left: 1px solid #e9e9e9; }
+    .period-select .chev { color: #adadad; }
+    @keyframes pls { 0%,100%{opacity:1} 50%{opacity:.35} }
+    /* dropdown menu */
+    .period-menu { position: absolute; top: calc(100% + 6px); right: 0; background: white; border: 1px solid #e9e9e9; border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,0.08); padding: 4px; min-width: 180px; display: none; z-index: 20; }
+    .period-select.open .period-menu { display: block; }
+    .period-menu button { display: block; width: 100%; text-align: left; font-size: 13px; font-weight: 500; padding: 8px 12px; border-radius: 6px; border: none; background: transparent; color: #45556c; cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .period-menu button:hover { background: #f4f4f4; color: #120b0b; }
+    .period-menu button.active { background: #f4f4f4; color: #120b0b; font-weight: 600; }
+
+    /* SUMMARY STATS — matches autoflow */
+    @property --grad-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    @keyframes grad-spin { from { --grad-angle: 0deg; } to { --grad-angle: 360deg; } }
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .stat-card {
+      background: white; border: 1px solid #e9e9e9; border-radius: 12px; padding: 18px;
+      display: flex; flex-direction: column; gap: 14px; min-width: 0;
+      transition: border-color .15s;
+    }
+    .stat-card::before, .stat-card::after { display: none; }
+    .stat-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+    .stat-icon-wrap { width: 34px; height: 34px; min-width: 34px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
+    .stat-icon-wrap.g { background: #dcfce7; color: #16a34a; }
+    .stat-icon-wrap.b { background: #e7f4ff; color: #155dfc; }
+    .stat-icon-wrap.a { background: #fdf2d4; color: #b17728; }
+    .stat-icon-wrap.o { background: #fff5f1; color: #ff6900; }
+    .stat-mid { display: flex; flex-direction: column; gap: 4px; }
+    .stat-num { font-size: 30px; font-weight: 600; color: #0b0d12; line-height: 1; font-variant-numeric: tabular-nums; }
+    .stat-lbl { font-size: 14px; font-weight: 500; color: #45556c; letter-spacing: 0; }
+    .stat-foot { display: flex; flex-direction: column; gap: 6px; min-height: 28px; }
+    .stat-foot-lbl { font-size: 12px; color: #45556c; font-weight: 400; }
+    .stat-bot { display: flex; align-items: center; justify-content: space-between; }
+    .stat-meta { font-size: 11px; color: #45556c; margin-top: 6px; }
+
+    .filter-bar { display: flex; flex-direction: column; gap: 10px; }
+    .filter-bar-top { display: flex; align-items: center; gap: 16px; }
+    .filter-tabs { display: flex; gap: 4px; padding: 4px; background: #f4f4f4; border-radius: 12px; border: 1px solid #e9e9e9; width: fit-content; }
+    .ftab { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; background: transparent; border: 0; border-radius: 8px; cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 500; color: #45556c; line-height: 1.25; letter-spacing: -0.1px; transition: background .15s ease, color .15s ease, box-shadow .15s ease; outline: none; white-space: nowrap; }
+    .ftab:hover { color: #0b0d12; background: rgba(255,255,255,0.6); }
+    .ftab.active { background: white; color: #0b0d12; font-weight: 600; box-shadow: 0 1px 2px rgba(11,13,18,0.06), 0 0 0 1px #e9e9e9; }
+    .ftab-dot { display: inline-block; width: 8px; height: 8px; min-width: 8px; border-radius: 50%; flex-shrink: 0; }
+    .count { display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px; font-variant-numeric: tabular-nums; background: #e9e9e9; color: #45556c; line-height: 1.4; }
+    .ftab[data-type="all"].active .count    { background: #FF6900; color: white; }
+    .ftab[data-type="auto"] .ftab-dot      { background: #16a34a; }
+    .ftab[data-type="auto"] .count         { background: #dcfce7; color: #15803d; }
+    .ftab[data-type="routed"] .ftab-dot    { background: #155dfc; }
+    .ftab[data-type="routed"] .count       { background: #e7f4ff; color: #155dfc; }
+    .ftab[data-type="waiting"] .ftab-dot   { background: #e9b44c; }
+    .ftab[data-type="waiting"] .count      { background: #fdf2d4; color: #b17728; }
+    .ftab[data-type="skipped"] .ftab-dot   { background: #adadad; }
+    .ftab[data-type="skipped"] .count      { background: #f4f4f4; color: #45556c; }
+    .search-wrap { position: relative; display: flex; align-items: center; }
+    .search-wrap svg { position: absolute; left: 10px; color: #adadad; pointer-events: none; }
+    .search-input { width: 280px; padding: 8px 12px 8px 32px; border: 1px solid rgba(69,85,108,0.24); border-radius: 8px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 13px; color: #120b0b; background: white; outline: none; }
+    .search-input:focus { border-color: rgba(69,85,108,0.4); box-shadow: none; outline: none; }
+
+    /* TIMELINE */
+    .timeline { display: flex; flex-direction: column; }
+    .day-group { margin-bottom: 8px; }
+    .day-header { display: flex; align-items: center; gap: 12px; padding: 12px 0; margin-bottom: 8px; }
+    .day-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
+    .day-line { flex: 1; height: 1px; background: #e9e9e9; }
+    .day-count { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; color: #adadad; }
+
+    .log-card {
+      background: none;
+      border: 1px solid #e9e9e9;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      position: relative;
+      z-index: 0;
+      isolation: isolate;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    /* Clip inner content without clipping the ::before ring */
+    .log-head, .log-detail { overflow: hidden; background: white; }
+    .log-head { border-radius: 10px 10px 0 0; }
+    .log-card:not(.open) .log-head { border-radius: 10px; }
+    /* Gradient ring — always spinning, revealed on hover */
+    .log-card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 12px;
+      background: conic-gradient(
+        from var(--grad-angle),
+        #FF6900 0%, #FFD000 20%, #FFB347 35%, #fff0e0 48%,
+        #FF6900 58%, #FFD000 74%, #FFB347 86%, #fff0e0 94%, #FF6900 100%
+      );
+      animation: grad-spin 4.5s linear infinite;
+      opacity: 0;
+      transition: opacity .35s ease;
+      z-index: -1;
+      pointer-events: none;
+    }
+    /* White inset — only 2px ring peeks through */
+    .log-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      background: white;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .log-card:hover { border-color: transparent; }
+    .log-card:hover::before { opacity: 1; }
+    .log-card:target { border-color: #155dfc; box-shadow: 0 0 0 3px rgba(21,93,252,0.10); scroll-margin-top: 96px; }
+
+    .log-head { padding: 18px 20px; display: grid; grid-template-columns: 14px 1fr auto; gap: 14px; cursor: pointer; align-items: flex-start; position: relative; }
+    .log-head:hover::after { display: none; }
+    .log-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+    .log-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .log-dot.g { background: #16a34a; }
+    .log-dot.a { background: #e9b44c; }
+    .log-dot.b { background: #155dfc; }
+    .log-dot.o { background: #ff6900; }
+    .log-dot.gr { background: #adadad; }
+
+    .log-main { min-width: 0; }
+    .log-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+    .log-title { font-size: 14px; font-weight: 600; color: #120b0b; line-height: 1.4; }
+    .log-time { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #adadad; margin-left: auto; flex-shrink: 0; }
+    .log-desc { font-size: 13px; color: #45556c; line-height: 1.65; margin-bottom: 14px; }
+    .log-meta-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .actor { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; }
+    .actor.ai { background: #ffe0ca; color: #d95b03; }
+    .actor.hu { background: #f1f1f1; color: #45556c; }
+    .actor.wa { background: #fdf2d4; color: #b17728; }
+    .actor.of { background: #e9e9e9; color: #45556c; }
+    .via { font-size: 11px; color: #adadad; }
+    .conf-pill { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: #f1f1f1; color: #45556c; margin-left: auto; }
+    .log-chev { color: #adadad; transition: transform .2s; flex-shrink: 0; align-self: flex-start; padding-top: 4px; }
+    .log-card.open .log-chev { transform: rotate(180deg); }
+
+    /* expanded panel */
+    .log-detail { display: none; padding: 20px 24px 24px 48px; border-top: 1px solid #e9e9e9; background: #f4f4f4; }
+    .log-card.open .log-detail { display: block; }
+    .log-card:target .log-detail { display: block; }
+
+    .ld-section { margin-bottom: 18px; }
+    .ld-section:last-of-type { margin-bottom: 0; }
+    .ld-sec-label { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; font-weight: 600; letter-spacing: .08em; margin-bottom: 8px; }
+    .ld-sec-label.read { color: #155dfc; }
+    .ld-sec-label.wrote { color: #d95b03; }
+    .ld-sec-label.skip { color: #45556c; }
+    .ld-sec-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .ld-sec-dot.read { background: #155dfc; }
+    .ld-sec-dot.wrote { background: #d95b03; }
+    .ld-sec-dot.skip { background: #45556c; }
+    .ld-line { font-size: 12.5px; color: #45556c; padding: 4px 0 4px 18px; line-height: 1.65; }
+    .ld-line .arrow { color: #adadad; margin-right: 6px; }
+    .ld-line .src { color: #adadad; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; }
+    .ld-line strong { color: #120b0b; font-weight: 600; }
+    .ld-line.skipped { color: #adadad; font-style: italic; }
+    .ld-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .ld-btn { font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 8px; border: 1px solid rgba(69,85,108,0.24); background: white; color: #120b0b; cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: all .15s; }
+    .ld-btn:hover { background: #f4f4f4; }
+    .ld-btn.undo { color: #45556c; }
+    .ld-btn.undo:hover { color: #dc2626; border-color: #dc2626; }
+    .ld-btn.verify { background: #dcfce7; color: #16a34a; border-color: #dcfce7; }
+    .ld-btn.review { background: #d95b03; color: white; border-color: #d95b03; }
+    .ld-btn.review:hover { background: #b84a00; border-color: #b84a00; }
+
+    /* In-card duplicate comparison view */
+    .ld-compare { display: none; }
+    .log-card.compare-mode .ld-summary { display: none; }
+    .log-card.compare-mode .ld-compare { display: block; }
+
+    .cmp-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .cmp-back { font-size: 11.5px; color: #45556c; background: transparent; border: none; padding: 2px 0; cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif; display: inline-flex; align-items: center; gap: 4px; }
+    .cmp-back:hover { color: #120b0b; }
+    .cmp-title { font-size: 11.5px; font-weight: 600; color: #120b0b; font-family: 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .02em; }
+
+    .cmp-ai { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #45556c; margin-bottom: 12px; padding: 8px 12px; background: #fff; border: 1px solid #e9e9e9; border-radius: 6px; }
+    .cmp-ai-icon { color: #ff6900; font-size: 13px; }
+    .cmp-ai strong { color: #120b0b; font-weight: 600; }
+
+    .cmp-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e9e9e9; border-radius: 6px; overflow: hidden; font-size: 11.5px; }
+    .cmp-table th { text-align: left; padding: 8px 12px; background: #fafafa; color: #45556c; font-weight: 600; font-size: 10px; letter-spacing: .06em; border-bottom: 1px solid #e9e9e9; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .cmp-table td { padding: 7px 12px; color: #120b0b; border-bottom: 1px solid #f0f0f0; line-height: 1.4; }
+    .cmp-table tr:last-child td { border-bottom: none; }
+    .cmp-table td.cmp-label { color: #45556c; font-weight: 500; }
+    .cmp-table td.cmp-ok { color: #16a34a; font-weight: 600; }
+    .cmp-table td.cmp-warn { color: #b17728; font-weight: 600; }
+    .cmp-table td.cmp-crit { color: #dc2626; font-weight: 600; }
+    .cmp-table td.cmp-dim { color: #adadad; }
+    .cmp-table tr.diff td:not(.cmp-label) { background: #fef9ec; }
+
+    .cmp-stake { margin-top: 12px; padding: 10px 14px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; font-size: 12px; color: #b91c1c; display: flex; align-items: center; gap: 8px; }
+    .cmp-stake strong { color: #dc2626; font-weight: 600; }
+
+    .ld-compare .ld-actions { align-items: center; }
+    .cmp-link { font-size: 12px; color: #45556c; text-decoration: none; padding: 6px 4px; margin-left: auto; }
+    .cmp-link:hover { color: #120b0b; }
+
+    /* FOOTER NOTE */
+    .footer-note { padding: 16px 20px; background: #fff5f1; border-left: 4px solid #FF6900; border-radius: 0 8px 8px 0; font-size: 13.5px; color: #d95b03; line-height: 1.6; }
+
+    /* ═══ INVOICE-CENTRIC HISTORY (per-invoice trace + revert/permission) ═══ */
+    .inv-list { display: flex; flex-direction: column; }
+    .inv-card { background: none; border: 1px solid #e9e9e9; border-radius: 10px; margin-bottom: 8px; overflow: visible; transition: border-color .2s ease; position: relative; z-index: 0; isolation: isolate; }
+    .inv-card::before { content: ''; position: absolute; inset: -2px; border-radius: 12px; background: conic-gradient(from var(--grad-angle), #FF6900 0%, #FFD000 20%, #FFB347 35%, #fff0e0 48%, #FF6900 58%, #FFD000 74%, #FFB347 86%, #fff0e0 94%, #FF6900 100%); animation: grad-spin 4.5s linear infinite; opacity: 0; transition: opacity .35s ease; z-index: -1; pointer-events: none; }
+    .inv-card::after { content: ''; position: absolute; inset: 0; border-radius: 10px; background: white; z-index: -1; pointer-events: none; }
+    .inv-card:hover { border-color: transparent; }
+    .inv-card:hover::before { opacity: 1; }
+    .inv-card.open { }
+
+    .inv-head { padding: 16px 20px; display: grid; grid-template-columns: 10px 1fr auto auto; gap: 16px; cursor: pointer; align-items: center; position: relative; background: white; border-radius: 10px 10px 0 0; }
+    .inv-card:not(.open) .inv-head { border-radius: 10px; }
+    .inv-head:hover::after { display: none; }
+    .inv-status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .inv-status-dot.held { background: #e9b44c; }
+    .inv-status-dot.dup { background: #ff6900; }
+    .inv-status-dot.scheduled { background: #16a34a; }
+    .inv-status-dot.done { background: #16a34a; }
+    .inv-status-dot.draft { background: #155dfc; }
+
+    .inv-main { min-width: 0; }
+    .inv-top { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 3px; }
+    .inv-id { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; color: #120b0b; letter-spacing: -0.2px; }
+    .inv-vendor { font-size: 13px; color: #45556c; }
+    .inv-sep { color: #d4d4d4; font-size: 11px; }
+    .inv-amount { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; color: #120b0b; font-weight: 500; }
+    .inv-status-line { font-size: 12.5px; color: #45556c; line-height: 1.65; }
+    .inv-status-line b { color: #120b0b; font-weight: 600; }
+
+    .inv-meta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .inv-last { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; color: #adadad; white-space: nowrap; }
+    .inv-chev { color: #adadad; transition: transform .2s; flex-shrink: 0; }
+    .inv-card.open .inv-chev { transform: rotate(180deg); }
+    .inv-toggle-btn { background: none; border: 0; cursor: pointer; padding: 4px 8px; margin-left: 4px; color: #45556c; font-size: 11px; font-weight: 500; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-family: 'Inter', system-ui, -apple-system, sans-serif; flex-shrink: 0; white-space: nowrap; }
+    .inv-toggle-btn:hover { background: #f4f4f4; color: #0b0d12; }
+    .inv-toggle-btn svg { transition: transform .2s; }
+    .inv-card.open .inv-toggle-btn svg { transform: rotate(-90deg); }
+
+    /* expanded history timeline */
+    .inv-body { display: none; padding: 0 22px 18px 22px; background: white; border-radius: 0 0 10px 10px; }
+    .inv-card.open .inv-body { display: block; }
+
+    .hist-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; font-weight: 600; letter-spacing: .1em; color: #adadad; padding: 14px 0 10px; border-top: 1px solid #f0f0f0; display: flex; align-items: center; gap: 8px; }
+    .hist-label .hl-count { color: #d4d4d4; font-weight: 500; }
+
+    .hist-list { position: relative; padding-left: 4px; }
+    .hist-list::before { content: ''; position: absolute; left: 17px; top: 14px; bottom: 14px; width: 1px; background: #ededed; }
+
+    .hist-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 14px; align-items: flex-start; padding: 10px 0; position: relative; }
+
+    .who { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; font-weight: 600; position: relative; z-index: 1; box-shadow: 0 0 0 3px #fff; line-height: 1; }
+    .who.ai  { background: #ffe0ca; color: #d95b03; }
+    .who.you { background: #0f172b; color: #fff; font-size: 10px; }
+    .who.sys { background: #f4f4f4; color: #adadad; font-size: 14px; border: 1.5px solid #e9e9e9; }
+
+    .hist-body { min-width: 0; padding-top: 3px; }
+    .hist-headline { font-size: 13px; color: #120b0b; line-height: 1.45; font-weight: 500; }
+    .hist-headline b { font-weight: 600; }
+    .hist-headline .hist-who-name { color: #adadad; font-weight: 500; font-size: 11.5px; margin-right: 6px; }
+    .hist-sub { font-size: 12px; color: #45556c; line-height: 1.65; margin-top: 4px; }
+    .hist-sub a { color: #d95b03; text-decoration: none; font-weight: 500; }
+    .hist-sub a:hover { text-decoration: underline; }
+    .hist-sub .arr { color: #d4d4d4; margin-right: 6px; }
+
+    .hist-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; padding-top: 5px; }
+    .hist-time { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10.5px; color: #adadad; white-space: nowrap; }
+
+    .hist-act { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 8px; border: 1.5px solid #ffd7c2; background: #fff5f1; color: #FF6900; cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background .12s, border-color .12s; white-space: nowrap; text-decoration: none; }
+    .hist-act:hover { background: #ffe8df; border-color: #FF6900; }
+    .hist-act.revert { border-color: #fecaca; background: #fef2f2; color: #dc2626; }
+    .hist-act.revert:hover { background: #fee2e2; border-color: #dc2626; }
+    .hist-act.perm { border-color: #ffd7c2; background: #fff5f1; color: #FF6900; }
+    .hist-act.perm:hover { background: #ffe8df; border-color: #FF6900; }
+    .hist-act.locked { color: #adadad; cursor: not-allowed; border-color: #ededed; background: white; }
+    .hist-act.locked:hover { color: #adadad; border-color: #ededed; background: white; }
+    .hist-row.reverted { opacity: 0.45; transition: opacity .2s; }
+
+    .inv-foot { display: flex; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #f0f0f0; }
+    .inv-foot .ib { font-size: 12px; font-weight: 500; padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(69,85,108,0.24); background: white; color: #120b0b; cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .inv-foot .ib:hover { background: #f4f4f4; }
+    .inv-foot .ib.primary { background: #FF6900; color: white; border-color: #FF6900; }
+    .inv-foot .ib.primary:hover { background: #d95b03; border-color: #d95b03; }
+    .inv-foot .ib.attn { background: #FF6900; color: white; border-color: #FF6900; }
+    .inv-foot .ib.attn:hover { background: #d95b03; border-color: #d95b03; }
+
+    .show-more { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; margin-top: 8px; font-size: 12.5px; color: #45556c; background: transparent; border: 1px dashed #d4d4d4; border-radius: 10px; cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .show-more:hover { color: #120b0b; border-color: #45556c; background: #fafafa; }
+    .show-more b { color: #120b0b; font-weight: 600; }
+
+    /* Inline "Why allowed / Why waiting" provenance (default closed, click to reveal) */
+    .why-toggle { margin-top: 8px; font-size: 11.5px; font-weight: 500; padding: 4px 10px; border-radius: 6px; border: 1px dashed #e0e0e0; background: transparent; color: #45556c; cursor: pointer; font-family: 'Inter', system-ui, -apple-system, sans-serif; display: inline-flex; align-items: center; gap: 5px; transition: all .12s; }
+    .why-toggle:hover { color: #d95b03; border-color: #ff9d6c; border-style: solid; }
+    .why-toggle .wts { color: #d95b03; font-size: 12px; }
+    .why-toggle.open { background: white; border-style: solid; border-color: #ffd5b8; color: #120b0b; }
+    .why-toggle.open::after { content: '▾'; font-size: 9px; margin-left: 2px; color: #adadad; }
+    .why-toggle::after { content: '▸'; font-size: 9px; margin-left: 2px; color: #adadad; }
+    .why-detail { display: none; margin-top: 10px; background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 12px 14px; }
+    .why-toggle.open + .why-detail { display: block; }
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .why-grid.single { grid-template-columns: 1fr; }
+    .why-block { font-size: 12px; color: #45556c; line-height: 1.65; }
+    .why-label { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 9px; font-weight: 600; letter-spacing: .08em; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+    .why-block.allowed .why-label { color: #15803d; }
+    .why-block.allowed .why-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #15803d; }
+    .why-block.wait .why-label { color: #b17728; }
+    .why-block.wait .why-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #b17728; }
+    .why-block b { color: #120b0b; font-weight: 600; }
+    .why-block a { color: #d95b03; text-decoration: none; font-weight: 500; }
+    .why-block a:hover { text-decoration: underline; }
+
+    /* Compare side-by-side mode (only inside inv-card.compare-mode) */
+    .inv-summary { display: block; }
+    .inv-compare { display: none; padding-top: 14px; border-top: 1px solid #f0f0f0; }
+    .inv-card.compare-mode .inv-summary { display: none; }
+    .inv-card.compare-mode .inv-compare { display: block; }
+
+    @media (max-width: 1100px) {
+      .content { padding: 32px 28px; }
+      .stat-row { flex-direction: column; }
+    }
+
+    /* ─── UNDO TOAST ─── */
+    @keyframes toastIn  { from { opacity: 0; transform: translateY(16px) translateX(-50%); } to { opacity: 1; transform: translateY(0) translateX(-50%); } }
+    @keyframes toastOut { from { opacity: 1; transform: translateY(0) translateX(-50%); } to { opacity: 0; transform: translateY(12px) translateX(-50%); } }
+    .undo-toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 14px;
+      background: #0f172b; color: white;
+      padding: 12px 16px 12px 14px;
+      border-radius: 12px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.08);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 500;
+      z-index: 9999; min-width: 340px; max-width: 480px;
+      animation: toastIn .32s cubic-bezier(0.16, 1, 0.3, 1) both;
+      pointer-events: all;
+    }
+    .undo-toast.hiding { animation: toastOut .22s ease both; }
+    .undo-toast-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .undo-toast-text { flex: 1; min-width: 0; line-height: 1.45; }
+    .undo-toast-text .toast-title { font-weight: 600; color: white; }
+    .undo-toast-text .toast-sub { font-size: 11.5px; color: rgba(255,255,255,0.55); margin-top: 1px; }
+    .undo-toast-undo { background: white; color: #0f172b; border: none; border-radius: 8px; padding: 7px 14px; font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: background .12s; }
+    .undo-toast-undo:hover { background: #f0f0f0; }
+    /* Circular countdown ring */
+    .toast-ring { flex-shrink: 0; position: relative; width: 28px; height: 28px; }
+    .toast-ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+    .toast-ring-bg  { fill: none; stroke: rgba(255,255,255,0.12); stroke-width: 2.5; }
+    .toast-ring-arc { fill: none; stroke: #ff6900; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 75.4; stroke-dashoffset: 0; transition: stroke-dashoffset linear; }
+    .toast-ring-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.7); }
+  .topbar-left { display: flex; flex-direction: column; gap: 4px; }
+  .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
+  /* ── Nav tooltip (collapsed sidebar) ── */
+  .sidebar.collapsed .nav-item { position: relative; pointer-events: auto; min-height: 40px; }
+  #nav-tooltip { position: fixed; background: #120b0b; color: #fff; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 500; padding: 5px 10px; border-radius: 7px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .15s ease, transform .15s ease; transform: translateX(-4px); z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.18); }
+  #nav-tooltip.visible { opacity: 1; transform: translateX(0); }
+  /* ── Chat tool button tooltips ── */
+  .chat-tool-btn { position: relative; }
+  .chat-tool-btn::after { content: attr(data-tip); position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #120b0b; color: #fff; font-family: 'Inter', system-ui, sans-serif; font-size: 11px; font-weight: 500; padding: 4px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .15s ease; z-index: 200; }
+  .chat-tool-btn:hover::after { opacity: 1; }
+  /* ── Draft panel ── */
+  .draft-panel { margin: 8px 0 4px; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; background: #fff; font-size: 12px; font-family: 'Inter', system-ui, sans-serif; color: #120b0b; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .draft-panel-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #fafafa; border-bottom: 1px solid #f0f0f0; font-size: 11px; font-weight: 600; color: #45556c; letter-spacing: 0.03em; }
+  .draft-panel-head span { display: flex; align-items: center; gap: 6px; }
+  .draft-copy-btn { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; border: 1px solid #e9e9e9; background: white; font-size: 11px; font-weight: 600; color: #45556c; cursor: pointer; transition: background .12s, color .12s, border-color .12s; }
+  .draft-copy-btn:hover { background: #f4f4f4; color: #120b0b; border-color: #d0d5dd; }
+  .draft-copy-btn.copied { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+  .draft-fields { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #f0f0f0; }
+  .draft-field { display: flex; gap: 8px; font-size: 11.5px; line-height: 1.4; }
+  .draft-field-lbl { color: #9f9fa6; font-weight: 500; min-width: 36px; flex-shrink: 0; }
+  .draft-field-val { color: #120b0b; }
+  .draft-body { padding: 10px 12px; font-size: 12px; color: #0b0d12; line-height: 1.6; white-space: pre-wrap; }
+  .view-draft-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #ff6900; background: #fff5f1; border: 1px solid #ffd7c2; padding: 2px 8px; border-radius: 999px; cursor: pointer; transition: background .12s; }
+  .view-draft-btn:hover { background: #ffe8df; }
+  .msg-user-2, .msg-agent-2 { display: none; }
+  .msg-user-2:not(.hidden), .msg-agent-2:not(.hidden) { display: block; }
+  .hidden { display: none !important; }
+  /* ── Logo animations ── */
+  @keyframes witnessLogoSpinOnce { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes witnessLogoPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: 0.85; } }
+  .witness-logo-rays { animation: witnessLogoSpinOnce 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+  .witness-logo-center { animation: witnessLogoPulse 0.6s ease-out 0.8s both; }
+  </style>
+
+</head>
+<body data-chat="slim">
+
+<div class="app-grid">
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="4 4 24 24" fill="none" aria-hidden="true" width="26" height="26"><defs><linearGradient id="wgs2" x1="4.5" y1="4.5" x2="31.6" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD000"/><stop offset="1" stop-color="#FF6900"/></linearGradient></defs><g transform="rotate(45,16,16)"><g class="witness-logo-rays" style="transform-origin:16px 16px"><g transform="rotate(0,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs2)"/></g><g transform="rotate(45,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs2)"/></g><g transform="rotate(90,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs2)"/></g><g transform="rotate(135,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs2)"/></g><g transform="rotate(180,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs2)"/></g><g transform="rotate(225,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs2)"/></g><g transform="rotate(270,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs2)"/></g><g transform="rotate(315,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs2)"/></g></g></g><circle cx="16" cy="16" r="3.2" fill="url(#wgs2)" class="witness-logo-center" style="transform-origin:16px 16px"/></svg>
+    </div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="witness-dashboard.html" data-tip="Dashboard">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item" href="witness-all_invoices.html" data-tip="All Invoices">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13z M10 1.5V4h3 M5.5 7.5h5 M5.5 10h5 M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Invoice
+          <span class="nav-badge">38</span>
+        </a>
+        <a class="nav-item" href="vendors.html" data-tip="Vendors">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item" href="autoflow.html" data-tip="Autoflow">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Autoflow
+        </a>
+        <a class="nav-item active" href="ai-activity.html" data-tip="AI Activity">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge ai">24</span>
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html" data-tip="Settings">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M6.5 1.5h3l.5 1.5a4.5 4.5 0 011.1.65l1.5-.5 1.5 2.6-1.2 1.1a4.6 4.6 0 010 1.3l1.2 1.1-1.5 2.6-1.5-.5A4.5 4.5 0 0110 12l-.5 1.5h-3L6 12a4.5 4.5 0 01-1.1-.65l-1.5.5L2 9.25l1.2-1.1a4.6 4.6 0 010-1.3L2 5.75l1.5-2.6 1.5.5A4.5 4.5 0 016 3l.5-1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.8" stroke="currentColor" stroke-width="1.3"/></svg>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<div class="main">
+  <!-- PAGE HEADER — greeting style matching autoflow -->
+  <main class="content">
+    <div class="greeting">
+      <div class="greeting-title-row">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" style="flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="18" r="18" fill="#FF6900"/><path d="M18 8l2 6h6l-5 3.6 1.9 5.9L18 20l-4.9 3.5 1.9-5.9L10 14h6l2-6z" fill="white"/></svg>
+        <h1 class="gtitle">AI Activity</h1>
+        <span class="gclock" aria-label="Current Pacific time"><span data-wt-clock="full">Mon, Apr 28 · 6:42 AM PST</span></span>
+        <button class="ask-witness-btn" onclick="window.openWitnessChat && window.openWitnessChat()">
+          <span class="btn-sparkle">✦</span> Ask Witness
+        </button>
+      </div>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px;">
+        <p class="gsub" style="max-width:680px;">The full history of every invoice. <b>Who did each step, and what you can still take back.</b> AI actions are reversible; auto-sent items link to the rule that authorized them.</p>
+        <div class="hd-actions" style="flex-shrink:0; padding-top:4px;">
+          <button class="btn-outline"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M5 4.5L8 2l3 2.5M3 11.5v1a1 1 0 001 1h8a1 1 0 001-1v-1" stroke="#FF6900" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Export log</button>
+          <button class="btn-solid" onclick="window.location.href='autoflow.html'"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="#FF6900" stroke-width="1.4" stroke-linejoin="round"/></svg> Manage workflows</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY STATS -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-top"><div class="stat-icon-wrap g"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="stat-mid"><div class="stat-num">17</div><div class="stat-lbl">Auto Resolved</div></div>
+        <div class="stat-foot"><div class="stat-foot-lbl">No exceptions, no review needed</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top"><div class="stat-icon-wrap b"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9h14M11 4l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="stat-mid"><div class="stat-num">6</div><div class="stat-lbl">Routed</div></div>
+        <div class="stat-foot"><div class="stat-foot-lbl">Sent for payment under your pre-auth</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top"><div class="stat-icon-wrap a"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M9 5v4.5M9 12.5v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div></div>
+        <div class="stat-mid"><div class="stat-num">2</div><div class="stat-lbl">Held For You</div></div>
+        <div class="stat-foot"><div class="stat-foot-lbl">Exceptions or outbound, waiting</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top"><div class="stat-icon-wrap o"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M9 5v4l2.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div></div>
+        <div class="stat-mid"><div class="stat-num">~3h</div><div class="stat-lbl">Time Saved</div></div>
+        <div class="stat-foot"><div class="stat-foot-lbl">Estimated vs. doing it manually</div></div>
+      </div>
+    </div>
+
+    <!-- FILTER + PERIOD + SEARCH (unified bar) -->
+    <div class="filter-bar">
+      <div class="filter-bar-top">
+        <div class="search-wrap">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.4"/><path d="M9 9l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <input class="search-input" placeholder="Search invoice, vendor, or PO…" />
+        </div>
+        <div class="period-select" onclick="togglePeriod(event, this)" style="margin-left:auto;">
+          <span class="pulse"></span>
+          <span class="period-current">Last night</span>
+          <span class="period-range-mini"><span data-wt-time="yesterday 23:00" data-wt-fmt="datetimeN">May 31 · 11:00 PM</span> → <span data-wt-time="today 07:00" data-wt-fmt="datetimeN">Jun 1 · 7:00 AM</span></span>
+          <svg class="chev" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="period-menu" onclick="event.stopPropagation()">
+            <button class="active" onclick="selectPeriod(this, 'Last night')">Last night</button>
+            <button onclick="selectPeriod(this, 'Last 24h')">Last 24h</button>
+            <button onclick="selectPeriod(this, 'Last 7 days')">Last 7 days</button>
+            <button onclick="selectPeriod(this, 'Last 30 days')">Last 30 days</button>
+            <button onclick="selectPeriod(this, 'Custom…')">Custom…</button>
+          </div>
+        </div>
+      </div>
+      <div class="filter-tabs">
+        <button class="ftab active" data-type="all" onclick="filterTab(this)">All <span class="count">24</span></button>
+        <button class="ftab" data-type="auto" onclick="filterTab(this)"><span class="ftab-dot"></span>Auto-resolved <span class="count">17</span></button>
+        <button class="ftab" data-type="routed" onclick="filterTab(this)"><span class="ftab-dot"></span>Routed <span class="count">6</span></button>
+        <button class="ftab" data-type="waiting" onclick="filterTab(this)"><span class="ftab-dot"></span>Waiting on you <span class="count">2</span></button>
+        <button class="ftab" data-type="skipped" onclick="filterTab(this)"><span class="ftab-dot"></span>Skipped <span class="count">1</span></button>
+      </div>
+    </div>
+
+    <!-- INVOICE-CENTRIC HISTORY -->
+    <div class="inv-list">
+
+      <!-- ─── Mon · Apr 28 ─── -->
+      <div class="day-group">
+        <div class="day-header">
+          <span class="day-label" data-wt-day="0" data-wt-fmt="daylabel">Mon · Apr 28</span>
+          <span class="day-line"></span>
+          <span class="day-count">3 invoices</span>
+        </div>
+
+        <!-- INV-1048 · held (open by default to teach the pattern) -->
+        <div class="inv-card open">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot held"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1048</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Brightline Office Supply</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$3,210.45</span>
+              </div>
+              <div class="inv-status-line"><b>Held for review</b> · discount window closing · approve to capture 2% early-pay saving</div>
+            </div>
+            <div class="inv-meta">
+              <span class="inv-last" data-wt-time="today 06:42" data-wt-fmt="time2">06:42 AM</span>
+            </div>
+            <button class="inv-toggle-btn" onclick="event.stopPropagation(); var c=this.closest('.inv-card'); c.classList.toggle('open'); this.querySelector('.inv-lbl').textContent=c.classList.contains('open')?'Collapse':'Expand'"><span class="inv-lbl">Expand</span><svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <div class="inv-body">
+            <div class="hist-label">History <span class="hl-count">· 4 steps · Witness 3 · you 0</span></div>
+            <div class="hist-list">
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline"><b>Held for review</b> · discount window closing tomorrow</div>
+                  <div class="hist-sub"><span class="arr">↳</span>3-way match clean. 2/10 net 30 terms apply. Approve before end of day to capture $64 early-pay discount. No payment sent.</div>
+                  <button class="why-toggle" onclick="event.stopPropagation();this.classList.toggle('open')">
+                    <span class="wts">✦</span> Why was Witness allowed to hold this
+                  </button>
+                  <div class="why-detail">
+                    <div class="why-grid single">
+                      <div class="why-block allowed">
+                        <div class="why-label">Why allowed</div>
+                        Rule <b>discount window review</b> · flag invoices with early-pay discounts for human approval before payment. Confidence 99%. <a href="autoflow.html#discount-review" onclick="event.stopPropagation()">Edit rule →</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="today 06:42" data-wt-fmt="time2">06:42 AM</span>
+                  <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                          data-trace-revert="hold-inv1048"
+                          data-revert-title="Release review hold on INV-1048?"
+                          data-revert-undos="Status: held_for_review → approved;Invoice will enter payment queue;Discount window may close before payment processes"
+                          data-revert-note="Discount window closes tomorrow. Releasing without approval may forfeit the $64 early-pay saving.">
+                    <span class="ico">↩</span> Revert
+                  </button>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Ran 3-way match · clean · flagged for discount approval</div>
+                  <div class="hist-sub"><span class="arr">↳</span>PO, GRN, and Invoice all aligned. 2/10 net 30 terms detected. Held for your approval to capture discount.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="today 06:40" data-wt-fmt="time2">06:40 AM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent receipt confirmation to Brightline Office Supply</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Auto-sent per rule <a href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">Vendor receipt confirmation</a>.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="today 03:15" data-wt-fmt="time2">03:15 AM</span>
+                  <a class="hist-act perm" href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">
+                    <span class="ico">⚙</span> Edit rule
+                  </a>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who sys"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#c8d0db"/></svg></div>
+                <div class="hist-body">
+                  <div class="hist-headline">Invoice received via vendor portal</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="today 03:14" data-wt-fmt="time2">03:14 AM</span>
+                </div>
+              </div>
+
+            </div>
+            <div class="inv-foot">
+              <a class="ib attn" href="invoice-detail.html">Open invoice →</a>
+              <button class="ib">View case file</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- INV-1031 · waiting on approver, nudge drafted -->
+        <div class="inv-card">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot draft"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1031</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Globex Materials</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$12,400.00</span>
+              </div>
+              <div class="inv-status-line"><b>Awaiting approval · J. Park</b> · nudge drafted · review before sending</div>
+            </div>
+            <div class="inv-meta">
+              <span class="inv-last" data-wt-time="today 02:00" data-wt-fmt="time2">02:00 AM</span>
+            </div>
+            <button class="inv-toggle-btn" onclick="event.stopPropagation(); var c=this.closest('.inv-card'); c.classList.toggle('open'); this.querySelector('.inv-lbl').textContent=c.classList.contains('open')?'Collapse':'Expand'"><span class="inv-lbl">Expand</span><svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <div class="inv-body">
+            <div class="hist-label">History <span class="hl-count">· 5 steps · Witness 4 · you 1</span></div>
+            <div class="hist-list">
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Drafted approval nudge to J. Park · <b>held to send</b></div>
+                  <div class="hist-sub"><span class="arr">↳</span>3 days overdue. Outbound to people requires your sign-off · draft is waiting.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="today 02:00" data-wt-fmt="datetime">Apr 28 · 02:00 AM</span>
+                  <button class="hist-act">Review & send</button>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who you">SC</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent for approval to J. Park</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="-3d 09:15" data-wt-fmt="datetime">Apr 25 · 09:15 AM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">3-way match · clean</div>
+                  <div class="hist-sub"><span class="arr">↳</span>PO, GRN, Invoice all aligned. No write to ERP yet · waiting on approval.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="-3d 09:00" data-wt-fmt="datetime">Apr 25 · 09:00 AM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent receipt confirmation to Globex</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Auto-sent per rule <a href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">Vendor receipt confirmation</a>.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="-3d 08:55" data-wt-fmt="datetime">Apr 25 · 08:55 AM</span>
+                  <a class="hist-act perm" href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">
+                    <span class="ico">⚙</span> Edit rule
+                  </a>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who sys"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#c8d0db"/></svg></div>
+                <div class="hist-body">
+                  <div class="hist-headline">Invoice received via email</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="-3d 08:30" data-wt-fmt="datetime">Apr 25 · 08:30 AM</span>
+                </div>
+              </div>
+
+            </div>
+            <div class="inv-foot">
+              <button class="ib primary">Review draft & send</button>
+              <button class="ib">Edit draft</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- INV-1042 · auto routed, fully automated -->
+        <div class="inv-card">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot scheduled"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1042</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Northwind Supplies</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$1,840.00</span>
+              </div>
+              <div class="inv-status-line"><b>Scheduled</b> · added to batch PB-0428-A under your pre-authorization</div>
+            </div>
+            <div class="inv-meta">
+              <span class="inv-last" data-wt-time="today 00:14" data-wt-fmt="time2">12:14 AM</span>
+            </div>
+            <button class="inv-toggle-btn" onclick="event.stopPropagation(); var c=this.closest('.inv-card'); c.classList.toggle('open'); this.querySelector('.inv-lbl').textContent=c.classList.contains('open')?'Collapse':'Expand'"><span class="inv-lbl">Expand</span><svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <div class="inv-body">
+            <div class="hist-label">History <span class="hl-count">· 4 steps · Witness 4 · you 0 (pre-authorized)</span></div>
+            <div class="hist-list">
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Added to payment batch <b>PB-0428-A</b></div>
+                  <div class="hist-sub"><span class="arr">↳</span>Clean invoice under $5,000 · within your pre-authorized routing limit.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="today 00:14" data-wt-fmt="datetime">Apr 28 · 12:14 AM</span>
+                  <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                          data-trace-revert="batch-inv1042"
+                          data-revert-title="Remove INV-1042 from payment batch PB-0428-A?"
+                          data-revert-undos="ERP: invoice status scheduled → received;Batch total: $18,420.00 → $16,580.00;Vendor will not be paid on May 1">
+                    <span class="ico">↩</span> Revert
+                  </button>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">3-way match · clean</div>
+                  <div class="hist-sub"><span class="arr">↳</span>PO #6118, GRN, Invoice all aligned. Confidence 98%.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="yesterday 20:30" data-wt-fmt="datetime">Apr 27 · 08:30 PM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent receipt confirmation to Northwind</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Auto-sent per rule <a href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">Vendor receipt confirmation</a>.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="yesterday 18:25" data-wt-fmt="datetime">Apr 27 · 06:25 PM</span>
+                  <a class="hist-act perm" href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">
+                    <span class="ico">⚙</span> Edit rule
+                  </a>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who sys"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#c8d0db"/></svg></div>
+                <div class="hist-body">
+                  <div class="hist-headline">Invoice received via vendor portal</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="yesterday 16:30" data-wt-fmt="datetime">Apr 27 · 04:30 PM</span>
+                </div>
+              </div>
+
+            </div>
+            <div class="inv-foot">
+              <a class="ib" href="invoice-detail.html">Open invoice →</a>
+              <button class="ib">Verify in ERP</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ─── Sun · Apr 27 ─── -->
+      <div class="day-group">
+        <div class="day-header">
+          <span class="day-label" data-wt-day="-1" data-wt-fmt="daylabel">Sun · Apr 27</span>
+          <span class="day-line"></span>
+          <span class="day-count">2 invoices · +17 fully auto-resolved</span>
+        </div>
+
+        <!-- INV-1008 · discount captured (with prior human approval) -->
+        <div class="inv-card">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot done"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1008</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Amazon Business</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$4,250.00</span>
+              </div>
+              <div class="inv-status-line"><b>Paid</b> · matched PO and paid with 2% early-pay discount · saved $85</div>
+            </div>
+            <div class="inv-meta">
+              <span class="inv-last" data-wt-time="yesterday 23:45" data-wt-fmt="time2">11:45 PM</span>
+            </div>
+            <button class="inv-toggle-btn" onclick="event.stopPropagation(); var c=this.closest('.inv-card'); c.classList.toggle('open'); this.querySelector('.inv-lbl').textContent=c.classList.contains('open')?'Collapse':'Expand'"><span class="inv-lbl">Expand</span><svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <div class="inv-body">
+            <div class="hist-label">History <span class="hl-count">· 6 steps · Witness 5 · you 1</span></div>
+            <div class="hist-list">
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline"><b>Paid with 2% early-pay discount</b> · saved $85</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Wrote: payable $4,250.00 → $4,165.00 in <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="ERP" data-trace-doc="INV-1008" data-trace-loc="AP entry · payable_amount" data-trace-url="#erp" data-trace-fields="Field|payable_amount;Old value|$4,250.00;New value|$4,165.00;Discount captured|$85.00 (2.0%);Pay date|today">ERP</span>.</div>
+                  <button class="why-toggle" onclick="event.stopPropagation();this.classList.toggle('open')">
+                    <span class="wts">✦</span> Why was Witness allowed to capture
+                  </button>
+                  <div class="why-detail">
+                    <div class="why-grid single">
+                      <div class="why-block allowed">
+                        <div class="why-label">Why allowed</div>
+                        Rule <b>Early payment discount capture</b> · invoice clean-matched, vendor terms <b>2/10 net 30</b>, today is day 9 (within window). Confidence 99%. <a href="autoflow.html#early-discount" onclick="event.stopPropagation()">Edit rule →</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="yesterday 23:45" data-wt-fmt="datetime">Apr 27 · 11:45 PM</span>
+                  <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                          data-trace-revert="discount-inv1008"
+                          data-revert-title="Reverse early payment discount?"
+                          data-revert-undos="ERP: restore payable_amount $4,165.00 → $4,250.00;Pay date will move to net-30;Discount $85.00 will be released back to vendor">
+                    <span class="ico">↩</span> Revert
+                  </button>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Scheduled payment for May 1 (day 10 of discount window)</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="yesterday 23:43" data-wt-fmt="datetime">Apr 27 · 11:43 PM</span>
+                  <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                          data-trace-revert="schedule-inv1008"
+                          data-revert-title="Cancel May 1 payment schedule?"
+                          data-revert-undos="ERP: payment status scheduled → pending;Discount of $85.00 will be forfeited if not rescheduled in time">
+                    <span class="ico">↩</span> Revert
+                  </button>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who you">SC</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Approved batch routing for vendors &lt; $10,000</div>
+                  <div class="hist-sub"><span class="arr">↳</span>This authorization let Witness schedule INV-1008 without further approval.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="yesterday 09:30" data-wt-fmt="datetime">Apr 27 · 09:30 AM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">3-way match · clean</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="yesterday 18:30" data-wt-fmt="datetime">Apr 27 · 06:30 PM</span>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who ai">✦</div>
+                <div class="hist-body">
+                  <div class="hist-headline">Sent receipt confirmation to Amazon Business</div>
+                  <div class="hist-sub"><span class="arr">↳</span>Auto-sent per rule <a href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">Vendor receipt confirmation</a>.</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="yesterday 18:25" data-wt-fmt="datetime">Apr 27 · 06:25 PM</span>
+                  <a class="hist-act perm" href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()">
+                    <span class="ico">⚙</span> Edit rule
+                  </a>
+                </div>
+              </div>
+
+              <div class="hist-row">
+                <div class="who sys"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#c8d0db"/></svg></div>
+                <div class="hist-body">
+                  <div class="hist-headline">Invoice received via email</div>
+                </div>
+                <div class="hist-side">
+                  <span class="hist-time" data-wt-time="yesterday 18:24" data-wt-fmt="datetime">Apr 27 · 06:24 PM</span>
+                </div>
+              </div>
+
+            </div>
+            <div class="inv-foot">
+              <a class="ib" href="invoice-detail.html">Open invoice →</a>
+              <button class="ib">Verify in ERP</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- INV-1027 · held duplicate -->
+        <div class="inv-card" id="duplicate-prevented-inv-1014">
+          <div class="inv-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="inv-status-dot dup"></div>
+            <div class="inv-main">
+              <div class="inv-top">
+                <span class="inv-id">INV-1027</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-vendor">Praxis Logistics</span>
+                <span class="inv-sep">·</span>
+                <span class="inv-amount">$890.40</span>
+              </div>
+              <div class="inv-status-line"><b>Held · possible duplicate</b> of INV-1024 (paid <span data-wt-time="-5d 00:00" data-wt-fmt="dateonly">Apr 26</span>) · waiting on you</div>
+            </div>
+            <div class="inv-meta">
+              <span class="inv-last" data-wt-time="yesterday 22:22" data-wt-fmt="time2">10:22 PM</span>
+            </div>
+            <button class="inv-toggle-btn" onclick="event.stopPropagation(); var c=this.closest('.inv-card'); c.classList.toggle('open'); this.querySelector('.inv-lbl').textContent=c.classList.contains('open')?'Collapse':'Expand'"><span class="inv-lbl">Expand</span><svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <div class="inv-body">
+            <div class="inv-summary">
+              <div class="hist-label">History <span class="hl-count">· 3 steps · Witness 2 · you 0</span></div>
+              <div class="hist-list">
+
+                <div class="hist-row">
+                  <div class="who ai">✦</div>
+                  <div class="hist-body">
+                    <div class="hist-headline"><b>Held as possible duplicate</b> of INV-1024</div>
+                    <div class="hist-sub"><span class="arr">↳</span>6 of 7 identity signals matched a paid invoice. Releasing could mean paying $890.40 twice.</div>
+                    <button class="why-toggle" onclick="event.stopPropagation();this.classList.toggle('open')">
+                      <span class="wts">✦</span> Why was Witness allowed to hold · and why it's on you
+                    </button>
+                    <div class="why-detail">
+                      <div class="why-grid">
+                        <div class="why-block allowed">
+                          <div class="why-label">Why allowed</div>
+                          Rule <b>Duplicate detection</b> · 6 of 7 identity signals matched a paid invoice. Triggers automatic hold; never auto-pays. <a href="autoflow.html#duplicate" onclick="event.stopPropagation()">Edit rule →</a>
+                        </div>
+                        <div class="why-block wait">
+                          <div class="why-label">Why waiting on you</div>
+                          Releasing a held duplicate could mean paying <b>$890.40 twice</b>. Only you can confirm whether this is a legitimate second invoice.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hist-side">
+                    <span class="hist-time" data-wt-time="yesterday 22:22" data-wt-fmt="datetime">Apr 27 · 10:22 PM</span>
+                    <button class="hist-act revert wt-revert" onclick="event.stopPropagation()"
+                            data-trace-revert="hold-inv1027"
+                            data-revert-title="Release duplicate hold on INV-1027?"
+                            data-revert-undos="Status: held_duplicate → received;Witness will not re-flag this exact invoice;Invoice will enter standard AP routing"
+                            data-revert-note="If INV-1027 is in fact a duplicate of INV-1024, releasing the hold may cause a $890.40 double payment.">
+                      <span class="ico">↩</span> Revert
+                    </button>
+                  </div>
+                </div>
+
+                <div class="hist-row">
+                  <div class="who ai">✦</div>
+                  <div class="hist-body">
+                    <div class="hist-headline">Matched 6/7 signals against <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="ERP" data-trace-doc="INV-1024" data-trace-loc="AP · paid invoices" data-trace-url="#erp" data-trace-fields="Status|Paid <span class="wt-paid-date">Apr 26</span> · ACH;Submission channel|Email · AP inbox;Total|$890.40;PO|PO-7718;Reference|SHP-2241">INV-1024</span> (paid)</div>
+                    <div class="hist-sub"><span class="arr">↳</span>Vendor, PO, shipment ref, total, tax, bill-to all identical. Only invoice # and submission channel differ.</div>
+                  </div>
+                  <div class="hist-side">
+                    <span class="hist-time" data-wt-time="yesterday 22:20" data-wt-fmt="datetime">Apr 27 · 10:20 PM</span>
+                  </div>
+                </div>
+
+                <div class="hist-row">
+                  <div class="who sys"><svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#c8d0db"/></svg></div>
+                  <div class="hist-body">
+                    <div class="hist-headline">Invoice received via vendor portal</div>
+                  </div>
+                  <div class="hist-side">
+                    <span class="hist-time" data-wt-time="yesterday 22:18" data-wt-fmt="datetime">Apr 27 · 10:18 PM</span>
+                  </div>
+                </div>
+
+              </div>
+              <div class="inv-foot">
+                <a class="ib attn" href="invoice-detail-duplicate.html">Open invoice →</a>
+                <button class="ib" onclick="event.stopPropagation();showCompare(this)">Compare side-by-side</button>
+                <button class="ib">Mark not duplicate</button>
+              </div>
+            </div>
+
+            <div class="inv-compare">
+              <div class="cmp-head">
+                <button class="cmp-back" onclick="event.stopPropagation();hideCompare(this)">← Back to history</button>
+                <div class="cmp-title">Compare · INV-1027 vs INV-1024</div>
+              </div>
+
+              <div class="cmp-ai">
+                <span class="cmp-ai-icon">✦</span>
+                <span><strong>6 of 7 signals identical</strong> · 98% match · 0.3s</span>
+              </div>
+
+              <table class="cmp-table">
+                <thead>
+                  <tr><th>Field</th><th>INV-1024 (paid)</th><th>INV-1027 (held)</th><th>Match</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td class="cmp-label">Vendor</td><td>Praxis Logistics</td><td>Praxis Logistics</td><td class="cmp-ok">✓</td></tr>
+                  <tr><td class="cmp-label">PO reference</td><td>PO-7718</td><td>PO-7718</td><td class="cmp-ok">✓</td></tr>
+                  <tr><td class="cmp-label">Shipment ref</td><td>SHP-2241</td><td>SHP-2241</td><td class="cmp-ok">✓</td></tr>
+                  <tr><td class="cmp-label">Total</td><td>$890.40</td><td>$890.40</td><td class="cmp-ok">✓</td></tr>
+                  <tr><td class="cmp-label">Tax</td><td>$73.40</td><td>$73.40</td><td class="cmp-ok">✓</td></tr>
+                  <tr><td class="cmp-label">Bill-to address</td><td>SF DC · Dock 3</td><td>SF DC · Dock 3</td><td class="cmp-ok">✓</td></tr>
+                  <tr class="diff"><td class="cmp-label">Invoice #</td><td>INV-1024</td><td>INV-1027</td><td class="cmp-warn">⚠ differs</td></tr>
+                  <tr class="diff"><td class="cmp-label">Submission channel</td><td>Email · AP inbox</td><td>Vendor portal</td><td class="cmp-warn">⚠ differs</td></tr>
+                  <tr><td class="cmp-label">Payment status</td><td class="cmp-ok">Paid <span class="wt-paid-date">Apr 26</span> · ACH</td><td class="cmp-crit">⏳ Held by Witness</td><td class="cmp-dim">—</td></tr>
+                </tbody>
+              </table>
+
+              <div class="cmp-stake">
+                <span>⚠</span>
+                <span>If released in error: <strong>−$890.40 paid twice for the same shipment</strong></span>
+              </div>
+
+              <div class="inv-foot">
+                <button class="ib attn">Confirm hold</button>
+                <button class="ib">Mark not duplicate</button>
+                <a class="ib" href="invoice-detail-duplicate.html">Open full invoice →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="show-more">Showing <b>5 of 24</b> invoices · show all activity from the last 7 days</button>
+
+    </div>
+
+    <!-- FOOTER NOTE -->
+    <div class="footer-note">
+      <b>Every step is logged.</b> AI actions can be reverted; auto-sent emails can't be un-sent, but the rule that authorized them is one click away.
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function filterTab(tab) {
+    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  }
+  function togglePeriod(e, el) {
+    e.stopPropagation();
+    el.classList.toggle('open');
+  }
+  function selectPeriod(btn, label) {
+    btn.closest('.period-menu').querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    var sel = btn.closest('.period-select');
+    sel.querySelector('.period-current').textContent = label;
+    sel.classList.remove('open');
+  }
+  document.addEventListener('click', function(){
+    document.querySelectorAll('.period-select.open').forEach(s => s.classList.remove('open'));
+  });
+  function showCompare(btn) { btn.closest('.inv-card').classList.add('compare-mode'); }
+  function hideCompare(btn) { btn.closest('.inv-card').classList.remove('compare-mode'); }
+  // Stop click bubbling on interactive children so they don't toggle the inv-head
+  document.querySelectorAll('.search-input, .ftab, .period-select, .cmp-back, .ib, .hist-act').forEach(el => {
+    el.addEventListener('click', e => e.stopPropagation());
+  });
+
+  // ─── Undo Toast with circular countdown ───────────────────
+  (function(){
+    var toast    = document.getElementById('undo-toast');
+    var titleEl  = document.getElementById('toast-title');
+    var subEl    = document.getElementById('toast-sub');
+    var undoBtn  = document.getElementById('toast-undo-btn');
+    var numEl    = document.getElementById('toast-num');
+    var arc      = document.getElementById('toast-arc');
+    var DURATION = 3000;
+    var CIRC     = 75.4; // 2π × r=12
+    var _timer   = null;
+    var _raf     = null;
+    var _revertBtn  = null;
+    var _prevState  = null; // stores DOM state snapshot for undo
+
+    function hideToast() {
+      if (!toast) return;
+      toast.classList.add('hiding');
+      setTimeout(function(){ toast.style.display = 'none'; toast.classList.remove('hiding'); }, 220);
+      clearTimeout(_timer); cancelAnimationFrame(_raf);
+    }
+
+    function showToast(title, sub, revertBtn) {
+      if (!toast) return;
+      clearTimeout(_timer); cancelAnimationFrame(_raf);
+      toast.classList.remove('hiding');
+      titleEl.textContent = title;
+      subEl.textContent   = sub;
+      _revertBtn = revertBtn;
+      toast.style.display = 'flex';
+
+      // Animate arc countdown
+      var start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        var elapsed = ts - start;
+        var progress = Math.min(elapsed / DURATION, 1);
+        var offset   = CIRC * progress;
+        arc.style.strokeDashoffset = offset;
+        var secsLeft = Math.ceil((DURATION - elapsed) / 1000);
+        numEl.textContent = secsLeft > 0 ? secsLeft : '';
+        if (progress < 1) { _raf = requestAnimationFrame(step); }
+        else { hideToast(); }
+      }
+      arc.style.strokeDashoffset = '0';
+      arc.style.transition = 'none';
+      _raf = requestAnimationFrame(step);
+
+      _timer = setTimeout(hideToast, DURATION);
+    }
+
+    // Undo: re-show the reverted button
+    undoBtn.addEventListener('click', function(){
+      hideToast();
+      if (_revertBtn) {
+        _revertBtn.style.display = '';
+        _revertBtn.closest('.hist-row') && (_revertBtn.closest('.hist-row').style.opacity = '');
+        // re-enable the row visual
+        var row = _revertBtn.closest('.hist-row');
+        if (row) row.classList.remove('reverted');
+      }
+    });
+
+    // Wire all revert buttons
+    document.querySelectorAll('.wt-revert').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var title  = btn.dataset.revertTitle || 'Action reverted';
+        var undos  = (btn.dataset.revertUndos || '').split(';').filter(Boolean);
+        var sub    = undos[0] || '';
+
+        // Visual: dim the row and hide the button
+        var row = btn.closest('.hist-row');
+        if (row) row.classList.add('reverted');
+        btn.style.display = 'none';
+
+        showToast(title, sub, btn);
+      });
+    });
+  })();
+
+  // Sidebar collapse + tooltips
+  document.addEventListener('DOMContentLoaded', function(){
+    var sb  = document.querySelector('.sidebar');
+    var btn = document.querySelector('.sidebar-toggle');
+    if (sb && btn) {
+      // Always open on load — never restore collapsed state from localStorage
+      btn.addEventListener('click', function(){
+        sb.classList.toggle('collapsed');
+        localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
+      });
+    }
+
+    // Nav tooltips (collapsed mode only)
+    var tooltip = document.getElementById('nav-tooltip');
+    if (tooltip) {
+      function showTip(item) {
+        if (!sb || !sb.classList.contains('collapsed')) return;
+        var label = item.getAttribute('data-tip');
+        if (!label) return;
+        var rect = item.getBoundingClientRect();
+        tooltip.textContent = label;
+        tooltip.style.top  = (rect.top + rect.height / 2 - 12) + 'px';
+        tooltip.style.left = (rect.right + 10) + 'px';
+        tooltip.classList.add('visible');
+      }
+      function hideTip() { tooltip.classList.remove('visible'); }
+      document.querySelectorAll('.nav-item[data-tip]').forEach(function(item){
+        item.addEventListener('mouseenter', function(){ showTip(item); });
+        item.addEventListener('mouseleave', hideTip);
+        item.addEventListener('click', hideTip);
+      });
+    }
+  });
+</script>
+
+<!-- ─── Undo Toast (single instance, shown on revert) ─── -->
+<div class="undo-toast" id="undo-toast" style="display:none" role="alert" aria-live="polite">
+  <div class="undo-toast-icon">↺</div>
+  <div class="undo-toast-text">
+    <div class="toast-title" id="toast-title">Action reverted</div>
+    <div class="toast-sub" id="toast-sub"></div>
+  </div>
+  <button class="undo-toast-undo" id="toast-undo-btn">Undo</button>
+  <div class="toast-ring" id="toast-ring">
+    <svg width="28" height="28" viewBox="0 0 28 28">
+      <circle class="toast-ring-bg"  cx="14" cy="14" r="12"/>
+      <circle class="toast-ring-arc" id="toast-arc" cx="14" cy="14" r="12"/>
+    </svg>
+    <div class="toast-ring-num" id="toast-num">3</div>
+  </div>
+</div>
+
+<!-- ═══════════ Witness chat panel ═══════════ -->
+<aside class="chat" id="chat"></aside>
+</div><!-- /.app-grid -->
+
+<!-- Nav tooltip -->
+<div id="nav-tooltip"></div>
+
+<script src="witness-chat.js"></script>
+<script>
+(function () {
+  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function pad(n){return n<10?'0'+n:''+n;}
+  function tick(){
+    var d=new Date(),day=DAYS[d.getDay()].slice(0,3),mon=MONTHS[d.getMonth()];
+    var h=d.getHours(),m=pad(d.getMinutes()),ampm=h>=12?'PM':'AM',h12=h%12||12;
+    var tz=d.toLocaleTimeString('en-US',{timeZoneName:'short'}).split(' ').pop();
+    var full=day+', '+mon+' '+d.getDate()+' · '+h12+':'+m+' '+ampm+' '+tz;
+    document.querySelectorAll('[data-wt-clock="full"]').forEach(function(el){el.textContent=full;});
+  }
+  tick(); setInterval(tick, 1000);
+})();
+
+/* Dynamic date/time rendering */
+(function () {
+  var DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function parseWtTime(spec) {
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (!spec) return now;
+    spec = spec.trim();
+    var m;
+    // "today HH:MM"
+    if ((m = spec.match(/^today\s+(\d+):(\d+)$/))) {
+      return new Date(today.getFullYear(), today.getMonth(), today.getDate(), +m[1], +m[2]);
+    }
+    // "yesterday HH:MM"
+    if ((m = spec.match(/^yesterday\s+(\d+):(\d+)$/))) {
+      var y = new Date(today); y.setDate(y.getDate() - 1);
+      return new Date(y.getFullYear(), y.getMonth(), y.getDate(), +m[1], +m[2]);
+    }
+    // "-Nd HH:MM"
+    if ((m = spec.match(/^-(\d+)d\s+(\d+):(\d+)$/))) {
+      var d = new Date(today); d.setDate(d.getDate() - +m[1]);
+      return new Date(d.getFullYear(), d.getMonth(), d.getDate(), +m[2], +m[3]);
+    }
+    return now;
+  }
+
+  function fmt12(d) {
+    var h = d.getHours(), m = d.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+    return h + ':' + pad(m) + ' ' + ampm;
+  }
+  function fmtDate(d) {
+    return MONTHS[d.getMonth()] + ' ' + d.getDate();
+  }
+  function fmtDatetime(d) {
+    return fmtDate(d) + ' · ' + fmt12(d);
+  }
+  function fmtDaylabel(d) {
+    return DAYS[d.getDay()].slice(0,3) + ' · ' + MONTHS[d.getMonth()] + ' ' + d.getDate();
+  }
+
+  // Render [data-wt-time] spans
+  document.querySelectorAll('[data-wt-time]').forEach(function(el) {
+    var spec = el.getAttribute('data-wt-time');
+    var fmt  = el.getAttribute('data-wt-fmt') || 'time2';
+    var d = parseWtTime(spec);
+    if (fmt === 'time2')     el.textContent = fmt12(d);
+    else if (fmt === 'datetime')  el.textContent = fmtDatetime(d);
+    else if (fmt === 'datetimeN') el.textContent = fmtDate(d) + ' · ' + fmt12(d);
+    else if (fmt === 'dateonly')  el.textContent = fmtDate(d);
+  });
+
+  // Render [data-wt-day] spans (day-label headers)
+  // data-wt-day="0" = today, data-wt-day="-1" = yesterday, data-wt-day="-2" = 2 days ago
+  document.querySelectorAll('[data-wt-day]').forEach(function(el) {
+    var offset = parseInt(el.getAttribute('data-wt-day'), 10) || 0;
+    var d = new Date(); d.setDate(d.getDate() + offset);
+    el.textContent = fmtDaylabel(d);
+  });
+
+  // .wt-paid-date = 5 days ago (the paid date of the prior invoice)
+  var paidDate = new Date(); paidDate.setDate(paidDate.getDate() - 5);
+  document.querySelectorAll('.wt-paid-date').forEach(function(el) {
+    el.textContent = fmtDate(paidDate);
+  });
+
+  // Period range in filter bar
+  var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  var today = new Date();
+  var rangeEls = document.querySelectorAll('.period-range-mini');
+  rangeEls.forEach(function(el) {
+    var yStr = MONTHS[yesterday.getMonth()] + ' ' + yesterday.getDate() + ' · 11:00 PM';
+    var tStr = MONTHS[today.getMonth()] + ' ' + today.getDate() + ' · 7:00 AM';
+    // Only update inner spans if using data-wt-time
+    var spans = el.querySelectorAll('[data-wt-time]');
+    if (!spans.length) el.textContent = yStr + ' → ' + tStr;
+  });
+})();
+(function () {
+  var tooltip = document.getElementById('nav-tooltip');
+  if (!tooltip) return;
+  function showTip(navItem) {
+    var sb = document.querySelector('.sidebar');
+    if (!sb || !sb.classList.contains('collapsed')) return;
+    var label = navItem.getAttribute('data-tip');
+    if (!label) return;
+    var rect = navItem.getBoundingClientRect();
+    tooltip.textContent = label;
+    tooltip.style.top  = (rect.top + rect.height / 2 - 12) + 'px';
+    tooltip.style.left = (rect.right + 10) + 'px';
+    tooltip.classList.add('visible');
+  }
+  function hideTip() { tooltip.classList.remove('visible'); }
+  document.querySelectorAll('.nav-item[data-tip]').forEach(function (item) {
+    item.addEventListener('mouseenter', function () { showTip(item); });
+    item.addEventListener('mouseleave', hideTip);
+    item.addEventListener('click', hideTip);
+  });
+})();
+
+/* Fix labels for cards that start open */
+document.querySelectorAll('.inv-card.open .inv-lbl').forEach(function(el) {
+  el.textContent = 'Collapse';
+});
+</script>
+</body>
+</html>
