@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witness — I adapt to you</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F4F4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ─── Subtle futuristic gradient overlay ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 55% 55% at 85% 15%, rgba(255, 208, 0, 0.07) 0%, transparent 65%),
+                radial-gradient(ellipse 45% 55% at 15% 85%, rgba(21, 93, 252, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 35% 40% at 75% 80%, rgba(255, 92, 27, 0.05) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header, main { position: relative; z-index: 1; }
+
+        /* ─── Animations ─── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes exampleReveal {
+            from { opacity: 0; transform: translateY(5px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(0.8); }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes breathe {
+            0%, 100% { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12)); }
+            50% {
+                filter:
+                    drop-shadow(0 2px 4px rgba(0,0,0,0.06))
+                    drop-shadow(0 6px 20px rgba(255,140,0,0.24))
+                    drop-shadow(0 14px 34px rgba(255,92,27,0.13));
+            }
+        }
+        @keyframes logoIn {
+            from { opacity: 0; transform: scale(0.88); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        /* ─── Header ─── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 52px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 130px;
+        }
+
+
+        .logo-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: #120B0B;
+            letter-spacing: -0.01em;
+        }
+
+        /* ─── Progress ─── */
+        .progress-system { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .progress-phases { display: flex; align-items: center; }
+
+        .phase { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+
+        .phase-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #ADADAD;
+        }
+
+        .phase-label.active-phase { color: #FF5C1B; }
+
+        .phase-dots { display: flex; gap: 6px; align-items: center; width: 76px; justify-content: center; }
+
+        .dot {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background-color: #BEBEBE;
+            transition: all 0.3s ease;
+        }
+        .dot.active { background-color: #FF5C1B; width: 28px; border-radius: 5px; }
+        .dot.done   { background-color: #FF5C1B; opacity: 0.35; }
+
+        .phase-divider { width: 20px; height: 1.5px; background-color: #BEBEBE; margin: 0 8px; flex-shrink: 0; }
+
+        .step-counter {
+            min-width: 130px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .step-counter span {
+            font-size: 11px;
+            font-weight: 500;
+            color: #ADADAD;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* ─── Main ─── */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 0 52px;
+            gap: 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ─── Left ─── */
+        .left {
+            flex: 1;
+            max-width: 460px;
+            animation: fadeInUp 0.6s ease both;
+        }
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .eyebrow-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background-color: #FF5C1B;
+            flex-shrink: 0;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        .eyebrow-text {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #FF5C1B;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px;
+            line-height: 1.15;
+            font-weight: 600;
+            color: #120B0B;
+            margin-bottom: 22px;
+            letter-spacing: -0.02em;
+        }
+
+        h1 .accent { color: #FF5C1B; font-style: italic; }
+
+        .body-text {
+            font-size: 15px;
+            line-height: 1.78;
+            color: #45556C;
+            margin-bottom: 44px;
+            font-weight: 400;
+        }
+
+        .cta-group { display: flex; align-items: center; gap: 20px; }
+
+        .btn-next {
+            background-color: #120B0B;
+            color: white;
+            border: none;
+            padding: 13px 48px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.01em;
+            transition: background-color 0.2s;
+        }
+        .btn-next:hover { background-color: #FF5C1B; }
+
+        .btn-prev {
+            font-size: 13px;
+            color: #ADADAD;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            transition: color 0.15s;
+        }
+        .btn-prev:hover {
+            color: #45556C;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        /* ─── Right: Autonomy cards ─── */
+        .right {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .autonomy-panel { width: 380px; }
+
+        .panel-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #ADADAD;
+            margin-bottom: 14px;
+        }
+
+        /* ─── Mode cards ─── */
+        .mode-card {
+            background: #FFFFFF;
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 10px;
+            border: 1.5px solid rgba(18,11,11,0.06);
+            cursor: pointer;
+            /* Smooth transition on all properties */
+            transition:
+                border-color 0.28s ease,
+                box-shadow 0.28s ease,
+                transform 0.22s ease;
+            animation: cardIn 0.5s ease both;
+            box-shadow: 0 2px 8px rgba(18,11,11,0.04);
+        }
+
+        .mode-card:nth-child(2) { animation-delay: 0.06s; }
+        .mode-card:nth-child(3) { animation-delay: 0.12s; }
+        .mode-card:nth-child(4) { animation-delay: 0.18s; }
+
+        /* Hover — only for cards NOT already selected */
+        .mode-card:not(.active):hover {
+            border-color: rgba(255, 92, 27, 0.28);
+            box-shadow:
+                0 8px 32px rgba(255, 92, 27, 0.10),
+                0 2px 10px rgba(18,11,11,0.06);
+            transform: translateY(-1px);
+        }
+
+        /* Show example on hover (unselected) */
+        .mode-card:not(.active):hover .mode-example {
+            max-height: 80px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+
+        /* Active / selected state */
+        .mode-card.active {
+            border-color: rgba(255, 92, 27, 0.32);
+            box-shadow:
+                0 8px 36px rgba(255, 92, 27, 0.11),
+                0 2px 10px rgba(18,11,11,0.06);
+        }
+
+        .mode-card.active .mode-example {
+            max-height: 80px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+        .mode-card.active .mode-badge { opacity: 1; }
+
+        /* Header row inside card */
+        .mode-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+
+        .mode-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-icon-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            opacity: 0.55;
+            transition: opacity 0.22s ease;
+        }
+
+        .mode-card:not(.active):hover .mode-icon-wrap,
+        .mode-card.active .mode-icon-wrap {
+            opacity: 1;
+        }
+
+        .mode-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #120B0B;
+        }
+
+        .mode-badge {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: #FF5C1B;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.24s ease;
+        }
+
+        .mode-desc {
+            font-size: 12px;
+            color: #45556C;
+            line-height: 1.55;
+        }
+
+        /* Example row */
+        .mode-example {
+            margin-top: 12px;
+            padding: 10px 12px;
+            background: #F8F8F8;
+            border-radius: 8px;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition:
+                max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.28s ease,
+                margin-top 0.28s ease;
+            margin-top: 0;
+        }
+
+        .example-label {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #BEBEBE;
+            margin-bottom: 4px;
+        }
+
+        .example-text {
+            font-size: 11px;
+            color: #120B0B;
+            line-height: 1.5;
+        }
+
+        .example-text span { color: #FF5C1B; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="8" fill="#120B0B"/>
+                <mask id="mask-s3" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="4" width="24" height="24">
+                    <rect x="4" y="4" width="24" height="24" fill="#D9D9D9"/>
+                </mask>
+                <g mask="url(#mask-s3)">
+                    <path d="M12.9062 20.3841C12.9062 20.7494 12.7795 21.0588 12.5261 21.3121L9.71537 24.1229C9.46199 24.3763 9.15263 24.503 8.7873 24.503C8.42196 24.503 8.1126 24.3763 7.85922 24.1229C7.60584 23.8695 7.47915 23.5601 7.47915 23.1948C7.47915 22.8295 7.60584 22.5201 7.85922 22.2667L10.67 19.456C10.9233 19.2026 11.2327 19.0759 11.598 19.0759C11.9634 19.0759 12.2727 19.2026 12.5261 19.456C12.7795 19.7094 12.9062 20.0187 12.9062 20.3841ZM11.0677 16C11.0677 16.4007 10.9469 16.7218 10.7053 16.9634C10.4637 17.205 10.1426 17.3258 9.74189 17.3258L8.69891 17.3081C8.32178 17.3081 8.01242 17.1873 7.77083 16.9458C7.52923 16.7042 7.40844 16.383 7.40844 15.9823C7.40844 15.6052 7.52923 15.2958 7.77083 15.0542C8.01242 14.8127 8.32178 14.6919 8.69891 14.6919L9.74189 14.6742C10.119 14.6742 10.4343 14.8009 10.6876 15.0542C10.941 15.3076 11.0677 15.6229 11.0677 16ZM10.6876 12.5263L7.87689 9.71559C7.62351 9.46221 7.49683 9.15285 7.49683 8.78751C7.49683 8.42217 7.62351 8.11281 7.87689 7.85943C8.13027 7.60605 8.43963 7.47936 8.80497 7.47936C9.17031 7.47936 9.47967 7.60605 9.73305 7.85943L12.5438 10.6702C12.7972 10.9236 12.9239 11.2329 12.9239 11.5983C12.9239 11.9636 12.7972 12.273 12.5438 12.5263C12.2904 12.7797 11.9811 12.9064 11.6157 12.9064C11.2504 12.9064 10.941 12.7797 10.6876 12.5263ZM15.9998 11.0679C15.5991 11.0679 15.2779 10.9471 15.0364 10.7055C14.7948 10.4639 14.674 10.1428 14.674 9.74211L14.6916 8.69912C14.6916 8.322 14.8124 8.01264 15.054 7.77105C15.2956 7.52945 15.6168 7.40865 16.0175 7.40865C16.3946 7.40865 16.7039 7.52945 16.9455 7.77104C17.1871 8.01264 17.3079 8.322 17.3079 8.69912L17.3256 9.7421C17.3256 10.1192 17.1989 10.4345 16.9455 10.6879C16.6922 10.9412 16.3769 11.0679 15.9998 11.0679ZM19.0757 11.5983C19.0757 11.2329 19.2024 10.9236 19.4558 10.6702L22.2665 7.85943C22.5199 7.60605 22.8293 7.47936 23.1946 7.47936C23.5599 7.47936 23.8693 7.60605 24.1227 7.85943C24.3761 8.11281 24.5027 8.42217 24.5027 8.78751C24.5027 9.15285 24.3761 9.46221 24.1227 9.71559L21.3119 12.5263C21.0585 12.7797 20.7492 12.9064 20.3838 12.9064C20.0185 12.9064 19.7091 12.7797 19.4558 12.5263C19.2024 12.273 19.0757 11.9636 19.0757 11.5983ZM15.9998 19.2262C15.11 19.2262 14.3499 18.9109 13.7194 18.2804C13.0889 17.6499 12.7736 16.8898 12.7736 16C12.7736 15.1102 13.0889 14.3501 13.7194 13.7196C14.3499 13.0891 15.11 12.7738 15.9998 12.7738C16.8896 12.7738 17.6497 13.0891 18.2802 13.7196C18.9107 14.3501 19.226 15.1102 19.226 16C19.226 16.8898 18.9107 17.6499 18.2802 18.2804C17.6497 18.9109 16.8896 19.2262 15.9998 19.2262ZM20.9319 16C20.9319 15.5993 21.0527 15.2782 21.2942 15.0366C21.5358 14.795 21.857 14.6742 22.2577 14.6742L23.2653 14.6919C23.6424 14.6919 23.9518 14.8127 24.1934 15.0542C24.435 15.2958 24.5558 15.617 24.5558 16.0177C24.5558 16.3948 24.435 16.7042 24.1934 16.9458C23.9518 17.1873 23.6424 17.3081 23.2653 17.3081L22.2577 17.3258C21.8806 17.3258 21.5653 17.1991 21.3119 16.9458C21.0585 16.6924 20.9319 16.3771 20.9319 16ZM15.9998 20.9321C16.4005 20.9321 16.7216 21.0529 16.9632 21.2945C17.2048 21.5361 17.3256 21.8572 17.3256 22.2579L17.3079 23.2655C17.3079 23.6426 17.1871 23.952 16.9455 24.1936C16.7039 24.4352 16.3828 24.556 15.9821 24.556C15.605 24.556 15.2956 24.4352 15.054 24.1936C14.8124 23.952 14.6916 23.6426 14.6916 23.2655L14.674 22.2579C14.674 21.8808 14.8006 21.5655 15.054 21.3121C15.3074 21.0588 15.6227 20.9321 15.9998 20.9321ZM20.4015 19.0759C20.7669 19.0759 21.0762 19.2026 21.3296 19.456L24.1404 22.2667C24.3937 22.5201 24.5204 22.8295 24.5204 23.1948C24.5204 23.5602 24.3937 23.8695 24.1404 24.1229C23.887 24.3763 23.5776 24.503 23.2123 24.503C22.8469 24.503 22.5376 24.3763 22.2842 24.1229L19.4734 21.3121C19.2201 21.0588 19.0934 20.7494 19.0934 20.3841C19.0934 20.0187 19.2201 19.7094 19.4734 19.456C19.7268 19.2026 20.0362 19.0759 20.4015 19.0759Z" fill="url(#grad-s3)"/>
+                </g>
+                <defs>
+                    <linearGradient id="grad-s3" x1="5.32763" y1="15.2444" x2="24.1682" y2="5.87843" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FFD000"/>
+                        <stop offset="0.677885" stop-color="#FF6F00"/>
+                        <stop offset="1" stop-color="#FF5C1B"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span class="logo-name">Witness</span>
+        </div>
+
+        <div class="progress-system">
+            <div class="progress-phases">
+                <div class="phase">
+                    <div class="phase-label active-phase">Learn</div>
+                    <div class="phase-dots">
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                        <div class="dot active"></div>
+                        <div class="dot edu-pending"></div>
+                    </div>
+                </div>
+                <div class="phase-divider"></div>
+                <div class="phase">
+                    <div class="phase-label">Set up</div>
+                    <div class="phase-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-counter"><span>Step 3 of 7</span></div>
+    </header>
+
+    <main>
+        <!-- Left -->
+        <div class="left">
+            <div class="eyebrow">
+                <div class="eyebrow-dot"></div>
+                <span class="eyebrow-text">How to get started</span>
+            </div>
+
+            <h1>I <em class="accent">adapt</em> to you, not the other way around</h1>
+
+            <p class="body-text">
+                Maintain full governance and oversight as we work together. I identify patterns, learn your style, and get smarter over time. Set the autonomy level that feels right and build trust at your own pace.
+            </p>
+
+            <div class="cta-group">
+                <button class="btn-prev" onclick="window.location.href='screen-2.html'">← Previous</button>
+                <button class="btn-next" onclick="window.location.href='screen-3.1.html'">Get started →</button>
+            </div>
+        </div>
+
+        <!-- Right -->
+        <div class="right">
+            <div class="autonomy-panel">
+
+                <div class="panel-label">Set your autonomy levels</div>
+
+                <!-- Assist -->
+                <div class="mode-card" id="card-assist" onclick="selectMode('assist')">
+                    <div class="mode-header">
+                        <div class="mode-title">
+                            <span class="mode-icon-wrap">
+                                <!-- Eye icon: surface & watch -->
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M1.5 8s2.5-5 6.5-5 6.5 5 6.5 5-2.5 5-6.5 5S1.5 8 1.5 8z" stroke="#120B0B" stroke-width="1.3" stroke-linejoin="round"/>
+                                    <circle cx="8" cy="8" r="2" stroke="#120B0B" stroke-width="1.3"/>
+                                </svg>
+                            </span>
+                            <span class="mode-name">Assist</span>
+                        </div>
+                        <span class="mode-badge">Selected</span>
+                    </div>
+                    <div class="mode-desc">I surface what matters. You review and decide everything.</div>
+                    <div class="mode-example">
+                        <div class="example-label">For example</div>
+                        <div class="example-text">"Invoice INV-2245 looks off. <span>Review before approving?</span>"</div>
+                    </div>
+                </div>
+
+                <!-- Draft for review -->
+                <div class="mode-card active" id="card-draft" onclick="selectMode('draft')">
+                    <div class="mode-header">
+                        <div class="mode-title">
+                            <span class="mode-icon-wrap">
+                                <!-- Edit/pen icon: draft & compose -->
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M11 2.5l2.5 2.5-7 7H4v-2.5l7-7z" stroke="#120B0B" stroke-width="1.3" stroke-linejoin="round"/>
+                                    <path d="M2 14h12" stroke="#120B0B" stroke-width="1.3" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <span class="mode-name">Draft for review</span>
+                        </div>
+                    </div>
+                    <div class="mode-desc">I prepare the action. You approve before anything happens.</div>
+                    <div class="mode-example">
+                        <div class="example-label">For example</div>
+                        <div class="example-text">"Drafted a follow-up to Acme Corp. <span>Ready to send?</span>"</div>
+                    </div>
+                </div>
+
+                <!-- Handle it -->
+                <div class="mode-card" id="card-handle" onclick="selectMode('handle')">
+                    <div class="mode-header">
+                        <div class="mode-title">
+                            <span class="mode-icon-wrap">
+                                <!-- Lightning bolt: fast, autonomous action -->
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M9.5 1.5L4.5 9h5L5.5 14.5l7-8.5H8l1.5-4.5z" stroke="#120B0B" stroke-width="1.3" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <span class="mode-name">Handle it</span>
+                        </div>
+                        <span class="mode-badge">Selected</span>
+                    </div>
+                    <div class="mode-desc">I take care of it end-to-end and keep you informed.</div>
+                    <div class="mode-example">
+                        <div class="example-label">For example</div>
+                        <div class="example-text">"Matched and filed INV-2245. <span>Done.</span>"</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const modes = ['assist', 'draft', 'handle'];
+        function selectMode(mode) {
+            modes.forEach(m => {
+                document.getElementById('card-' + m).classList.toggle('active', m === mode);
+            });
+        }
+    </script>
+
+</body>
+</html>

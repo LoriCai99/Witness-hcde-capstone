@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witness — Your AI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F4F4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 55% 55% at 85% 15%, rgba(255,208,0,0.07) 0%, transparent 65%),
+                radial-gradient(ellipse 45% 55% at 15% 85%, rgba(21,93,252,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 35% 40% at 75% 80%, rgba(255,92,27,0.05) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header, main { position: relative; z-index: 1; }
+
+        /* ── Animations ── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes panelIn {
+            from { opacity: 0; transform: scale(0.96) translateY(12px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+            40%            { transform: translateY(-5px); opacity: 1; }
+        }
+        @keyframes ping {
+            0%  { transform: scale(1); opacity: 0.8; }
+            70% { transform: scale(2.2); opacity: 0; }
+            100%{ transform: scale(2.2); opacity: 0; }
+        }
+        @keyframes thinkingPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,92,27,0.35); }
+            50%       { box-shadow: 0 0 0 6px rgba(255,92,27,0); }
+        }
+        @keyframes actionSlide {
+            from { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+            to   { opacity: 1; max-height: 120px; }
+        }
+        @keyframes float-a {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-9px); }
+        }
+        @keyframes float-b {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-7px); }
+        }
+        @keyframes float-c {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-10px); }
+        }
+        @keyframes float-d {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-6px); }
+        }
+        @keyframes cardFloat {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Header ── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 52px;
+        }
+        .logo { display: flex; align-items: center; gap: 10px; min-width: 130px; }
+        .logo-name { font-size: 15px; font-weight: 500; color: #120B0B; letter-spacing: -0.01em; }
+
+        .progress-system { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .progress-phases { display: flex; align-items: center; }
+        .phase { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .phase-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #ADADAD; }
+        .phase-label.active-phase { color: #FF5C1B; }
+        .phase-dots { display: flex; gap: 6px; align-items: center; width: 76px; justify-content: center; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background-color: #BEBEBE; }
+        .dot.done { background-color: #FF5C1B; opacity: 0.35; }
+        .dot.active { background-color: #FF5C1B; width: 28px; border-radius: 5px; opacity: 1; }
+        .phase-divider { width: 20px; height: 1.5px; background-color: #BEBEBE; margin: 0 8px; flex-shrink: 0; }
+
+        .step-counter { min-width: 130px; display: flex; justify-content: flex-end; }
+        .step-counter span { font-size: 11px; font-weight: 500; color: #ADADAD; letter-spacing: 0.06em; text-transform: uppercase; }
+
+        /* ── Main ── */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 0 52px 32px;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ── Left column ── */
+        .left {
+            flex: 0 0 360px;
+            animation: fadeInUp 0.6s ease 0.05s both;
+        }
+
+        .eyebrow {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 20px;
+        }
+        .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: #FF5C1B; flex-shrink: 0; }
+        .eyebrow-text { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #FF5C1B; }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px; line-height: 1.15; font-weight: 600;
+            color: #120B0B; margin-bottom: 18px; letter-spacing: -0.02em;
+        }
+        h1 em { font-style: italic; color: #FF5C1B; }
+
+        .body-text {
+            font-size: 15px; line-height: 1.75; color: #45556C;
+            margin-bottom: 36px; font-weight: 400;
+        }
+
+        /* USP list — icon + heading + subtext */
+        .usp-list { display: flex; flex-direction: column; gap: 18px; margin-bottom: 44px; }
+
+        .usp-item { display: flex; align-items: flex-start; gap: 13px; }
+
+        .usp-icon {
+            width: 32px; height: 32px; border-radius: 9px;
+            background: rgba(255,92,27,0.09);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; margin-top: 1px;
+        }
+        .usp-text {}
+        .usp-title { font-size: 13px; font-weight: 600; color: #120B0B; letter-spacing: -0.01em; margin-bottom: 3px; }
+        .usp-desc { font-size: 12.5px; color: #6B7A8D; line-height: 1.6; }
+
+        /* CTA */
+        .cta-group { display: flex; align-items: center; gap: 20px; }
+        .btn-next {
+            background-color: #120B0B; color: white; border: none;
+            padding: 13px 48px; border-radius: 8px; font-size: 14px; font-weight: 500;
+            cursor: pointer; font-family: 'Inter', sans-serif; letter-spacing: 0.01em;
+            transition: background-color 0.2s;
+        }
+        .btn-next:hover { background-color: #FF5C1B; }
+        .btn-prev {
+            font-size: 13px; color: #ADADAD; background: none; border: none;
+            cursor: pointer; font-family: 'Inter', sans-serif; transition: color 0.15s;
+        }
+        .btn-prev:hover { color: #45556C; }
+
+        /* ── Right column — chat + floating cards ── */
+        .right {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 520px;
+        }
+
+        /* ── Chat panel ── */
+        .chat-panel {
+            width: 360px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: 0 24px 64px rgba(18,11,11,0.13), 0 4px 16px rgba(18,11,11,0.07);
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+            animation: panelIn 0.6s cubic-bezier(0.2,0,0,1) 0.2s both;
+        }
+
+        .chat-header {
+            background: linear-gradient(180deg, #fff8f5 0%, #ffffff 100%);
+            border-bottom: 1px solid rgba(18,11,11,0.06);
+            padding: 13px 15px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .chat-avatar {
+            width: 34px; height: 34px; border-radius: 9px;
+            background: #120B0B;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            animation: thinkingPulse 2.5s ease infinite;
+        }
+        .chat-name { font-size: 13px; font-weight: 600; color: #120B0B; letter-spacing: -0.01em; }
+        .chat-status { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8A98A8; }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #22C55E; position: relative; }
+        .status-dot::after {
+            content: ''; position: absolute; inset: 0; border-radius: 50%;
+            background: #22C55E; animation: ping 2s ease infinite;
+        }
+        .chat-badge {
+            font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+            background: rgba(255,92,27,0.10); color: #FF5C1B; padding: 3px 7px; border-radius: 20px;
+            margin-left: auto;
+        }
+
+        .chat-body {
+            padding: 14px 13px; display: flex; flex-direction: column; gap: 11px;
+            min-height: 340px; background: #F7F7F5;
+        }
+
+        .msg-system { text-align: center; font-size: 10px; color: #ADADAD; opacity: 0; animation: msgIn 0.4s ease 0.8s both; }
+
+        .msg-user { display: flex; justify-content: flex-end; opacity: 0; animation: msgIn 0.35s ease 1.4s both; }
+        .bubble-user {
+            background: #120B0B; color: white; font-size: 12px; line-height: 1.5;
+            padding: 9px 13px; border-radius: 13px 13px 4px 13px; max-width: 82%;
+        }
+
+        .msg-typing { display: flex; align-items: flex-start; gap: 7px; opacity: 0; animation: msgIn 0.3s ease 2.1s both; }
+        .ai-avatar {
+            width: 22px; height: 22px; border-radius: 6px; background: #120B0B;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+        }
+        .typing-dots {
+            display: flex; gap: 4px; align-items: center;
+            background: white; border: 1px solid rgba(18,11,11,0.07);
+            border-radius: 4px 13px 13px 13px; padding: 10px 13px;
+            box-shadow: 0 2px 8px rgba(18,11,11,0.05);
+        }
+        .typing-dots span {
+            width: 5px; height: 5px; border-radius: 50%; background: #ADADAD;
+            display: block; animation: typingBounce 1.2s ease infinite;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.30s; }
+
+        .msg-ai { display: flex; align-items: flex-start; gap: 7px; opacity: 0; }
+        .msg-ai.visible { animation: msgIn 0.4s ease both; }
+
+        .bubble-ai {
+            background: white; border: 1px solid rgba(18,11,11,0.07);
+            border-radius: 4px 13px 13px 13px; padding: 9px 12px;
+            font-size: 12px; color: #45556C; line-height: 1.55; max-width: 88%;
+            box-shadow: 0 2px 8px rgba(18,11,11,0.05);
+        }
+
+        .action-card {
+            margin-top: 8px; background: #EFF6FF;
+            border: 1px solid rgba(21,93,252,0.15); border-radius: 10px;
+            padding: 9px 11px; overflow: hidden; max-height: 0; opacity: 0;
+            animation: actionSlide 0.4s ease 4.2s both;
+        }
+        .action-card-label { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #155DFC; margin-bottom: 5px; }
+        .action-item { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: #45556C; margin-bottom: 3px; }
+        .action-item:last-child { margin-bottom: 0; }
+        .action-dot { width: 4px; height: 4px; border-radius: 50%; background: #155DFC; flex-shrink: 0; }
+
+        .chat-input-row {
+            padding: 11px 13px; border-top: 1px solid rgba(18,11,11,0.06);
+            display: flex; align-items: center; gap: 8px; background: white;
+        }
+        .chat-input {
+            flex: 1; background: #F4F4F4; border: 1px solid rgba(18,11,11,0.08);
+            border-radius: 9px; padding: 8px 11px; font-size: 11.5px;
+            font-family: 'Inter', sans-serif; outline: none; pointer-events: none; color: #120B0B;
+        }
+        .chat-input::placeholder { color: #ADADAD; }
+        .chat-send {
+            width: 30px; height: 30px; background: #FF5C1B; border: none;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; pointer-events: none;
+        }
+
+        /* ── Floating callout cards — square, icon only ── */
+        .float-card {
+            position: absolute;
+            background: #FFFFFF;
+            border-radius: 18px;
+            width: 76px; height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 28px rgba(18,11,11,0.10), 0 2px 8px rgba(18,11,11,0.05);
+            border: 1px solid rgba(18,11,11,0.05);
+            z-index: 3;
+            opacity: 0;
+        }
+        .float-card-icon {
+            width: 56px; height: 56px; border-radius: 14px;
+            background: rgba(255,92,27,0.09);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Positions — tucked close to chat edges */
+        .fc-1 { top: 72px;   left: 72px;  animation: cardFloat 0.5s ease 0.5s both,  float-a 4s   ease-in-out 1.2s infinite; }
+        .fc-2 { top: 55px;   right: 60px; animation: cardFloat 0.5s ease 0.65s both, float-b 4.4s ease-in-out 1.4s infinite; }
+        .fc-3 { bottom: 95px; left: 62px; animation: cardFloat 0.5s ease 0.80s both, float-c 3.8s ease-in-out 1.6s infinite; }
+        .fc-4 { bottom: 72px; right: 52px; animation: cardFloat 0.5s ease 0.95s both, float-d 4.2s ease-in-out 1.8s infinite; }
+
+    </style>
+</head>
+<body>
+
+    <!-- ── Header ── -->
+    <header>
+        <div class="logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="8" fill="#120B0B"/>
+                <mask id="mask-s31" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="4" width="24" height="24">
+                    <rect x="4" y="4" width="24" height="24" fill="#D9D9D9"/>
+                </mask>
+                <g mask="url(#mask-s31)">
+                    <path d="M12.9062 20.3841C12.9062 20.7494 12.7795 21.0588 12.5261 21.3121L9.71537 24.1229C9.46199 24.3763 9.15263 24.503 8.7873 24.503C8.42196 24.503 8.1126 24.3763 7.85922 24.1229C7.60584 23.8695 7.47915 23.5601 7.47915 23.1948C7.47915 22.8295 7.60584 22.5201 7.85922 22.2667L10.67 19.456C10.9233 19.2026 11.2327 19.0759 11.598 19.0759C11.9634 19.0759 12.2727 19.2026 12.5261 19.456C12.7795 19.7094 12.9062 20.0187 12.9062 20.3841ZM11.0677 16C11.0677 16.4007 10.9469 16.7218 10.7053 16.9634C10.4637 17.205 10.1426 17.3258 9.74189 17.3258L8.69891 17.3081C8.32178 17.3081 8.01242 17.1873 7.77083 16.9458C7.52923 16.7042 7.40844 16.383 7.40844 15.9823C7.40844 15.6052 7.52923 15.2958 7.77083 15.0542C8.01242 14.8127 8.32178 14.6919 8.69891 14.6919L9.74189 14.6742C10.119 14.6742 10.4343 14.8009 10.6876 15.0542C10.941 15.3076 11.0677 15.6229 11.0677 16ZM10.6876 12.5263L7.87689 9.71559C7.62351 9.46221 7.49683 9.15285 7.49683 8.78751C7.49683 8.42217 7.62351 8.11281 7.87689 7.85943C8.13027 7.60605 8.43963 7.47936 8.80497 7.47936C9.17031 7.47936 9.47967 7.60605 9.73305 7.85943L12.5438 10.6702C12.7972 10.9236 12.9239 11.2329 12.9239 11.5983C12.9239 11.9636 12.7972 12.273 12.5438 12.5263C12.2904 12.7797 11.9811 12.9064 11.6157 12.9064C11.2504 12.9064 10.941 12.7797 10.6876 12.5263ZM15.9998 11.0679C15.5991 11.0679 15.2779 10.9471 15.0364 10.7055C14.7948 10.4639 14.674 10.1428 14.674 9.74211L14.6916 8.69912C14.6916 8.322 14.8124 8.01264 15.054 7.77105C15.2956 7.52945 15.6168 7.40865 16.0175 7.40865C16.3946 7.40865 16.7039 7.52945 16.9455 7.77104C17.1871 8.01264 17.3079 8.322 17.3079 8.69912L17.3256 9.7421C17.3256 10.1192 17.1989 10.4345 16.9455 10.6879C16.6922 10.9412 16.3769 11.0679 15.9998 11.0679ZM19.0757 11.5983C19.0757 11.2329 19.2024 10.9236 19.4558 10.6702L22.2665 7.85943C22.5199 7.60605 22.8293 7.47936 23.1946 7.47936C23.5599 7.47936 23.8693 7.60605 24.1227 7.85943C24.3761 8.11281 24.5027 8.42217 24.5027 8.78751C24.5027 9.15285 24.3761 9.46221 24.1227 9.71559L21.3119 12.5263C21.0585 12.7797 20.7492 12.9064 20.3838 12.9064C20.0185 12.9064 19.7091 12.7797 19.4558 12.5263C19.2024 12.273 19.0757 11.9636 19.0757 11.5983ZM15.9998 19.2262C15.11 19.2262 14.3499 18.9109 13.7194 18.2804C13.0889 17.6499 12.7736 16.8898 12.7736 16C12.7736 15.1102 13.0889 14.3501 13.7194 13.7196C14.3499 13.0891 15.11 12.7738 15.9998 12.7738C16.8896 12.7738 17.6497 13.0891 18.2802 13.7196C18.9107 14.3501 19.226 15.1102 19.226 16C19.226 16.8898 18.9107 17.6499 18.2802 18.2804C17.6497 18.9109 16.8896 19.2262 15.9998 19.2262ZM20.9319 16C20.9319 15.5993 21.0527 15.2782 21.2942 15.0366C21.5358 14.795 21.857 14.6742 22.2577 14.6742L23.2653 14.6919C23.6424 14.6919 23.9518 14.8127 24.1934 15.0542C24.435 15.2958 24.5558 15.617 24.5558 16.0177C24.5558 16.3948 24.435 16.7042 24.1934 16.9458C23.9518 17.1873 23.6424 17.3081 23.2653 17.3081L22.2577 17.3258C21.8806 17.3258 21.5653 17.1991 21.3119 16.9458C21.0585 16.6924 20.9319 16.3771 20.9319 16ZM15.9998 20.9321C16.4005 20.9321 16.7216 21.0529 16.9632 21.2945C17.2048 21.5361 17.3256 21.8572 17.3256 22.2579L17.3079 23.2655C17.3079 23.6426 17.1871 23.952 16.9455 24.1936C16.7039 24.4352 16.3828 24.556 15.9821 24.556C15.605 24.556 15.2956 24.4352 15.054 24.1936C14.8124 23.952 14.6916 23.6426 14.6916 23.2655L14.674 22.2579C14.674 21.8808 14.8006 21.5655 15.054 21.3121C15.3074 21.0588 15.6227 20.9321 15.9998 20.9321ZM20.4015 19.0759C20.7669 19.0759 21.0762 19.2026 21.3296 19.456L24.1404 22.2667C24.3937 22.5201 24.5204 22.8295 24.5204 23.1948C24.5204 23.5602 24.3937 23.8695 24.1404 24.1229C23.887 24.3763 23.5776 24.503 23.2123 24.503C22.8469 24.503 22.5376 24.3763 22.2842 24.1229L19.4734 21.3121C19.2201 21.0588 19.0934 20.7494 19.0934 20.3841C19.0934 20.0187 19.2201 19.7094 19.4734 19.456C19.7268 19.2026 20.0362 19.0759 20.4015 19.0759Z" fill="url(#grad-s31)"/>
+                </g>
+                <defs>
+                    <linearGradient id="grad-s31" x1="5.32763" y1="15.2444" x2="24.1682" y2="5.87843" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FFD000"/><stop offset="0.677885" stop-color="#FF6F00"/><stop offset="1" stop-color="#FF5C1B"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span class="logo-name">Witness</span>
+        </div>
+
+        <div class="progress-system">
+            <div class="progress-phases">
+                <div class="phase">
+                    <div class="phase-label active-phase">Learn</div>
+                    <div class="phase-dots">
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                        <div class="dot active"></div>
+                    </div>
+                </div>
+                <div class="phase-divider"></div>
+                <div class="phase">
+                    <div class="phase-label">Set up</div>
+                    <div class="phase-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-counter"><span>Step 4 of 7</span></div>
+    </header>
+
+    <!-- ── Main ── -->
+    <main>
+
+        <!-- Left -->
+        <div class="left">
+            <div class="eyebrow">
+                <div class="eyebrow-dot"></div>
+                <span class="eyebrow-text">Witness AI</span>
+            </div>
+
+            <h1>Not just an <em>AI chat box</em></h1>
+
+            <p class="body-text">Witness doesn't wait to be asked. It works across your procurement workflow continuously, surfacing what matters before you even open the app.</p>
+
+            <div class="usp-list">
+                <div class="usp-item">
+                    <div class="usp-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="2" stroke="#FF5C1B" stroke-width="1.3"/>
+                            <circle cx="8" cy="8" r="5" stroke="#FF5C1B" stroke-width="1.2" stroke-dasharray="2.5 2"/>
+                            <circle cx="8" cy="8" r="7" stroke="#FF5C1B" stroke-width="1" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <div class="usp-text">
+                        <div class="usp-title">Proactive, not reactive</div>
+                        <div class="usp-desc">Surfaces risks before you think to look.</div>
+                    </div>
+                </div>
+                <div class="usp-item">
+                    <div class="usp-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M10.5 2l3 3-7 7H3.5V9l7-7z" stroke="#FF5C1B" stroke-width="1.3" stroke-linejoin="round"/>
+                            <path d="M1.5 14.5h13" stroke="#FF5C1B" stroke-width="1.2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="usp-text">
+                        <div class="usp-title">Acts on your behalf</div>
+                        <div class="usp-desc">Drafts POs and approvals, ready for your sign-off.</div>
+                    </div>
+                </div>
+                <div class="usp-item">
+                    <div class="usp-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="2" stroke="#FF5C1B" stroke-width="1.3"/>
+                            <circle cx="2" cy="3.5" r="1.5" stroke="#FF5C1B" stroke-width="1.1"/>
+                            <circle cx="14" cy="3.5" r="1.5" stroke="#FF5C1B" stroke-width="1.1"/>
+                            <circle cx="8" cy="14" r="1.5" stroke="#FF5C1B" stroke-width="1.1"/>
+                            <path d="M3.5 4.5L6.5 7M12.5 4.5L9.5 7M8 12V10" stroke="#FF5C1B" stroke-width="1.1" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="usp-text">
+                        <div class="usp-title">Works across your tools</div>
+                        <div class="usp-desc">Connected to your product and tools.</div>
+                    </div>
+                </div>
+                <div class="usp-item">
+                    <div class="usp-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="6" stroke="#FF5C1B" stroke-width="1.3"/>
+                            <path d="M8 5v3l2 1.5" stroke="#FF5C1B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="usp-text">
+                        <div class="usp-title">Always on</div>
+                        <div class="usp-desc">Running 24/7 in the background.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-group">
+                <button class="btn-prev" onclick="window.location.href='screen-3.html'">← Previous</button>
+                <button class="btn-next" onclick="window.location.href='screen-4.html'">Next →</button>
+            </div>
+        </div>
+
+        <!-- Right: chat + floating cards -->
+        <div class="right">
+
+            <!-- Sparkling stars — scoped to this column only -->
+            <canvas id="stars-canvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;border-radius:inherit;"></canvas>
+
+            <!-- Floating card 1: top-left -->
+            <div class="float-card fc-1">
+                <div class="float-card-icon">
+                    <svg width="26" height="26" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="2" stroke="#FF5C1B" stroke-width="1.3"/>
+                        <circle cx="8" cy="8" r="5" stroke="#FF5C1B" stroke-width="1.2" stroke-dasharray="2.5 2"/>
+                        <circle cx="8" cy="8" r="7" stroke="#FF5C1B" stroke-width="1" opacity="0.3"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Floating card 2: top-right -->
+            <div class="float-card fc-2">
+                <div class="float-card-icon">
+                    <svg width="26" height="26" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="6" stroke="#FF5C1B" stroke-width="1.3"/>
+                        <path d="M8 5v3l2 1.5" stroke="#FF5C1B" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Chat panel -->
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-avatar">
+                        <svg width="28" height="28" viewBox="0 0 18 18" fill="none">
+                            <mask id="cm" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14">
+                                <rect x="2" y="2" width="14" height="14" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#cm)" transform="rotate(45 9 9)">
+                                <path d="M6.03 9.51C5.88 9.66 5.7 9.74 5.5 9.74H3.28C3.08 9.74 2.9 9.66 2.75 9.51C2.6 9.36 2.53 9.18 2.53 8.98C2.53 8.78 2.6 8.6 2.75 8.45C2.9 8.3 3.08 8.22 3.28 8.22H5.5C5.7 8.22 5.88 8.3 6.03 8.45C6.18 8.6 6.25 8.78 6.25 8.98C6.25 9.18 6.18 9.36 6.03 9.51ZM7.06 7.06C6.9 7.22 6.71 7.3 6.51 7.3C6.31 7.3 6.12 7.22 5.96 7.06L5.54 6.61C5.39 6.46 5.31 6.28 5.31 6.08C5.31 5.88 5.4 5.69 5.55 5.54C5.7 5.39 5.88 5.31 6.08 5.31C6.28 5.31 6.46 5.39 6.61 5.54L7.06 5.96C7.21 6.11 7.29 6.3 7.29 6.51C7.29 6.71 7.21 6.9 7.06 7.06ZM8.27 5.5V3.28C8.27 3.08 8.35 2.9 8.5 2.75C8.65 2.6 8.83 2.53 9.03 2.53C9.23 2.53 9.41 2.6 9.56 2.75C9.71 2.9 9.78 3.08 9.78 3.28V5.5C9.78 5.7 9.71 5.88 9.56 6.03C9.41 6.18 9.23 6.25 9.03 6.25C8.83 6.25 8.65 6.18 8.5 6.03C8.35 5.88 8.27 5.7 8.27 5.5ZM10.97 7.06C10.81 6.9 10.73 6.71 10.73 6.51C10.73 6.31 10.81 6.12 10.97 5.96L11.42 5.54C11.57 5.39 11.75 5.31 11.95 5.31C12.15 5.31 12.33 5.4 12.48 5.55C12.63 5.7 12.71 5.88 12.71 6.08C12.71 6.28 12.63 6.46 12.48 6.61L12.06 7.06C11.91 7.21 11.72 7.29 11.51 7.29C11.31 7.29 11.12 7.21 10.97 7.06ZM11.99 8.45C12.14 8.3 12.32 8.22 12.52 8.22H14.74C14.94 8.22 15.12 8.3 15.27 8.45C15.42 8.6 15.49 8.78 15.49 8.98C15.49 9.18 15.42 9.36 15.27 9.51C15.12 9.66 14.94 9.74 14.74 9.74H12.52C12.32 9.74 12.14 9.66 11.99 9.51C11.84 9.36 11.76 9.18 11.76 8.98C11.76 8.78 11.84 8.6 11.99 8.45ZM7.74 10.24C7.39 9.89 7.22 9.47 7.22 8.98C7.22 8.49 7.39 8.07 7.74 7.72C8.09 7.37 8.51 7.2 9 7.2C9.49 7.2 9.91 7.37 10.26 7.72C10.61 8.07 10.78 8.49 10.78 8.98C10.78 9.47 10.61 9.89 10.26 10.24C9.91 10.59 9.49 10.76 9 10.76C8.51 10.76 8.09 10.59 7.74 10.24ZM10.97 10.94C11.13 10.78 11.32 10.7 11.52 10.7C11.72 10.7 11.91 10.78 12.07 10.94L12.49 11.39C12.64 11.54 12.72 11.72 12.72 11.92C12.72 12.12 12.63 12.3 12.48 12.45C12.33 12.6 12.15 12.68 11.95 12.68C11.75 12.68 11.57 12.6 11.42 12.45L11 12.03C10.85 11.88 10.77 11.69 10.77 11.48C10.77 11.28 10.85 11.09 10.97 10.94ZM7.06 10.94C7.22 11.1 7.3 11.29 7.3 11.49C7.3 11.69 7.22 11.88 7.06 12.04L6.64 12.46C6.49 12.61 6.31 12.69 6.11 12.69C5.91 12.69 5.73 12.6 5.58 12.45C5.43 12.3 5.35 12.12 5.35 11.92C5.35 11.72 5.43 11.54 5.58 11.39L6 10.97C6.15 10.82 6.34 10.74 6.55 10.74C6.75 10.74 6.94 10.82 7.06 10.94ZM9.56 11.97C9.71 12.12 9.78 12.3 9.78 12.5V14.72C9.78 14.92 9.71 15.1 9.56 15.25C9.41 15.4 9.23 15.47 9.03 15.47C8.83 15.47 8.65 15.4 8.5 15.25C8.35 15.1 8.27 14.92 8.27 14.72V12.5C8.27 12.3 8.35 12.12 8.5 11.97C8.65 11.82 8.83 11.74 9.03 11.74C9.23 11.74 9.41 11.82 9.56 11.97Z" fill="url(#cg)"/>
+                            </g>
+                            <defs>
+                                <linearGradient id="cg" x1="2.5" y1="2.5" x2="17" y2="11" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#FFD000"/><stop offset="0.677885" stop-color="#FF6F00"/><stop offset="1" stop-color="#FF5C1B"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="chat-name">Witness AI</div>
+                        <div class="chat-status">
+                            <span class="status-dot"></span>
+                            <span>Active now</span>
+                        </div>
+                    </div>
+                    <span class="chat-badge">AI Assistant</span>
+                </div>
+
+                <div class="chat-body">
+                    <div class="msg-system">Monitoring 4 connected tools</div>
+                    <div class="msg-user">
+                        <div class="bubble-user">What needs my attention today?</div>
+                    </div>
+                    <div class="msg-typing" id="typing-indicator">
+                        <div class="ai-avatar">
+                            <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
+                                <circle cx="5" cy="5" r="3" stroke="url(#cg2)" stroke-width="1.2"/>
+                                <defs><linearGradient id="cg2" x1="1" y1="1" x2="9" y2="6" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD000"/><stop offset="0.677885" stop-color="#FF6F00"/><stop offset="1" stop-color="#FF5C1B"/></linearGradient></defs>
+                            </svg>
+                        </div>
+                        <div class="typing-dots"><span></span><span></span><span></span></div>
+                    </div>
+                    <div class="msg-ai" id="msg-ai-1">
+                        <div class="ai-avatar">
+                            <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
+                                <circle cx="5" cy="5" r="3" stroke="url(#cg3)" stroke-width="1.2"/>
+                                <defs><linearGradient id="cg3" x1="1" y1="1" x2="9" y2="6" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD000"/><stop offset="0.677885" stop-color="#FF6F00"/><stop offset="1" stop-color="#FF5C1B"/></linearGradient></defs>
+                            </svg>
+                        </div>
+                        <div class="bubble-ai">
+                            Found <strong>2 overdue approvals</strong> and flagged an Acme Corp invoice $4,200 above PO.
+                            <div class="action-card">
+                                <div class="action-card-label">Drafted for your review</div>
+                                <div class="action-item"><span class="action-dot"></span>Approval — Apex Supplies $12,400</div>
+                                <div class="action-item"><span class="action-dot"></span>Flag — Acme Corp variance</div>
+                                <div class="action-item"><span class="action-dot"></span>Follow-up — TechCorp PO renewal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-row">
+                    <input class="chat-input" type="text" placeholder="Ask Witness anything…" readonly>
+                    <button class="chat-send">
+                        <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                            <path d="M2 7h10M7 2l5 5-5 5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Floating card 3: bottom-left -->
+            <div class="float-card fc-3">
+                <div class="float-card-icon">
+                    <svg width="26" height="26" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="2" stroke="#FF5C1B" stroke-width="1.3"/>
+                        <circle cx="2" cy="3.5" r="1.5" stroke="#FF5C1B" stroke-width="1.1"/>
+                        <circle cx="14" cy="3.5" r="1.5" stroke="#FF5C1B" stroke-width="1.1"/>
+                        <circle cx="8" cy="14" r="1.5" stroke="#FF5C1B" stroke-width="1.1"/>
+                        <path d="M3.5 4.5L6.5 7M12.5 4.5L9.5 7M8 12V10" stroke="#FF5C1B" stroke-width="1.1" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Floating card 4: bottom-right -->
+            <div class="float-card fc-4">
+                <div class="float-card-icon">
+                    <svg width="26" height="26" viewBox="0 0 16 16" fill="none">
+                        <path d="M10.5 2l3 3-7 7H3.5V9l7-7z" stroke="#FF5C1B" stroke-width="1.3" stroke-linejoin="round"/>
+                        <path d="M1.5 14.5h13" stroke="#FF5C1B" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        /* ── Sparkling stars (scoped to .right visual column) ── */
+        (function () {
+            const canvas = document.getElementById('stars-canvas');
+            const ctx    = canvas.getContext('2d');
+            const parent = canvas.parentElement;
+            const COLORS = ['#FF5C1B', '#FFD000', '#FF8C3B', '#FFE566', '#FFFFFF', '#FFA8F6', '#FF5C1B', '#FFD000'];
+            const COUNT  = 70;
+            let W, H, stars = [];
+
+            function resize() {
+                const rect = parent.getBoundingClientRect();
+                W = canvas.width  = Math.round(rect.width);
+                H = canvas.height = Math.round(rect.height);
+            }
+
+            function rand(min, max) { return Math.random() * (max - min) + min; }
+
+            function mkStar() {
+                return {
+                    x:      rand(0, W),
+                    y:      rand(0, H),
+                    r:      rand(1.0, 2.8),
+                    color:  COLORS[Math.floor(Math.random() * COLORS.length)],
+                    alpha:  rand(0, 1),
+                    dAlpha: rand(0.008, 0.028) * (Math.random() < 0.5 ? 1 : -1),
+                    arms:   Math.random() < 0.45,
+                    drift:  rand(-0.06, 0.06),
+                    vy:     rand(-0.05, 0.05),
+                };
+            }
+
+            function drawStar(s) {
+                ctx.save();
+                const a = Math.max(0, Math.min(1, s.alpha));
+                ctx.globalAlpha = a;
+                ctx.fillStyle   = s.color;
+
+                if (s.arms) {
+                    ctx.strokeStyle = s.color;
+                    ctx.lineCap     = 'round';
+                    const len = s.r * 4.2;
+                    // main cross
+                    ctx.lineWidth = s.r * 0.9;
+                    ctx.save();
+                    ctx.translate(s.x, s.y);
+                    ctx.beginPath();
+                    ctx.moveTo(-len, 0); ctx.lineTo(len, 0);
+                    ctx.moveTo(0, -len); ctx.lineTo(0, len);
+                    ctx.stroke();
+                    ctx.restore();
+                    // diagonal cross (dimmer)
+                    ctx.save();
+                    ctx.translate(s.x, s.y);
+                    ctx.globalAlpha = a * 0.45;
+                    ctx.lineWidth = s.r * 0.6;
+                    ctx.rotate(Math.PI / 4);
+                    const len2 = len * 0.65;
+                    ctx.beginPath();
+                    ctx.moveTo(-len2, 0); ctx.lineTo(len2, 0);
+                    ctx.moveTo(0, -len2); ctx.lineTo(0, len2);
+                    ctx.stroke();
+                    ctx.restore();
+                    // centre glow dot
+                    ctx.globalAlpha = a;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r * 1.1, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // plain glowing dot
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            function tick() {
+                ctx.clearRect(0, 0, W, H);
+                for (const s of stars) {
+                    s.alpha += s.dAlpha;
+                    if (s.alpha >= 1)      { s.alpha = 1;  s.dAlpha *= -1; }
+                    else if (s.alpha <= 0) {
+                        s.alpha  = 0;
+                        s.dAlpha = Math.abs(s.dAlpha);
+                        s.x = rand(0, W);
+                        s.y = rand(0, H);
+                    }
+                    s.x += s.drift;
+                    s.y += s.vy;
+                    if (s.x < -10) s.x = W + 10;
+                    if (s.x > W + 10) s.x = -10;
+                    if (s.y < -10) s.y = H + 10;
+                    if (s.y > H + 10) s.y = -10;
+                    drawStar(s);
+                }
+                requestAnimationFrame(tick);
+            }
+
+            resize();
+            window.addEventListener('resize', () => { resize(); });
+            for (let i = 0; i < COUNT; i++) stars.push(mkStar());
+            tick();
+        })();
+    </script>
+
+    <script>
+        setTimeout(() => {
+            const typing = document.getElementById('typing-indicator');
+            typing.style.transition = 'opacity 0.25s ease';
+            typing.style.opacity = '0';
+            setTimeout(() => {
+                typing.style.display = 'none';
+                const msg1 = document.getElementById('msg-ai-1');
+                msg1.style.animation = 'msgIn 0.4s ease both';
+            }, 250);
+        }, 3200);
+    </script>
+
+</body>
+</html>

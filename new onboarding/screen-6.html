@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witness — Customize Your Workplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #FAFAF8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .bg-gradient { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .bg-blob { position: absolute; border-radius: 50%; filter: blur(80px); }
+        .blob-1 {
+            width: 900px; height: 500px;
+            top: -200px; left: calc(50% - 140px);
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse, rgba(255,220,0,0.32) 0%, rgba(255,230,60,0.12) 50%, transparent 70%);
+        }
+        .blob-2 {
+            width: 500px; height: 420px;
+            top: -60px; right: -80px;
+            background: radial-gradient(circle, rgba(255,92,27,0.32) 0%, rgba(255,140,60,0.14) 55%, transparent 72%);
+        }
+        .blob-3 {
+            width: 860px; height: 480px;
+            bottom: -200px; left: 50%;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse, rgba(255,168,246,0.30) 0%, rgba(255,168,246,0.12) 50%, transparent 72%);
+        }
+
+        header, main { position: relative; z-index: 1; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(8px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ─── Header ─── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 52px;
+        }
+        .logo { display: flex; align-items: center; gap: 10px; min-width: 130px; }
+        .logo-name { font-size: 15px; font-weight: 500; color: #120B0B; letter-spacing: -0.01em; }
+
+        .progress-system { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .progress-phases { display: flex; align-items: center; }
+        .phase { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .phase-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #ADADAD; }
+        .phase-label.active-phase { color: #FF5C1B; }
+        .phase-dots { display: flex; gap: 6px; align-items: center; width: 76px; justify-content: center; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background-color: #BEBEBE; }
+        .dot.done { background: rgba(255,92,27,0.35); }
+        .dot.active { background: #FF5C1B; width: 28px; border-radius: 5px; }
+        .phase-divider { width: 20px; height: 1.5px; background-color: #BEBEBE; margin: 0 8px; flex-shrink: 0; }
+        .step-counter { min-width: 130px; display: flex; justify-content: flex-end; }
+        .step-counter span { font-size: 11px; font-weight: 500; color: #ADADAD; letter-spacing: 0.06em; text-transform: uppercase; }
+
+        /* ─── Main ─── */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 72px 52px 40px;
+        }
+
+        /* ─── Intro ─── */
+        .intro {
+            text-align: center;
+            margin-bottom: 28px;
+            animation: fadeInUp 0.5s ease 0.08s both;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 38px;
+            font-weight: 500;
+            color: #120B0B;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-bottom: 8px;
+        }
+        h1 em { font-style: italic; color: #FF5C1B; }
+
+        .sub {
+            font-size: 14px;
+            color: #6B7A8D;
+            line-height: 1.6;
+        }
+
+        /* ─── Category sections ─── */
+        .sections-wrap {
+            width: 100%;
+            max-width: 780px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeInUp 0.5s ease 0.18s both;
+        }
+
+        .category-section { display: flex; flex-direction: column; gap: 8px; }
+
+        .category-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #ADADAD;
+        }
+
+        /* Uniform 3-col grid for all sections */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        /* ─── Tool card — inspired by reference ─── */
+        .tool-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(18,11,11,0.08);
+            border-radius: 14px;
+            padding: 16px 16px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 14px;
+            text-align: left;
+            position: relative;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            animation: cardIn 0.4s cubic-bezier(0.2,0,0,1) both;
+            user-select: none;
+        }
+
+        .tool-card:hover {
+            border-color: rgba(255,92,27,0.30);
+            box-shadow: 0 4px 16px rgba(255,92,27,0.09), 0 1px 4px rgba(18,11,11,0.04);
+        }
+
+        .tool-card.connected {
+            border-color: rgba(255,92,27,0.55);
+            background: rgba(255,250,247,0.96);
+            box-shadow: 0 4px 20px rgba(255,92,27,0.12);
+        }
+
+        /* 36×36 logo / PNG placeholder */
+        .tool-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: #EFEFED;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        /* Filled logos remove the dashed border */
+        .tool-logo.filled { border: none; }
+
+        .tool-logo img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        /* Text block */
+        .tool-info { flex: 1; min-width: 0; padding-top: 1px; }
+
+        .tool-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #120B0B;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+            margin-bottom: 3px;
+        }
+
+        .tool-desc {
+            font-size: 11.5px;
+            color: #8A98A8;
+            line-height: 1.45;
+        }
+
+        .tool-card.connected .tool-name { color: #FF5C1B; }
+
+        /* Check badge — top-right corner */
+        .check-badge {
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 17px; height: 17px;
+            border-radius: 50%;
+            background: #FF5C1B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.4);
+            transition: opacity 0.2s, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            flex-shrink: 0;
+        }
+        .tool-card.connected .check-badge { opacity: 1; transform: scale(1); }
+
+        /* Stagger delays per section */
+        .cat-comm  .tool-card:nth-child(1) { animation-delay: 0.08s; }
+        .cat-comm  .tool-card:nth-child(2) { animation-delay: 0.12s; }
+        .cat-comm  .tool-card:nth-child(3) { animation-delay: 0.16s; }
+        .cat-proc  .tool-card:nth-child(1) { animation-delay: 0.14s; }
+        .cat-proc  .tool-card:nth-child(2) { animation-delay: 0.18s; }
+        .cat-proc  .tool-card:nth-child(3) { animation-delay: 0.22s; }
+        .cat-proc  .tool-card:nth-child(4) { animation-delay: 0.26s; }
+        .cat-erp   .tool-card:nth-child(1) { animation-delay: 0.20s; }
+        .cat-erp   .tool-card:nth-child(2) { animation-delay: 0.24s; }
+        .cat-erp   .tool-card:nth-child(3) { animation-delay: 0.28s; }
+        .cat-erp   .tool-card:nth-child(4) { animation-delay: 0.32s; }
+        .cat-erp   .tool-card:nth-child(5) { animation-delay: 0.36s; }
+        .cat-files .tool-card:nth-child(1) { animation-delay: 0.26s; }
+        .cat-files .tool-card:nth-child(2) { animation-delay: 0.30s; }
+        .cat-files .tool-card:nth-child(3) { animation-delay: 0.34s; }
+        .cat-files .tool-card:nth-child(4) { animation-delay: 0.38s; }
+
+        /* ─── Bottom ─── */
+        .bottom-area {
+            width: 100%;
+            max-width: 780px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 24px;
+            animation: fadeInUp 0.5s ease 0.50s both;
+        }
+
+.cta-row { display: flex; align-items: center; gap: 20px; }
+
+        .btn-prev {
+            font-size: 13px;
+            color: #ADADAD;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: color 0.15s;
+        }
+        .btn-prev:hover { color: #45556C; text-decoration: underline; text-underline-offset: 3px; }
+
+        .btn-next {
+            background: #120B0B;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 13px 36px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            letter-spacing: -0.01em;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .btn-next:hover { background: #FF5C1B; transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-gradient">
+        <div class="bg-blob blob-1"></div>
+        <div class="bg-blob blob-2"></div>
+        <div class="bg-blob blob-3"></div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="8" fill="#120B0B"/>
+                <mask id="mask-s6" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="4" width="24" height="24">
+                    <rect x="4" y="4" width="24" height="24" fill="#D9D9D9"/>
+                </mask>
+                <g mask="url(#mask-s6)">
+                    <path d="M12.9062 20.3841C12.9062 20.7494 12.7795 21.0588 12.5261 21.3121L9.71537 24.1229C9.46199 24.3763 9.15263 24.503 8.7873 24.503C8.42196 24.503 8.1126 24.3763 7.85922 24.1229C7.60584 23.8695 7.47915 23.5601 7.47915 23.1948C7.47915 22.8295 7.60584 22.5201 7.85922 22.2667L10.67 19.456C10.9233 19.2026 11.2327 19.0759 11.598 19.0759C11.9634 19.0759 12.2727 19.2026 12.5261 19.456C12.7795 19.7094 12.9062 20.0187 12.9062 20.3841ZM11.0677 16C11.0677 16.4007 10.9469 16.7218 10.7053 16.9634C10.4637 17.205 10.1426 17.3258 9.74189 17.3258L8.69891 17.3081C8.32178 17.3081 8.01242 17.1873 7.77083 16.9458C7.52923 16.7042 7.40844 16.383 7.40844 15.9823C7.40844 15.6052 7.52923 15.2958 7.77083 15.0542C8.01242 14.8127 8.32178 14.6919 8.69891 14.6919L9.74189 14.6742C10.119 14.6742 10.4343 14.8009 10.6876 15.0542C10.941 15.3076 11.0677 15.6229 11.0677 16ZM10.6876 12.5263L7.87689 9.71559C7.62351 9.46221 7.49683 9.15285 7.49683 8.78751C7.49683 8.42217 7.62351 8.11281 7.87689 7.85943C8.13027 7.60605 8.43963 7.47936 8.80497 7.47936C9.17031 7.47936 9.47967 7.60605 9.73305 7.85943L12.5438 10.6702C12.7972 10.9236 12.9239 11.2329 12.9239 11.5983C12.9239 11.9636 12.7972 12.273 12.5438 12.5263C12.2904 12.7797 11.9811 12.9064 11.6157 12.9064C11.2504 12.9064 10.941 12.7797 10.6876 12.5263ZM15.9998 11.0679C15.5991 11.0679 15.2779 10.9471 15.0364 10.7055C14.7948 10.4639 14.674 10.1428 14.674 9.74211L14.6916 8.69912C14.6916 8.322 14.8124 8.01264 15.054 7.77105C15.2956 7.52945 15.6168 7.40865 16.0175 7.40865C16.3946 7.40865 16.7039 7.52945 16.9455 7.77104C17.1871 8.01264 17.3079 8.322 17.3079 8.69912L17.3256 9.7421C17.3256 10.1192 17.1989 10.4345 16.9455 10.6879C16.6922 10.9412 16.3769 11.0679 15.9998 11.0679ZM19.0757 11.5983C19.0757 11.2329 19.2024 10.9236 19.4558 10.6702L22.2665 7.85943C22.5199 7.60605 22.8293 7.47936 23.1946 7.47936C23.5599 7.47936 23.8693 7.60605 24.1227 7.85943C24.3761 8.11281 24.5027 8.42217 24.5027 8.78751C24.5027 9.15285 24.3761 9.46221 24.1227 9.71559L21.3119 12.5263C21.0585 12.7797 20.7492 12.9064 20.3838 12.9064C20.0185 12.9064 19.7091 12.7797 19.4558 12.5263C19.2024 12.273 19.0757 11.9636 19.0757 11.5983ZM15.9998 19.2262C15.11 19.2262 14.3499 18.9109 13.7194 18.2804C13.0889 17.6499 12.7736 16.8898 12.7736 16C12.7736 15.1102 13.0889 14.3501 13.7194 13.7196C14.3499 13.0891 15.11 12.7738 15.9998 12.7738C16.8896 12.7738 17.6497 13.0891 18.2802 13.7196C18.9107 14.3501 19.226 15.1102 19.226 16C19.226 16.8898 18.9107 17.6499 18.2802 18.2804C17.6497 18.9109 16.8896 19.2262 15.9998 19.2262ZM20.9319 16C20.9319 15.5993 21.0527 15.2782 21.2942 15.0366C21.5358 14.795 21.857 14.6742 22.2577 14.6742L23.2653 14.6919C23.6424 14.6919 23.9518 14.8127 24.1934 15.0542C24.435 15.2958 24.5558 15.617 24.5558 16.0177C24.5558 16.3948 24.435 16.7042 24.1934 16.9458C23.9518 17.1873 23.6424 17.3081 23.2653 17.3081L22.2577 17.3258C21.8806 17.3258 21.5653 17.1991 21.3119 16.9458C21.0585 16.6924 20.9319 16.3771 20.9319 16ZM15.9998 20.9321C16.4005 20.9321 16.7216 21.0529 16.9632 21.2945C17.2048 21.5361 17.3256 21.8572 17.3256 22.2579L17.3079 23.2655C17.3079 23.6426 17.1871 23.952 16.9455 24.1936C16.7039 24.4352 16.3828 24.556 15.9821 24.556C15.605 24.556 15.2956 24.4352 15.054 24.1936C14.8124 23.952 14.6916 23.6426 14.6916 23.2655L14.674 22.2579C14.674 21.8808 14.8006 21.5655 15.054 21.3121C15.3074 21.0588 15.6227 20.9321 15.9998 20.9321ZM20.4015 19.0759C20.7669 19.0759 21.0762 19.2026 21.3296 19.456L24.1404 22.2667C24.3937 22.5201 24.5204 22.8295 24.5204 23.1948C24.5204 23.5602 24.3937 23.8695 24.1404 24.1229C23.887 24.3763 23.5776 24.503 23.2123 24.503C22.8469 24.503 22.5376 24.3763 22.2842 24.1229L19.4734 21.3121C19.2201 21.0588 19.0934 20.7494 19.0934 20.3841C19.0934 20.0187 19.2201 19.7094 19.4734 19.456C19.7268 19.2026 20.0362 19.0759 20.4015 19.0759Z" fill="url(#grad-s6)"/>
+                </g>
+                <defs>
+                    <linearGradient id="grad-s6" x1="5.32763" y1="15.2444" x2="24.1682" y2="5.87843" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FFD000"/><stop offset="0.677885" stop-color="#FF6F00"/><stop offset="1" stop-color="#FF5C1B"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span class="logo-name">Witness</span>
+        </div>
+
+        <div class="progress-system">
+            <div class="progress-phases">
+                <div class="phase">
+                    <div class="phase-label">Learn</div>
+                    <div class="phase-dots">
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                    </div>
+                </div>
+                <div class="phase-divider"></div>
+                <div class="phase">
+                    <div class="phase-label active-phase">Set up</div>
+                    <div class="phase-dots">
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                        <div class="dot active"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-counter"><span>Step 6 of 7</span></div>
+    </header>
+
+    <main>
+
+        <div class="intro">
+            <h1><em>Customize</em> Your Workplace</h1>
+            <p class="sub">Select the tools you use and add more anytime you want.</p>
+        </div>
+
+        <div class="sections-wrap">
+
+            <!-- Communication -->
+            <div class="category-section">
+                <div class="category-label">Communication</div>
+                <div class="tool-grid cat-comm">
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Gmail.png" alt="Gmail"></div>
+                        <div class="tool-info"><div class="tool-name">Gmail</div><div class="tool-desc">Email & inbox management</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Outlook.png" alt="Outlook"></div>
+                        <div class="tool-info"><div class="tool-name">Outlook</div><div class="tool-desc">Email & calendar</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Slack.png" alt="Slack"></div>
+                        <div class="tool-info"><div class="tool-name">Slack</div><div class="tool-desc">Team messaging & channels</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Procurement & Purchasing -->
+            <div class="category-section">
+                <div class="category-label">Procurement & Purchasing</div>
+                <div class="tool-grid cat-proc">
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Amazon Buisness.png" alt="Amazon Business"></div>
+                        <div class="tool-info"><div class="tool-name">Amazon Business</div><div class="tool-desc">B2B purchasing & ordering</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Walmart.png" alt="Walmart"></div>
+                        <div class="tool-info"><div class="tool-name">Walmart</div><div class="tool-desc">Retail & bulk supply</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Coupa.png" alt="Coupa"></div>
+                        <div class="tool-info"><div class="tool-name">Coupa</div><div class="tool-desc">Spend management platform</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Sap Ariba.png" alt="SAP Ariba"></div>
+                        <div class="tool-info"><div class="tool-name">SAP Ariba</div><div class="tool-desc">Procurement network</div></div>
+                    </div>
+                    <!-- Ghost card to balance 4-item row in 3-col grid -->
+                    <div class="tool-card" style="visibility:hidden;" aria-hidden="true"></div>
+                    <div class="tool-card" style="visibility:hidden;" aria-hidden="true"></div>
+                </div>
+            </div>
+
+            <!-- ERP & Finance -->
+            <div class="category-section">
+                <div class="category-label">ERP & Finance</div>
+                <div class="tool-grid cat-erp">
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Sap Ariba.png" alt="SAP"></div>
+                        <div class="tool-info"><div class="tool-name">SAP</div><div class="tool-desc">Enterprise resource planning</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Oracle Cloud.png" alt="Oracle Cloud"></div>
+                        <div class="tool-info"><div class="tool-name">Oracle Cloud</div><div class="tool-desc">Cloud ERP suite</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Netsuite.png" alt="NetSuite"></div>
+                        <div class="tool-info"><div class="tool-name">NetSuite</div><div class="tool-desc">Cloud accounting & ERP</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Quickbooks.png" alt="QuickBooks"></div>
+                        <div class="tool-info"><div class="tool-name">QuickBooks</div><div class="tool-desc">Bookkeeping & invoicing</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Xero Accounting.png" alt="Xero"></div>
+                        <div class="tool-info"><div class="tool-name">Xero</div><div class="tool-desc">Accounting software</div></div>
+                    </div>
+                    <div class="tool-card" style="visibility:hidden;" aria-hidden="true"></div>
+                </div>
+            </div>
+
+            <!-- Files & Documents -->
+            <div class="category-section">
+                <div class="category-label">Files & Documents</div>
+                <div class="tool-grid cat-files">
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Spreadsheet.png" alt="Google Sheets"></div>
+                        <div class="tool-info"><div class="tool-name">Google Sheets</div><div class="tool-desc">Spreadsheets & data</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Dropbox.png" alt="Dropbox"></div>
+                        <div class="tool-info"><div class="tool-name">Dropbox</div><div class="tool-desc">Cloud file storage</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled"><img src="Microsoft Office.png" alt="Microsoft 365"></div>
+                        <div class="tool-info"><div class="tool-name">Microsoft 365</div><div class="tool-desc">Office apps & OneDrive</div></div>
+                    </div>
+                    <div class="tool-card" onclick="toggleTool(this)">
+                        <div class="check-badge"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <div class="tool-logo filled" style="background:#F0F0EE;">
+                            <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 2C3 1.44772 3.44772 1 4 1H13L19 7V20C19 20.5523 18.5523 21 18 21H4C3.44772 21 3 20.5523 3 20V2Z" fill="#E8E8E5" stroke="#BDBDBA" stroke-width="1.2"/>
+                                <path d="M13 1V7H19" fill="none" stroke="#BDBDBA" stroke-width="1.2" stroke-linejoin="round"/>
+                                <path d="M7 11H13" stroke="#ADADAA" stroke-width="1.2" stroke-linecap="round"/>
+                                <path d="M7 14H13" stroke="#ADADAA" stroke-width="1.2" stroke-linecap="round"/>
+                                <path d="M7 17H10" stroke="#ADADAA" stroke-width="1.2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="tool-info"><div class="tool-name">Local Files</div><div class="tool-desc">PDFs, invoices, spreadsheets</div></div>
+                    </div>
+                    <div class="tool-card" style="visibility:hidden;" aria-hidden="true"></div>
+                    <div class="tool-card" style="visibility:hidden;" aria-hidden="true"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom -->
+        <div class="bottom-area">
+            <div class="cta-row">
+                <button class="btn-prev" onclick="window.location.href='screen-5.html'">← Previous</button>
+                <button class="btn-next" onclick="window.location.href='screen-7.html'">Next →</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleTool(card) {
+            if (card.style.visibility === 'hidden') return;
+            card.classList.toggle('connected');
+        }
+    </script>
+
+</body>
+</html>

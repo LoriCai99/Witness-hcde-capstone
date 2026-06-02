@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witness — Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #FAFAF8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ── Atmospheric background — slightly richer for celebration ── */
+        .bg-gradient { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .bg-blob { position: absolute; border-radius: 50%; filter: blur(80px); }
+        .blob-1 {
+            width: 900px; height: 500px;
+            top: -180px; left: calc(50% - 140px);
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse, rgba(255,220,0,0.40) 0%, rgba(255,230,60,0.16) 50%, transparent 70%);
+        }
+        .blob-2 {
+            width: 520px; height: 440px;
+            top: -60px; right: -80px;
+            background: radial-gradient(circle, rgba(255,92,27,0.36) 0%, rgba(255,140,60,0.15) 55%, transparent 72%);
+        }
+        .blob-3 {
+            width: 860px; height: 480px;
+            bottom: -200px; left: 50%;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse, rgba(255,168,246,0.28) 0%, rgba(255,168,246,0.10) 50%, transparent 72%);
+        }
+
+        header, main { position: relative; z-index: 1; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.82); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,92,27,0); }
+            50% { box-shadow: 0 0 40px 12px rgba(255,208,0,0.18); }
+        }
+
+        /* ─── Header ─── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 52px;
+        }
+        .logo { display: flex; align-items: center; gap: 10px; min-width: 130px; }
+        .logo-name { font-size: 15px; font-weight: 500; color: #120B0B; letter-spacing: -0.01em; }
+
+        .progress-system { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .progress-phases { display: flex; align-items: flex-end; }
+        .phase { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .phase-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #ADADAD; }
+        .dots { display: flex; gap: 5px; align-items: center; }
+        .dot { width: 7px; height: 7px; border-radius: 50%; background: #DADADA; }
+        .dot.done { background: rgba(255,92,27,0.35); }
+        .phase-spacer { width: 20px; }
+
+        .complete-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #FF5C1B;
+        }
+        .complete-badge .check-circle {
+            width: 16px; height: 16px;
+            background: rgba(255,92,27,0.12);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* ─── Main ─── */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 72px 52px 52px;
+        }
+
+        /* ─── Witness mark ─── */
+        .witness-mark {
+            width: 56px; height: 56px;
+            border-radius: 14px;
+            margin-bottom: 28px;
+            animation: scaleIn 0.55s cubic-bezier(0.2,0,0,1) 0.05s both, glowPulse 3s ease 1s infinite;
+            flex-shrink: 0;
+        }
+
+        /* ─── Intro ─── */
+        .intro {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.5s ease 0.18s both;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 44px;
+            font-weight: 500;
+            color: #120B0B;
+            letter-spacing: -0.022em;
+            line-height: 1.1;
+            margin-bottom: 14px;
+        }
+        h1 em { font-style: italic; color: #FF5C1B; }
+        .sub {
+            font-size: 15px;
+            color: #6B7A8D;
+            line-height: 1.65;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* ─── Feature cards ─── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 820px;
+            margin-bottom: 24px;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(18,11,11,0.07);
+            border-radius: 16px;
+            padding: 22px 20px;
+            animation: cardIn 0.45s cubic-bezier(0.2,0,0,1) both;
+        }
+        .feature-card:nth-child(1) { animation-delay: 0.28s; }
+        .feature-card:nth-child(2) { animation-delay: 0.36s; }
+        .feature-card:nth-child(3) { animation-delay: 0.44s; }
+
+        .feature-icon {
+            width: 34px; height: 34px;
+            background: rgba(255,92,27,0.09);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 16px;
+        }
+        .feature-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #120B0B;
+            letter-spacing: -0.01em;
+            margin-bottom: 7px;
+        }
+        .feature-desc {
+            font-size: 12px;
+            color: #8A98A8;
+            line-height: 1.65;
+        }
+
+        /* ─── Summary strip ─── */
+        .summary-strip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 0.5s ease 0.52s both;
+        }
+        .summary-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            color: #6B7A8D;
+            background: rgba(255,255,255,0.72);
+            border: 1px solid rgba(18,11,11,0.08);
+            border-radius: 20px;
+            padding: 5px 13px 5px 8px;
+        }
+        .pill-check {
+            width: 14px; height: 14px;
+            background: rgba(34,197,94,0.13);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .summary-sep { color: #D8D8D5; font-size: 14px; }
+
+        /* ─── CTA ─── */
+        .cta-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 13px;
+            animation: fadeInUp 0.5s ease 0.60s both;
+        }
+        .btn-enter {
+            background: #120B0B;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 52px;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            letter-spacing: -0.01em;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        }
+        .btn-enter:hover {
+            background: #FF5C1B;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(255,92,27,0.28);
+        }
+        .btn-enter-note {
+            font-size: 12px;
+            color: #ADADAD;
+            letter-spacing: 0.01em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-gradient">
+        <div class="bg-blob blob-1"></div>
+        <div class="bg-blob blob-2"></div>
+        <div class="bg-blob blob-3"></div>
+    </div>
+
+    <!-- ─── Header ─── -->
+    <header>
+        <div class="logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="8" fill="#120B0B"/>
+                <mask id="mask-s8" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="4" width="24" height="24">
+                    <rect x="4" y="4" width="24" height="24" fill="#D9D9D9"/>
+                </mask>
+                <g mask="url(#mask-s8)">
+                    <path d="M12.9062 20.3841C12.9062 20.7494 12.7795 21.0588 12.5261 21.3121L9.71537 24.1229C9.46199 24.3763 9.15263 24.503 8.7873 24.503C8.42196 24.503 8.1126 24.3763 7.85922 24.1229C7.60584 23.8695 7.47915 23.5601 7.47915 23.1948C7.47915 22.8295 7.60584 22.5201 7.85922 22.2667L10.67 19.456C10.9233 19.2026 11.2327 19.0759 11.598 19.0759C11.9634 19.0759 12.2727 19.2026 12.5261 19.456C12.7795 19.7094 12.9062 20.0187 12.9062 20.3841ZM11.0677 16C11.0677 16.4007 10.9469 16.7218 10.7053 16.9634C10.4637 17.205 10.1426 17.3258 9.74189 17.3258L8.69891 17.3081C8.32178 17.3081 8.01242 17.1873 7.77083 16.9458C7.52923 16.7042 7.40844 16.383 7.40844 15.9823C7.40844 15.6052 7.52923 15.2958 7.77083 15.0542C8.01242 14.8127 8.32178 14.6919 8.69891 14.6919L9.74189 14.6742C10.119 14.6742 10.4343 14.8009 10.6876 15.0542C10.941 15.3076 11.0677 15.6229 11.0677 16ZM10.6876 12.5263L7.87689 9.71559C7.62351 9.46221 7.49683 9.15285 7.49683 8.78751C7.49683 8.42217 7.62351 8.11281 7.87689 7.85943C8.13027 7.60605 8.43963 7.47936 8.80497 7.47936C9.17031 7.47936 9.47967 7.60605 9.73305 7.85943L12.5438 10.6702C12.7972 10.9236 12.9239 11.2329 12.9239 11.5983C12.9239 11.9636 12.7972 12.273 12.5438 12.5263C12.2904 12.7797 11.9811 12.9064 11.6157 12.9064C11.2504 12.9064 10.941 12.7797 10.6876 12.5263ZM15.9998 11.0679C15.5991 11.0679 15.2779 10.9471 15.0364 10.7055C14.7948 10.4639 14.674 10.1428 14.674 9.74211L14.6916 8.69912C14.6916 8.322 14.8124 8.01264 15.054 7.77105C15.2956 7.52945 15.6168 7.40865 16.0175 7.40865C16.3946 7.40865 16.7039 7.52945 16.9455 7.77104C17.1871 8.01264 17.3079 8.322 17.3079 8.69912L17.3256 9.7421C17.3256 10.1192 17.1989 10.4345 16.9455 10.6879C16.6922 10.9412 16.3769 11.0679 15.9998 11.0679ZM19.0757 11.5983C19.0757 11.2329 19.2024 10.9236 19.4558 10.6702L22.2665 7.85943C22.5199 7.60605 22.8293 7.47936 23.1946 7.47936C23.5599 7.47936 23.8693 7.60605 24.1227 7.85943C24.3761 8.11281 24.5027 8.42217 24.5027 8.78751C24.5027 9.15285 24.3761 9.46221 24.1227 9.71559L21.3119 12.5263C21.0585 12.7797 20.7492 12.9064 20.3838 12.9064C20.0185 12.9064 19.7091 12.7797 19.4558 12.5263C19.2024 12.273 19.0757 11.9636 19.0757 11.5983ZM15.9998 19.2262C15.11 19.2262 14.3499 18.9109 13.7194 18.2804C13.0889 17.6499 12.7736 16.8898 12.7736 16C12.7736 15.1102 13.0889 14.3501 13.7194 13.7196C14.3499 13.0891 15.11 12.7738 15.9998 12.7738C16.8896 12.7738 17.6497 13.0891 18.2802 13.7196C18.9107 14.3501 19.226 15.1102 19.226 16C19.226 16.8898 18.9107 17.6499 18.2802 18.2804C17.6497 18.9109 16.8896 19.2262 15.9998 19.2262ZM20.9319 16C20.9319 15.5993 21.0527 15.2782 21.2942 15.0366C21.5358 14.795 21.857 14.6742 22.2577 14.6742L23.2653 14.6919C23.6424 14.6919 23.9518 14.8127 24.1934 15.0542C24.435 15.2958 24.5558 15.617 24.5558 16.0177C24.5558 16.3948 24.435 16.7042 24.1934 16.9458C23.9518 17.1873 23.6424 17.3081 23.2653 17.3081L22.2577 17.3258C21.8806 17.3258 21.5653 17.1991 21.3119 16.9458C21.0585 16.6924 20.9319 16.3771 20.9319 16ZM15.9998 20.9321C16.4005 20.9321 16.7216 21.0529 16.9632 21.2945C17.2048 21.5361 17.3256 21.8572 17.3256 22.2579L17.3079 23.2655C17.3079 23.6426 17.1871 23.952 16.9455 24.1936C16.7039 24.4352 16.3828 24.556 15.9821 24.556C15.605 24.556 15.2956 24.4352 15.054 24.1936C14.8124 23.952 14.6916 23.6426 14.6916 23.2655L14.674 22.2579C14.674 21.8808 14.8006 21.5655 15.054 21.3121C15.3074 21.0588 15.6227 20.9321 15.9998 20.9321ZM20.4015 19.0759C20.7669 19.0759 21.0762 19.2026 21.3296 19.456L24.1404 22.2667C24.3937 22.5201 24.5204 22.8295 24.5204 23.1948C24.5204 23.5602 24.3937 23.8695 24.1404 24.1229C23.887 24.3763 23.5776 24.503 23.2123 24.503C22.8469 24.503 22.5376 24.3763 22.2842 24.1229L19.4734 21.3121C19.2201 21.0588 19.0934 20.7494 19.0934 20.3841C19.0934 20.0187 19.2201 19.7094 19.4734 19.456C19.7268 19.2026 20.0362 19.0759 20.4015 19.0759Z" fill="url(#grad-s8)"/>
+                </g>
+                <defs>
+                    <linearGradient id="grad-s8" x1="5.32763" y1="15.2444" x2="24.1682" y2="5.87843" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#FFD000"/><stop offset="0.677885" stop-color="#FF6F00"/><stop offset="1" stop-color="#FF5C1B"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span class="logo-name">Witness</span>
+        </div>
+
+    </header>
+
+    <!-- ─── Main ─── -->
+    <main>
+
+        <!-- Witness mark — larger, celebratory -->
+        <svg class="witness-mark" width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip-s8b)">
+                <path d="M42 0H14C6.26801 0 0 6.26801 0 14V42C0 49.732 6.26801 56 14 56H42C49.732 56 56 49.732 56 42V14C56 6.26801 49.732 0 42 0Z" fill="#120B0B"/>
+                <mask id="mask-s8b" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="7" y="7" width="42" height="42">
+                    <path d="M49 7H7V49H49V7Z" fill="#D9D9D9"/>
+                </mask>
+                <g mask="url(#mask-s8b)">
+                    <path d="M22.5859 35.6722C22.5859 36.3115 22.3642 36.8529 21.9207 37.2962L17.002 42.2151C16.5586 42.6585 16.0172 42.8803 15.3778 42.8803C14.7385 42.8803 14.1971 42.6585 13.7537 42.2151C13.3103 41.7716 13.0886 41.2302 13.0886 40.5909C13.0886 39.9516 13.3103 39.4102 13.7537 38.9667L18.6726 34.048C19.1158 33.6045 19.6573 33.3828 20.2966 33.3828C20.936 33.3828 21.4773 33.6045 21.9207 34.048C22.3642 34.4914 22.5859 35.0327 22.5859 35.6722ZM19.3685 28C19.3685 28.7012 19.1571 29.2632 18.7343 29.686C18.3115 30.1088 17.7496 30.3202 17.0484 30.3202L15.2232 30.2892C14.5632 30.2892 14.0218 30.0778 13.599 29.6552C13.1762 29.2324 12.9648 28.6703 12.9648 27.969C12.9648 27.3091 13.1762 26.7677 13.599 26.3449C14.0218 25.9222 14.5632 25.7108 15.2232 25.7108L17.0484 25.6799C17.7083 25.6799 18.2601 25.9016 18.7034 26.3449C19.1468 26.7883 19.3685 27.3401 19.3685 28ZM18.7034 21.921L13.7846 17.0023C13.3412 16.5589 13.1195 16.0175 13.1195 15.3781C13.1195 14.7388 13.3412 14.1974 13.7846 13.754C14.228 13.3106 14.7694 13.0889 15.4088 13.0889C16.0481 13.0889 16.5895 13.3106 17.0329 13.754L21.9517 18.6729C22.3952 19.1163 22.6169 19.6576 22.6169 20.297C22.6169 20.9363 22.3952 21.4778 21.9517 21.921C21.5083 22.3645 20.967 22.5862 20.3275 22.5862C19.6883 22.5862 19.1468 22.3645 18.7034 21.921ZM27.9997 19.3688C27.2985 19.3688 26.7364 19.1574 26.3138 18.7346C25.891 18.3118 25.6796 17.7499 25.6796 17.0487L25.7104 15.2235C25.7104 14.5635 25.9218 14.0221 26.3446 13.5993C26.7674 13.1765 27.3295 12.9651 28.0307 12.9651C28.6906 12.9651 29.2319 13.1765 29.6547 13.5993C30.0775 14.0221 30.2889 14.5635 30.2889 15.2235L30.3199 17.0487C30.3199 17.7086 30.0981 18.2604 29.6547 18.7038C29.2114 19.1471 28.6596 19.3688 27.9997 19.3688ZM33.3826 20.297C33.3826 19.6576 33.6043 19.1163 34.0477 18.6729L38.9665 13.754C39.4099 13.3106 39.9513 13.0889 40.5906 13.0889C41.2299 13.0889 41.7713 13.3106 42.2148 13.754C42.6582 14.1974 42.8798 14.7388 42.8798 15.3781C42.8798 16.0175 42.6582 16.5589 42.2148 17.0023L37.2959 21.921C36.8524 22.3645 36.3112 22.5862 35.6717 22.5862C35.0325 22.5862 34.491 22.3645 34.0477 21.921C33.6043 21.4778 33.3826 20.9363 33.3826 20.297ZM27.9997 33.6459C26.4426 33.6459 25.1124 33.0941 24.009 31.9907C22.9056 30.8873 22.3539 29.5572 22.3539 28C22.3539 26.4429 22.9056 25.1127 24.009 24.0093C25.1124 22.9059 26.4426 22.3541 27.9997 22.3541C29.5569 22.3541 30.887 22.9059 31.9904 24.0093C33.0938 25.1127 33.6456 26.4429 33.6456 28C33.6456 29.5572 33.0938 30.8873 31.9904 31.9907C30.887 33.0941 29.5569 33.6459 27.9997 33.6459ZM36.6309 28C36.6309 27.2988 36.8423 26.7369 37.2649 26.3141C37.6877 25.8913 38.2498 25.6799 38.951 25.6799L40.7144 25.7108C41.3743 25.7108 41.9157 25.9222 42.3385 26.3449C42.7613 26.7677 42.9727 27.3298 42.9727 28.031C42.9727 28.6909 42.7613 29.2324 42.3385 29.6552C41.9157 30.0778 41.3743 30.2892 40.7144 30.2892L38.951 30.3202C38.2911 30.3202 37.7393 30.0984 37.2959 29.6552C36.8524 29.2117 36.6309 28.6599 36.6309 28ZM27.9997 36.6312C28.7009 36.6312 29.2629 36.8426 29.6857 37.2654C30.1085 37.6882 30.3199 38.2501 30.3199 38.9513L30.2889 40.7146C30.2889 41.3745 30.0775 41.916 29.6547 42.3388C29.2319 42.7616 28.67 42.973 27.9687 42.973C27.3088 42.973 26.7674 42.7616 26.3446 42.3388C25.9218 41.916 25.7104 41.3745 25.7104 40.7146L25.6796 38.9513C25.6796 38.2914 25.9011 37.7396 26.3446 37.2962C26.788 36.8529 27.3398 36.6312 27.9997 36.6312ZM35.7027 33.3828C36.3422 33.3828 36.8834 33.6045 37.3269 34.048L42.2458 38.9667C42.689 39.4102 42.9108 39.9516 42.9108 40.5909C42.9108 41.2303 42.689 41.7716 42.2458 42.2151C41.8023 42.6585 41.2609 42.8803 40.6216 42.8803C39.9821 42.8803 39.4409 42.6585 38.9974 42.2151L34.0785 37.2962C33.6352 36.8529 33.4135 36.3115 33.4135 35.6722C33.4135 35.0327 33.6352 34.4914 34.0785 34.048C34.522 33.6045 35.0634 33.3828 35.7027 33.3828Z" fill="url(#grad-s8b)"/>
+                </g>
+            </g>
+            <defs>
+                <linearGradient id="grad-s8b" x1="9.32343" y1="26.6777" x2="42.2944" y2="10.2873" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FFD000"/>
+                    <stop offset="0.677885" stop-color="#FF6F00"/>
+                    <stop offset="1" stop-color="#FF5C1B"/>
+                </linearGradient>
+                <clipPath id="clip-s8b">
+                    <rect width="56" height="56" fill="white"/>
+                </clipPath>
+            </defs>
+        </svg>
+
+        <!-- Heading -->
+        <div class="intro">
+            <h1>Your workspace is <em>ready</em></h1>
+            <p class="sub">Here's how Witness will show up for you, every day, across everything you've connected.</p>
+        </div>
+
+        <!-- Feature cards -->
+        <div class="feature-grid">
+
+            <!-- Monitor -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                        <path d="M1.5 8.5s2.8-5.2 7-5.2 7 5.2 7 5.2-2.8 5.2-7 5.2-7-5.2-7-5.2z" stroke="#FF5C1B" stroke-width="1.3" stroke-linejoin="round"/>
+                        <circle cx="8.5" cy="8.5" r="2.1" stroke="#FF5C1B" stroke-width="1.3"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Always watching</div>
+                <p class="feature-desc">Monitoring your connected tools for procurement signals, delays, and spend anomalies in real time.</p>
+            </div>
+
+            <!-- Draft -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                        <path d="M11.5 2.5l3 3-7.5 7.5H4v-3l7.5-7.5z" stroke="#FF5C1B" stroke-width="1.3" stroke-linejoin="round"/>
+                        <path d="M1.5 15.5h14" stroke="#FF5C1B" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Drafts before it acts</div>
+                <p class="feature-desc">Preparing approvals and purchase orders for your sign-off — nothing moves without you.</p>
+            </div>
+
+            <!-- Flag -->
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                        <path d="M3 10V2.5h10l-3 3.75L13 10H3z" stroke="#FF5C1B" stroke-width="1.3" stroke-linejoin="round"/>
+                        <path d="M3 10v5" stroke="#FF5C1B" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="feature-title">Flags risks early</div>
+                <p class="feature-desc">Catching overruns, missing receipts, and vendor delays before they become problems.</p>
+            </div>
+
+        </div>
+
+        <!-- Summary strip -->
+        <div class="summary-strip">
+            <span class="summary-pill">
+                <span class="pill-check">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.2 5.7L6.5 2.3" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                Tools connected
+            </span>
+            <span class="summary-sep">·</span>
+            <span class="summary-pill">
+                <span class="pill-check">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.2 5.7L6.5 2.3" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                Draft for review mode
+            </span>
+            <span class="summary-sep">·</span>
+            <span class="summary-pill">
+                <span class="pill-check">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.2 5.7L6.5 2.3" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                Every action is reversible
+            </span>
+            <span class="summary-sep">·</span>
+            <span class="summary-pill">
+                <span class="pill-check">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.2 5.7L6.5 2.3" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                Witness intelligence
+            </span>
+            <span class="summary-sep">·</span>
+            <span class="summary-pill">
+                <span class="pill-check">
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.2 5.7L6.5 2.3" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                Tradeable actions
+            </span>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-wrap">
+            <button class="btn-enter" onclick="window.location.href='../dashboard.html'">Go to Dashboard →</button>
+        </div>
+
+    </main>
+
+    <canvas id="confetti-canvas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:999;"></canvas>
+
+    <script>
+        (function () {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width  = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // Brand-inspired palette with some neutral pops
+            const COLORS = [
+                '#FF5C1B', '#FFD000', '#FFA8F6',
+                '#FF8C3B', '#FFE066', '#120B0B',
+                '#FFFFFF', '#FF5C1B', '#FFD000'
+            ];
+
+            const SHAPES = ['rect', 'circle', 'ribbon'];
+            const TOTAL  = 160;
+            const GRAVITY = 0.32;
+            const DRAG    = 0.985;
+
+            let particles = [];
+            let animId;
+            let startTime = null;
+            const DURATION = 3800; // ms before fade-out begins
+
+            function rand(min, max) { return Math.random() * (max - min) + min; }
+
+            function createParticle() {
+                const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+                return {
+                    x:      rand(canvas.width * 0.2, canvas.width * 0.8),
+                    y:      rand(-40, -10),
+                    vx:     rand(-3.5, 3.5),
+                    vy:     rand(-10, -4),
+                    w:      shape === 'ribbon' ? rand(3, 5)  : rand(6, 11),
+                    h:      shape === 'ribbon' ? rand(14, 22) : rand(6, 11),
+                    color:  COLORS[Math.floor(Math.random() * COLORS.length)],
+                    shape,
+                    angle:  rand(0, Math.PI * 2),
+                    spin:   rand(-0.14, 0.14),
+                    opacity: 1,
+                };
+            }
+
+            // Stagger the burst so pieces don't all pop at once
+            for (let i = 0; i < TOTAL; i++) {
+                const p = createParticle();
+                p._delay = rand(0, 600); // ms
+                p._born  = false;
+                particles.push(p);
+            }
+
+            function draw(ts) {
+                if (!startTime) startTime = ts;
+                const elapsed = ts - startTime;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                let alive = false;
+
+                for (const p of particles) {
+                    if (elapsed < p._delay) { alive = true; continue; }
+                    if (!p._born) { p._born = true; }
+
+                    // Physics
+                    p.vy  += GRAVITY;
+                    p.vx  *= DRAG;
+                    p.x   += p.vx;
+                    p.y   += p.vy;
+                    p.angle += p.spin;
+
+                    // Fade after DURATION
+                    if (elapsed > DURATION) {
+                        p.opacity -= 0.022;
+                    }
+
+                    if (p.opacity <= 0 || p.y > canvas.height + 30) continue;
+                    alive = true;
+
+                    ctx.save();
+                    ctx.globalAlpha = Math.max(0, p.opacity);
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.angle);
+                    ctx.fillStyle = p.color;
+
+                    if (p.shape === 'circle') {
+                        ctx.beginPath();
+                        ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (p.shape === 'ribbon') {
+                        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    } else {
+                        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    }
+
+                    ctx.restore();
+                }
+
+                if (alive) {
+                    animId = requestAnimationFrame(draw);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    canvas.style.display = 'none';
+                }
+            }
+
+            animId = requestAnimationFrame(draw);
+
+            window.addEventListener('resize', () => {
+                canvas.width  = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        })();
+    </script>
+
+</body>
+</html>
