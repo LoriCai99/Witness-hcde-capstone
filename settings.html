@@ -52,6 +52,8 @@
     .crumbs a:hover { color: #120b0b; }
     .crumbs .sep { color: #c8d0db; }
     .crumbs .here { color: #120b0b; font-weight: 600; }
+    .topbar-left { display: flex; flex-direction: column; gap: 4px; }
+    .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
     .topbar-right { display: flex; align-items: center; gap: 24px; }
     .health-chip { display: flex; align-items: center; gap: 8px; background: #dcfce7; border-radius: 10px; padding: 6px 12px 6px 8px; height: 34px; }
     .health-chip .hdot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
@@ -272,17 +274,14 @@
 
 <div class="main">
   <header class="topbar">
-    <div class="crumbs">
-      <a href="dashboard.html">Dashboard</a>
-      <span class="sep">/</span>
-      <span class="here">Settings</span>
+    <div class="topbar-left">
+      <div class="topbar-date" data-wt-clock="topbar">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
     </div>
     <div class="topbar-right">
       <div class="health-chip">
         <span class="hdot"></span>
         <span>All systems healthy</span>
       </div>
-      <div class="avatar">SC</div>
     </div>
   </header>
 

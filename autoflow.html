@@ -259,7 +259,7 @@
       padding: 52px 58px;
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 52px;
       max-width: 1400px;
       min-width: 900px;
       width: 100%;
@@ -269,7 +269,7 @@
     /* PAGE HEAD */
     .page-hd {
       display: flex;
-      align-items: flex-start;
+      align-items: flex-end;
       justify-content: space-between;
       gap: 24px;
       flex-wrap: wrap;
@@ -278,87 +278,75 @@
     .page-hd-left {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-    }
-
-    .page-title-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 4px;
-    }
-
-    .page-title-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: var(--color-neutral-black);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      gap: 6px;
     }
 
     h1.ptitle {
-      font-family: 'Playfair Display', serif;
-      font-size: 32px;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 28px;
       font-weight: 400;
-      color: var(--color-neutral-black);
-      line-height: 1.2;
-      letter-spacing: -0.5px;
+      color: #120b0b;
+      line-height: 1.4;
     }
 
     p.page-sub {
       font-size: 14px;
-      color: var(--color-neutral-cool-grey);
+      font-weight: 400;
+      color: #45556c;
       line-height: 20px;
-      max-width: 640px;
+      letter-spacing: -0.15px;
     }
 
     .hd-actions {
       display: flex;
+      align-items: center;
       gap: 8px;
       flex-shrink: 0;
     }
 
     .btn-outline {
-      background: var(--color-neutral-white);
-      border: 1.5px solid var(--color-neutral-lotion);
+      background: white;
+      border: 1.5px solid #e9e9e9;
       border-radius: 8px;
-      padding: 8px 14px;
+      padding: 8px 16px;
       font-family: 'Inter', sans-serif;
       font-size: 13px;
       font-weight: 500;
-      color: var(--color-neutral-black);
+      color: #0b0d12;
       cursor: pointer;
-      text-decoration: none;
+      white-space: nowrap;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      text-decoration: none;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
 
     .btn-outline:hover {
-      background: var(--color-neutral-grey);
+      background: #f4f4f4;
     }
 
     .btn-solid {
-      background: var(--color-neutral-black);
-      border: 1.5px solid var(--color-neutral-black);
-      border-radius: 8px;
-      padding: 8px 14px;
+      background: #ff7a3d;
+      border: none;
+      border-radius: 999px;
+      padding: 0 24px;
+      height: 32px;
       font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-neutral-white);
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
       cursor: pointer;
-      text-decoration: none;
+      white-space: nowrap;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      text-decoration: none;
+      transition: background 0.15s ease, border-color 0.15s ease;
     }
 
     .btn-solid:hover {
-      background: #2a2222;
+      background: #ff6826;
     }
 
     /* STATS */
@@ -1475,10 +1463,48 @@
     .sidebar.collapsed .nav-badge {
       display: none;
     }
+
+    /* ── Ask Witness button ── */
+    .ask-witness-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      white-space: nowrap;
+      box-shadow: 0 2px 12px rgba(255,105,0,0.4);
+      transition: box-shadow .2s, transform .2s, filter .2s;
+    }
+    .ask-witness-btn:hover {
+      filter: brightness(1.06);
+      box-shadow: 0 6px 20px rgba(255,105,0,0.45);
+      transform: translateY(-1px);
+    }
+    .ask-witness-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 12px rgba(255,105,0,0.4);
+    }
+    .btn-sparkle {
+      display: inline-block;
+      font-size: 13px;
+      line-height: 1;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .ask-witness-btn:hover .btn-sparkle {
+      transform: rotate(180deg) scale(1.2);
+    }
   </style>
 </head>
 
-<body data-chat="rail">
+<body data-chat="slim">
 
   <div class="app-grid">
     <aside class="sidebar">
@@ -1568,7 +1594,7 @@
             <span class="hdot"></span>
             <span>All systems healthy</span>
           </div>
-          <div class="avatar">SC</div>
+          <button class="ask-witness-btn" onclick="window.openWitnessChat && window.openWitnessChat()"><span class="btn-sparkle">✦</span> Ask Witness</button>
         </div>
       </header>
 
@@ -1577,14 +1603,7 @@
         <!-- PAGE HEAD -->
         <div class="page-hd">
           <div class="page-hd-left">
-            <div class="page-title-row">
-              <div class="page-title-icon">
-                <svg width="20" height="20" viewbox="0 0 20 20" fill="none">
-                  <path d="M11 2L4 11h5l-1 7 7-9h-5l1-7z" stroke="white" stroke-width="1.5" stroke-linejoin="round" />
-                </svg>
-              </div>
-              <h1 class="ptitle">Autoflows</h1>
-            </div>
+            <h1 class="ptitle">Autoflows</h1>
             <p class="page-sub">Each flow is a journey of phases. Follow the track to see how work moves through Witness
               — tap any phase to see the rules inside and what each one is allowed to do. <b>Auto</b> runs without
               asking, <b>Suggest</b> waits for your click, <b>Manual</b> never runs without you.</p>

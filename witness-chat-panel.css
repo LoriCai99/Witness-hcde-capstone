@@ -6,7 +6,7 @@
 
 /* Layout-level chat width tokens (used by host pages' grid). */
 [data-chat="float"] { --chat-w: 0px; }
-[data-chat="slim"]  { --chat-w: 56px; }
+[data-chat="slim"]  { --chat-w: 0px; }
 
 /* CHAT — sits in 3rd grid column (rail/slim), floats over in float mode.
    Default to position:fixed so pages without a grid wrapper (e.g. onboarding)
@@ -51,6 +51,7 @@ body.chat-padded[data-chat="float"] { padding-right: 0; }
 
 /* SLIM state — 56px vertical rail */
 [data-chat="slim"] .chat {
+  display: none !important;
   align-items: center;
   cursor: default;
   pointer-events: none;

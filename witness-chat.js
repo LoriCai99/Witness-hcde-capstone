@@ -28,7 +28,7 @@
       '.chat-grip:hover,.chat-grip.dragging{background:linear-gradient(90deg,transparent,#ff6900 50%,transparent);}',
       'body[data-chat="slim"] .chat-grip,body[data-chat="float"] .chat-grip{display:none;}',
       'body[data-chat="float"] .chat{top:72px;right:24px;bottom:24px;width:380px;border:1px solid rgba(69,85,108,.24);border-radius:12px;box-shadow:0 24px 60px -12px rgba(0,0,0,.22),0 4px 16px rgba(0,0,0,.06);}',
-      'body[data-chat="slim"] .chat{width:56px;align-items:center;cursor:pointer;}',
+      'body[data-chat="slim"] .chat{display:none!important;width:0px;align-items:center;cursor:pointer;}',
       'body[data-chat="slim"] .chat-head{padding:16px 0;border-bottom:1px solid #e9e9e9;width:100%;justify-content:center;flex-direction:column;gap:8px;}',
       'body[data-chat="slim"] .chat-head>.chat-head-info,body[data-chat="slim"] .chat-head>.chat-tools,body[data-chat="slim"] .chat-body,body[data-chat="slim"] .chat-suggestions,body[data-chat="slim"] .chat-foot{display:none;}',
       'body[data-chat="slim"] .chat-status-dot{margin-left:0;}',
