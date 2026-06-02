@@ -81,7 +81,7 @@
 
         .progress-phases {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
         }
 
         .phase {
@@ -101,11 +101,7 @@
 
         .phase-label.active-phase { color: #FF5C1B; }
 
-        .phase-dots {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
+        .phase-dots { display: flex; gap: 6px; align-items: center; width: 76px; justify-content: center; }
 
         .dot {
             width: 9px;
@@ -124,12 +120,7 @@
         .dot.done { background-color: #FF5C1B; opacity: 0.35; }
         .dot.edu-pending { background-color: #FFB299; }
 
-        .phase-divider {
-            width: 24px;
-            height: 1.5px;
-            background-color: #BEBEBE;
-            margin: 0 10px 5px;
-        }
+        .phase-divider { width: 20px; height: 1.5px; background-color: #BEBEBE; margin: 0 8px; flex-shrink: 0; }
 
         .step-counter {
             min-width: 130px;
@@ -454,9 +445,10 @@
                         <div class="dot done"></div>
                         <div class="dot active"></div>
                         <div class="dot edu-pending"></div>
+                        <div class="dot edu-pending"></div>
                     </div>
                 </div>
-                <div style="width:20px;"></div>
+                <div class="phase-divider"></div>
                 <div class="phase">
                     <div class="phase-label">Set up</div>
                     <div class="phase-dots">

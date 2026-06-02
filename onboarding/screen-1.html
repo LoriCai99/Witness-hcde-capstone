@@ -95,7 +95,7 @@
 
         .progress-phases {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             gap: 0;
         }
 
@@ -118,11 +118,7 @@
             color: #FF5C1B;
         }
 
-        .phase-dots {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
+        .phase-dots { display: flex; gap: 6px; align-items: center; width: 76px; justify-content: center; }
 
         .dot {
             width: 9px;
@@ -142,12 +138,7 @@
             background-color: #FFB299;
         }
 
-        .phase-divider {
-            width: 24px;
-            height: 1.5px;
-            background-color: #BEBEBE;
-            margin: 0 10px 5px;
-        }
+        .phase-divider { width: 20px; height: 1.5px; background-color: #BEBEBE; margin: 0 8px; flex-shrink: 0; }
 
         /* Step counter top-right */
         .step-counter {
@@ -504,6 +495,7 @@
                     <div class="phase-label active-phase">Learn</div>
                     <div class="phase-dots">
                         <div class="dot active"></div>
+                        <div class="dot edu-pending"></div>
                         <div class="dot edu-pending"></div>
                         <div class="dot edu-pending"></div>
                     </div>

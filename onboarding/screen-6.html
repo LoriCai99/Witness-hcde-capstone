@@ -60,16 +60,17 @@
         .logo-name { font-size: 15px; font-weight: 500; color: #120B0B; letter-spacing: -0.01em; }
 
         .progress-system { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .progress-phases { display: flex; align-items: flex-end; }
+        .progress-phases { display: flex; align-items: center; }
         .phase { display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .phase-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #ADADAD; }
         .phase-label.active-phase { color: #FF5C1B; }
-        .dots { display: flex; gap: 5px; align-items: center; }
-        .dot { width: 7px; height: 7px; border-radius: 50%; background: #DADADA; }
+        .phase-dots { display: flex; gap: 6px; align-items: center; width: 76px; justify-content: center; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background-color: #BEBEBE; }
         .dot.done { background: rgba(255,92,27,0.35); }
         .dot.active { background: #FF5C1B; width: 28px; border-radius: 5px; }
-        .phase-spacer { width: 20px; }
-        .step-label { font-size: 11px; font-weight: 500; color: #ADADAD; letter-spacing: 0.04em; text-transform: uppercase; }
+        .phase-divider { width: 20px; height: 1.5px; background-color: #BEBEBE; margin: 0 8px; flex-shrink: 0; }
+        .step-counter { min-width: 130px; display: flex; justify-content: flex-end; }
+        .step-counter span { font-size: 11px; font-weight: 500; color: #ADADAD; letter-spacing: 0.06em; text-transform: uppercase; }
 
         /* ─── Main ─── */
         main {
@@ -310,24 +311,27 @@
             <div class="progress-phases">
                 <div class="phase">
                     <div class="phase-label">Learn</div>
-                    <div class="dots">
-                        <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div>
+                    <div class="phase-dots">
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
+                        <div class="dot done"></div>
                     </div>
                 </div>
-                <div class="phase-spacer"></div>
+                <div class="phase-divider"></div>
                 <div class="phase">
                     <div class="phase-label active-phase">Set up</div>
-                    <div class="dots">
+                    <div class="phase-dots">
+                        <div class="dot done"></div>
                         <div class="dot done"></div>
                         <div class="dot active"></div>
-                        <div class="dot"></div>
                         <div class="dot"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="step-label">STEP 6 OF 7</div>
+        <div class="step-counter"><span>Step 6 of 7</span></div>
     </header>
 
     <main>
