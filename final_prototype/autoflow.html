@@ -1,0 +1,2743 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="View and configure automated workflows (Autoflows) in the Witness platform, including intake, validation, payment, and exception handling permissions." />
+  <title>Witness – Autoflow</title>
+  <style>
+    :root {
+      --color-neutral-white: #ffffff;
+      --color-neutral-black: #120b0b;
+      --color-neutral-grey: #f4f4f4;
+      --color-neutral-lotion: #f0f0f0;
+      --color-neutral-cool-grey: #45556c;
+      --color-neutral-dark-grey: #9f9fa6;
+      --color-brand-primary-orange-the-orange: #FF6900;
+      --color-semantic-success-100: #dcfce7;
+      --color-semantic-success-500: #16a34a;
+      --color-semantic-success-1000: #15803d;
+      --color-semantic-warning-500: #e9b44c;
+    }
+  </style>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--color-neutral-white);
+      color: var(--color-neutral-black);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      --sidebar-w: 258px;
+      --chat-w: 340px;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 10px;
+      --radius-xl: 12px;
+    }
+
+    body:has(.sidebar.collapsed) {
+      --sidebar-w: 72px;
+    }
+
+    body[data-chat="float"] { --chat-w: 0px; }
+    body[data-chat="slim"]  { --chat-w: 0px; }
+
+    .app-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--chat-w);
+      transition: grid-template-columns .25s cubic-bezier(.4, 0, .2, 1);
+    }
+
+
+    /* SIDEBAR — same as other pages */
+    .sidebar {
+      position: relative;
+      height: 100%;
+      background: var(--color-neutral-grey);
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      padding: 24px;
+      background: rgba(247, 247, 247, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--color-neutral-black);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-logo img {
+      width: 20px;
+      height: 20px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .brand-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-neutral-black);
+      letter-spacing: -0.44px;
+    }
+
+    .sidebar-nav {
+      padding: 24px 12px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .nav-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .nav-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #9f9fa6;
+      letter-spacing: 0.6px;
+      line-height: 16px;
+      padding: 0 12px;
+    }
+
+    .nav-items {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--color-neutral-cool-grey);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      letter-spacing: -0.15px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .nav-item.active {
+      background: var(--color-neutral-white);
+      color: var(--color-neutral-black);
+      padding: 8px 12px;
+    }
+
+    .nav-item img {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--color-neutral-black);
+      color: var(--color-neutral-white);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 16px;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .nav-badge.ai {
+      background: #d95b03;
+    }
+
+    .nav-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* MAIN */
+    .main {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: auto;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--color-neutral-white);
+      border-bottom: 1px solid #ededed;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 23px 24px;
+      flex-shrink: 0;
+    }
+
+    .topbar-date {
+      font-size: 14px;
+      font-weight: 500;
+      color: #0f172b;
+      letter-spacing: -0.15px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .health-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-semantic-success-100);
+      border-radius: 10px;
+      padding: 6px 12px 6px 8px;
+      height: 34px;
+    }
+
+    .health-chip .hdot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #16a34a;
+    }
+
+    .health-chip span {
+      font-size: 14px;
+      font-weight: 500;
+      color: #00a63e;
+      letter-spacing: -0.15px;
+      white-space: nowrap;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      background: #0f172b;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-neutral-white);
+    }
+
+    /* CONTENT */
+    .content {
+      padding: 32px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      width: 100%;
+    }
+
+    /* PAGE HEAD */
+    .page-hd {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .page-hd-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    h1.ptitle {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: #120b0b;
+      line-height: 1.4;
+    }
+
+    p.page-sub {
+      font-size: 14px;
+      font-weight: 400;
+      color: #45556c;
+      line-height: 20px;
+      letter-spacing: -0.15px;
+    }
+
+    .hd-actions button {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hd-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-outline {
+      background: #fff5f1; border: 1.5px solid #ffd7c2; border-radius: 8px; padding: 0 16px; height: 34px;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #FF6900;
+      cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; transition: background .12s, border-color .12s;
+    }
+
+    .btn-outline:hover {
+      background: #ffe8df; border-color: #FF6900;
+    }
+
+    .btn-solid {
+      background: #fff5f1; border: 1.5px solid #ffd7c2; border-radius: 8px; padding: 0 16px; height: 34px;
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #FF6900;
+      cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center;
+      text-decoration: none; transition: background .12s, border-color .12s;
+    }
+
+    .btn-solid:hover {
+      background: #ffe8df; border-color: #FF6900;
+    }
+
+    /* STATS */    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid #e9e9e9;
+      border-radius: 12px;
+      padding: 18px;
+      display: flex; flex-direction: column; gap: 14px;
+      min-width: 0;
+    }
+
+    .stat-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 6px;
+      flex-wrap: nowrap; min-width: 0; overflow: hidden;
+    }
+
+    .stat-icon {
+      width: 34px; height: 34px; min-width: 34px;
+      border-radius: 10px;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .stat-icon.ai { background: #fff5f1; }
+    .stat-icon.green { background: #dcfce7; }
+    .stat-icon.amber { background: #fdf2d4; }
+
+    .stat-trend {
+      font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 999px;
+      background: #f4f4f4; color: #45556c;
+      white-space: nowrap; line-height: 1.4;
+    }
+    .stat-trend.up   { background: #fee2e2; color: #b91c1c; }
+    .stat-trend.down { background: #dcfce7; color: #15803d; }
+
+    .stat-mid { display: flex; flex-direction: column; gap: 4px; }
+
+    .stat-num {
+      font-size: 30px; font-weight: 600; color: #0b0d12;
+      line-height: 1; font-variant-numeric: tabular-nums;
+    }
+    .stat-num.green { color: #15803d; }
+    .stat-num.brand { color: #ff6900; }
+
+    .stat-lbl {
+      font-size: 14px; font-weight: 500; color: #45556c;
+      letter-spacing: 0;
+    }
+
+    .stat-foot { display: flex; flex-direction: column; gap: 6px; min-height: 28px; }
+    .stat-foot-lbl { font-size: 12px; color: #45556c; font-weight: 400; }
+
+    /* SECTION */
+    .sec-hd {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 0 16px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 16px;
+    }
+
+    .sec-icon {
+      width: 36px; height: 36px; min-width: 36px;
+      border-radius: 10px; background: #fff5f1;
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+
+    .sec-title-wrap { display: flex; flex-direction: column; gap: 2px; }
+
+    .sec-title {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 16px; font-weight: 600;
+      color: #120b0b; line-height: 1.25; letter-spacing: -0.15px;
+    }
+
+    .sec-sub {
+      font-size: 12px; font-weight: 400;
+      color: #45556c; margin-top: 0;
+    }
+
+    .sec-hd-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+    .sec-count {
+      background: #f4f4f4; padding: 3px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; color: #45556c; white-space: nowrap;
+    }
+
+    /* FLOW LIST */
+    .flow-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Gradient spin animation — same as All Invoices stat cards */
+    @property --grad-angle {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
+    @keyframes grad-spin {
+      from { --grad-angle: 0deg; }
+      to   { --grad-angle: 360deg; }
+    }
+
+    .flow-card {
+      background: white;
+      border: 1px solid #e9e9e9;
+      border-radius: 12px;
+      position: relative;
+      z-index: 0;
+      isolation: isolate;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    /* Clip inner content to card radius without clipping the ::before ring */
+    .flow-head, .flow-body, .flow-foot { overflow: hidden; }
+    .flow-head { border-radius: 12px 12px 0 0; }
+    .flow-foot { border-radius: 0 0 12px 12px; }
+
+    /* Gradient ring — always spinning, revealed on hover */
+    .flow-card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 14px;
+      background: conic-gradient(
+        from var(--grad-angle),
+        #FF6900 0%,
+        #FFD000 20%,
+        #FFB347 35%,
+        #fff0e0 48%,
+        #FF6900 58%,
+        #FFD000 74%,
+        #FFB347 86%,
+        #fff0e0 94%,
+        #FF6900 100%
+      );
+      animation: grad-spin 4.5s linear infinite;
+      opacity: 0;
+      transition: opacity .35s ease;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* White inset — only 2px ring visible */
+    .flow-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: white;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .flow-card:hover {
+      border-color: transparent;
+    }
+
+    .flow-card:hover::before {
+      opacity: 1;
+    }
+
+    .flow-card.active-flow {
+      border-color: transparent;
+    }
+
+    .flow-card.active-flow::before {
+      opacity: 1;
+    }
+
+    .flow-head {
+      padding: 20px 22px;
+    }
+
+    .flow-head-main {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .flow-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-neutral-black);
+      line-height: 22px;
+      letter-spacing: -0.2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .flow-desc {
+      font-size: 13px;
+      color: var(--color-neutral-cool-grey);
+      line-height: 19px;
+    }
+
+    /* ─── Section tabs (Active / Draft) ─── */
+    .act-tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      background: #f4f4f4;
+      border-radius: 12px;
+      border: 1px solid #e9e9e9;
+      width: fit-content;
+    }
+
+    .act-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 22px;
+      min-width: 180px;
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #45556c;
+      line-height: 1.25;
+      letter-spacing: -0.1px;
+      transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+    }
+
+    .act-tab:hover {
+      color: #0b0d12;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .act-tab.active {
+      background: white;
+      color: #0b0d12;
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(11, 13, 18, 0.06), 0 0 0 1px #e9e9e9;
+    }
+
+    .act-tab-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .act-tab[data-tab="active"] .act-tab-dot {
+      background: #ff6900;
+    }
+
+    .act-tab[data-tab="draft"] .act-tab-dot {
+      background: #adadad;
+    }
+
+    .act-tab-count {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e9e9e9;
+      color: #45556c;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    .act-tab[data-tab="active"].active .act-tab-count {
+      background: #FF6900;
+      color: white;
+    }
+
+    .act-tab[data-tab="draft"].active .act-tab-count {
+      background: #e9e9e9;
+      color: #45556c;
+    }
+
+    .flow-list.tabbed>.flow-card {
+      display: none;
+    }
+
+    .flow-list.tabbed>.flow-card.tab-active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .flow-list.tabbed>.flow-new {
+      display: none;
+    }
+
+    .flow-list.tabbed.show-new>.flow-new {
+      display: flex;
+    }
+
+    /* Status pill */
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      white-space: nowrap; flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .status-pill::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    .status-pill.active {
+      background: #dcfce7; color: #15803d;
+    }
+
+    .status-pill.active::before {
+      background: #16a34a;
+      box-shadow: 0 0 0 2px rgba(22,163,74,.2);
+    }
+
+    .status-pill.draft {
+      background: #f4f4f4; color: #45556c;
+    }
+
+    .status-pill.draft::before {
+      background: #9f9fa6;
+    }
+
+    /* Summary perm bar */
+    .perm-summary {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .perm-bar {
+      display: flex;
+      gap: 2px;
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: var(--color-neutral-lotion);
+      flex: 1;
+      min-width: 160px;
+      max-width: 280px;
+    }
+
+    .perm-seg {
+      height: 100%;
+    }
+
+    .perm-seg.manual {
+      background: #c8d0db;
+    }
+
+    .perm-seg.suggest {
+      background: #e9b44c;
+    }
+
+    .perm-seg.auto {
+      background: #ff6900;
+    }
+
+    .perm-legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-size: 11.5px;
+      color: var(--color-neutral-cool-grey);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    .perm-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+    }
+
+    .perm-legend .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .perm-legend .dot.manual {
+      background: #c8d0db;
+    }
+
+    .perm-legend .dot.suggest {
+      background: #e9b44c;
+    }
+
+    .perm-legend .dot.auto {
+      background: #ff6900;
+    }
+
+    /* ═══════════ PHASE RAIL (the real journey — one node per phase) ═══════════ */
+    .flow-body {
+      display: block;
+      padding: 8px 22px 14px;
+      border-top: 1px solid #f0f0f0;
+      background: #fafafa;
+    }
+
+    .rail {
+      display: flex;
+      align-items: flex-start;
+      padding: 16px 2px 6px;
+    }
+
+    .pnode {
+      appearance: none;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
+      width: 110px;
+      flex-shrink: 0;
+      padding: 8px 4px;
+      border-radius: 12px;
+      transition: background .12s;
+    }
+
+    .pnode:hover {
+      background: #fff5f1;
+    }
+
+    .pnode:hover .pnode-circle {
+      background: #ff6900;
+      box-shadow: 0 0 0 4px #fff, 0 0 0 5px #ffd0b0;
+    }
+
+    .pnode:hover .pnode-title {
+      color: #d95b03;
+    }
+
+    .pnode-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      background: #1d1d1f;
+      box-shadow: 0 0 0 4px #fff, 0 0 0 5px #e5e5e5;
+      transition: background .14s, box-shadow .14s;
+    }
+
+    .pnode-circle svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* selected = the circle itself fills brand orange (not an outer ring that reads as a warning) */
+    .pnode.active .pnode-circle {
+      background: #ff6900;
+      box-shadow: 0 0 0 4px #fff, 0 0 0 5px #ffd0b0;
+    }
+
+    .pnode-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--color-neutral-black);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .pnode.active .pnode-title {
+      color: #d95b03;
+    }
+
+    .pnode-dots {
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .pnode-dots i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .pnode-dots i.auto {
+      background: #ff6900;
+    }
+
+    .pnode-dots i.suggest {
+      background: #e9b44c;
+    }
+
+    .pnode-dots i.manual {
+      background: #c8d0db;
+    }
+
+    /* short directional connector with an arrowhead → the track reads as a forward journey */
+    .rail-conn {
+      flex: 0 0 auto;
+      width: 38px;
+      height: 2px;
+      background: #d8d8d8;
+      margin-top: 28px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .rail-conn::after {
+      content: '';
+      position: absolute;
+      right: -1px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid #d8d8d8;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+    }
+
+    /* Execution pulse — glowing dot travels along each rail connector */
+    @keyframes railPulse {
+      0% {
+        left: 0;
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      85% {
+        opacity: 1;
+      }
+
+      100% {
+        left: 100%;
+        opacity: 0;
+      }
+    }
+
+    .rail-conn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ff6900;
+      box-shadow: 0 0 6px 2px rgba(255, 105, 0, 0.45);
+      animation: railPulse 3.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .rail-conn:nth-of-type(1)::before {
+      animation-delay: 0s;
+    }
+
+    .rail-conn:nth-of-type(2)::before {
+      animation-delay: 0.9s;
+    }
+
+    .rail-conn:nth-of-type(3)::before {
+      animation-delay: 1.8s;
+    }
+
+    /* Only animate rail connectors inside active-flow cards */
+    .flow-card:not(.tab-active) .rail-conn::before {
+      display: none;
+    }
+
+    /* ─── Phase detail SLIDE-OVER ─── */
+    .phase-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 43, 0.18);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .3s ease;
+      z-index: 60;
+      backdrop-filter: blur(0);
+      -webkit-backdrop-filter: blur(0);
+    }
+
+    .phase-overlay.open {
+      opacity: 1;
+      visibility: visible;
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+    }
+
+    .phase-sheet {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(480px, 92vw);
+      background: #fff;
+      box-shadow: -10px 0 36px rgba(15, 23, 43, 0.14);
+      transform: translateX(100%);
+      transition: transform .45s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 61;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .phase-overlay.open .phase-sheet {
+      transform: translateX(0);
+    }
+
+    .phase-sheet-hd {
+      flex-shrink: 0;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid #ededed;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #fafafa;
+    }
+
+    .phase-sheet-hd-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .phase-sheet-eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: #adadad;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .phase-sheet-title {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #120b0b;
+      letter-spacing: -0.2px;
+      line-height: 1.3;
+    }
+
+    .phase-sheet-cond {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 12px;
+      color: #45556c;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .phase-sheet-close {
+      background: white;
+      border: 1px solid #e9e9e9;
+      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      color: #45556c;
+      flex-shrink: 0;
+      transition: background .12s;
+    }
+
+    .phase-sheet-close:hover {
+      background: #f4f4f4;
+      color: #120b0b;
+    }
+
+    .phase-sheet-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 20px 24px;
+    }
+
+    /* staggered entrance for rules */
+    @keyframes ruleIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .phase-overlay.open .phase-sheet .pd-rule {
+      animation: ruleIn .25s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .phase-overlay.open .phase-sheet .pd-rule:nth-child(1) {
+      animation-delay: .04s;
+    }
+
+    .phase-overlay.open .phase-sheet .pd-rule:nth-child(2) {
+      animation-delay: .1s;
+    }
+
+    .phase-overlay.open .phase-sheet .pd-rule:nth-child(3) {
+      animation-delay: .15s;
+    }
+
+    .phase-overlay.open .phase-sheet .pd-rule:nth-child(4) {
+      animation-delay: .19s;
+    }
+
+    /* fork: Validation splits — main line continues to Pay, off-ramp arrow drops to Exceptions */
+    .fork {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .fork-svg {
+      width: 48px;
+      height: 222px;
+      flex-shrink: 0;
+    }
+
+    .fork-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .fork-col .pnode {
+      height: 104px;
+      justify-content: flex-start;
+    }
+
+    /* Animated SVG fork pulse */
+    @keyframes forkPulse {
+      0% {
+        stroke-dashoffset: 160;
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        stroke-dashoffset: 0;
+        opacity: 0;
+      }
+    }
+
+    .fork-pulse-line {
+      stroke: #ff6900;
+      stroke-width: 2;
+      stroke-dasharray: 8 160;
+      animation: forkPulse 3.2s linear infinite;
+      pointer-events: none;
+    }
+
+    .fork-pulse-straight {
+      animation-delay: 0.9s;
+    }
+
+    .fork-pulse-curve {
+      animation-delay: 0.9s;
+    }
+
+    /* Only animate when the parent flow-card is active tab */
+    .flow-card:not(.tab-active) .fork-pulse-line {
+      display: none;
+    }
+
+    /* expanded phase detail (collapsed by default) */
+    .flow-details {
+      display: block;
+    }
+
+    .phase-detail {
+      display: none;
+      margin-top: 8px;
+      padding: 16px 18px;
+      background: var(--color-neutral-grey);
+      border: 1px solid #ededed;
+      border-radius: 12px;
+    }
+
+    .phase-detail.show {
+      display: block;
+      animation: pdIn .15s ease;
+    }
+
+    @keyframes pdIn {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .pd-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .pd-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--color-neutral-black);
+    }
+
+    .pd-cond {
+      font-size: 11.5px;
+      color: var(--color-neutral-cool-grey);
+      background: #fff;
+      border: 1px solid #ededed;
+      border-radius: 999px;
+      padding: 3px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pd-cond::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #c4c4c4;
+    }
+
+    .pd-cond b {
+      color: var(--color-neutral-black);
+      font-weight: 600;
+    }
+
+    .pd-rule {
+      display: grid;
+      grid-template-columns: 14px 1fr auto;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 6px;
+      border-radius: 8px;
+      scroll-margin-top: 96px;
+      position: relative;
+    }
+
+    .pd-rule:hover::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: repeating-linear-gradient(90deg, rgba(69, 85, 108, 0.15) 0, rgba(69, 85, 108, 0.15) 4px, transparent 4px, transparent 8px);
+      pointer-events: none;
+    }
+
+    .pd-rule+.pd-rule {
+      border-top: 1px solid #ededed;
+    }
+
+    .pd-rule:target,
+    .pd-rule.highlighted {
+      background: #fff5f1;
+    }
+
+    .pr-bullet {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 6px;
+    }
+
+    .pr-bullet.auto {
+      background: #ff6900;
+    }
+
+    .pr-bullet.suggest {
+      background: #e9b44c;
+    }
+
+    .pr-bullet.manual {
+      background: #c8d0db;
+    }
+
+    .pr-main {
+      min-width: 0;
+    }
+
+    .pr-name {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #120b0b;
+      line-height: 1.4;
+    }
+
+    .pr-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .pr-chip {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      color: var(--color-neutral-cool-grey);
+    }
+
+    .pr-chip.warn {
+      color: #b42318;
+      border-color: #f6c9c2;
+      background: #fef3f1;
+    }
+
+    .pr-chip.money {
+      color: #175cd3;
+      border-color: #c2d4f6;
+      background: #eff4fe;
+    }
+
+    .pr-desc {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 12px;
+      color: #45556c;
+      line-height: 1.5;
+      margin-top: 6px;
+    }
+
+    .pr-side {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .pr-perm {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    .pr-perm.auto {
+      color: #d95b03;
+    }
+
+    .pr-perm.suggest {
+      color: #b17728;
+    }
+
+    .pr-perm.manual {
+      color: #9aa5b1;
+    }
+
+    .pr-edit {
+      font-size: 11.5px;
+      font-weight: 500;
+      padding: 5px 11px;
+      border-radius: 6px;
+      border: 1px solid #d8d8d8;
+      background: #fff;
+      color: var(--color-neutral-black);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all .12s;
+    }
+
+    .pr-edit:hover {
+      border-color: #b8b8b8;
+      background: #fafafa;
+    }
+
+    .pr-edit:focus-visible {
+      outline: 2px solid #ff9d6c;
+      outline-offset: 2px;
+    }
+
+    /* Card foot */
+    .flow-foot {
+      padding: 12px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-top: 1px solid #f0f0f0;
+      background: #fafafa;
+    }
+
+    .flow-meta {
+      font-size: 12px;
+      color: #45556c;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .flow-meta::before {
+      content: '';
+      display: inline-block;
+      width: 12px; height: 12px;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='6' cy='6' r='4.5' stroke='%2345556c' stroke-width='1.2'/%3E%3Cpath d='M6 4v2.5l1.5 1' stroke='%2345556c' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: contain;
+      flex-shrink: 0;
+    }
+
+    .flow-open-btn {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(69, 85, 108, 0.24);
+      background: white;
+      color: var(--color-neutral-black);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .15s;
+    }
+
+    .flow-open-btn:hover {
+      background: var(--color-neutral-grey);
+    }
+
+    .flow-open-btn.primary {
+      background: var(--color-neutral-black);
+      color: white;
+      border-color: var(--color-neutral-black);
+    }
+
+    .flow-open-btn.primary:hover {
+      background: #2a2222;
+    }
+
+    /* New flow row */
+    .flow-new {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 22px;
+      border: 1.5px solid #ffd7c2;
+      border-radius: 12px;
+      background: #fff5f1;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .flow-new:hover {
+      border-color: #FF6900;
+      background: #ffe8df;
+    }
+
+    .flow-new .new-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #FF6900;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 400;
+      flex-shrink: 0;
+    }
+
+    .flow-new:hover .new-icon {
+      background: #d95b03;
+      color: white;
+    }
+
+    .flow-new .new-txt {
+      font-size: 14px;
+      font-weight: 600;
+      color: #120b0b;
+    }
+
+    .flow-new .new-sub {
+      font-size: 12px;
+      color: #45556c;
+      margin-left: auto;
+    }
+
+    /* SIDEBAR COLLAPSE */
+    .sidebar {
+      transition: width .2s ease;
+    }
+
+    .sidebar-toggle {
+      width: 28px;
+      height: 28px;
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--color-neutral-cool-grey);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background .15s, transform .2s;
+    }
+
+    .sidebar-toggle:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: var(--color-neutral-black);
+    }
+
+    .sidebar-toggle svg {
+      transition: transform .2s;
+    }
+
+    .sidebar.collapsed .sidebar-toggle svg {
+      transform: rotate(180deg);
+    }
+
+    .sidebar.collapsed .sidebar-brand {
+      padding: 24px 0;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .sidebar.collapsed .brand-name {
+      display: none;
+    }
+
+    .sidebar.collapsed .sidebar-toggle {
+      position: absolute;
+      top: 80px;
+      right: -12px;
+      background: var(--color-neutral-white);
+      border: 1.5px solid var(--color-neutral-lotion);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin: 0;
+      z-index: 21;
+    }
+
+    .sidebar.collapsed .sidebar-toggle:hover {
+      background: var(--color-neutral-white);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar.collapsed .sidebar-nav {
+      padding: 24px 12px;
+    }
+
+    .sidebar.collapsed .nav-label {
+      display: none;
+    }
+
+    .sidebar.collapsed .nav-item {
+      padding: 10px 0;
+      justify-content: center;
+      gap: 0;
+      font-size: 0;
+      line-height: 0;
+      overflow: hidden;
+    }
+
+    .sidebar.collapsed .nav-item.active {
+      padding: 8px 0;
+    }
+
+    .sidebar.collapsed .nav-badge {
+      display: none;
+    }
+
+    /* ── Ask Witness button ── */
+    .ask-witness-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+      white-space: nowrap;
+      box-shadow: 0 2px 12px rgba(255,105,0,0.4);
+      transition: box-shadow .2s, transform .2s, filter .2s;
+    }
+    .ask-witness-btn:hover {
+      filter: brightness(1.06);
+      box-shadow: 0 6px 20px rgba(255,105,0,0.45);
+      transform: translateY(-1px);
+    }
+    .ask-witness-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 12px rgba(255,105,0,0.4);
+    }
+    .btn-sparkle {
+      display: inline-block;
+      font-size: 13px;
+      line-height: 1;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .ask-witness-btn:hover .btn-sparkle {
+      transform: rotate(180deg) scale(1.2);
+    }
+  </style>
+<style>
+  .greeting { display: flex; flex-direction: column; gap: 24px; }
+  .greeting-title-row { display: flex; align-items: center; gap: 12px; }
+  .greeting-title-row img { width: 32px; height: 32px; object-fit: contain; }
+  .greeting-title-row .gclock {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px; font-weight: 500; color: #45556c;
+    letter-spacing: -0.1px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f6f6f6; border-radius: 999px; padding: 6px 12px;
+  }
+  .gtitle {
+    font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 400;
+    color: #120b0b; line-height: 1.3;
+  }
+  p.gsub { font-size: 22px; line-height: 32px; color: #120b0b; letter-spacing: 0.07px; }
+  p.gsub b { font-weight: 600; }
+
+  /* ─────────── Stat cards (KPI with trend) ─────────── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .gclock {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px; font-weight: 500; color: #45556c;
+    letter-spacing: -0.1px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f6f6f6; border-radius: 999px; padding: 6px 12px;
+  }
+  .ask-witness-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%);
+    color: white;
+    border: none; border-radius: 999px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 7px 16px; cursor: pointer;
+    flex-shrink: 0; white-space: nowrap;
+    box-shadow: 0 2px 12px rgba(255,105,0,0.4);
+    transition: box-shadow .2s, transform .2s, filter .2s;
+  }
+  .ask-witness-btn:hover {
+    filter: brightness(1.06);
+    box-shadow: 0 6px 20px rgba(255,105,0,0.45);
+    transform: translateY(-1px);
+  }
+  .ask-witness-btn:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(255,105,0,0.4); }
+  .btn-sparkle {
+    display: inline-block;
+    font-size: 13px;
+    line-height: 1;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .btn-sparkle {
+    display: inline-block;
+    font-size: 13px;
+    line-height: 1;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .ask-witness-btn:hover .btn-sparkle {
+    transform: rotate(180deg) scale(1.2);
+  }
+
+  /* ── Sidebar overrides to match dashboard ── */
+  .sidebar {
+    background: #f4f4f4;
+    display: flex; flex-direction: column;
+    height: 100%; overflow-y: auto; overflow-x: visible;
+    transition: width .2s ease;
+    position: relative;
+  }
+  .sidebar.collapsed { overflow: visible; }
+  .sidebar.collapsed .sidebar-nav { overflow: visible; }
+  .sidebar-brand {
+    padding: 24px; background: rgba(247,247,247,0.5);
+    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+  }
+  .brand-logo {
+    width: 32px; height: 32px; background: #120b0b; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-logo img { width: 26px; height: 26px; display: block; object-fit: contain; }
+  .brand-name {
+    font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px;
+  }
+  .sidebar-toggle {
+    width: 28px; height: 28px; margin-left: auto;
+    background: transparent; border: none; border-radius: 8px;
+    color: #45556c; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background .15s, transform .2s;
+  }
+  .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
+  .sidebar-toggle svg { transition: transform .2s; }
+  .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+  .sidebar-nav {
+    padding: 24px 12px 24px 24px;
+    display: flex; flex-direction: column; gap: 24px;
+  }
+  .nav-group { display: flex; flex-direction: column; gap: 12px; }
+  .nav-label {
+    font-size: 12px; font-weight: 600; color: #9f9fa6;
+    letter-spacing: 0.6px; line-height: 16px;
+    padding: 0 12px;
+  }
+  .nav-items { display: flex; flex-direction: column; gap: 1px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px; color: #6b7a92;
+    font-size: 13.5px; font-weight: 500; line-height: 20px;
+    letter-spacing: -0.1px; text-decoration: none; cursor: pointer;
+    transition: background .12s, color .12s;
+  }
+  .nav-item:hover { background: rgba(0,0,0,0.045); color: #120b0b; }
+  .nav-item:hover .nav-badge { opacity: 1; }
+  .nav-item.active {
+    background: white; color: #120b0b;
+    font-weight: 600;
+    border-radius: 0 8px 8px 0;
+    box-shadow: inset 3px 0 0 #FF6900;
+  }
+  .nav-item.active svg { color: #120b0b; }
+  .nav-item.active .nav-badge {
+    background: #f4f4f4; color: #45556c;
+  }
+  .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; color: inherit; transition: color .12s; }
+  .nav-badge {
+    margin-left: auto; background: #eef0f3; color: #45556c;
+    font-size: 11px; font-weight: 600; line-height: 1;
+    padding: 3px 7px; border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+    transition: background .12s, color .12s;
+  }
+  .nav-badge.ai { background: #fff0e8; color: #FF6900; }
+  .nav-item.active .nav-badge.ai { background: #FFE8DF; color: #FF6900; }
+  .nav-item.active .nav-badge { background: #FFE8DF; color: #FF6900; }
+  .nav-item[data-tip="AI Activity"].active .nav-badge { background: #FFE8DF; color: #FF6900; }
+
+  /* ── Chat tool button tooltips ─────────────────────────────── */
+  .chat-tool-btn { position: relative; }
+  .chat-tool-btn::after {
+    content: attr(data-tip);
+    position: absolute; top: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%);
+    background: #120b0b; color: #ffffff;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px; font-weight: 500;
+    padding: 4px 8px; border-radius: 6px;
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity .15s ease;
+    z-index: 200;
+  }
+  .chat-tool-btn:hover::after { opacity: 1; }
+
+  /* ── Draft panel + copy button + view draft button ─────────── */
+  .draft-panel {
+    margin: 8px 0 4px;
+    border: 1px solid #e9e9e9;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    font-size: 12px;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #120b0b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .draft-panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 11px; font-weight: 600; color: #45556c;
+    letter-spacing: 0.03em;
+  }
+  .draft-panel-head span { display: flex; align-items: center; gap: 6px; }
+  .draft-copy-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid #e9e9e9; background: white;
+    font-size: 11px; font-weight: 600; color: #45556c;
+    cursor: pointer; transition: background .12s, color .12s, border-color .12s;
+  }
+  .draft-copy-btn:hover { background: #f4f4f4; color: #120b0b; border-color: #d0d5dd; }
+  .draft-copy-btn.copied { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+  .draft-fields { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #f0f0f0; }
+  .draft-field { display: flex; gap: 8px; font-size: 11.5px; line-height: 1.4; }
+  .draft-field-lbl { color: #9f9fa6; font-weight: 500; min-width: 36px; flex-shrink: 0; }
+  .draft-field-val { color: #120b0b; }
+  .draft-body { padding: 10px 12px; font-size: 12px; color: #0b0d12; line-height: 1.6; white-space: pre-wrap; }
+  .view-draft-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600; color: #ff6900;
+    background: #fff5f1; border: 1px solid #ffd7c2;
+    padding: 2px 8px; border-radius: 999px; cursor: pointer;
+    transition: background .12s;
+  }
+  .view-draft-btn:hover { background: #ffe8df; }
+
+  .msg-user-2, .msg-agent-2 { display: none; }
+  .msg-user-2:not(.hidden), .msg-agent-2:not(.hidden) { display: block; }
+  .hidden { display: none !important; }
+
+  /* Witness logo: one-time spin on load */
+  @keyframes witnessLogoSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes witnessLogoPulse {
+    0%, 100% { transform: scale(1);    opacity: 1; }
+    50%       { transform: scale(1.35); opacity: 0.85; }
+  }
+  @keyframes witnessLogoSpinOnce {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .witness-logo-center {
+    animation: witnessLogoPulse 0.6s ease-out 0.8s both;
+  }
+
+  /* ── Sidebar nav tooltips (collapsed mode only) ─────────────── */
+  #nav-tooltip {
+    position: fixed;
+    background: #120b0b; color: #ffffff;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12px; font-weight: 500;
+    padding: 5px 10px; border-radius: 7px;
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity .15s ease, transform .15s ease;
+    transform: translateX(-4px);
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  }
+  #nav-tooltip.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .sidebar.collapsed .nav-item { position: relative; }
+  .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+  .sidebar.collapsed .brand-name { display: none; }
+  .sidebar.collapsed .sidebar-toggle {
+    position: fixed;
+    top: calc(var(--topbar-h) + 14px);
+    left: calc(var(--sidebar-w) - 14px);
+    background: #fff; border: 1.5px solid #e9e9e9;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    width: 28px; height: 28px; border-radius: 50%;
+    margin: 0; z-index: 35;
+    transition: background .15s, box-shadow .15s, transform .15s;
+  }
+  .sidebar.collapsed .sidebar-toggle:hover {
+    background: #f4f4f4;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+    transform: scale(1.06);
+  }
+  .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+  .sidebar.collapsed .nav-label { display: none; }
+  .sidebar.collapsed .nav-item {
+    padding: 10px 0; justify-content: center; gap: 0;
+    font-size: 0; line-height: 0; overflow: hidden;
+  }
+  .sidebar.collapsed .nav-item.active { padding: 9px 0; }
+  .sidebar.collapsed .nav-badge { display: none; }
+
+  /* ═══════════════════════════════════════════════════════════════
+     TOPBAR (fixed 56px, spans full width above all 3 columns)
+     ═══════════════════════════════════════════════════════════════ */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--topbar-h);
+    background: white; border-bottom: 1px solid #ededed;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    z-index: 30;
+  }
+  .topbar-date { font-size: 13px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .health-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f4f4f4; border-radius: 999px;
+    padding: 4px 10px; height: 28px;
+  }
+  .health-chip span {
+    font-size: 12px; font-weight: 500; color: #45556c;
+    letter-spacing: -0.1px; white-space: nowrap;
+  }
+  .avatar {
+    width: 28px; height: 28px; background: #0f172b; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: white;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     CENTER COLUMN (scrolls independently)
+     ═══════════════════════════════════════════════════════════════ */
+  
+  
+  .witness-logo-rays {
+    animation: witnessLogoSpinOnce 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+</style>
+</head>
+
+<body data-chat="slim">
+
+<!-- Nav tooltip (shown in collapsed sidebar) -->
+<div id="nav-tooltip"></div>
+
+  <div class="app-grid">
+    <aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="4 4 24 24" fill="none" aria-hidden="true" width="26" height="26"><defs><linearGradient id="wgs" x1="4.5" y1="4.5" x2="31.6" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD000"/><stop offset="1" stop-color="#FF6900"/></linearGradient></defs><g transform="rotate(45,16,16)"><g class="witness-logo-rays" style="transform-origin:16px 16px"><g transform="rotate(0,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(45,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(90,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(135,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(180,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(225,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(270,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(315,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g></g></g><circle cx="16" cy="16" r="3.2" fill="url(#wgs)" class="witness-logo-center" style="transform-origin:16px 16px"/></svg></div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="witness-dashboard.html" data-tip="Dashboard">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item" href="witness-invoices.html" data-tip="All Invoices">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13z M10 1.5V4h3 M5.5 7.5h5 M5.5 10h5 M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Invoice
+          <span class="nav-badge">38</span>
+        </a>
+        <a class="nav-item" href="vendors.html" data-tip="Vendors">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item active" href="autoflow.html" data-tip="Autoflow">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Autoflow
+        </a>
+        <a class="nav-item" href="ai-activity.html" data-tip="AI Activity">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge">24</span>
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html" data-tip="Settings">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M6.5 1.5h3l.5 1.5a4.5 4.5 0 011.1.65l1.5-.5 1.5 2.6-1.2 1.1a4.6 4.6 0 010 1.3l1.2 1.1-1.5 2.6-1.5-.5A4.5 4.5 0 0110 12l-.5 1.5h-3L6 12a4.5 4.5 0 01-1.1-.65l-1.5.5L2 9.25l1.2-1.1a4.6 4.6 0 010-1.3L2 5.75l1.5-2.6 1.5.5A4.5 4.5 0 016 3l.5-1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.8" stroke="currentColor" stroke-width="1.3"/></svg>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+    <div class="main">
+      
+
+      <main class="content">
+
+        <!-- PAGE HEAD -->
+        <div class="greeting">
+          <div class="greeting-title-row">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" style="flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="18" r="18" fill="#FF6900"/><path d="M20 8L11 20h8l-2 8 11-13h-8l3-7z" fill="white"/></svg>
+            <h1 class="gtitle">Autoflow</h1>
+            <span class="gclock" aria-label="Current Pacific time"><span data-wt-clock="full">Mon, Apr 28 · 6:42 AM PST</span></span>
+            <button class="ask-witness-btn" id="askWitnessBtn" onclick="window.openWitnessChat()">
+          <span class="btn-sparkle">✦</span>
+          Ask Witness
+        </button>
+          </div>
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px;">
+            <p class="gsub" style="max-width:680px;">Each flow is a journey of phases. <b>Auto</b> runs without asking, <b>Suggest</b> waits for your click, <b>Manual</b> never runs without you. Tap any phase to see the rules inside.</p>
+            <div class="hd-actions" style="flex-shrink:0; padding-top:4px;">
+              <button class="btn-outline"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M5 8.5L8 11l3-2.5M3 13.5v1a1 1 0 001 1h8a1 1 0 001-1v-1" stroke="#FF6900" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Import template</button>
+              <button class="btn-solid">+ New flow</button>
+            </div>
+          </div>
+        </div>
+
+                <!-- STATS -->
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon ai"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2L3 11h5l-1 7 9-9h-5l2-7z" stroke="#ff6900" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+              <span class="stat-trend flat">active</span>
+            </div>
+            <div class="stat-mid">
+              <div class="stat-num">2</div>
+              <div class="stat-lbl">Active Flows</div>
+            </div>
+            <div class="stat-foot"><div class="stat-foot-lbl">handling work in production</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon ai"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.6 7H16l-3.5 2.6 1.3 4.4L10 11.5l-3.8 2.5 1.3-4.4L4 7h4.4L10 2.5z" stroke="#ff6900" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+              <span class="stat-trend down">+4% vs last week</span>
+            </div>
+            <div class="stat-mid">
+              <div class="stat-num">68%</div>
+              <div class="stat-lbl">AI-handled steps</div>
+            </div>
+            <div class="stat-foot"><div class="stat-foot-lbl">across all active flows</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon amber"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3.5 5.5h13M3.5 10h9M3.5 14.5h6" stroke="#b17728" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+              <span class="stat-trend flat">this week</span>
+            </div>
+            <div class="stat-mid">
+              <div class="stat-num">47</div>
+              <div class="stat-lbl">Cases this week</div>
+            </div>
+            <div class="stat-foot"><div class="stat-foot-lbl">processed by autoflows</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="#15803d" stroke-width="1.6"/><path d="M10 6.5v4l2.5 2" stroke="#15803d" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+              <span class="stat-trend down">saved</span>
+            </div>
+            <div class="stat-mid">
+              <div class="stat-num brand">12.4h</div>
+              <div class="stat-lbl">Time saved</div>
+            </div>
+            <div class="stat-foot"><div class="stat-foot-lbl">vs. fully manual handling</div></div>
+          </div>
+        </div>
+
+        <!-- YOUR FLOWS -->
+        <div>
+          <div class="sec-hd">
+            <div class="sec-title-wrap">
+              <div class="sec-title">Your flows</div>
+              <div class="sec-sub">The track shows each flow's <b>phases</b> in order. Tap a phase to open the rules inside it and edit any permission.</div>
+            </div>
+            <div class="sec-hd-right">
+              <span class="sec-count">3 total · 2 running · 1 not deployed</span>
+            </div>
+          </div>
+
+          <!-- Tab bar -->
+          <div class="act-tabs" role="tablist" aria-label="Flow sort" style="margin-bottom:16px;">
+            <button class="act-tab active" type="button" role="tab" aria-selected="true" data-tab="active">
+              <span class="act-tab-dot"></span>
+              <span>Running</span>
+              <span class="act-tab-count">2</span>
+            </button>
+            <button class="act-tab" type="button" role="tab" aria-selected="false" data-tab="draft">
+              <span class="act-tab-dot"></span>
+              <span>Not deployed</span>
+              <span class="act-tab-count">1</span>
+            </button>
+          </div>
+
+          <div class="flow-list tabbed">
+
+            <!-- ═══════════ Flow 1: Invoice approval (branches at Validation) ═══════════ -->
+            <div class="flow-card tab-active" data-tab="active">
+              <div class="flow-head">
+                <div class="flow-head-main">
+                  <div class="flow-name">
+                    Invoice approval flow
+                    <span class="status-pill active">Active</span>
+                  </div>
+                  <p class="flow-desc">From arrival to payment. Clean cases under $5K pay themselves; anything that
+                    fails the gate diverts to you.</p>
+                  <div class="perm-summary">
+                    <div class="perm-bar" title="6 auto · 1 suggest · 1 manual">
+                      <div class="perm-seg auto" style="flex: 6"></div>
+                      <div class="perm-seg suggest" style="flex: 1"></div>
+                      <div class="perm-seg manual" style="flex: 1"></div>
+                    </div>
+                    <div class="perm-legend">
+                      <span><span class="dot auto"></span>6 auto</span>
+                      <span><span class="dot suggest"></span>1 suggest</span>
+                      <span><span class="dot manual"></span>1 manual</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-body">
+
+                <!-- Intake → Validation, then Validation forks: main line → Pay, off-ramp → Exceptions -->
+                <div class="rail">
+                  <button class="pnode" data-phase="inv-intake" aria-expanded="false">
+                    <span class="pnode-circle">1</span>
+                    <span class="pnode-title">Intake</span>
+                    <span class="pnode-dots"><i class="auto"></i><i class="auto"></i></span>
+                  </button>
+                  <span class="rail-conn"></span>
+                  <button class="pnode" data-phase="inv-validation" aria-expanded="false">
+                    <span class="pnode-circle">2</span>
+                    <span class="pnode-title">Validation</span>
+                    <span class="pnode-dots"><i class="auto"></i><i class="auto"></i></span>
+                  </button>
+                  <div class="fork">
+                    <svg class="fork-svg" viewBox="0 0 48 222" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <!-- main line, straight on to Pay -->
+                      <path d="M0 28 H40" stroke="#d8d8d8" stroke-width="2" stroke-linecap="round" />
+                      <path class="fork-pulse-line fork-pulse-straight" d="M0 28 H40" stroke-linecap="round" />
+                      <path d="M40 23 L48 28 L40 33 Z" fill="#d8d8d8" />
+                      <!-- off-ramp, drops down to Exceptions -->
+                      <path d="M14 28 V140 Q14 146 20 146 H40" stroke="#d8d8d8" stroke-width="2"
+                        stroke-linecap="round" />
+                      <path class="fork-pulse-line fork-pulse-curve" d="M14 28 V140 Q14 146 20 146 H40"
+                        stroke-linecap="round" />
+                      <path d="M40 141 L48 146 L40 151 Z" fill="#d8d8d8" />
+                    </svg>
+                    <div class="fork-col">
+                      <button class="pnode" data-phase="inv-pay" aria-expanded="false">
+                        <span class="pnode-circle">3</span>
+                        <span class="pnode-title">Clean → Pay</span>
+                        <span class="pnode-dots"><i class="auto"></i><i class="auto"></i></span>
+                      </button>
+                      <button class="pnode" data-phase="inv-exceptions" aria-expanded="false">
+                        <span class="pnode-circle"><svg viewBox="0 0 16 16" fill="none">
+                            <path d="M4 2v4.5a3 3 0 0 0 3 3h5M9.5 6 13 9.5 9.5 13" stroke="white" stroke-width="1.6"
+                              stroke-linecap="round" stroke-linejoin="round" />
+                          </svg></span>
+                        <span class="pnode-title">Exceptions</span>
+                        <span class="pnode-dots"><i class="suggest"></i><i class="manual"></i></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flow-details">
+                  <div class="phase-detail" id="inv-intake">
+                    <div class="pd-head"><span class="pd-name">Phase 1 · Intake</span><span class="pd-cond">Runs on
+                        <b>every invoice</b>, no condition</span></div>
+                    <div class="pd-rule" id="ingest-invoice">
+                      <span class="pr-bullet auto"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Ingest invoice</div>
+                        <div class="pr-chips"><span class="pr-chip">Read-only</span></div>
+                        <div class="pr-desc">OCR + schema match on every received invoice. Witness never modifies the
+                          source file.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit"
+                          href="autoflow-editor.html#ingest-invoice">Edit →</a></div>
+                    </div>
+                    <div class="pd-rule" id="vendor-receipt">
+                      <span class="pr-bullet auto"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Vendor receipt confirmation</div>
+                        <div class="pr-chips"><span class="pr-chip warn">Outbound · can't un-send</span></div>
+                        <div class="pr-desc">Sends an acknowledgment email to the vendor on every received invoice.
+                        </div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit"
+                          href="autoflow-editor.html#vendor-receipt">Edit →</a></div>
+                    </div>
+                  </div>
+
+                  <div class="phase-detail" id="inv-validation">
+                    <div class="pd-head"><span class="pd-name">Phase 2 · Validation</span><span class="pd-cond">The gate
+                        and <b>decides the path</b></span></div>
+                    <div class="pd-rule" id="three-way-match">
+                      <span class="pr-bullet auto"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">3-way match</div>
+                        <div class="pr-chips"><span class="pr-chip">Writes match result</span></div>
+                        <div class="pr-desc">Compares PO, GRN, and invoice for qty + price alignment. Holds any
+                          exception for human review.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit"
+                          href="autoflow-editor.html#three-way-match">Edit →</a></div>
+                    </div>
+                    <div class="pd-rule" id="duplicate">
+                      <span class="pr-bullet auto"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Duplicate detection</div>
+                        <div class="pr-chips"><span class="pr-chip warn">Holds only · never auto-pays</span></div>
+                        <div class="pr-desc">Holds any invoice matching 5+ identity signals of an already-paid invoice.
+                        </div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit"
+                          href="autoflow-editor.html#duplicate">Edit →</a></div>
+                    </div>
+                  </div>
+
+                  <div class="phase-detail" id="inv-pay">
+                    <div class="pd-head"><span class="pd-name">Phase 3 · Clean → Pay</span><span class="pd-cond">Clean
+                        match &amp; <b>amount ≤ $5,000</b> &amp; pre-approved vendor</span></div>
+                    <div class="pd-rule" id="clean-routing">
+                      <span class="pr-bullet auto"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Clean payment routing</div>
+                        <div class="pr-chips"><span class="pr-chip money">≤ $5,000</span><span
+                            class="pr-chip">Pre-approved only</span></div>
+                        <div class="pr-desc">Routes clean-matched invoices to the ERP payment batch automatically.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit"
+                          href="autoflow-editor.html#clean-routing">Edit →</a></div>
+                    </div>
+                    <div class="pd-rule" id="early-discount">
+                      <span class="pr-bullet auto"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Early payment discount capture</div>
+                        <div class="pr-chips"><span class="pr-chip">Discount window only</span></div>
+                        <div class="pr-desc">Captures vendor discount terms (e.g. 2/10 net 30) on clean-matched
+                          invoices, inside the window only.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit"
+                          href="autoflow-editor.html#early-discount">Edit →</a></div>
+                    </div>
+                  </div>
+
+                  <div class="phase-detail" id="inv-exceptions">
+                    <div class="pd-head"><span class="pd-name">Off-ramp · Exceptions</span><span class="pd-cond">Gate
+                        failed · overdue <b>3+ days</b> · dispute <b>&gt; $250</b></span></div>
+                    <div class="pd-rule" id="approval-nudge">
+                      <span class="pr-bullet suggest"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Approval nudge</div>
+                        <div class="pr-chips"><span class="pr-chip">Draft only</span></div>
+                        <div class="pr-desc">Drafts a reminder email after approvals sit 3+ days. Never sends without
+                          your click.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm suggest">SUGGEST</span><a class="pr-edit"
+                          href="autoflow-editor.html#approval-nudge">Edit →</a></div>
+                    </div>
+                    <div class="pd-rule" id="exception">
+                      <span class="pr-bullet manual"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Exception escalation</div>
+                        <div class="pr-chips"><span class="pr-chip warn">Always to human</span></div>
+                        <div class="pr-desc">Disputes &gt; $250 or any quantity mismatch is held for review. Witness
+                          never resolves these on its own.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit"
+                          href="autoflow-editor.html#exception">Edit →</a></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="flow-foot">
+                <span class="flow-meta">23 runs this week · last 4m ago</span>
+                <a class="flow-open-btn primary" href="autoflow-editor.html">Open in editor →</a>
+              </div>
+            </div>
+
+            <!-- ═══════════ Flow 2: Vendor onboarding (linear) ═══════════ -->
+            <div class="flow-card tab-active" data-tab="active">
+              <div class="flow-head">
+                <div class="flow-head-main">
+                  <div class="flow-name">
+                    Vendor onboarding
+                    <span class="status-pill active">Active</span>
+                  </div>
+                  <p class="flow-desc">First-time vendor = extra verification. Witness verifies and drafts, but never
+                    moves money without you.</p>
+                  <div class="perm-summary">
+                    <div class="perm-bar" title="2 auto · 3 suggest · 1 manual">
+                      <div class="perm-seg auto" style="flex: 2"></div>
+                      <div class="perm-seg suggest" style="flex: 3"></div>
+                      <div class="perm-seg manual" style="flex: 1"></div>
+                    </div>
+                    <div class="perm-legend">
+                      <span><span class="dot auto"></span>2 auto</span>
+                      <span><span class="dot suggest"></span>3 suggest</span>
+                      <span><span class="dot manual"></span>1 manual</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-body">
+
+                <div class="rail">
+                  <button class="pnode" data-phase="vnd-verify" aria-expanded="false">
+                    <span class="pnode-circle">1</span>
+                    <span class="pnode-title">Verify identity</span>
+                    <span class="pnode-dots"><i class="auto"></i><i class="auto"></i></span>
+                  </button>
+                  <span class="rail-conn"></span>
+                  <button class="pnode" data-phase="vnd-draft" aria-expanded="false">
+                    <span class="pnode-circle">2</span>
+                    <span class="pnode-title">Draft proposals</span>
+                    <span class="pnode-dots"><i class="suggest"></i><i class="suggest"></i><i
+                        class="suggest"></i></span>
+                  </button>
+                  <span class="rail-conn"></span>
+                  <button class="pnode" data-phase="vnd-guard" aria-expanded="false">
+                    <span class="pnode-circle">3</span>
+                    <span class="pnode-title">Payment guard</span>
+                    <span class="pnode-dots"><i class="manual"></i></span>
+                  </button>
+                </div>
+
+                <div class="flow-details">
+                  <div class="phase-detail" id="vnd-verify">
+                    <div class="pd-head"><span class="pd-name">Phase 1 · Verify identity</span><span class="pd-cond">New
+                        vendor's <b>first invoice</b> arrives</span></div>
+                    <div class="pd-rule" id="ingest-first">
+                      <span class="pr-bullet auto"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Ingest first invoice</div>
+                        <div class="pr-chips"><span class="pr-chip">Read-only</span></div>
+                        <div class="pr-desc">OCR + schema match; tags the vendor as first-touch.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit"
+                          href="autoflow-editor.html#ingest-first">Edit →</a></div>
+                    </div>
+                    <div class="pd-rule" id="tax-id-lookup">
+                      <span class="pr-bullet auto"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Tax-ID lookup</div>
+                        <div class="pr-chips"><span class="pr-chip">Read-only · IRS registry</span></div>
+                        <div class="pr-desc">Looks up EIN/SSN against the IRS public registry.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm auto">AUTO</span><a class="pr-edit"
+                          href="autoflow-editor.html#tax-id-lookup">Edit →</a></div>
+                    </div>
+                  </div>
+
+                  <div class="phase-detail" id="vnd-draft">
+                    <div class="pd-head"><span class="pd-name">Phase 2 · Draft proposals</span><span class="pd-cond">AI
+                        drafts · <b>waits for your confirm</b></span></div>
+                    <div class="pd-rule" id="category-suggest">
+                      <span class="pr-bullet suggest"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Vendor category suggestion</div>
+                        <div class="pr-chips"><span class="pr-chip">Needs your confirm</span></div>
+                        <div class="pr-desc">Suggests a GL category based on invoice line items.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm suggest">SUGGEST</span><a class="pr-edit"
+                          href="autoflow-editor.html#category-suggest">Edit →</a></div>
+                    </div>
+                    <div class="pd-rule" id="terms-recommend">
+                      <span class="pr-bullet suggest"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Payment terms recommendation</div>
+                        <div class="pr-chips"><span class="pr-chip">Needs your confirm</span></div>
+                        <div class="pr-desc">Recommends net-30 / net-60 / discount terms based on vendor size +
+                          industry.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm suggest">SUGGEST</span><a class="pr-edit"
+                          href="autoflow-editor.html#terms-recommend">Edit →</a></div>
+                    </div>
+                    <div class="pd-rule" id="welcome-draft">
+                      <span class="pr-bullet suggest"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Welcome email draft</div>
+                        <div class="pr-chips"><span class="pr-chip">Draft only</span></div>
+                        <div class="pr-desc">Drafts a welcome message + portal invite, held for your review.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm suggest">SUGGEST</span><a class="pr-edit"
+                          href="autoflow-editor.html#welcome-draft">Edit →</a></div>
+                    </div>
+                  </div>
+
+                  <div class="phase-detail" id="vnd-guard">
+                    <div class="pd-head"><span class="pd-name">Phase 3 · Payment guard</span><span
+                        class="pd-cond"><b>Never automated</b>: bank-change verification</span></div>
+                    <div class="pd-rule" id="bank-info">
+                      <span class="pr-bullet manual"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Bank-info confirmation</div>
+                        <div class="pr-chips"><span class="pr-chip warn">Never automated · verified channel</span></div>
+                        <div class="pr-desc">You confirm bank details in person or via a verified channel, prevents
+                          misdirected payments.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit"
+                          href="autoflow-editor.html#bank-info">Edit →</a></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="flow-foot">
+                <span class="flow-meta">8 runs this week · last 2h ago</span>
+                <a class="flow-open-btn primary" href="autoflow-editor.html">Open in editor →</a>
+              </div>
+            </div>
+
+            <!-- ═══════════ Flow 3: Month-end close (draft, linear, all manual) ═══════════ -->
+            <div class="flow-card" data-tab="draft">
+              <div class="flow-head">
+                <div class="flow-head-main">
+                  <div class="flow-name">
+                    Month-end close
+                    <span class="status-pill draft">Draft</span>
+                  </div>
+                  <p class="flow-desc">Reconcile, report, sign off. Currently fully manual. Open a phase to delegate it
+                    to Witness.</p>
+                  <div class="perm-summary">
+                    <div class="perm-bar" title="0 auto · 0 suggest · 5 manual">
+                      <div class="perm-seg manual" style="flex: 5"></div>
+                    </div>
+                    <div class="perm-legend">
+                      <span><span class="dot manual"></span>5 manual</span>
+                      <span style="color:#adadad">No AI involvement yet</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flow-body">
+
+                <div class="rail">
+                  <button class="pnode" data-phase="me-reconcile" aria-expanded="false">
+                    <span class="pnode-circle">1</span>
+                    <span class="pnode-title">Reconcile</span>
+                    <span class="pnode-dots"><i class="manual"></i><i class="manual"></i></span>
+                  </button>
+                  <span class="rail-conn"></span>
+                  <button class="pnode" data-phase="me-report" aria-expanded="false">
+                    <span class="pnode-circle">2</span>
+                    <span class="pnode-title">Report</span>
+                    <span class="pnode-dots"><i class="manual"></i><i class="manual"></i></span>
+                  </button>
+                  <span class="rail-conn"></span>
+                  <button class="pnode" data-phase="me-signoff" aria-expanded="false">
+                    <span class="pnode-circle">3</span>
+                    <span class="pnode-title">Sign-off</span>
+                    <span class="pnode-dots"><i class="manual"></i></span>
+                  </button>
+                </div>
+
+                <div class="flow-details">
+                  <div class="phase-detail" id="me-reconcile">
+                    <div class="pd-head"><span class="pd-name">Phase 1 · Reconcile</span><span class="pd-cond">Manual ·
+                        start of close</span></div>
+                    <div class="pd-rule" id="open-recon">
+                      <span class="pr-bullet manual"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Open invoice reconciliation</div>
+                        <div class="pr-chips"><span class="pr-chip">Manual</span></div>
+                        <div class="pr-desc">Match open AR/AP entries against bank statements.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit"
+                          href="autoflow-editor.html">Edit →</a></div>
+                    </div>
+                    <div class="pd-rule" id="overdue-flag">
+                      <span class="pr-bullet manual"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Overdue flagging</div>
+                        <div class="pr-chips"><span class="pr-chip">Manual</span></div>
+                        <div class="pr-desc">Identify invoices past their due date for collections follow-up.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit"
+                          href="autoflow-editor.html">Edit →</a></div>
+                    </div>
+                  </div>
+
+                  <div class="phase-detail" id="me-report">
+                    <div class="pd-head"><span class="pd-name">Phase 2 · Report</span><span
+                        class="pd-cond">Manual</span></div>
+                    <div class="pd-rule" id="close-report">
+                      <span class="pr-bullet manual"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Close report preparation</div>
+                        <div class="pr-chips"><span class="pr-chip">Manual</span></div>
+                        <div class="pr-desc">Compile the month-end financial close package.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit"
+                          href="autoflow-editor.html">Edit →</a></div>
+                    </div>
+                    <div class="pd-rule" id="variance-review">
+                      <span class="pr-bullet manual"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Variance review</div>
+                        <div class="pr-chips"><span class="pr-chip">Manual</span></div>
+                        <div class="pr-desc">Investigate any line items differing &gt; 5% from prior month.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit"
+                          href="autoflow-editor.html">Edit →</a></div>
+                    </div>
+                  </div>
+
+                  <div class="phase-detail" id="me-signoff">
+                    <div class="pd-head"><span class="pd-name">Phase 3 · Sign-off</span><span class="pd-cond">Manual ·
+                        <b>locks the period</b></span></div>
+                    <div class="pd-rule" id="final-approval">
+                      <span class="pr-bullet manual"></span>
+                      <div class="pr-main">
+                        <div class="pr-name">Final approval</div>
+                        <div class="pr-chips"><span class="pr-chip warn">Locks the period</span></div>
+                        <div class="pr-desc">Sign-off and lock the close period.</div>
+                      </div>
+                      <div class="pr-side"><span class="pr-perm manual">MANUAL</span><a class="pr-edit"
+                          href="autoflow-editor.html">Edit →</a></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="flow-foot">
+                <span class="flow-meta">Not yet deployed</span>
+                <a class="flow-open-btn primary" href="autoflow-editor.html">Open in editor →</a>
+              </div>
+            </div>
+
+            <!-- New flow row -->
+            <a class="flow-new" href="autoflow-editor.html">
+              <span class="new-icon">+</span>
+              <div class="new-txt">Build a new flow</div>
+              <div class="new-sub">Start blank or use a template</div>
+            </a>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <script>
+      (function () {
+        var sb = document.querySelector('.sidebar');
+        var btn = document.querySelector('.sidebar-toggle');
+        if (!sb || !btn) return;
+        if (localStorage.getItem('witness-sidebar') === 'collapsed') sb.classList.add('collapsed');
+        btn.addEventListener('click', function () {
+          sb.classList.toggle('collapsed');
+          localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
+        });
+      })();
+
+      // ─── Tab switching (Active / Draft) ───────────────────────
+      function setTab(name) {
+        document.querySelectorAll('.act-tab').forEach(function (t) {
+          var match = t.dataset.tab === name;
+          t.classList.toggle('active', match);
+          t.setAttribute('aria-selected', match ? 'true' : 'false');
+        });
+        document.querySelectorAll('.flow-list.tabbed > .flow-card').forEach(function (c) {
+          c.classList.toggle('tab-active', c.dataset.tab === name);
+        });
+        var list = document.querySelector('.flow-list.tabbed');
+        if (list) list.classList.toggle('show-new', name === 'active');
+        try { localStorage.setItem('witness-autoflow-tab', name); } catch (e) { }
+      }
+      document.querySelectorAll('.act-tab').forEach(function (t) {
+        t.addEventListener('click', function () { setTab(t.dataset.tab); });
+      });
+      try {
+        var saved = localStorage.getItem('witness-autoflow-tab');
+        if (saved === 'draft' || saved === 'active') setTab(saved);
+        else setTab('active');
+      } catch (e) { setTab('active'); }
+
+      // ─── Phase detail slide-over ───────────────────────────
+      function openPhaseSheet(node) {
+        var phaseId = node.dataset.phase;
+        var detail = document.getElementById(phaseId);
+        if (!detail) return;
+
+        // Mark active node
+        document.querySelectorAll('.pnode.active').forEach(function (n) {
+          n.classList.remove('active'); n.setAttribute('aria-expanded', 'false');
+        });
+        node.classList.add('active');
+        node.setAttribute('aria-expanded', 'true');
+
+        // Mark active flow card
+        document.querySelectorAll('.flow-card.active-flow').forEach(function (c) {
+          c.classList.remove('active-flow');
+        });
+        var card = node.closest('.flow-card');
+        if (card) card.classList.add('active-flow');
+
+        // Populate sheet header from phase-detail head
+        var pdHead = detail.querySelector('.pd-head');
+        var nameEl = pdHead ? pdHead.querySelector('.pd-name') : null;
+        var condEl = pdHead ? pdHead.querySelector('.pd-cond') : null;
+        var nameText = nameEl ? nameEl.textContent.trim() : node.querySelector('.pnode-title').textContent.trim();
+        var parts = nameText.split('·');
+        document.getElementById('ps-eyebrow').textContent = (parts[0] || 'Phase').trim();
+        document.getElementById('ps-title').textContent = (parts[1] || nameText).trim();
+        document.getElementById('ps-cond').innerHTML = condEl ? condEl.innerHTML : '';
+
+        // Clone rules into body (don't move the original)
+        var psBody = document.getElementById('ps-body');
+        psBody.innerHTML = '';
+        var highlightedClone = null;
+        detail.querySelectorAll('.pd-rule').forEach(function (rule) {
+          var clone = rule.cloneNode(true);
+          if (location.hash && location.hash === '#' + rule.id) {
+            clone.classList.add('highlighted');
+            highlightedClone = clone;
+          }
+          psBody.appendChild(clone);
+        });
+
+        // Open overlay
+        document.getElementById('phase-overlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        // Scroll to highlighted rule if there is one
+        if (highlightedClone) {
+          setTimeout(function () {
+            highlightedClone.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          }, 100);
+        }
+      }
+
+      function closePhaseSheet(e) {
+        if (e && e.target !== document.getElementById('phase-overlay')) return;
+        document.getElementById('phase-overlay').classList.remove('open');
+        document.body.style.overflow = '';
+        document.querySelectorAll('.pnode.active').forEach(function (n) {
+          n.classList.remove('active'); n.setAttribute('aria-expanded', 'false');
+        });
+        document.querySelectorAll('.flow-card.active-flow').forEach(function (c) {
+          c.classList.remove('active-flow');
+        });
+      }
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          closePhaseSheet(null);
+          document.getElementById('phase-overlay').classList.remove('open');
+          document.body.style.overflow = '';
+          document.querySelectorAll('.pnode.active').forEach(function (n) { n.classList.remove('active'); n.setAttribute('aria-expanded', 'false'); });
+          document.querySelectorAll('.flow-card.active-flow').forEach(function (c) { c.classList.remove('active-flow'); });
+        }
+      });
+
+      document.querySelectorAll('.pnode').forEach(function (n) {
+        n.addEventListener('click', function () {
+          if (n.classList.contains('active')) {
+            n.classList.remove('active'); n.setAttribute('aria-expanded', 'false');
+            document.getElementById('phase-overlay').classList.remove('open');
+            document.body.style.overflow = '';
+            document.querySelectorAll('.flow-card.active-flow').forEach(function (c) { c.classList.remove('active-flow'); });
+          } else {
+            openPhaseSheet(n);
+          }
+        });
+      });
+
+      // ─── Cross-page deep link: AI Activity → autoflow.html#vendor-receipt ───
+      function openFromHash() {
+        if (!location.hash || location.hash === '#') return;
+        // Reset any native browser window scrolling caused by the hash anchor
+        window.scrollTo(0, 0);
+        setTimeout(function () { window.scrollTo(0, 0); }, 0);
+        setTimeout(function () { window.scrollTo(0, 0); }, 100);
+
+        try {
+          var rule = document.querySelector(location.hash);
+          if (!rule || !rule.classList.contains('pd-rule')) return;
+          var card = rule.closest('.flow-card');
+          if (card && card.dataset.tab) setTab(card.dataset.tab);
+          var phase = rule.closest('.phase-detail');
+          var node = card && phase ? card.querySelector('.pnode[data-phase="' + phase.id + '"]') : null;
+          if (node) setTimeout(function () { openPhaseSheet(node); }, 80);
+        } catch (e) {
+          console.warn("Invalid hash selector", e);
+        }
+      }
+      window.addEventListener('DOMContentLoaded', openFromHash);
+      window.addEventListener('hashchange', openFromHash);
+    </script>
+
+    <!-- ═══════════ Witness chat panel (shared — see witness-chat-panel.{css,js}) ═══════════ -->
+    <aside class="chat" id="chat"></aside>
+  </div><!-- /.app-grid -->
+
+  <!-- ═══════════ Phase detail slide-over ═══════════ -->
+  <div class="phase-overlay" id="phase-overlay" onclick="closePhaseSheet(event)">
+    <aside class="phase-sheet" id="phase-sheet">
+      <div class="phase-sheet-hd">
+        <div class="phase-sheet-hd-body">
+          <div class="phase-sheet-eyebrow" id="ps-eyebrow">Phase</div>
+          <div class="phase-sheet-title" id="ps-title">Phase detail</div>
+          <div class="phase-sheet-cond" id="ps-cond"></div>
+        </div>
+        <button class="phase-sheet-close" onclick="closePhaseSheet()" aria-label="Close">&times;</button>
+      </div>
+      <div class="phase-sheet-body" id="ps-body"></div>
+    </aside>
+  </div>
+
+
+<script>
+(function () {
+  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function pad(n){return n<10?'0'+n:''+n;}
+  function tick(){
+    var d=new Date(),day=DAYS[d.getDay()].slice(0,3),mon=MONTHS[d.getMonth()];
+    var h=d.getHours(),m=pad(d.getMinutes()),ampm=h>=12?'PM':'AM',h12=h%12||12;
+    var tz=d.toLocaleTimeString('en-US',{timeZoneName:'short'}).split(' ').pop();
+    var full=day+', '+mon+' '+d.getDate()+' · '+h12+':'+m+' '+ampm+' '+tz;
+    document.querySelectorAll('[data-wt-clock="full"]').forEach(function(el){el.textContent=full;});
+  }
+  tick();setInterval(tick,1000);
+})();
+</script>
+<script src="witness-chat.js"></script>
+<script>
+  /* ─────────── Sidebar nav tooltips (collapsed mode) ─────────── */
+  (function () {
+    var tooltip = document.getElementById('nav-tooltip');
+    if (!tooltip) return;
+
+    function showTip(navItem) {
+      var sb = document.querySelector('.sidebar');
+      if (!sb || !sb.classList.contains('collapsed')) return;
+      var label = navItem.getAttribute('data-tip');
+      if (!label) return;
+      var rect = navItem.getBoundingClientRect();
+      tooltip.textContent = label;
+      tooltip.style.top  = (rect.top + rect.height / 2 - 12) + 'px';
+      tooltip.style.left = (rect.right + 10) + 'px';
+      tooltip.classList.add('visible');
+    }
+
+    function hideTip() {
+      tooltip.classList.remove('visible');
+    }
+
+    document.querySelectorAll('.nav-item[data-tip]').forEach(function (item) {
+      item.addEventListener('mouseenter', function () { showTip(item); });
+      item.addEventListener('mouseleave', hideTip);
+      item.addEventListener('click', hideTip);
+    });
+  })();
+</script>
+</body>
+
+</html>
