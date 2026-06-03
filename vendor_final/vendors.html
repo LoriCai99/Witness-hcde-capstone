@@ -1,0 +1,2849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Witness – Vendors</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #fff; color: #0b0d12; overflow: hidden; --sidebar-w: 258px; --chat-w: 340px; --radius-sm: 6px; --radius-md: 8px; --radius-lg: 10px; --radius-xl: 12px; -webkit-font-smoothing: antialiased; }
+    body:has(.sidebar.collapsed) { --sidebar-w: 72px; }
+    body[data-chat="float"] { --chat-w: 0px; }
+    body[data-chat="slim"]  { --chat-w: 0px; }
+    .app-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr); transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1); }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar { background: #f4f4f4; display: flex; flex-direction: column; height: 100%; overflow-y: auto; overflow-x: visible; transition: width .2s ease; position: relative; }
+    .sidebar.collapsed { overflow: visible; }
+    .sidebar.collapsed .sidebar-nav { overflow: visible; }
+    .sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .brand-logo { width: 32px; height: 32px; background: #120b0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .brand-logo img { width: 26px; height: 26px; display: block; object-fit: contain; }
+    .brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
+    .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
+    .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
+    .sidebar-toggle svg { transition: transform .2s; }
+    .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+    .nav-group { display: flex; flex-direction: column; gap: 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-items { display: flex; flex-direction: column; gap: 1px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: #6b7a92; font-size: 13.5px; font-weight: 500; line-height: 20px; letter-spacing: -0.1px; text-decoration: none; cursor: pointer; transition: background .12s, color .12s; }
+    .nav-item:hover { background: rgba(0,0,0,0.045); color: #120b0b; }
+    .nav-item:hover .nav-badge { opacity: 1; }
+    .nav-item.active { background: white; color: #120b0b; font-weight: 600; border-radius: 0 8px 8px 0; box-shadow: inset 3px 0 0 #FF6900; }
+    .nav-item.active svg { color: #120b0b; }
+    .nav-item.active .nav-badge { background: #FFE8DF; color: #FF6900; }
+    .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; color: inherit; transition: color .12s; }
+    .nav-badge { margin-left: auto; background: #eef0f3; color: #45556c; font-size: 11px; font-weight: 600; line-height: 1; padding: 3px 7px; border-radius: 999px; font-variant-numeric: tabular-nums; transition: background .12s, color .12s; }
+    .nav-badge.ai { background: #fff0e8; color: #FF6900; }
+    .nav-item.active .nav-badge.ai { background: #FFE8DF; color: #FF6900; }
+    .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+    .sidebar.collapsed .brand-name { display: none; }
+    .sidebar.collapsed .sidebar-toggle { position: fixed; top: 14px; left: calc(var(--sidebar-w) - 14px); background: #fff; border: 1.5px solid #e9e9e9; box-shadow: 0 2px 8px rgba(0,0,0,0.12); width: 28px; height: 28px; border-radius: 50%; margin: 0; z-index: 35; transition: background .15s, box-shadow .15s, transform .15s; }
+    .sidebar.collapsed .sidebar-toggle:hover { background: #f4f4f4; box-shadow: 0 4px 12px rgba(0,0,0,0.16); transform: scale(1.06); }
+    .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+    .sidebar.collapsed .nav-label { display: none; }
+    .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; position: relative; pointer-events: auto; min-height: 40px; }
+    .sidebar.collapsed .nav-item.active { padding: 9px 0; }
+    .sidebar.collapsed .nav-badge { display: none; }
+    /* Witness logo animation */
+    .witness-logo-rays { animation: witnessLogoSpinOnce 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+    .witness-logo-center { animation: witnessLogoPulse 0.6s ease-out 0.8s both; }
+    @keyframes witnessLogoSpinOnce { from { transform: rotate(-45deg); opacity: 0.6; } to { transform: rotate(0deg); opacity: 1; } }
+    @keyframes witnessLogoPulse { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+    /* Sidebar nav tooltips (collapsed mode) */
+    #nav-tooltip { position: fixed; background: #120b0b; color: #ffffff; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 500; padding: 5px 10px; border-radius: 7px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .15s ease, transform .15s ease; transform: translateX(-4px); z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.18); }
+    #nav-tooltip.visible { opacity: 1; transform: translateX(0); }
+
+    /* ─── CENTER COLUMN ─── */
+    .center { height: 100%; overflow-y: auto; overflow-x: hidden; min-width: 0; background: white; display: flex; flex-direction: column; }
+
+    /* ─── CONTENT ─── */
+    .content { padding: 32px 32px 40px; display: flex; flex-direction: column; gap: 32px; max-width: 1400px; min-width: 900px; width: 100%; margin: 0 auto; }
+
+    /* ─── GREETING / PAGE HEADING ─── */
+    .greeting { display: flex; flex-direction: column; gap: 16px; }
+    .greeting-title-row { display: flex; align-items: center; gap: 12px; }
+    .greeting-title-row .gclock { margin-left: auto; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #45556c; letter-spacing: -0.1px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; background: #f6f6f6; border-radius: 999px; padding: 6px 12px; }
+    .gclock-dot { width: 6px; height: 6px; min-width: 6px; min-height: 6px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 2.5px rgba(22,163,74,.2); display: inline-block; flex-shrink: 0; }
+    h1.gtitle { font-family: 'Playfair Display', Georgia, serif; font-size: 38px; font-weight: 400; color: #120b0b; line-height: 1.3; }
+    p.gsub { font-size: 22px; line-height: 32px; color: #120b0b; letter-spacing: 0.07px; }
+    p.gsub b { font-weight: 600; }
+    .hd-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-outline { background: #fff5f1; border: 1.5px solid #ffd7c2; border-radius: 8px; padding: 0 16px; height: 34px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 700; color: #FF6900; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; transition: background .12s, border-color .12s; }
+    .btn-outline:hover { background: #ffe8df; border-color: #FF6900; }
+    .btn-solid { background: #fff5f1; border: 1.5px solid #ffd7c2; border-radius: 8px; padding: 0 16px; height: 34px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 700; color: #FF6900; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; transition: background .12s, border-color .12s; }
+    .btn-solid:hover { background: #ffe8df; border-color: #FF6900; }
+
+    /* ─── ASK WITNESS BUTTON ─── */
+    .ask-witness-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%); color: white; border: none; border-radius: 999px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; padding: 7px 16px; cursor: pointer; flex-shrink: 0; white-space: nowrap; box-shadow: 0 2px 12px rgba(255,105,0,0.4); transition: box-shadow .2s, transform .2s, filter .2s; }
+    .ask-witness-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 20px rgba(255,105,0,0.45); transform: translateY(-1px); }
+    .ask-witness-btn:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(255,105,0,0.4); }
+    .btn-sparkle { display: inline-block; font-size: 13px; line-height: 1; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
+
+    /* ─── STAT CARDS ─── */
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .stat-card { background: white; border: 1px solid #e9e9e9; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; transition: border-color .15s, box-shadow .15s; }
+    .stat-card[data-view] { cursor: pointer; }
+    .stat-card[data-view]:hover { border-color: #c8c8c8; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .stat-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; flex-wrap: nowrap; min-width: 0; overflow: hidden; }
+    .stat-icon { width: 34px; height: 34px; min-width: 34px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
+    .stat-icon.ai    { background: #fff5f1; }
+    .stat-icon.green { background: #dcfce7; }
+    .stat-icon.amber { background: #fdf2d4; }
+    .stat-icon.red   { background: #fee2e2; }
+    .stat-trend { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; background: #f4f4f4; color: #45556c; white-space: nowrap; line-height: 1.4; }
+    .stat-trend.up   { background: #fee2e2; color: #b91c1c; }
+    .stat-trend.down { background: #dcfce7; color: #15803d; }
+    .stat-mid { display: flex; flex-direction: column; gap: 4px; }
+    .stat-num { font-size: 30px; font-weight: 600; color: #0b0d12; line-height: 1; font-variant-numeric: tabular-nums; }
+    .stat-num.brand { color: #ff6900; }
+    .stat-lbl { font-size: 14px; font-weight: 500; color: #45556c; }
+    .stat-foot { display: flex; flex-direction: column; gap: 6px; min-height: 28px; }
+    .stat-foot-lbl { font-size: 12px; color: #45556c; font-weight: 400; }.stat-inner { display: flex; flex-direction: column; gap: 16px; }
+
+
+    /* ─── SAVED VIEWS ─── */
+    .views-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 16px 18px;
+      background: #fff5f1; border: 1.5px solid #ffe8df; border-radius: 10px;
+    }
+    .views-bar-left  { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .views-label {
+      font-size: 12px; font-weight: 600; color: #45556c;
+      letter-spacing: 0.6px; line-height: 16px; flex-shrink: 0;
+    }
+    .views-scroll { display: flex; align-items: center; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px 0; min-width: 0; }
+    .views-scroll::-webkit-scrollbar { display: none; }
+    .view-chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
+      border-radius: 999px; border: 1.5px solid #e9e9e9; background: white;
+      font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 500; color: #0b0d12;
+      cursor: pointer; white-space: nowrap; transition: border-color .15s, background .15s, color .15s;
+    }
+    .view-chip:hover { border-color: #adadad; }
+    .view-chip.active { background: #120b0b; border-color: #120b0b; color: white; }
+    .view-chip .view-spark { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; font-size: 12px; line-height: 1; color: #ff5c1b; }
+    .view-chip.active .view-spark { color: #ffd000; }
+    .view-chip .view-count { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 18px; padding: 0 6px; border-radius: 999px; background: #f4f4f4; color: #45556c; font-size: 11px; font-weight: 700; letter-spacing: 0.2px; }
+    .view-chip.active .view-count { background: rgba(255,255,255,0.18); color: white; }
+    .view-save { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; border: 1.5px dashed #ffb299; background: transparent; color: #d95b03; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s; }
+    .view-save:hover { background: white; border-color: #ff5c1b; }
+
+    /* ─── TOOLBAR ─── */
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .toolbar-left  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .toolbar-right { display: flex; align-items: center; gap: 8px; }
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; display: flex; align-items: center; }
+    .search-icon svg { width: 15px; height: 15px; color: #adadad; }
+    .search-input { width: 340px; padding: 8px 12px 8px 36px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-size: 13px; font-family: 'Inter', system-ui, sans-serif; color: #0b0d12; outline: none; }
+    .search-input::placeholder { color: #adadad; }
+    .search-input:focus { border-color: #c8c8c8; }
+    .sort-select { padding: 8px 28px 8px 12px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; color: #0b0d12; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 4l3 3 3-3' stroke='%2345556c' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+
+    /* ─── TABLE ─── */
+    .vendors-wrap { width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid #e9e9e9; }
+    table.vnd { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    table.vnd col.c-vendor { width: 28%; }
+    table.vnd col.c-active { width: 11%; }
+    table.vnd col.c-ontime { width: 11%; }
+    table.vnd col.c-dso { width: 11%; }
+    table.vnd col.c-disp { width: 11%; }
+    table.vnd col.c-vol { width: 13%; }
+    table.vnd col.c-stat { width: 15%; }
+    table.vnd thead tr { background: #fafafa; }
+    table.vnd thead th {
+      font-size: 10.5px; font-weight: 600; color: #45556c;
+      letter-spacing: 0.05em;
+      padding: 10px 16px;
+      text-align: left; white-space: nowrap;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    table.vnd thead th:first-child { padding-left: 20px; }
+    table.vnd thead th:last-child  { padding-right: 28px; }
+    table.vnd tbody tr { background: white; border-top: 1px solid #f4f4f4; cursor: pointer; transition: background .12s; }
+    table.vnd tbody tr:hover { background: #fafafa; }
+    table.vnd tbody tr:hover .row-arrow { opacity: 1; transform: translateX(2px); }
+    table.vnd tbody tr.spotlight { background: #fff8f3; }
+    table.vnd tbody tr.spotlight:hover { background: #fff3eb; }
+    table.vnd tbody td { padding: 14px 16px; vertical-align: middle; font-size: 13px; line-height: 1.45; color: #0b0d12; white-space: nowrap; }
+    table.vnd tbody td:first-child { padding-left: 20px; }
+    table.vnd tbody td:last-child  { padding-right: 28px; }
+    .row-arrow { display: inline-block; opacity: 0; color: #9f9fa6; margin-left: 6px; transition: opacity .15s, transform .15s; font-size: 11px; }
+
+    .vnd-cell { display: flex; align-items: center; gap: 12px; }
+    .vnd-logo { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 16px; font-weight: 500; color: white; flex-shrink: 0; letter-spacing: -0.5px; overflow: hidden; }
+    .vnd-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }    .vnd-logo.global   { background: linear-gradient(135deg, #45556c, #0f172b); }
+    .vnd-logo.bright   { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+    .vnd-logo.acme     { background: linear-gradient(135deg, #ff9900, #ff5c1b); }
+    .vnd-logo.tech     { background: linear-gradient(135deg, #155dfc, #4c8dff); }
+    .vnd-logo.hudson   { background: linear-gradient(135deg, #9a3412, #7c2d12); }
+    .vnd-logo.coastal  { background: linear-gradient(135deg, #2563eb, #155dfc); }
+    .vnd-logo.apex     { background: linear-gradient(135deg, #d95b03, #ff6900); }
+    .vnd-logo.fast     { background: linear-gradient(135deg, #6b21a8, #4f46e5); }
+    .vnd-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .vnd-name { font-size: 13px; font-weight: 600; color: #0b0d12; line-height: 1.4; }
+    .vnd-tag  { font-size: 11.5px; font-weight: 400; color: #45556c; line-height: 1.4; }
+
+    .metric-strong { font-weight: 600; color: #0b0d12; }
+    .metric-amber  { color: #d95b03; font-weight: 600; }
+    .metric-red    { color: #b91c1c; font-weight: 600; }
+    .metric-green  { color: #16a34a; font-weight: 600; }
+
+    /* status pills (same family as platform-card.status-pill but lighter) */
+    .v-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .v-pill .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .v-pill.good  { background: #dcfce7; color: #15803d; }
+    .v-pill.good  .dot { background: #16a34a; }
+    .v-pill.watch { background: #fff0e0; color: #d95b03; }
+    .v-pill.watch .dot { background: #ff6900; }
+    .v-pill.flag  { background: #fee2e2; color: #b91c1c; }
+    .v-pill.flag  .dot { background: #dc2626; }
+    .v-pill.new   { background: #e7f4ff; color: #155dfc; }
+    .v-pill.new   .dot { background: #155dfc; }
+
+    /* ─── AI INSIGHT INLINE ─── */
+    .insight-card { background: #fff5f0; border: 1px solid #ffb088; border-radius: 10px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px; }
+    .insight-hd { display: flex; align-items: center; gap: 8px; }
+    .insight-spark { color: #ff6900; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+    .insight-body { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .insight-lbl { font-size: 11px; font-weight: 700; color: #d95b03; letter-spacing: 0.6px; line-height: 16px; }
+    .insight-txt { font-size: 14px; font-weight: 400; color: #0b0d12; line-height: 20px; letter-spacing: -0.15px; }
+    .insight-txt b { font-weight: 600; }
+    .insight-link { font-size: 13px; font-weight: 500; color: #d95b03; text-decoration: underline; cursor: pointer; white-space: nowrap; margin-left: 12px; flex-shrink: 0; align-self: center; }
+
+    /* ─── VENDOR PROFILE (SPOTLIGHT) ─── */
+    .profile-wrap { display: flex; flex-direction: column; gap: 24px; }
+    .profile-eyebrow-row { display: flex; align-items: center; gap: 8px; }
+    .profile-eyebrow { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
+    .profile-eyebrow b { color: #d95b03; font-weight: 700; }
+    .sec-hd-vp { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    h2.stitle { font-family: 'Playfair Display', Georgia, serif; font-size: 28px; font-weight: 400; color: #120b0b; line-height: 1.4; }
+
+    .profile-card { background: white; border: 1px solid #e9e9e9; border-radius: 10px; overflow: hidden; }
+    .profile-head { padding: 24px 28px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #ededed; flex-wrap: wrap; }
+    .vnd-logo-lg { width: 64px; height: 64px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 28px; font-weight: 500; color: white; flex-shrink: 0; letter-spacing: -0.5px; }
+    .vnd-logo-lg.global { background: linear-gradient(135deg, #45556c, #0f172b); }
+    .ph-info { flex: 1; min-width: 220px; }
+    .ph-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+    .ph-name { font-family: 'Inter', system-ui, sans-serif; font-size: 24px; font-weight: 500; color: #120b0b; letter-spacing: -0.3px; }
+    .ph-id { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #45556c; padding: 2px 8px; background: #f4f4f4; border-radius: 4px; }
+    .ph-tagline { font-size: 13px; color: #45556c; line-height: 1.65; }
+    .ph-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    /* tabs */
+    .vp-tabs { display: flex; gap: 4px; border-bottom: 1px solid #e9e9e9; padding: 0 28px; background: #fafafa; }
+    .vp-tab { font-size: 13px; font-weight: 500; padding: 14px 14px; border: none; background: transparent; color: #45556c; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .12s; display: inline-flex; align-items: center; gap: 6px; }
+    .vp-tab:hover { color: #120b0b; }
+    .vp-tab.active { color: #120b0b; font-weight: 600; border-bottom-color: #120b0b; }
+    .vp-tab .ct { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: #e9e9e9; color: #45556c; }
+    .vp-tab.active .ct { background: #120b0b; color: white; }
+    .vp-tab .ct.warn { background: #ffe0ca; color: #d95b03; }
+    .vp-tab.active .ct.warn { background: #ff7a3d; color: white; }
+    .vp-tab .ct.zero { background: transparent; color: #c8c8c8; border: 1px solid #ebebeb; font-weight: 400; }
+    .vp-tab.active .ct.zero { background: transparent; border-color: rgba(18,11,11,0.15); color: rgba(18,11,11,0.32); }
+
+    /* tab body */
+    .vp-body { padding: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .vp-body > .span2 { grid-column: 1 / -1; }
+
+    .vp-block { background: white; border: 1px solid #e9e9e9; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+    .vp-block.flat { padding: 0; border: none; }
+    .vp-block-hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .vp-block-title { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
+    .vp-block-link { font-size: 12px; font-weight: 500; color: #45556c; text-decoration: underline; cursor: pointer; }
+    .vp-block-link:hover { color: #120b0b; }
+
+    /* identity rows */
+    .id-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f4f4f4; }
+    .id-row:last-child { border-bottom: none; }
+    .id-key { font-size: 12px; color: #45556c; flex-shrink: 0; min-width: 110px; }
+    .id-val { font-size: 13px; color: #0b0d12; text-align: right; font-weight: 500; word-break: break-word; }
+    .id-val .id-edit { font-size: 11px; color: #155dfc; text-decoration: underline; cursor: pointer; margin-left: 6px; }
+
+    /* perf row + bars */
+    .perf-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f4f4f4; }
+    .perf-row:last-child { border-bottom: none; }
+    .perf-lbl { font-size: 13px; color: #0b0d12; font-weight: 500; flex: 1; min-width: 0; }
+    .perf-bar { width: 130px; height: 6px; border-radius: 999px; background: #f4f4f4; overflow: hidden; flex-shrink: 0; }
+    .perf-bar-fill { height: 100%; border-radius: 999px; background: #16a34a; }
+    .perf-bar-fill.warn { background: #ff7a3d; }
+    .perf-bar-fill.flag { background: #dc2626; }
+    .perf-val { font-size: 13px; font-weight: 600; color: #0b0d12; min-width: 56px; text-align: right; flex-shrink: 0; }
+
+    /* recurring flags / memory */
+    .mem-list { display: flex; flex-direction: column; gap: 10px; }
+    .mem-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px; background: #fff5f0; border: 1px solid #ffd9c2; border-radius: 8px; }
+    .mem-item.calm { background: #f7f7f7; border-color: #e9e9e9; }
+    .mem-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff6900; flex-shrink: 0; margin-top: 6px; animation: pls 2.5s ease-in-out infinite; }
+    .mem-item.calm .mem-dot { background: #adadad; animation: none; }
+    @keyframes pls { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .mem-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+    .mem-title { font-size: 13px; font-weight: 600; color: #0b0d12; line-height: 1.4; }
+    .mem-sub { font-size: 12px; color: #45556c; line-height: 1.65; }
+    .mem-link { font-size: 12px; font-weight: 500; color: #d95b03; text-decoration: underline; cursor: pointer; }
+    .mem-item.calm .mem-link { color: #45556c; }
+
+    /* comms thread */
+    .thread { display: flex; flex-direction: column; gap: 14px; }
+    .thread-item { display: flex; gap: 12px; }
+    .thread-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+    .thread-avatar.them { background: linear-gradient(135deg, #45556c, #0f172b); }
+    .thread-avatar.us   { background: #ff6900; }
+    .thread-avatar.ai   { background: linear-gradient(135deg, #6b21a8, #4f46e5); }
+    .thread-body { flex: 1; min-width: 0; }
+    .thread-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .thread-from { font-size: 13px; font-weight: 600; color: #0b0d12; }
+    .thread-when { font-size: 12px; color: #adadad; }
+    .thread-ref  { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; color: #155dfc; background: #e7f4ff; padding: 2px 6px; border-radius: 4px; }
+    .thread-text { font-size: 13px; color: #0b0d12; line-height: 1.65; }
+    .thread-tag  { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: rgba(107,33,168,0.1); color: #6b21a8; }
+
+    /* compliance */
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .comp-item { padding: 12px 14px; border-radius: 8px; border: 1px solid #e9e9e9; background: white; display: flex; flex-direction: column; gap: 4px; }
+    .comp-item.ok   { border-color: #b9f5cf; background: white; }
+    .comp-item.warn { border-color: #ffd9c2; background: white; }
+    .comp-item.bad  { border-color: #fecaca; background: white; }
+    .comp-lbl { font-size: 11px; font-weight: 600; color: #45556c; letter-spacing: 0.05em; }
+    .comp-val { font-size: 13px; font-weight: 600; color: #0b0d12; }
+    .comp-sub { font-size: 11px; color: #45556c; }
+    .comp-item.ok .comp-lbl   { color: #16a34a; }
+    .comp-item.warn .comp-lbl { color: #d95b03; }
+    .comp-item.bad .comp-lbl  { color: #b91c1c; }
+
+    /* active invoices summary */
+    .ai-row { display: flex; align-items: stretch; }
+    .ai-cell { flex: 1; padding: 14px 16px; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; gap: 4px; }
+    .ai-cell:last-child { border-right: none; }
+    .ai-cell .n { font-size: 22px; font-weight: 600; color: #0f172b; line-height: 1; }
+    .ai-cell .n.red { color: #b91c1c; }
+    .ai-cell .n.amber { color: #d95b03; }
+    .ai-cell .l { font-size: 11px; font-weight: 600; color: #45556c; letter-spacing: 0.05em; }
+    .ai-cell-link { font-size: 12px; font-weight: 500; color: #155dfc; text-decoration: underline; cursor: pointer; margin-top: 2px; }
+
+    /* witness chat context strip */
+    .chat-context { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: #0f172b; border-radius: 10px; color: white; }
+    .chat-context .spark { color: #ffd000; font-size: 16px; flex-shrink: 0; }
+    .chat-context .text { font-size: 13px; line-height: 1.65; flex: 1; }
+    .chat-context .text b { font-weight: 600; }
+    .chat-context .text .muted { color: #94a5bc; }
+    .chat-context .open-chat { background: white; color: #0f172b; border: none; border-radius: 999px; padding: 6px 16px; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .chat-context .open-chat:hover { background: #f4f4f4; }
+
+    /* ═══ VENDOR RELATIONSHIP CARDS — expandable, one shape for every vendor ═══ */
+    /* Mixed grid: flagged vendors span the full row; the rest pack two-up.
+       Any card that's open also spans full width so its dossier has room.
+       First principle: this page is only for seeing what's happening with each
+       vendor — depth lives in the expanded dossier (the drill-down). */
+    /* Stretch so cards sharing a row are equal height; min-height makes the
+       whole grid uniform (sized to the tallest collapsed card). */
+    .vendor-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 12px; align-items: stretch; }
+    .vc-card { min-height: 182px; }
+    /* Detail no longer expands in-grid — it opens in a slide-over (see .vsheet),
+       so the card grid never reflows. The .vc-body is the data source, moved
+       into the panel on click. */
+
+    @property --grad-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    @keyframes grad-spin { from { --grad-angle: 0deg; } to { --grad-angle: 360deg; } }
+
+    .vc-card { background: white; border: 1px solid #e9e9e9; border-radius: 16px; transition: border-color .2s ease; scroll-margin-top: 96px; position: relative; z-index: 0; isolation: isolate; }
+    .vc-card::before { content: ''; position: absolute; inset: -1.5px; border-radius: 17.5px; background: conic-gradient(from var(--grad-angle), #FF6900 0%, #FFD000 20%, #FFB347 35%, #fff0e0 48%, #FF6900 58%, #FFD000 74%, #FFB347 86%, #fff0e0 94%, #FF6900 100%); animation: grad-spin 4.5s linear infinite; opacity: 0; transition: opacity .4s ease; z-index: -1; pointer-events: none; }
+    .vc-card::after { content: ''; position: absolute; inset: 0; border-radius: 16px; background: white; z-index: -1; pointer-events: none; }
+    .vc-card:hover { border-color: transparent; }
+    .vc-card:hover::before { opacity: 1; }
+    .vc-card.open { border-color: rgba(69,85,108,0.45); }
+    .vc-card:target { border-color: #c8c8c8; box-shadow: 0 0 0 3px rgba(15,23,43,0.06); }
+
+    .vc-head { padding: 16px 20px; cursor: pointer; display: grid; grid-template-columns: 32px 1fr auto 14px; gap: 14px; align-items: center; }
+
+    /* Identifier square (was gradient logos — neutralized to dark avatar pattern so identity, not branding) */
+    .vc-id-sq { width: 32px; height: 32px; border-radius: 8px; background: #0f172b; color: white; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 500; letter-spacing: -0.3px; flex-shrink: 0; overflow: hidden; }
+    .vc-id-sq img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .vc-main { min-width: 0; }
+    .vc-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 3px; }
+    .vc-name { font-size: 14.5px; font-weight: 600; color: #120b0b; letter-spacing: -0.15px; }
+    .vc-id { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #adadad; padding: 1px 6px; background: #f4f4f4; border-radius: 4px; }
+    .vc-tag { font-size: 12.5px; color: #45556c; }
+
+    .vc-signals { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 7px; font-family: 'Inter', system-ui, sans-serif; font-size: 11px; color: #45556c; }
+    .vc-signals .sig { display: inline-flex; align-items: baseline; gap: 4px; }
+    .vc-signals .sig-lbl { color: #adadad; letter-spacing: 0.05em; font-size: 10px; font-weight: 600; }
+    .vc-signals .sig-val { font-weight: 600; color: #120b0b; }
+    .vc-signals .sig-val.amber { color: #d95b03; }
+    .vc-signals .sig-val.red { color: #b91c1c; }
+    .vc-signals .sig-val.green { color: #15803d; }
+    .vc-signals .sig-sep { color: #d4d4d4; }
+
+    .vc-side { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .vc-chev { color: #adadad; transition: transform .2s; }
+    .vc-card.open .vc-chev { transform: rotate(180deg); }
+
+    /* Status pill — reuse but rationalized colors */
+    .vc-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+    .vc-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .vc-pill.good  { background: #dcfce7; color: #15803d; }
+    .vc-pill.good::before  { background: #16a34a; }
+    .vc-pill.watch { background: #fff5f0; color: #d95b03; }
+    .vc-pill.watch::before { background: #ff6900; }
+    .vc-pill.flag  { background: #fef2f2; color: #b91c1c; }
+    .vc-pill.flag::before  { background: #dc2626; }
+    .vc-pill.new   { background: #e7f4ff; color: #155dfc; }
+    .vc-pill.new::before   { background: #155dfc; }
+
+    /* Detail body — hidden in the grid; revealed inside the slide-over panel */
+    .vc-body { display: none; }
+    .vsheet-body .vc-body { display: block; }
+
+    .vc-sec { padding: 18px 0; border-top: 1px solid #f0f0f0; }
+    .vc-sec-lbl { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: .1em; color: #45556c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .vc-sec-lbl .lbl-count { color: #adadad; font-weight: 500; }
+    .vc-sec-lbl .lbl-link { margin-left: auto; font-family: 'Inter', system-ui, sans-serif; font-weight: 500; font-size: 11.5px; color: #45556c; text-decoration: none; text-transform: none; letter-spacing: 0; }
+    .vc-sec-lbl .lbl-link:hover { color: #120b0b; text-decoration: underline; }
+
+    .vc-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+    /* Identity / terms key-value rows */
+    .vc-kv { display: flex; flex-direction: column; gap: 0; }
+    .vc-kv-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 7px 0; border-bottom: 1px solid #f4f4f4; }
+    .vc-kv-row:last-child { border-bottom: none; }
+    .vc-kv-k { font-size: 12px; color: #45556c; flex-shrink: 0; min-width: 110px; }
+    .vc-kv-v { font-size: 12.5px; color: #120b0b; text-align: right; font-weight: 500; word-break: break-word; line-height: 1.45; }
+    .vc-kv-v .sub { font-weight: 400; color: #45556c; font-size: 11px; display: block; margin-top: 2px; }
+    .vc-kv-v .note { font-weight: 400; color: #45556c; font-style: italic; }
+
+    /* Performance bars */
+    .vc-perf { display: flex; flex-direction: column; }
+    .vc-perf-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f4f4f4; }
+    .vc-perf-row:last-child { border-bottom: none; }
+    .vc-perf-lbl { font-size: 12.5px; color: #120b0b; font-weight: 500; flex: 1; min-width: 0; }
+    .vc-perf-bar { width: 110px; height: 6px; border-radius: 999px; background: #f4f4f4; overflow: hidden; flex-shrink: 0; }
+    .vc-perf-fill { height: 100%; border-radius: 999px; background: #16a34a; }
+    .vc-perf-fill.warn { background: #e9b44c; }
+    .vc-perf-fill.flag { background: #dc2626; }
+    .vc-perf-val { font-size: 12.5px; font-weight: 600; color: #120b0b; min-width: 56px; text-align: right; flex-shrink: 0; }
+    .vc-perf-val.warn { color: #d95b03; }
+    .vc-perf-val.flag { color: #b91c1c; }
+
+    /* Recurring flags (memory) */
+    .vc-flags { display: flex; flex-direction: column; gap: 8px; }
+    .vc-flag-item { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: flex-start; padding: 12px 14px; background: white; border: 1px solid #ffd9c2; border-radius: 8px; }
+    .vc-flag-item.calm { background: #f7f7f7; border-color: #ededed; }
+    .vc-flag-icon { width: 28px; height: 28px; border-radius: 50%; background: #ffe0ca; color: #d95b03; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .vc-flag-item.calm .vc-flag-icon { background: #e9e9e9; color: #adadad; }
+    .vc-flag-body { min-width: 0; padding-top: 3px; }
+    .vc-flag-title { font-size: 13px; font-weight: 600; color: #120b0b; line-height: 1.4; }
+    .vc-flag-sub { font-size: 12px; color: #45556c; margin-top: 3px; line-height: 1.65; }
+    .vc-flag-sub a { color: #d95b03; font-weight: 500; text-decoration: none; }
+    .vc-flag-sub a:hover { text-decoration: underline; }
+    .vc-flag-item.calm .vc-flag-sub a { color: #45556c; }
+    .vc-flag-side { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; color: #adadad; font-weight: 500; white-space: nowrap; padding-top: 6px; }
+
+    /* ─── EXPANDED DATA VIZ (first principle: show state + trajectory only) ─── */
+    /* Two small charts, no chrome: a stacked bar = the state of money in flight
+       right now; a sparkline = where the relationship is heading. Nothing
+       decorative — every mark answers "what's happening with this vendor". */
+    .vc-viz { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; margin-top: 12px; }
+    .vc-viz-card { border: 1px solid #ededed; border-radius: 8px; padding: 12px 14px; min-width: 0; }
+    .vc-viz-hd { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 11px; }
+    .vc-viz-title { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: #45556c; }
+    .vc-viz-sum { font-size: 11.5px; font-weight: 600; color: #120b0b; white-space: nowrap; }
+    .vc-viz-sum.green { color: #15803d; }
+    .vc-bar { height: 9px; border-radius: 999px; overflow: hidden; display: flex; background: #f4f4f4; }
+    .vc-bar span { height: 100%; display: block; }
+    .vc-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 11px; }
+    .vc-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #45556c; }
+    .vc-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .vc-legend-item b { color: #120b0b; font-weight: 600; }
+    .vc-spark { display: flex; align-items: flex-end; gap: 3px; height: 36px; }
+    .vc-spark .bar { flex: 1; background: #e4e4e4; border-radius: 2px 2px 0 0; min-height: 4px; }
+    .vc-spark .bar.curr { background: #120b0b; }
+    .vc-spark-x { display: flex; justify-content: space-between; font-family: 'Inter', system-ui, sans-serif; font-size: 9px; color: #adadad; margin-top: 5px; }
+    /* condensed recent-activity line (detail panel) */
+    .vc-mini-act { display: flex; gap: 12px; align-items: baseline; font-size: 12.5px; color: #120b0b; line-height: 1.5; }
+    .vc-mini-when { font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; color: #adadad; font-weight: 600; flex-shrink: 0; min-width: 44px; }
+    .vc-mini-act .who { font-weight: 600; }
+
+    /* Active invoices summary strip */
+    .vc-inv-strip { display: flex; border: 1px solid #e9e9e9; border-radius: 8px; overflow: hidden; }
+    .vc-inv-cell { flex: 1; padding: 12px 14px; border-right: 1px solid #f0f0f0; }
+    .vc-inv-cell:last-child { border-right: none; }
+    .vc-inv-cell .n { font-size: 20px; font-weight: 600; color: #120b0b; line-height: 1; }
+    .vc-inv-cell .n.red { color: #b91c1c; }
+    .vc-inv-cell .n.amber { color: #d95b03; }
+    .vc-inv-cell .l { font-size: 11px; font-weight: 600; color: #45556c; letter-spacing: 0.04em; margin-top: 6px; display: block; }
+    .vc-inv-link { display: inline-block; font-size: 11.5px; font-weight: 500; color: #d95b03; text-decoration: none; margin-top: 4px; }
+    .vc-inv-link:hover { text-decoration: underline; }
+    .vc-inv-note { font-size: 12px; color: #45556c; line-height: 1.65; padding-top: 10px; }
+    .vc-inv-note b { color: #120b0b; font-weight: 600; }
+
+    /* Compliance grid */
+    .vc-comp { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .vc-comp-item { padding: 10px 12px; border-radius: 8px; border: 1px solid #ededed; background: #fafafa; display: flex; flex-direction: column; gap: 3px; }
+    .vc-comp-item.ok   { border-color: #c7e8d3; background: white; }
+    .vc-comp-item.warn { border-color: #ffd9c2; background: white; }
+    .vc-comp-item.bad  { border-color: #fecaca; background: white; }
+    .vc-comp-lbl { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; color: #45556c; letter-spacing: 0.05em; }
+    .vc-comp-val { font-size: 12px; font-weight: 600; color: #120b0b; }
+    .vc-comp-sub { font-size: 10.5px; color: #45556c; }
+    .vc-comp-item.ok   .vc-comp-lbl { color: #15803d; }
+    .vc-comp-item.warn .vc-comp-lbl { color: #d95b03; }
+    .vc-comp-item.bad  .vc-comp-lbl { color: #b91c1c; }
+
+    /* Comms thread (compact) */
+    .vc-thread { display: flex; flex-direction: column; gap: 12px; }
+    .vc-thread-item { display: grid; grid-template-columns: 28px 1fr; gap: 12px; }
+    .vc-thread-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; flex-shrink: 0; }
+    .vc-thread-avatar.them { background: #0f172b; }
+    .vc-thread-avatar.us   { background: #0f172b; }
+    .vc-thread-avatar.ai   { background: #ffe0ca; color: #d95b03; font-size: 13px; }
+    .vc-thread-body { min-width: 0; }
+    .vc-thread-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+    .vc-thread-from { font-size: 12.5px; font-weight: 600; color: #120b0b; }
+    .vc-thread-when { font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; color: #adadad; }
+    .vc-thread-ref  { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; color: #155dfc; background: #e7f4ff; padding: 1px 6px; border-radius: 4px; }
+    .vc-thread-tag  { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: #ffe0ca; color: #d95b03; }
+    .vc-thread-text { font-size: 12.5px; color: #120b0b; line-height: 1.55; }
+
+    /* Card foot — primary actions */
+    .vc-foot { display: flex; gap: 8px; padding-top: 18px; border-top: 1px solid #f0f0f0; margin-top: 4px; flex-wrap: wrap; }
+    .vc-btn { font-size: 12px; font-weight: 500; padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(69,85,108,0.24); background: white; color: #120b0b; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all .15s; }
+    .vc-btn:hover { background: #f4f4f4; }
+    .vc-btn.primary { background: #120b0b; color: white; border-color: #120b0b; }
+    .vc-btn.primary:hover { background: #45556c; }
+
+    /* Cross-vendor AI callout — top of list, same orange gradient as invoices */
+    /* ─── Agent suggestion callout ─── */
+    .agent-sug-callout { padding: 24px 28px; background: #fff8f3; border: 1.5px solid #ffc8a3; border-radius: 14px; display: grid; grid-template-columns: 52px 1fr; gap: 22px; align-items: center; position: relative; overflow: hidden; animation: vc-breathe 6s ease-in-out infinite; }
+    @keyframes vc-breathe { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,105,0,0); } 50% { box-shadow: 0 0 0 6px rgba(255,105,0,0.06), 0 0 28px rgba(255,105,0,0.10); } }
+    .agent-sug-icon { width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #ff7a3d 0%, #ff5c1b 100%); color: white; font-size: 24px; box-shadow: 0 6px 16px rgba(255,105,0,0.28), inset 0 1px 0 rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; align-self: flex-start; animation: vc-icon-pulse 4s ease-in-out infinite; }
+    @keyframes vc-icon-pulse { 0%, 100% { box-shadow: 0 6px 16px rgba(255,105,0,0.28), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 0 rgba(255,105,0,0.35); } 50% { box-shadow: 0 6px 16px rgba(255,105,0,0.36), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 10px rgba(255,105,0,0); } }
+    .agent-sug-body { min-width: 0; }
+    .agent-sug-lbl { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; color: #FF6900; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+    .agent-sug-lbl::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, rgba(255,105,0,0.25), rgba(255,105,0,0)); max-width: 60px; }
+    .agent-sug-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: #120b0b; font-weight: 400; letter-spacing: -0.15px; }
+    .agent-sug-txt b { font-weight: 600; }
+    .agent-sug-actions { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+    .agent-sug-btn-primary { background: #120b0b; color: white; padding: 10px 20px; border-radius: 999px; font-size: 12px; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; white-space: nowrap; border: none; cursor: pointer; transition: transform .15s; box-shadow: 0 2px 6px rgba(0,0,0,0.10); }
+    .agent-sug-btn-primary:hover { transform: translateY(-1px); }
+    .agent-sug-btn-sec { background: white; color: #FF6900; padding: 9px 18px; border-radius: 999px; font-size: 12px; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; white-space: nowrap; border: 1.5px solid #FF6900; cursor: pointer; transition: all .15s; }
+    .agent-sug-btn-sec:hover { background: #fff5f1; }
+
+    /* Simplified stat row — 3 cards mirroring invoices */
+
+
+    /* Quick search */
+    .v-search { position: relative; flex: 1; max-width: 400px; flex-shrink: 0; }
+    .v-search input { width: 100%; padding: 8px 12px 8px 36px; border: 1.5px solid #e9e9e9; border-radius: 8px; background: white; font-size: 13px; font-family: 'Inter', system-ui, sans-serif; color: #0b0d12; outline: none; transition: border-color .15s; }
+    .v-search input:focus { border-color: #c8c8c8; }
+    .v-search input::placeholder { color: #adadad; }
+    .v-search .vs-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #adadad; pointer-events: none; display: flex; }
+
+    /* Row that pairs the search input with the saved-views strip */
+    .v-filter-row { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .v-filter-row .vv-strip {
+      flex: 1; min-width: 0;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 2px 22px 2px 0;
+      mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+    }
+    .v-filter-row .vv-strip::-webkit-scrollbar { height: 0; width: 0; display: none; }
+    .v-filter-row .vv-chip { flex-shrink: 0; }
+
+    /* Slim chip strip for views — same as invoices */
+    .vv-strip { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; overflow-x: auto; scrollbar-width: none; }
+    .vv-label { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; color: #adadad; letter-spacing: 0.1em; margin-right: 6px; }
+    .vv-chip { display: inline-flex; align-items: center; gap: 6px; padding: 0 12px; height: 32px; border-radius: 8px; border: 1.5px solid #e9e9e9; background: white; font-size: 12px; font-weight: 500; color: #45556c; cursor: pointer; transition: all .12s; font-family: 'Inter', system-ui, sans-serif; }
+    .vv-chip:hover { border-color: #c8c8c8; color: #120b0b; }
+    .vv-chip.active { background: #120b0b; color: white; border-color: #120b0b; }
+    .vv-chip .vv-spark { color: #d95b03; font-size: 11px; }
+    .vv-chip.active .vv-spark { color: #ffd000; }
+    .vv-chip .vv-count { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 700; opacity: 0.55; }
+    .vv-chip.active .vv-count { opacity: 1; color: rgba(255,255,255,0.85); }
+
+    /* ─── SITUATION LINE (collapsed-card one-liner) ─── */
+    .vc-situation { grid-column: 2 / 3; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ededed; display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #45556c; line-height: 1.45; }
+    .vc-situation .sit-icon { color: #d95b03; font-size: 12px; flex-shrink: 0; }
+    .vc-situation.calm { color: #adadad; }
+    .vc-situation.calm .sit-icon { color: #adadad; }
+    .vc-situation.flag .sit-icon { color: #b91c1c; }
+    .vc-situation b { color: #120b0b; font-weight: 600; }
+
+    /* ─── ADAPTIVE "WHAT NEEDS YOU" TRAY ─── */
+    .vc-tray { margin: 8px 0 4px; padding: 14px 16px; border-radius: 10px; display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: center; }
+    .vc-tray.watch { background: #fff5f0; border: 1px solid #ffd9c2; }
+    .vc-tray.bad   { background: #fef2f2; border: 1px solid #fecaca; }
+    .vc-tray.info  { background: #e7f4ff; border: 1px solid #c9deff; }
+    .vc-tray-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .vc-tray.watch .vc-tray-icon { background: #ffe0ca; color: #d95b03; }
+    .vc-tray.bad   .vc-tray-icon { background: #fecaca; color: #b91c1c; }
+    .vc-tray.info  .vc-tray-icon { background: #d3e6ff; color: #155dfc; }
+    .vc-tray-body { min-width: 0; }
+    .vc-tray-title { font-size: 13px; font-weight: 600; color: #120b0b; line-height: 1.4; }
+    .vc-tray-sub { font-size: 12px; color: #45556c; margin-top: 3px; line-height: 1.65; }
+    .vc-tray-act { font-size: 12px; font-weight: 600; color: white; background: #120b0b; border: none; border-radius: 8px; padding: 7px 14px; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; white-space: nowrap; text-decoration: none; }
+    .vc-tray-act:hover { background: #45556c; }
+    .vc-tray.bad .vc-tray-act { background: #b91c1c; }
+    .vc-tray.bad .vc-tray-act:hover { background: #991414; }
+
+    /* ─── DOCUMENTS DRAWER ─── */
+    .vc-docs { display: flex; flex-direction: column; gap: 6px; }
+    .vc-doc-item { display: grid; grid-template-columns: 32px 1fr auto auto; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid #ededed; border-radius: 8px; background: white; transition: border-color .15s; }
+    .vc-doc-item:hover { border-color: #c8c8c8; }
+    .vc-doc-item.stale  { border-color: #ffd9c2; background: #fff8f3; }
+    .vc-doc-item.expire { border-color: #fde68a; background: #fffbeb; }
+    .vc-doc-item.bad    { border-color: #fecaca; background: #fef2f2; }
+    .vc-doc-icon { width: 32px; height: 32px; border-radius: 6px; background: #f4f4f4; color: #45556c; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.05em; }
+    .vc-doc-item.stale  .vc-doc-icon { background: #ffe0ca; color: #d95b03; }
+    .vc-doc-item.expire .vc-doc-icon { background: #fde68a; color: #92400e; }
+    .vc-doc-item.bad    .vc-doc-icon { background: #fecaca; color: #b91c1c; }
+    .vc-doc-name { font-size: 12.5px; font-weight: 600; color: #120b0b; line-height: 1.3; }
+    .vc-doc-meta { font-size: 11px; color: #45556c; margin-top: 2px; }
+    .vc-doc-meta .badge { font-family: 'Inter', system-ui, sans-serif; font-size: 9.5px; font-weight: 600; padding: 1px 5px; border-radius: 3px; margin-left: 4px; }
+    .vc-doc-meta .badge.warn { background: #fff0e0; color: #d95b03; }
+    .vc-doc-meta .badge.expire { background: #fde68a; color: #92400e; }
+    .vc-doc-meta .badge.bad { background: #fee2e2; color: #b91c1c; }
+    .vc-doc-act { font-size: 11px; font-weight: 500; color: #45556c; background: white; border: 1px solid #e9e9e9; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; text-decoration: none; }
+    .vc-doc-act:hover { background: #f4f4f4; color: #120b0b; }
+    .vc-doc-act.primary { color: #120b0b; border-color: #c8c8c8; }
+    .vc-docs-empty { font-size: 12px; color: #adadad; padding: 12px; text-align: center; border: 1px dashed #e9e9e9; border-radius: 8px; background: #fafafa; }
+    .vc-docs-add { font-size: 11.5px; font-weight: 500; color: #45556c; background: transparent; border: 1px dashed #c8c8c8; border-radius: 8px; padding: 8px 12px; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; margin-top: 4px; transition: border-color .15s, color .15s; }
+    .vc-docs-add:hover { border-color: #45556c; color: #120b0b; }
+
+    /* ─── MONEY & BANKING ─── */
+    .vc-bank-box { background: #f7f7f7; border: 1px solid #ededed; border-radius: 8px; padding: 12px 14px; margin-top: 8px; }
+    .vc-bank-box.alert { background: #fff8f3; border-color: #ffd9c2; }
+    .vc-bank-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 4px 0; }
+    .vc-bank-k { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 600; color: #45556c; letter-spacing: 0.06em; }
+    .vc-bank-v { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; color: #120b0b; }
+    .vc-bank-pending { font-size: 12px; color: #b91c1c; font-weight: 600; padding: 8px 10px; border: 1px solid #fecaca; background: #fef2f2; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .vc-bank-pending::before { content: '⚠'; font-size: 13px; }
+    .vc-changelog { margin-top: 12px; padding-top: 12px; border-top: 1px solid #ededed; display: flex; flex-direction: column; gap: 8px; }
+    .vc-changelog-title { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; margin-bottom: 2px; }
+    .vc-change-row { display: grid; grid-template-columns: 70px 1fr; gap: 12px; font-size: 12px; line-height: 1.55; padding: 4px 0; border-bottom: 1px solid #f4f4f4; }
+    .vc-change-row:hover { border-bottom-style: dashed; border-bottom-color: rgba(69,85,108,0.2); }
+    .vc-change-row:last-child { border-bottom: none; }
+    .vc-change-when { font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; color: #adadad; font-weight: 500; }
+    .vc-change-what { color: #120b0b; }
+    .vc-change-what b { font-weight: 600; }
+    .vc-change-what .who { color: #45556c; font-size: 11px; display: block; margin-top: 1px; }
+
+    /* ─── BEHAVIORAL NOTES (inside Relationship memory) ─── */
+    .vc-notes { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+    .vc-notes-title { font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; color: #45556c; letter-spacing: 0.1em; }
+    .vc-note { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: flex-start; padding: 6px 0; font-size: 12.5px; color: #120b0b; line-height: 1.5; }
+    .vc-note .nm { color: #d95b03; font-size: 11px; margin-top: 3px; }
+    .vc-note .nt { font-style: italic; color: #45556c; }
+    .vc-note .nt b { font-style: normal; color: #120b0b; font-weight: 600; }
+
+    /* ─── LIFETIME & TRENDS (collapsible drawer) ─── */
+    .vc-life { border-top: 1px solid #f0f0f0; padding: 14px 0 18px; }
+    .vc-life-toggle { display: flex; align-items: center; gap: 8px; background: transparent; border: none; padding: 0; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: #45556c; }
+    .vc-life-toggle:hover { color: #120b0b; }
+    .vc-life-toggle .chev { transition: transform .15s; }
+    .vc-life.open .vc-life-toggle .chev { transform: rotate(90deg); }
+    .vc-life-body { display: none; margin-top: 14px; }
+    .vc-life.open .vc-life-body { display: block; }
+    .vc-life-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 14px; }
+    .vc-life-cell { display: flex; flex-direction: column; gap: 4px; }
+    .vc-life-n { font-size: 18px; font-weight: 600; color: #120b0b; line-height: 1; }
+    .vc-life-l { font-size: 10.5px; font-weight: 600; color: #45556c; letter-spacing: 0.05em; }
+    .vc-life-spark { display: flex; align-items: flex-end; gap: 3px; height: 28px; margin-top: 6px; }
+    .vc-life-spark .bar { flex: 1; background: #d4d4d4; border-radius: 2px 2px 0 0; min-height: 4px; }
+    .vc-life-spark .bar.good { background: #86d9a5; }
+    .vc-life-spark .bar.warn { background: #ffb088; }
+    .vc-life-spark .bar.curr { background: #120b0b; }
+    .vc-life-note { font-size: 11.5px; color: #45556c; line-height: 1.5; padding: 10px 12px; background: #fafafa; border-radius: 6px; }
+    .vc-life-note b { color: #120b0b; font-weight: 600; }
+
+    /* ─── COMPLIANCE-SWEEP STAT (functional 3rd stat card) ─── */
+    .v-stat.action { flex-direction: column; align-items: stretch; padding: 16px 18px; gap: 8px; }
+    .v-stat-action-row { display: flex; align-items: flex-start; gap: 12px; }
+    .v-stat-action-row .v-stat-icon { margin-top: 2px; }
+    .v-stat-action-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+    .v-stat-action-hd { font-size: 11.5px; font-weight: 600; color: #45556c; letter-spacing: 0.5px; }
+    .v-stat-action-val { font-size: 16px; font-weight: 600; color: #120b0b; line-height: 1.3; }
+    .v-stat-action-sub { font-size: 11.5px; color: #45556c; line-height: 1.5; }
+    .v-stat-action-sub b { color: #120b0b; font-weight: 600; }
+    .v-stat-cta { font-size: 11.5px; font-weight: 600; color: #d95b03; background: transparent; border: none; padding: 0; cursor: pointer; font-family: 'Inter', system-ui, sans-serif; text-align: left; align-self: flex-start; text-decoration: none; }
+    .v-stat-cta:hover { text-decoration: underline; }
+
+    /* ─── OPEN CONVERSATIONS HEADER (waiting indicators) ─── */
+    .vc-waiting { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 600; background: #fff0e0; color: #d95b03; margin-left: 6px; }
+    .vc-waiting::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    /* ═══════════════════════════════════════════════════════════ */
+    /* WISE-STYLE BANDED CARD — one shape for every vendor          */
+    /* Color lives only in the top band (status), never the stroke. */
+    /* Band label = status pill · band icon = the ID square.        */
+    /* Body = vendor name + one-line "what's happening". Metrics and */
+    /* the rest live in the expanded dossier (the drill-down).      */
+    /* ═══════════════════════════════════════════════════════════ */
+    .vc-card[data-status] { background: white; border-color: #e9e9e9; }
+
+    /* ── CARD-PACK / 卡包 ──────────────────────────────────────────
+       Each vendor is a little wallet: two cards peek out behind the top
+       edge (the detail that's "tucked inside", opened in the slide-over),
+       and the face shows only the name + key identifying info.
+       Color follows the design-system soft tints — calm, never loud. */
+    .vc-card { box-shadow: 0 1px 2px rgba(15,23,43,0.04); position: relative; }
+
+    /* Header: name band on top, [logo | meta] row below */
+    .vc-head { cursor: pointer; display: flex; flex-direction: column; border-radius: 16px 16px 0 0; overflow: hidden; }
+    .vc-head::before { display: none; }
+
+    /* Row 1 — name + pill + chevron */
+    .vc-hd-name { display: flex; align-items: center; gap: 8px; padding: 13px 16px 13px 20px; background: #f6f6f6; border-bottom: 1px solid #efefef; }
+    .vc-head:hover .vc-hd-meta { background: white; }
+    .vc-hd-name .vc-name { flex: 1; font-size: 15px; font-weight: 600; color: #120b0b; letter-spacing: -0.25px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 0; }
+    .vc-hd-name .vc-side { position: static; height: auto; padding: 0; display: flex; align-items: center; flex-shrink: 0; }
+    .vc-hd-name .vc-side .vc-pill { background: #eaeaea; padding: 2px 8px; border-radius: 5px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #45556c; gap: 5px; }
+    .vc-hd-name .vc-side .vc-pill::before { display: inline-block; }
+
+    /* Row 2 — logo left, tag + signals right */
+    .vc-hd-meta { display: flex; align-items: flex-start; gap: 12px; padding: 14px 20px 16px; }
+    .vc-head:hover .vc-hd-meta { background: white; }
+    .vc-hd-meta .vc-id-sq { position: static; flex-shrink: 0; width: 36px; height: 36px; border-radius: 9px; background: #0f172b; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 600; letter-spacing: -0.3px; }
+    .vc-hd-meta .vc-main { flex: 1; min-width: 0; }
+
+    /* Meta content */
+    .vc-top { display: flex; flex-direction: column; gap: 1px; margin-bottom: 6px; }
+    .vc-name { font-size: 15px; font-weight: 600; color: #120b0b; letter-spacing: -0.25px; line-height: 1.25; }
+    .vc-id { display: none; }
+    .vc-tag { font-size: 12px; color: #45556c; line-height: 1.45; }
+    .vc-signals { display: flex; align-items: center; gap: 6px 12px; flex-wrap: wrap; margin-top: 5px; }
+    .vc-situation { grid-column: auto; margin-top: 7px; padding-top: 0; border-top: none; font-size: 12px; }
+    .vc-card[data-status="fraud"] .vc-situation,
+    .vc-card[data-status="compliance"] .vc-situation { color: #120b0b; }
+
+    /* ═══════════════════════════════════════════════════════════ */
+    /* VENDOR DETAIL — SLIDE-OVER PANEL                             */
+    /* The grid never reflows; clicking a card slides this in.      */
+    /* ═══════════════════════════════════════════════════════════ */
+    .vsheet-overlay { position: fixed; inset: 0; background: rgba(15,23,43,0.22); opacity: 0; visibility: hidden; transition: opacity .3s ease; z-index: 60; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); }
+    body.vsheet-open .vsheet-overlay { opacity: 1; visibility: visible; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); transition: opacity .3s ease, backdrop-filter .3s ease; }
+
+    .vsheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(496px, 94vw); background: #fff; box-shadow: -10px 0 36px rgba(15,23,43,0.16); transform: translateX(100%); transition: transform .45s cubic-bezier(0.16, 1, 0.3, 1); z-index: 61; display: flex; flex-direction: column; }
+    body.vsheet-open .vsheet { transform: translateX(0); }
+
+    /* Staggered entrance for dossier sections */
+    @keyframes vcSecIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    body.vsheet-open .vsheet-body .vc-sec { animation: vcSecIn .28s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    body.vsheet-open .vsheet-body .vc-sec:nth-child(1) { animation-delay: .04s; }
+    body.vsheet-open .vsheet-body .vc-sec:nth-child(2) { animation-delay: .09s; }
+    body.vsheet-open .vsheet-body .vc-sec:nth-child(3) { animation-delay: .13s; }
+    body.vsheet-open .vsheet-body .vc-sec:nth-child(4) { animation-delay: .17s; }
+    body.vsheet-open .vsheet-body .vc-sec:nth-child(5) { animation-delay: .20s; }
+    body.vsheet-open .vsheet-body .vc-tray { animation: vcSecIn .22s cubic-bezier(0.16, 1, 0.3, 1) .02s both; }
+
+    /* Sticky section labels within the scrollable dossier */
+    .vsheet-body .vc-sec-lbl { position: sticky; top: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 2; padding-top: 14px; padding-bottom: 10px; margin-bottom: 0; border-bottom: 1px solid #f4f4f4; }
+
+    /* Sticky tab TOC — scrolls with content but stays visible */
+    .vp-tabs { position: sticky; top: 0; z-index: 5; }
+
+    /* Interactive stat card hover states */
+    .v-stat[data-view] { cursor: pointer; transition: border-color .15s, background .15s, transform .1s; }
+    .v-stat[data-view]:hover { background: #fafafa; border-color: #c8c8c8; }
+    .v-stat[data-view]:active { transform: scale(0.99); }
+    .v-stat[data-view].stat-active { border-color: #120b0b; background: #f9f7f7; }
+
+    /* Header — banded, mirrors the card */
+    .vsheet-hd { position: relative; flex-shrink: 0; padding: 70px 22px 18px; border-bottom: 1px solid #ededed; }
+    .vsheet-hd::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 56px; background: #f4f4f4; }
+    .vsheet-pill { position: absolute; top: 0; left: 22px; height: 56px; display: flex; align-items: center; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; color: #45556c; }
+    .vsheet-id { position: absolute; top: 12px; right: 56px; width: 32px; height: 32px; border-radius: 9px; background: #0f172b; color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 600; }
+    .vsheet-close { position: absolute; top: 12px; right: 16px; width: 32px; height: 32px; border: none; background: rgba(255,255,255,0.55); border-radius: 9px; color: #0b0d12; font-size: 19px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .vsheet-close:hover { background: #fff; color: #120b0b; }
+    .vsheet-name { font-size: 20px; font-weight: 600; color: #120b0b; letter-spacing: -0.3px; line-height: 1.25; }
+    .vsheet-tag { font-size: 12.5px; color: #45556c; margin-top: 3px; }
+
+    .vsheet-body { flex: 1; overflow-y: auto; padding: 8px 22px 28px; }
+    .vsheet-body .vc-body { display: block; padding: 0; }
+    .vsheet-body .vc-sec:first-child { border-top: none; }
+
+    /* ═══════════════════════════════════════════════════════════ */
+    /* HERO CROSS-VENDOR CALLOUT                                    */
+    /* ═══════════════════════════════════════════════════════════ */
+    @media (max-width: 980px) {
+      .content { padding: 32px 28px; }
+      .vp-body { grid-template-columns: 1fr; }
+      .ph-actions { width: 100%; }
+      .vc-grid-2 { grid-template-columns: 1fr; }
+      .vc-comp { grid-template-columns: 1fr 1fr; }
+      .vc-life-grid { grid-template-columns: repeat(2, 1fr); }
+      .vc-tray { grid-template-columns: 28px 1fr; }
+      .vc-tray-act { grid-column: 2 / 3; justify-self: start; margin-top: 6px; }
+      .vendor-callout { grid-template-columns: 44px 1fr; padding: 18px 20px; gap: 16px; }
+      .vendor-callout-icon { width: 44px; height: 44px; font-size: 20px; }
+      .vendor-callout-link { grid-column: 2 / 3; justify-self: start; margin-top: 8px; }
+      .vendor-callout-txt { font-size: 15px; }
+    }
+
+    /* ─── THUMBNAIL CARD REDESIGN ─── */
+    .vc-card { min-height: 0; }
+
+    /* Head is now a column: thumbnail on top, footer below */
+    .vc-head { cursor: pointer; display: flex; flex-direction: column; border-radius: 16px 16px 0 0; overflow: hidden; }
+    .vc-head::before { display: none; }
+
+    /* Screenshot placeholder area */
+    .vc-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .vc-thumb-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Fake browser chrome */
+    .vc-thumb-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 8px;
+      background: rgba(0,0,0,0.22);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+    .vc-thumb-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.3); flex-shrink: 0; }
+    .vc-thumb-url {
+      font-size: 8px;
+      color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      padding: 1px 8px;
+      flex: 1;
+      text-align: center;
+      font-family: 'Inter', system-ui, sans-serif;
+      letter-spacing: 0.02em;
+    }
+
+    /* Page body area — initials centred */
+    .vc-thumb-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Subtle grid lines for "website" feel */
+    .vc-thumb-page::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    /* Skeleton page content — suggests a website screenshot */
+    .vc-thumb-page::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.20) 100%),
+        linear-gradient(rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.11) 100%),
+        linear-gradient(rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.08) 100%),
+        linear-gradient(rgba(255,255,255,0.17) 0%, rgba(255,255,255,0.17) 100%),
+        linear-gradient(rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.05) 100%);
+      background-size: 50% 9px, 33% 6px, 58% 5px, 22% 14px, 36% 55%;
+      background-position: 14px 14px, 14px 31px, 14px 44px, 14px 60px, 58% 10%;
+      background-repeat: no-repeat;
+    }
+
+    /* Status pill badge overlaid on thumbnail */
+    .vc-thumb-badge {
+      position: absolute;
+      top: 34px;
+      right: 10px;
+      z-index: 2;
+    }
+    /* Override pill appearance on thumbnail: semi-opaque frosted look */
+    .vc-thumb-badge .vc-pill { font-size: 10.5px; padding: 3px 9px; }
+
+    /* Vendor-specific thumbnail gradients */
+    .vc-thumb--amazon  { background: linear-gradient(145deg, #1a2940 0%, #232f3e 100%); }
+    .vc-thumb--hudson  { background: linear-gradient(145deg, #5c1a06 0%, #7c2d12 100%); }
+    .vc-thumb--global  { background: linear-gradient(145deg, #1b2c42 0%, #0f172b 100%); }
+    .vc-thumb--apex    { background: linear-gradient(145deg, #7c3400 0%, #c24d00 100%); }
+    .vc-thumb--coastal { background: linear-gradient(145deg, #1d4ed8 0%, #1e3a8a 100%); }
+    .vc-thumb--bright  { background: linear-gradient(145deg, #0d9488 0%, #0a706a 100%); }
+    .vc-thumb--acme    { background: linear-gradient(145deg, #92400e 0%, #d97706 100%); }
+    .vc-thumb--tech    { background: linear-gradient(145deg, #1e3a8a 0%, #155dfc 100%); }
+    .vc-thumb--fast    { background: linear-gradient(145deg, #3b0764 0%, #6b21a8 100%); }
+
+    /* Card footer: logo left · title fills · chevron far right */
+    .vc-card-foot {
+      padding: 12px 16px 14px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: left;
+      gap: 10px;
+      background: white;
+      width: 100%;
+      align-self: stretch;
+      box-sizing: border-box;
+      border-top: 1px solid #f0f0f0;
+    }
+    .vc-head:hover .vc-card-foot { background: white; }
+    .vc-card-foot-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .vc-card-foot .vc-name {
+      font-size: 14px; font-weight: 600; color: #120b0b; letter-spacing: -0.2px; line-height: 1.3;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .vc-card-foot .vc-tag {
+      font-size: 12px; color: #45556c; line-height: 1.4;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .vc-card-foot .vc-chev { color: #adadad; flex-shrink: 0; transition: transform .2s; }
+    .vc-card.open .vc-card-foot .vc-chev { transform: rotate(180deg); }
+  </style>
+</head>
+<body data-chat="slim">
+
+<div class="app-grid">
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="4 4 24 24" fill="none" aria-hidden="true" width="26" height="26"><defs><linearGradient id="wgs" x1="4.5" y1="4.5" x2="31.6" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD000"/><stop offset="1" stop-color="#FF6900"/></linearGradient></defs><g transform="rotate(45,16,16)"><g class="witness-logo-rays" style="transform-origin:16px 16px"><g transform="rotate(0,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(45,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(90,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(135,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(180,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(225,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(270,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(315,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g></g></g><circle cx="16" cy="16" r="3.2" fill="url(#wgs)" class="witness-logo-center" style="transform-origin:16px 16px"/></svg></div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="witness-dashboard.html" data-tip="Dashboard">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item" href="witness-all_invoices.html" data-tip="All Invoices">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13z M10 1.5V4h3 M5.5 7.5h5 M5.5 10h5 M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Invoices
+          <span class="nav-badge">38</span>
+        </a>
+        <a class="nav-item active" href="vendors.html" data-tip="Vendors">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item" href="autoflow.html" data-tip="Autoflow">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Autoflow
+        </a>
+        <a class="nav-item" href="ai-activity.html" data-tip="AI Activity">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge ai">24</span>
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html" data-tip="Settings">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M6.5 1.5h3l.5 1.5a4.5 4.5 0 011.1.65l1.5-.5 1.5 2.6-1.2 1.1a4.6 4.6 0 010 1.3l1.2 1.1-1.5 2.6-1.5-.5A4.5 4.5 0 0110 12l-.5 1.5h-3L6 12a4.5 4.5 0 01-1.1-.65l-1.5.5L2 9.25l1.2-1.1a4.6 4.6 0 010-1.3L2 5.75l1.5-2.6 1.5.5A4.5 4.5 0 016 3l.5-1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.8" stroke="currentColor" stroke-width="1.3"/></svg>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+<div id="nav-tooltip"></div>
+
+<main class="center" id="main-content">
+  <div class="content">
+
+    <!-- PAGE HEADING -->
+    <div class="greeting">
+      <div class="greeting-title-row">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" style="flex-shrink:0;" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="18" r="18" fill="#FF6900"/><path d="M10 19h16M10 19L12 13h12l2 6M10 19v5h16v-5M14 22.5h8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h1 class="gtitle">Vendor relationships</h1>
+        <span class="gclock" aria-label="Current time"><span class="gclock-dot"></span><span data-wt-clock="full">Mon, Apr 28 · 8:42 AM PST</span></span>
+        <button class="ask-witness-btn" onclick="window.openWitnessChat()">
+          <span class="btn-sparkle">✦</span>
+          Ask Witness
+        </button>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
+        <p class="gsub">$2.6M paid across <b>9 vendors</b> in the last 90 days · synced from <b>NetSuite</b></p>
+        <div class="hd-actions">
+          <button class="btn-outline"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v9M5 4.5L8 2l3 2.5M3 11.5v1a1 1 0 001 1h8a1 1 0 001-1v-1" stroke="#FF6900" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Export</button>
+          <button class="btn-solid">+ Add vendor</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon ai"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 14h14M3 14L5 8h10l2 6M3 14v3h14v-3M7 17.5h6" stroke="#ff6900" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="stat-trend flat">9 vendors</span>
+        </div>
+        <div class="stat-mid">
+          <div class="stat-num">$216.5K</div>
+          <div class="stat-lbl">Outstanding AP</div>
+        </div>
+        <div class="stat-foot"><div class="stat-foot-lbl">across all active vendors</div></div>
+      </div>
+      <div class="stat-card" data-view="attn" style="cursor:pointer">
+        <div class="stat-top">
+          <div class="stat-icon amber"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 3L2.5 16.5h15L10 3z" stroke="#b17728" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 8.5v4" stroke="#b17728" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="14" r="0.8" fill="#b17728"/></svg></div>
+          <span class="stat-trend up">4 flagged</span>
+        </div>
+        <div class="stat-mid">
+          <div class="stat-num">4</div>
+          <div class="stat-lbl">Needs attention</div>
+        </div>
+        <div class="stat-foot"><div class="stat-foot-lbl">fraud &amp; compliance warnings</div></div>
+      </div>
+      <div class="stat-card" data-view="discount" style="cursor:pointer">
+        <div class="stat-top">
+          <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2.5v15M13.5 5.5H8.25a2.75 2.75 0 000 5.5h3.5a2.75 2.75 0 010 5.5H6" stroke="#15803d" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+          <span class="stat-trend down">75% capture rate</span>
+        </div>
+        <div class="stat-mid">
+          <div class="stat-num">$2,340</div>
+          <div class="stat-lbl">Discounts captured</div>
+        </div>
+        <div class="stat-foot"><div class="stat-foot-lbl">this quarter across all vendors</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon ai"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="#ff6900" stroke-width="1.6"/><path d="M7 10l2.5 2.5L13 7" stroke="#ff6900" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="stat-trend down">+2 this month</span>
+        </div>
+        <div class="stat-mid">
+          <div class="stat-num">7</div>
+          <div class="stat-lbl">Good standing</div>
+        </div>
+        <div class="stat-foot"><div class="stat-foot-lbl">no flags, payments on time</div></div>
+      </div>
+    </div>
+
+    <!-- QUICK SEARCH + SAVED VIEWS -->
+    <div style="display:flex; align-items:center; gap:12px; overflow:hidden;">
+      <div class="v-search" style="flex-shrink:0;">
+        <span class="vs-icon"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 10l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        <input id="v-quick-search" type="text" placeholder="Search vendor, contact, terms…" />
+      </div>
+      <div style="flex:1; min-width:0; overflow-x:auto; overflow-y:visible; scrollbar-width:none; display:flex; gap:6px; align-items:center; flex-wrap:nowrap;">
+        <button class="vv-chip active" data-view="all" style="flex-shrink:0;">All <span class="vv-count" data-vcount="all">9</span></button>
+        <button class="vv-chip" data-view="attn" style="flex-shrink:0;"><span class="vv-spark">✦</span>Needs attention <span class="vv-count" data-vcount="attn">4</span></button>
+        <button class="vv-chip" data-view="security" style="flex-shrink:0;">Security hold <span class="vv-count" data-vcount="security">1</span></button>
+        <button class="vv-chip" data-view="discount" style="flex-shrink:0;"><span class="vv-spark">✦</span>Discount opportunities <span class="vv-count" data-vcount="discount">2</span></button>
+        <button class="vv-chip" data-view="new" style="flex-shrink:0;">New this month <span class="vv-count" data-vcount="new">1</span></button>
+        <button class="vv-chip" data-view="compliance" style="flex-shrink:0;">Compliance flag <span class="vv-count" data-vcount="compliance">1</span></button>
+        <button class="vv-chip" data-view="highvol" style="flex-shrink:0;">High volume <span class="vv-count" data-vcount="highvol">5</span></button>
+      </div>
+      <div style="display:flex; gap:4px; background:#f4f4f4; padding:4px; border-radius:8px; border:1px solid #e9e9e9; flex-shrink:0;">
+        <button id="btn-view-card" class="btn-toggle active" style="border:0; background:white; color:#120b0b; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.06);">Grid</button>
+        <button id="btn-view-table" class="btn-toggle" style="border:0; background:transparent; color:#45556c; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:500; cursor:pointer;">Table</button>
+      </div>
+    </div>
+
+    <!-- CROSS-VENDOR AI CALLOUT -->
+    <div class="agent-sug-callout">
+      <div class="agent-sug-icon">✦</div>
+      <div class="agent-sug-body">
+        <div class="agent-sug-lbl">Most urgent · across 9 vendors</div>
+        <div class="agent-sug-txt">
+          An email at 7:42 AM asked to change <b>Amazon Business</b>'s banking details. The sender domain did not match. I paused all 14 invoices ($62.4K) until you verify via the portal.
+        </div>
+        <div class="agent-sug-actions">
+          <button class="agent-sug-btn-primary" onclick="location.href='#vendor-amazon'">Open Amazon Business →</button>
+          <button class="agent-sug-btn-sec">View paused invoices</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VENDOR LIST — sorted by urgency; each card is a dossier -->
+    <div class="vendor-list" id="vendor-list">
+
+      <!-- ─── Amazon Business — suspected BEC (top priority: payment fraud beats compliance) ─── -->
+      <div class="vc-card flag" id="vendor-amazon" data-status="fraud" data-volume="62400" data-name="amazon business">
+        <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
+          <div class="vc-thumb vc-thumb--amazon">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">business.amazon.com</span>
+              </div>
+              <div class="vc-thumb-page"><img src="amzon_business.png" alt="Amazon Business" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"></div>
+            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill flag">Security hold</span></div>
+          </div>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq"><img src="amazon.jpeg" alt="Amazon Business"></div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Amazon Business</div>
+              <div class="vc-tag">Office &amp; supplies · $62.4K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">14</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
+        </div>
+        <div class="vc-body">
+
+          <!-- Adaptive tray: BAD (suspected BEC) -->
+          <div class="vc-tray bad">
+            <div class="vc-tray-icon">⚠</div>
+            <div class="vc-tray-body">
+              <div class="vc-tray-title">An email at 7:42 AM requested a banking change — Witness paused all 14 active invoices</div>
+              <div class="vc-tray-sub">Sender domain was <b>amazonbusiness-billing.com</b>, not the verified <b>amazon.com</b> contact on file since Jul 2022. The requested account ••••6601 has never been seen on this vendor. Verify any real change through the Amazon Business portal — <b>never reply to the email</b>.</div>
+            </div>
+            <button class="vc-tray-act">Open security review →</button>
+          </div>
+
+          <!-- Drawer 1: Open conversations & people -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Open conversations &amp; people <a class="lbl-link">Open full thread</a></div>
+            <div class="vc-grid-2">
+              <div class="vc-kv">
+                <div class="vc-kv-row"><span class="vc-kv-k">AR contact (verified)</span><span class="vc-kv-v">business-ap@amazon.com<span class="sub">on file since Jul 2022 · 161 invoices</span></span></div>
+                <div class="vc-kv-row"><span class="vc-kv-k">Account manager</span><span class="vc-kv-v">Priya Mehta</span></div>
+                <div class="vc-kv-row"><span class="vc-kv-k">Change channel</span><span class="vc-kv-v">Amazon Business portal only<span class="sub">policy: never via email</span></span></div>
+              </div>
+              <div class="vc-thread">
+                <div class="vc-thread-item">
+                  <div class="vc-thread-avatar them" style="background:#b91c1c;">??</div>
+                  <div class="vc-thread-body">
+                    <div class="vc-thread-meta"><span class="vc-thread-from">"Amazon AR" · <b style="color:#b91c1c;">unverified sender</b></span><span class="vc-thread-when">Today · 7:42 AM</span><span class="vc-thread-tag" style="background:#fee2e2;color:#b91c1c;">SUSPECT</span></div>
+                    <p class="vc-thread-text">"Hi — please update our banking effective today. New ACH routing 026013-•••, account ••••6601. Wire all open invoices to this account."</p>
+                  </div>
+                </div>
+                <div class="vc-thread-item">
+                  <div class="vc-thread-avatar ai">✦</div>
+                  <div class="vc-thread-body">
+                    <div class="vc-thread-meta"><span class="vc-thread-from">Witness AI</span><span class="vc-thread-when">Today · 7:43 AM</span><span class="vc-thread-tag">PAUSED 14</span></div>
+                    <p class="vc-thread-text">Sender domain <b>amazonbusiness-billing.com</b> doesn't match the verified <b>amazon.com</b> on file. Pattern matches the FBI IC3 advisory on BEC against Amazon Business invoices (April 2026). All 14 active invoices paused. <b>Recommended:</b> verify via the Amazon Business portal — do not reply to this email.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 2: Active invoices -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Active invoices <span class="lbl-count">· 14 paused</span> <a class="lbl-link" href="invoices.html">Open filtered →</a></div>
+            <div class="vc-inv-strip">
+              <div class="vc-inv-cell"><div class="n red">14</div><span class="l">Paused (security)</span><a class="vc-inv-link" href="invoices.html">View →</a></div>
+              <div class="vc-inv-cell"><div class="n">0</div><span class="l">Approved</span></div>
+              <div class="vc-inv-cell"><div class="n">0</div><span class="l">Pending</span></div>
+              <div class="vc-inv-cell"><div class="n red">$62.4K</div><span class="l">Held</span></div>
+            </div>
+            <div class="vc-inv-note">All 14 are tied to the <b>verified ACH on file</b>, not the requested one. Witness will release them automatically once you confirm authenticity in the portal — no need to re-approve each.</div>
+          </div>
+
+          <!-- Drawer 3: Relationship memory -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Relationship memory <span class="lbl-count">· what Witness has observed</span></div>
+            <div class="vc-flags">
+              <div class="vc-flag-item">
+                <div class="vc-flag-icon">✦</div>
+                <div class="vc-flag-body">
+                  <div class="vc-flag-title">First bank-change request in 3.8 years of partnership</div>
+                  <div class="vc-flag-sub">Amazon Business has used <b>JPM Chase ••••2447</b> since onboarding (Jul 2022) · 161 invoices · 0 prior change requests. Today's request is the first ever — and that's why it's suspicious.</div>
+                </div>
+                <div class="vc-flag-side">Anomaly</div>
+              </div>
+              <div class="vc-flag-item calm">
+                <div class="vc-flag-icon">✦</div>
+                <div class="vc-flag-body">
+                  <div class="vc-flag-title">Routine: monthly consolidated bill, 80–120 line items</div>
+                  <div class="vc-flag-sub">Amazon Business consolidates daily orders into one PDF on the 1st of each month. Witness auto-matches lines against POs — Sarah typically only sees exceptions.</div>
+                </div>
+                <div class="vc-flag-side">Pattern</div>
+              </div>
+            </div>
+            <div class="vc-notes">
+              <div class="vc-notes-title">BEHAVIORAL NOTES</div>
+              <div class="vc-note"><span class="nm">✦</span><span class="nt">Amazon Business policy explicitly states <b>banking changes must go through the portal</b>, never via email. Witness has this quoted in their original welcome email (Jul 2022).</span></div>
+              <div class="vc-note"><span class="nm">✦</span><span class="nt">Real Amazon Business AR replies typically come from <b>business-ap@amazon.com</b> within 1 business day — never from a "billing" subdomain.</span></div>
+            </div>
+          </div>
+
+          <!-- Drawer 4: Documents -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Documents <span class="lbl-count">· 5 on file · 1 suspect attachment today</span></div>
+            <div class="vc-docs">
+              <div class="vc-doc-item bad">
+                <div class="vc-doc-icon">EML</div>
+                <div>
+                  <div class="vc-doc-name">Suspect bank-change email · today 7:42 AM</div>
+                  <div class="vc-doc-meta">From amazonbusiness-billing.com · <span class="badge bad">SUSPECT</span></div>
+                </div>
+                <a class="vc-doc-act primary" href="#">View headers</a>
+                <a class="vc-doc-act" href="#">Report phishing</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div><div class="vc-doc-name">W-9 · 2025</div><div class="vc-doc-meta">Amazon.com Services LLC · current</div></div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div><div class="vc-doc-name">Amazon Business T&amp;Cs</div><div class="vc-doc-meta">v2024 · accepted at signup</div></div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div><div class="vc-doc-name">ACH authorization (original)</div><div class="vc-doc-meta">Jul 2022 · JPM Chase ••••2447</div></div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div><div class="vc-doc-name">SOC 2 Type II</div><div class="vc-doc-meta">Amazon Business · 2025 attestation</div></div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 5: Money & banking — the heart of this incident -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Money &amp; banking <a class="lbl-link">Edit</a></div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Terms</span><span class="vc-kv-v">Net 30</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Channel</span><span class="vc-kv-v">ACH</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Tax</span><span class="vc-kv-v">W-9 on file · 1099-eligible</span></div>
+            </div>
+            <div class="vc-bank-box alert">
+              <div class="vc-bank-pending">Inbound change request blocked — do NOT update until verified in the Amazon Business portal.</div>
+              <div class="vc-bank-row"><span class="vc-bank-k">REQUESTED (TODAY 7:42)</span><span class="vc-bank-v" style="color:#b91c1c;">Unknown bank ••••6601 · routing 026013•••</span></div>
+              <div class="vc-bank-row"><span class="vc-bank-k">CURRENT ON FILE</span><span class="vc-bank-v">JPM Chase ••••2447</span></div>
+              <div class="vc-bank-row"><span class="vc-bank-k">VERIFIED</span><span class="vc-bank-v">Jul 11, 2022 · by Marcus Lee</span></div>
+              <div class="vc-changelog">
+                <div class="vc-changelog-title">CHANGE HISTORY</div>
+                <div class="vc-change-row">
+                  <span class="vc-change-when">Today 7:42</span>
+                  <span class="vc-change-what" style="color:#b91c1c;"><b>⚠ Inbound email requested change to ••••6601</b><span class="who">Sender failed domain match · Witness blocked + paused 14 invoices · awaiting human verification via Amazon Business portal</span></span>
+                </div>
+                <div class="vc-change-row">
+                  <span class="vc-change-when">Jul 2022</span>
+                  <span class="vc-change-what">Bank set at onboarding · <b>JPM Chase ••••2447</b><span class="who">Verified by callback to business-ap@amazon.com · by Marcus Lee</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 6: Lifetime (collapsed) -->
+          <div class="vc-life" data-life-toggle>
+            <button class="vc-life-toggle" type="button"><svg class="chev" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3 1.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>LIFETIME &amp; TRENDS</button>
+            <div class="vc-life-body">
+              <div class="vc-life-grid">
+                <div class="vc-life-cell"><div class="vc-life-n">3.8y</div><div class="vc-life-l">PARTNERED</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">161</div><div class="vc-life-l">INVOICES</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$2.1M</div><div class="vc-life-l">PAID LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">28%</div><div class="vc-life-l">% OF AP SPEND</div></div>
+              </div>
+              <div class="vc-life-note">Largest vendor by spend. 0 disputes lifetime · 0 prior bank changes — which is exactly why today's request stands out.</div>
+            </div>
+          </div>
+
+          <div class="vc-foot">
+            <button class="vc-btn primary">Verify via Amazon Business portal →</button>
+            <button class="vc-btn">Report phishing</button>
+            <a class="vc-btn" href="invoices.html">View 14 paused →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Hudson MetalCraft — compliance flag (top priority) ─── -->
+      <div class="vc-card flag" id="vendor-hudson" data-status="compliance" data-volume="36800" data-name="hudson metalcraft">
+        <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
+          <div class="vc-thumb vc-thumb--hudson">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">hudsonmetalcraft.com</span>
+              </div>
+              <div class="vc-thumb-page"><img src="hudson.png" alt="Hudson MetalCraft" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"></div>
+            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill flag">Compliance · OFAC</span></div>
+          </div>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq"><img src="hudson_technologies_logo.jpeg" alt="Hudson MetalCraft"></div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Hudson MetalCraft</div>
+              <div class="vc-tag">Manufacturing · $36.8K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">2</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">2</span></span>
+          </div>
+        </div>
+
+        <div class="vc-body">
+
+          <!-- Adaptive tray: bad (compliance) -->
+          <div class="vc-tray bad">
+            <div class="vc-tray-icon">⚠</div>
+            <div class="vc-tray-body">
+              <div class="vc-tray-title">OFAC possible match — review required before next payment</div>
+              <div class="vc-tray-sub">Apr 26 sanctions sweep flagged a name overlap on a Hudson principal. Witness paused payment on the 2 active invoices. Clearing this releases $36.8K.</div>
+            </div>
+            <button class="vc-tray-act">Review match</button>
+          </div>
+
+          <!-- Drawer 1: Open conversations & people -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Open conversations &amp; people <span class="lbl-count">· 3 unread</span> <a class="lbl-link">Open full thread</a></div>
+            <div class="vc-grid-2">
+              <div class="vc-kv">
+                <div class="vc-kv-row"><span class="vc-kv-k">AR contact</span><span class="vc-kv-v">Daniel Park<span class="sub">ap@hudsonmetal.com</span></span></div>
+                <div class="vc-kv-row"><span class="vc-kv-k">Procurement</span><span class="vc-kv-v">Erin Walsh<span class="sub">e.walsh@hudsonmetal.com</span></span></div>
+                <div class="vc-kv-row"><span class="vc-kv-k">Comms pref</span><span class="vc-kv-v">Email · monthly statements</span></div>
+              </div>
+              <div class="vc-thread">
+                <div class="vc-thread-item">
+                  <div class="vc-thread-avatar them">DP</div>
+                  <div class="vc-thread-body">
+                    <div class="vc-thread-meta"><span class="vc-thread-from">Daniel Park · Hudson</span><span class="vc-thread-when">Yesterday · 3:08 PM</span></div>
+                    <p class="vc-thread-text">Quote attached for batch #44. Available to ship next week.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 2: Active invoices -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Active invoices <span class="lbl-count">· 2</span> <a class="lbl-link" href="invoices.html">Open filtered →</a></div>
+            <div class="vc-inv-strip">
+              <div class="vc-inv-cell"><div class="n red">2</div><span class="l">Pay-hold</span><a class="vc-inv-link" href="invoices.html">View →</a></div>
+              <div class="vc-inv-cell"><div class="n">0</div><span class="l">Pending</span></div>
+              <div class="vc-inv-cell"><div class="n">0</div><span class="l">Approved</span></div>
+              <div class="vc-inv-cell"><div class="n red">$36.8K</div><span class="l">Held</span></div>
+            </div>
+            <div class="vc-inv-note">Both invoices auto-paused pending the OFAC review above. Match approval or escalation releases both at once.</div>
+          </div>
+
+          <!-- Drawer 4: Documents -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Documents <span class="lbl-count">· 5 on file · 1 missing</span> <a class="lbl-link">Upload</a></div>
+            <div class="vc-docs">
+              <div class="vc-doc-item bad">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">OFAC screening report · Apr 26</div>
+                  <div class="vc-doc-meta">Generated by Witness · <span class="badge bad">REVIEW</span></div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+                <a class="vc-doc-act" href="#">Trail</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">W-9 · 2025</div>
+                  <div class="vc-doc-meta">Signed Feb 2025 · current</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+                <a class="vc-doc-act" href="#">Replace</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">Certificate of Insurance (COI)</div>
+                  <div class="vc-doc-meta">Through Oct 24, 2026 · 180 days remaining</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+                <a class="vc-doc-act" href="#">Replace</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">Beneficial ownership · FinCEN 2024</div>
+                  <div class="vc-doc-meta">Filed Sep 2024 · on file</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item stale">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">Master service agreement</div>
+                  <div class="vc-doc-meta">Drafted Apr 2024 · <span class="badge warn">UNSIGNED</span></div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+                <a class="vc-doc-act" href="#">Send</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">ACH authorization</div>
+                  <div class="vc-doc-meta">Aug 2024</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 5: Money & banking -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Money &amp; banking <a class="lbl-link">Edit</a></div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Standard</span><span class="vc-kv-v">Net 60</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Preferred channel</span><span class="vc-kv-v">ACH</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Currency</span><span class="vc-kv-v">USD</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Tax</span><span class="vc-kv-v">1099-eligible · W-9 on file</span></div>
+            </div>
+            <div class="vc-bank-box">
+              <div class="vc-bank-row"><span class="vc-bank-k">BANK ON FILE</span><span class="vc-bank-v">Chase ••••4421</span></div>
+              <div class="vc-bank-row"><span class="vc-bank-k">VERIFIED</span><span class="vc-bank-v">Mar 2024 · by Sarah Chen</span></div>
+              <div class="vc-changelog">
+                <div class="vc-changelog-title">CHANGE HISTORY</div>
+                <div class="vc-change-row">
+                  <span class="vc-change-when">Aug 2024</span>
+                  <span class="vc-change-what">Vendor onboarded · ACH set to <b>Chase ••••4421</b><span class="who">Bank confirmation call — logged by Sarah Chen</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 6: Lifetime (collapsed) -->
+          <div class="vc-life" data-life-toggle>
+            <button class="vc-life-toggle" type="button"><svg class="chev" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3 1.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>LIFETIME &amp; TRENDS</button>
+            <div class="vc-life-body">
+              <div class="vc-life-grid">
+                <div class="vc-life-cell"><div class="vc-life-n">9 mo</div><div class="vc-life-l">PARTNERED</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">11</div><div class="vc-life-l">INVOICES</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$98K</div><div class="vc-life-l">PAID LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">5%</div><div class="vc-life-l">% OF AP SPEND</div></div>
+              </div>
+              <div class="vc-life-note">Recently slowed: 2 of last 3 invoices paid late (after Net 60). Driver is the current compliance hold.</div>
+            </div>
+          </div>
+
+          <div class="vc-foot">
+            <button class="vc-btn primary">Review OFAC match →</button>
+            <a class="vc-btn" href="invoices.html">View 2 invoices →</a>
+            <button class="vc-btn">Message Daniel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Global Industrial — watch · pattern (deepest dossier example) ─── -->
+      <div class="vc-card" id="vendor-global" data-status="attn" data-volume="48200" data-name="global industrial" data-discount="true">
+        <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
+          <div class="vc-thumb vc-thumb--global">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">globalindustrial.com</span>
+              </div>
+              <div class="vc-thumb-page"><img src="global_industrial.png" alt="Global Industrial" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"></div>
+            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill watch">Watch · pattern</span></div>
+          </div>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq"><img src="Global_Industrial.jpg" alt="Global Industrial"></div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Global Industrial</div>
+              <div class="vc-tag">MRO supplier · $48.2K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">7</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">4</span></span>
+          </div>
+        </div>
+        <div class="vc-body">
+
+          <!-- Adaptive tray: watch (recurring root cause) -->
+          <div class="vc-tray watch">
+            <div class="vc-tray-icon">✦</div>
+            <div class="vc-tray-body">
+              <div class="vc-tray-title">Rate card outdated since Q1 — 3 invoices blocked on the same root cause</div>
+              <div class="vc-tray-sub">INV-1062, INV-1092, INV-1101 all show unit-price variance. Lena attached Apr rates this morning. One push to NetSuite vendor master unblocks all three.</div>
+            </div>
+            <button class="vc-tray-act">Push refresh →</button>
+          </div>
+
+          <!-- Drawer 1: Open conversations & people -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Open conversations &amp; people <span class="lbl-count">· 12 total · 2 awaiting you</span> <a class="lbl-link">Open full thread</a></div>
+            <div class="vc-grid-2">
+              <div class="vc-kv">
+                <div class="vc-kv-row"><span class="vc-kv-k">Procurement</span><span class="vc-kv-v">Lena Ortiz<span class="sub">l.ortiz@globalindustrial.com · preferred</span></span></div>
+                <div class="vc-kv-row"><span class="vc-kv-k">AR contact</span><span class="vc-kv-v">Marcus Yi<span class="sub">ar@globalindustrial.com</span></span></div>
+                <div class="vc-kv-row"><span class="vc-kv-k">Comms pref</span><span class="vc-kv-v">Email · same-thread<span class="sub">replies faster to threaded</span></span></div>
+                <div class="vc-kv-row"><span class="vc-kv-k">Note</span><span class="vc-kv-v note">"Lena prefers we batch under one PO."</span></div>
+              </div>
+              <div class="vc-thread">
+                <div class="vc-thread-item">
+                  <div class="vc-thread-avatar them">LO</div>
+                  <div class="vc-thread-body">
+                    <div class="vc-thread-meta"><span class="vc-thread-from">Lena Ortiz</span><span class="vc-thread-when">Today · <span data-wt-time="today 09:14" data-wt-fmt="time">9:14 AM</span></span><span class="vc-thread-ref">INV-1062</span></div>
+                    <p class="vc-thread-text">Re: PO-7704 mismatch — our system pulled the Q1 rate card. New rates attached, effective Apr 1. Can your team refresh?</p>
+                  </div>
+                </div>
+                <div class="vc-thread-item">
+                  <div class="vc-thread-avatar ai">✦</div>
+                  <div class="vc-thread-body">
+                    <div class="vc-thread-meta"><span class="vc-thread-from">Witness AI</span><span class="vc-thread-when">Today · <span data-wt-time="today 09:18" data-wt-fmt="time">9:18 AM</span></span><span class="vc-thread-tag">DRAFT REPLY</span></div>
+                    <p class="vc-thread-text">Drafted reply confirming receipt and offering to push the new rate card. Same pattern as <span class="wt-src-mention" onclick="event.stopPropagation()" data-trace-system="Witness" data-trace-doc="Past thread · Mar 14" data-trace-loc="Lena Ortiz · Global Industrial" data-trace-url="#thread" data-trace-fields="Resolution|Updated NetSuite vendor master with new rate card;Time saved|2 days back-and-forth;Outcome|3 invoices auto-matched within 24h">Mar 14 resolution</span>. <a href="autoflow.html#vendor-receipt" onclick="event.stopPropagation()" style="color:#d95b03;text-decoration:none;font-weight:500;">Edit rule →</a></p>
+                  </div>
+                </div>
+                <div class="vc-thread-item">
+                  <div class="vc-thread-avatar us">SC</div>
+                  <div class="vc-thread-body">
+                    <div class="vc-thread-meta"><span class="vc-thread-from">You</span><span class="vc-thread-when">Yesterday · <span data-wt-time="yesterday 16:42" data-wt-fmt="time">4:42 PM</span></span><span class="vc-thread-ref">INV-1092</span></div>
+                    <p class="vc-thread-text">Lena — can you confirm whether INV-1092's freight is on a separate invoice this time?</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 2: Active invoices -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Active invoices <span class="lbl-count">· 7</span> <a class="lbl-link" href="invoices.html">Open filtered →</a></div>
+            <div class="vc-inv-strip">
+              <div class="vc-inv-cell"><div class="n red">3</div><span class="l">Blocked</span><a class="vc-inv-link" href="invoices.html">View →</a></div>
+              <div class="vc-inv-cell"><div class="n amber">2</div><span class="l">Pending</span><a class="vc-inv-link" href="invoices.html">View →</a></div>
+              <div class="vc-inv-cell"><div class="n">2</div><span class="l">Approved</span><a class="vc-inv-link" href="invoices.html">View →</a></div>
+              <div class="vc-inv-cell"><div class="n">$48.2K</div><span class="l">Outstanding</span></div>
+            </div>
+            <div class="vc-inv-note">3 of the 7 share the same <b>PO rate-card variance</b> — one refresh unblocks all three.</div>
+          </div>
+
+          <!-- Drawer 3: Relationship memory (Witness-only) -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Relationship memory <span class="lbl-count">· what Witness has observed</span> <a class="lbl-link">View pattern history</a></div>
+            <div class="vc-flags">
+              <div class="vc-flag-item">
+                <div class="vc-flag-icon">✦</div>
+                <div class="vc-flag-body">
+                  <div class="vc-flag-title">PO rate-card mismatch — 3 invoices this month</div>
+                  <div class="vc-flag-sub">INV-1062, INV-1092, INV-1101 all show unit-price variance. Root cause: rate card outdated since Q1. <a href="#">Push refresh →</a></div>
+                </div>
+                <div class="vc-flag-side">Active</div>
+              </div>
+              <div class="vc-flag-item">
+                <div class="vc-flag-icon">✦</div>
+                <div class="vc-flag-body">
+                  <div class="vc-flag-title">Late freight quote — 4 of last 6 invoices</div>
+                  <div class="vc-flag-sub">Freight line arrives 2–3 days after invoice header. Witness auto-pauses match until freight lands. <a href="#">Suggest split-invoice →</a></div>
+                </div>
+                <div class="vc-flag-side">Active</div>
+              </div>
+              <div class="vc-flag-item calm">
+                <div class="vc-flag-icon">○</div>
+                <div class="vc-flag-body">
+                  <div class="vc-flag-title">Duplicate invoice attempts — 2 prevented this quarter</div>
+                  <div class="vc-flag-sub">Witness caught INV-0987 resent under INV-1009. Vendor reissues sometimes drop trailing "-R". <a href="ai-activity.html">View prevention log →</a></div>
+                </div>
+                <div class="vc-flag-side">Resolved</div>
+              </div>
+            </div>
+
+            <div class="vc-notes">
+              <div class="vc-notes-title">PAST RESOLUTIONS · WHAT WORKED BEFORE</div>
+              <div class="vc-note"><span class="nm">↻</span><span class="nt"><b>Mar 14 · </b>Lena confirmed Q4 rate refresh → 3 invoices auto-matched within 24h.</span></div>
+              <div class="vc-note"><span class="nm">↻</span><span class="nt"><b>Feb 7 · </b>Added split-invoice rule for freight → on-time match jumped from 61% to 89%.</span></div>
+              <div class="vc-notes-title" style="margin-top:8px;">BEHAVIORAL NOTES · WITNESS HAS NOTICED</div>
+              <div class="vc-note"><span class="nm">✦</span><span class="nt">Invoices typically arrive <b>Tuesday mornings</b>; freight follows 2–3 days later.</span></div>
+              <div class="vc-note"><span class="nm">✦</span><span class="nt">Lena replies <b>faster to threaded emails</b> than to new ones.</span></div>
+            </div>
+          </div>
+
+          <!-- Drawer 4: Documents -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Documents <span class="lbl-count">· 7 on file · 1 outdated</span> <a class="lbl-link">Upload</a></div>
+            <div class="vc-docs">
+              <div class="vc-doc-item stale">
+                <div class="vc-doc-icon">XLSX</div>
+                <div>
+                  <div class="vc-doc-name">Rate card · Q1 2026</div>
+                  <div class="vc-doc-meta">On file since Jan · <span class="badge warn">OUTDATED</span> · Apr replacement attached by Lena today</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Push refresh</a>
+                <a class="vc-doc-act" href="#">Diff</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">W-9 · 2025</div>
+                  <div class="vc-doc-meta">Signed Jan 2025 · current</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+                <a class="vc-doc-act" href="#">Replace</a>
+              </div>
+              <div class="vc-doc-item expire">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">Certificate of Insurance (COI)</div>
+                  <div class="vc-doc-meta">Through Jul 7, 2026 · <span class="badge expire">42 DAYS</span> · reminder set</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+                <a class="vc-doc-act" href="#">Replace</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">Master service agreement · v3</div>
+                  <div class="vc-doc-meta">Signed Mar 2023 · 3-year term to Mar 2026</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">ACH authorization</div>
+                  <div class="vc-doc-meta">Feb 2024</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">Beneficial ownership · FinCEN 2024</div>
+                  <div class="vc-doc-meta">Filed May 2024 · on file</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div>
+                  <div class="vc-doc-name">ISO 9001 certification</div>
+                  <div class="vc-doc-meta">Valid to 2027</div>
+                </div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 5: Money & banking -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Money &amp; banking <a class="lbl-link">Edit</a></div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Standard</span><span class="vc-kv-v">Net 30</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Early discount</span><span class="vc-kv-v">2/15 Net 30<span class="sub">avg captured 38%</span></span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Preferred channel</span><span class="vc-kv-v">ACH via Bill.com<span class="sub">not check</span></span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Currency / Tax</span><span class="vc-kv-v">USD · 1099-eligible</span></div>
+            </div>
+            <div class="vc-bank-box">
+              <div class="vc-bank-row"><span class="vc-bank-k">BANK ON FILE</span><span class="vc-bank-v">First National ••••8862</span></div>
+              <div class="vc-bank-row"><span class="vc-bank-k">VERIFIED</span><span class="vc-bank-v">Mar 12, 2024 · by Sarah Chen</span></div>
+              <div class="vc-changelog">
+                <div class="vc-changelog-title">CHANGE HISTORY</div>
+                <div class="vc-change-row">
+                  <span class="vc-change-when">Mar 12, 2024</span>
+                  <span class="vc-change-what">Bank account changed <b>••••1108 → ••••8862</b><span class="who">Verified by callback to Marcus Yi · approved by Sarah Chen</span></span>
+                </div>
+                <div class="vc-change-row">
+                  <span class="vc-change-when">Jan 8, 2024</span>
+                  <span class="vc-change-what">AR contact changed <b>Tia → Marcus Yi</b><span class="who">Per email from Lena</span></span>
+                </div>
+                <div class="vc-change-row">
+                  <span class="vc-change-when">Sep 4, 2023</span>
+                  <span class="vc-change-what">Terms changed <b>Net 45 → Net 30</b><span class="who">Renegotiated by Procurement (Eli)</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 6: Lifetime (collapsed) -->
+          <div class="vc-life" data-life-toggle>
+            <button class="vc-life-toggle" type="button"><svg class="chev" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3 1.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>LIFETIME &amp; TRENDS</button>
+            <div class="vc-life-body">
+              <div class="vc-life-grid">
+                <div class="vc-life-cell"><div class="vc-life-n">2.3y</div><div class="vc-life-l">PARTNERED</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">184</div><div class="vc-life-l">INVOICES</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$1.2M</div><div class="vc-life-l">PAID LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">24%</div><div class="vc-life-l">% OF AP SPEND</div></div>
+              </div>
+              <div class="vc-life-grid">
+                <div class="vc-life-cell"><div class="vc-life-n">91%</div><div class="vc-life-l">ON-TIME LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$2,340</div><div class="vc-life-l">DISCOUNTS YTD</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$890</div><div class="vc-life-l">DISCOUNTS MISSED YTD</div></div>
+                <div class="vc-life-cell">
+                  <div class="vc-life-l">12-MO ON-TIME</div>
+                  <div class="vc-life-spark">
+                    <div class="bar good" style="height:88%"></div>
+                    <div class="bar good" style="height:92%"></div>
+                    <div class="bar good" style="height:95%"></div>
+                    <div class="bar good" style="height:93%"></div>
+                    <div class="bar good" style="height:90%"></div>
+                    <div class="bar good" style="height:94%"></div>
+                    <div class="bar good" style="height:91%"></div>
+                    <div class="bar good" style="height:88%"></div>
+                    <div class="bar warn" style="height:80%"></div>
+                    <div class="bar warn" style="height:78%"></div>
+                    <div class="bar warn" style="height:75%"></div>
+                    <div class="bar curr" style="height:72%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="vc-life-note">On-time has slipped from 92% → 74% over the last 4 months. The driver is the <b>rate-card mismatch pattern</b> — fixing the master rate file should pull the curve back.</div>
+            </div>
+          </div>
+
+          <div class="vc-foot">
+            <button class="vc-btn primary">Push rate-card refresh →</button>
+            <a class="vc-btn" href="invoices.html">View 7 invoices →</a>
+            <button class="vc-btn">Reply to Lena</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Apex Manufacturing — discount window closing ─── -->
+      <div class="vc-card" id="vendor-apex" data-status="attn" data-volume="18300" data-name="apex manufacturing" data-discount="true">
+        <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
+          <div class="vc-thumb vc-thumb--apex">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">apexmfg.com</span>
+              </div>
+              <div class="vc-thumb-page"><img src="Apex.png" alt="Apex Manufacturing" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"></div>
+            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill watch">Discount window</span></div>
+          </div>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq"><img src="Apex_Manufacturing.png" alt="Apex Manufacturing"></div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Apex Manufacturing</div>
+              <div class="vc-tag">Manufacturing · $18.3K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">3</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">1</span></span>
+          </div>
+        </div>
+        <div class="vc-body">
+          <!-- ── 1 · WHAT NEEDS YOU — the reason this card was opened ── -->
+          <div class="vc-tray watch">
+            <div class="vc-tray-icon">⏰</div>
+            <div class="vc-tray-body">
+              <div class="vc-tray-title">2/10 discount window closes Thursday</div>
+              <div class="vc-tray-sub">INV-1118 ($212) &amp; INV-1131 ($128) are 3-way matched — approval only. Captures ~$340.</div>
+            </div>
+            <a class="vc-tray-act" href="invoices.html">Approve both →</a>
+          </div>
+
+          <!-- ── 2 · KEY FACTS — always-on reference ── -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Key facts</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Payment terms</span><span class="vc-kv-v">2/10 Net 30 · ACH</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Bank on file</span><span class="vc-kv-v">Wells Fargo ••••3309<span class="sub">Verified Jul 2024</span></span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">AR contact</span><span class="vc-kv-v">Lena Ortiz<span class="sub">invoices@apexmfg.com</span></span></div>
+            </div>
+          </div>
+
+          <!-- ── 3 · MONEY — state now + trajectory (data viz) ── -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Active invoices <span class="lbl-count">· 3 · $18.3K</span> <a class="lbl-link" href="invoices.html">Open filtered →</a></div>
+            <div class="vc-viz">
+              <div class="vc-viz-card">
+                <div class="vc-viz-hd"><span class="vc-viz-title">MONEY IN FLIGHT · $18.3K</span></div>
+                <div class="vc-bar">
+                  <span style="width:66%;background:#e9b44c"></span>
+                  <span style="width:34%;background:#16a34a"></span>
+                </div>
+                <div class="vc-legend">
+                  <span class="vc-legend-item"><span class="vc-legend-dot" style="background:#e9b44c"></span>In discount window <b>$12.1K</b></span>
+                  <span class="vc-legend-item"><span class="vc-legend-dot" style="background:#16a34a"></span>Approved <b>$6.2K</b></span>
+                </div>
+              </div>
+              <div class="vc-viz-card">
+                <div class="vc-viz-hd"><span class="vc-viz-title">MONTHLY SPEND · 6 MO</span><span class="vc-viz-sum green">Steady</span></div>
+                <div class="vc-spark">
+                  <div class="bar" style="height:46%"></div>
+                  <div class="bar" style="height:60%"></div>
+                  <div class="bar" style="height:42%"></div>
+                  <div class="bar" style="height:72%"></div>
+                  <div class="bar" style="height:54%"></div>
+                  <div class="bar curr" style="height:62%"></div>
+                </div>
+                <div class="vc-spark-x"><span>Dec</span><span>May</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 4 · RECENT ACTIVITY — latest only, condensed ── -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Recent activity <a class="lbl-link" href="#">View thread →</a></div>
+            <div class="vc-mini-act">
+              <span class="vc-mini-when">Mar 27</span>
+              <span><span class="who">Lena Ortiz</span> sent the Q2 forecast — "rate card unchanged, expect steady volume."</span>
+            </div>
+          </div>
+
+          <!-- ── 5 · MORE — everything else, collapsed by default ── -->
+          <div class="vc-life" data-life-toggle>
+            <button class="vc-life-toggle" type="button"><svg class="chev" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3 1.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>DOCUMENTS, MEMORY &amp; HISTORY</button>
+            <div class="vc-life-body">
+              <div class="vc-notes" style="margin-top:0;border-top:none;padding-top:0;">
+                <div class="vc-notes-title">WITNESS REMEMBERS</div>
+                <div class="vc-note"><span class="nm">✦</span><span class="nt">Captures <b>6 of last 8 discount windows (75%)</b> — invoices the last week of the month, so windows overlap close. Suggests auto-approve under $500.</span></div>
+              </div>
+              <div class="vc-docs" style="margin-top:14px;">
+                <div class="vc-doc-item">
+                  <div class="vc-doc-icon">PDF</div>
+                  <div><div class="vc-doc-name">W-9 · 2025</div><div class="vc-doc-meta">Current</div></div>
+                  <a class="vc-doc-act primary" href="#">Open</a>
+                </div>
+                <div class="vc-doc-item">
+                  <div class="vc-doc-icon">PDF</div>
+                  <div><div class="vc-doc-name">COI</div><div class="vc-doc-meta">Through Sep 2026</div></div>
+                  <a class="vc-doc-act primary" href="#">Open</a>
+                </div>
+                <div class="vc-doc-item">
+                  <div class="vc-doc-icon">XLSX</div>
+                  <div><div class="vc-doc-name">Rate card · 2026</div><div class="vc-doc-meta">Current</div></div>
+                  <a class="vc-doc-act primary" href="#">Open</a>
+                </div>
+              </div>
+              <div class="vc-life-grid" style="margin-top:16px;">
+                <div class="vc-life-cell"><div class="vc-life-n">1.3y</div><div class="vc-life-l">PARTNERED</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">27</div><div class="vc-life-l">INVOICES</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$214K</div><div class="vc-life-l">PAID LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">9%</div><div class="vc-life-l">% OF AP SPEND</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vc-foot">
+            <a class="vc-btn primary" href="invoices.html">Approve 2 invoices →</a>
+            <button class="vc-btn">Message vendor</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Coastal Office Mart — new vendor, onboarding focus ─── -->
+      <div class="vc-card" id="vendor-coastal" data-status="new" data-volume="4100" data-name="coastal office mart">
+        <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
+          <div class="vc-thumb vc-thumb--coastal">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">coastalofficemart.com</span>
+              </div>
+              <div class="vc-thumb-page"><img src="coastal.png" alt="Coastal Office Mart" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"></div>
+            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill new">New · 14 days</span></div>
+          </div>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq"><img src="coastaltx-bing-profile2.jpg" alt="Coastal Office Mart"></div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Coastal Office Mart</div>
+              <div class="vc-tag">Office supplies · $4.1K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">2</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
+        </div>
+        <div class="vc-body">
+          <!-- Adaptive tray: info (onboarding) -->
+          <div class="vc-tray info">
+            <div class="vc-tray-icon">ⓘ</div>
+            <div class="vc-tray-body">
+              <div class="vc-tray-title">First payment cleared 6 days ago · no anomalies</div>
+              <div class="vc-tray-sub">Tax-ID and banking verified. Outstanding: signed COI. Vendor confirmed they'll send by end of week.</div>
+            </div>
+            <button class="vc-tray-act">Send COI reminder</button>
+          </div>
+
+          <!-- Drawer 1: People & comms -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Open conversations &amp; people</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">AR contact</span><span class="vc-kv-v">ar@coastaloffice.com</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Last comms</span><span class="vc-kv-v">Apr 21 · "Welcome — thanks for onboarding us"</span></div>
+            </div>
+          </div>
+
+          <!-- Drawer 2: Active invoices -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Active invoices <span class="lbl-count">· 2</span></div>
+            <div class="vc-inv-strip">
+              <div class="vc-inv-cell"><div class="n">1</div><span class="l">Pending</span></div>
+              <div class="vc-inv-cell"><div class="n">1</div><span class="l">Approved</span></div>
+              <div class="vc-inv-cell"><div class="n">$4.1K</div><span class="l">Outstanding</span></div>
+            </div>
+          </div>
+
+          <!-- Drawer 4: Documents -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Documents <span class="lbl-count">· 3 verified · 1 pending</span></div>
+            <div class="vc-docs">
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div><div class="vc-doc-name">W-9</div><div class="vc-doc-meta">Apr 14 · ✓ Tax-ID verified with IRS</div></div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div><div class="vc-doc-name">ACH authorization</div><div class="vc-doc-meta">Apr 16 · confirmed by callback</div></div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item">
+                <div class="vc-doc-icon">PDF</div>
+                <div><div class="vc-doc-name">Bank confirmation</div><div class="vc-doc-meta">Apr 16 · verified by Sarah Chen</div></div>
+                <a class="vc-doc-act primary" href="#">Open</a>
+              </div>
+              <div class="vc-doc-item expire">
+                <div class="vc-doc-icon">···</div>
+                <div><div class="vc-doc-name">Certificate of Insurance (COI)</div><div class="vc-doc-meta"><span class="badge expire">PENDING</span> · vendor committed end of week</div></div>
+                <a class="vc-doc-act primary" href="#">Request</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 5: Money & banking -->
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Money &amp; banking</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Terms</span><span class="vc-kv-v">Net 30</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Channel</span><span class="vc-kv-v">ACH</span></div>
+            </div>
+            <div class="vc-bank-box">
+              <div class="vc-bank-row"><span class="vc-bank-k">BANK ON FILE</span><span class="vc-bank-v">Bank of America ••••1147</span></div>
+              <div class="vc-bank-row"><span class="vc-bank-k">VERIFIED</span><span class="vc-bank-v">Apr 16, 2026 · by Sarah Chen</span></div>
+              <div class="vc-changelog">
+                <div class="vc-changelog-title">CHANGE HISTORY</div>
+                <div class="vc-change-row">
+                  <span class="vc-change-when">Apr 16</span>
+                  <span class="vc-change-what">Bank set at onboarding · <b>BofA ••••1147</b><span class="who">Verified by callback to vendor</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drawer 6: Lifetime (collapsed) -->
+          <div class="vc-life" data-life-toggle>
+            <button class="vc-life-toggle" type="button"><svg class="chev" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3 1.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>LIFETIME &amp; TRENDS</button>
+            <div class="vc-life-body">
+              <div class="vc-life-grid">
+                <div class="vc-life-cell"><div class="vc-life-n">14d</div><div class="vc-life-l">PARTNERED</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">2</div><div class="vc-life-l">INVOICES</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$4.1K</div><div class="vc-life-l">PAID LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">&lt;1%</div><div class="vc-life-l">% OF AP SPEND</div></div>
+              </div>
+              <div class="vc-life-note">Too early for trend signal — Witness will start reporting patterns after ~6 invoices.</div>
+            </div>
+          </div>
+
+          <div class="vc-foot">
+            <a class="vc-btn primary" href="invoices.html">View 2 invoices →</a>
+            <button class="vc-btn">Send COI reminder</button>
+            <button class="vc-btn">Message vendor</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Brightline Office Supply — good standing ─── -->
+      <div class="vc-card" id="vendor-bright" data-status="good" data-volume="12600" data-name="brightline office supply">
+        <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
+          <div class="vc-thumb vc-thumb--bright">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">brightlineoffice.com</span>
+              </div>
+              <div class="vc-thumb-page"><img src="Brightline_Office_Supply.png" alt="Brightline Office Supply" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"></div>
+            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill good">Good standing</span></div>
+          </div>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq"><img src="brightline-logo.png" alt="Brightline Office Supply"></div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Brightline Office Supply</div>
+              <div class="vc-tag">Office supplies · $12.6K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">5</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">1</span></span>
+          </div>
+        </div>
+        <div class="vc-body">
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Open conversations &amp; people</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">AR contact</span><span class="vc-kv-v">ar@brightline.co</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Last comms</span><span class="vc-kv-v">Apr 22 · monthly statement</span></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Active invoices <span class="lbl-count">· 5</span></div>
+            <div class="vc-inv-strip">
+              <div class="vc-inv-cell"><div class="n">0</div><span class="l">Blocked</span></div>
+              <div class="vc-inv-cell"><div class="n">2</div><span class="l">Pending</span></div>
+              <div class="vc-inv-cell"><div class="n">3</div><span class="l">Approved</span></div>
+              <div class="vc-inv-cell"><div class="n">$12.6K</div><span class="l">Outstanding</span></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Documents <span class="lbl-count">· 4 on file</span></div>
+            <div class="vc-docs">
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">W-9 · 2025</div><div class="vc-doc-meta">Current</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">COI</div><div class="vc-doc-meta">Through Mar 2027</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+              <div class="vc-doc-item"><div class="vc-doc-icon">XLSX</div><div><div class="vc-doc-name">Rate card · 2026</div><div class="vc-doc-meta">Current</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">Master agreement</div><div class="vc-doc-meta">Signed 2022 · auto-renews</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Money &amp; banking</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Terms</span><span class="vc-kv-v">Net 30</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Channel</span><span class="vc-kv-v">ACH</span></div>
+            </div>
+            <div class="vc-bank-box">
+              <div class="vc-bank-row"><span class="vc-bank-k">BANK ON FILE</span><span class="vc-bank-v">PNC ••••7720</span></div>
+              <div class="vc-bank-row"><span class="vc-bank-k">VERIFIED</span><span class="vc-bank-v">Sep 2022 · no changes since</span></div>
+            </div>
+          </div>
+
+          <div class="vc-life" data-life-toggle>
+            <button class="vc-life-toggle" type="button"><svg class="chev" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3 1.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>LIFETIME &amp; TRENDS</button>
+            <div class="vc-life-body">
+              <div class="vc-life-grid">
+                <div class="vc-life-cell"><div class="vc-life-n">3.7y</div><div class="vc-life-l">PARTNERED</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">142</div><div class="vc-life-l">INVOICES</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$540K</div><div class="vc-life-l">PAID LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">95%</div><div class="vc-life-l">ON-TIME LIFETIME</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vc-foot">
+            <a class="vc-btn primary" href="invoices.html">View 5 invoices →</a>
+            <button class="vc-btn">Message vendor</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Acme Logistics — good standing ─── -->
+      <div class="vc-card" id="vendor-acme" data-status="good" data-volume="28400" data-name="acme logistics">
+        <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
+          <div class="vc-thumb vc-thumb--acme">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">acmelogistics.com</span>
+              </div>
+              <div class="vc-thumb-page"><img src="acme.png" alt="Acme Logistics Co." style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"></div>
+            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill good">Good standing</span></div>
+          </div>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq"><img src="acme.png" alt="Acme Logistics Co."></div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">Acme Logistics Co.</div>
+              <div class="vc-tag">Freight &amp; 3PL · $28.4K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">4</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
+        </div>
+        <div class="vc-body">
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Open conversations &amp; people</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">AR contact</span><span class="vc-kv-v">accounts@acme-log.com</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Last comms</span><span class="vc-kv-v">Apr 18 · routing confirmation</span></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Active invoices <span class="lbl-count">· 4</span></div>
+            <div class="vc-inv-strip">
+              <div class="vc-inv-cell"><div class="n">0</div><span class="l">Blocked</span></div>
+              <div class="vc-inv-cell"><div class="n">1</div><span class="l">Pending</span></div>
+              <div class="vc-inv-cell"><div class="n">3</div><span class="l">Approved</span></div>
+              <div class="vc-inv-cell"><div class="n">$28.4K</div><span class="l">Outstanding</span></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Documents <span class="lbl-count">· 3 on file</span></div>
+            <div class="vc-docs">
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">W-9 · 2025</div><div class="vc-doc-meta">Current</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">COI · freight liability</div><div class="vc-doc-meta">Through Dec 2026</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">Carrier agreement</div><div class="vc-doc-meta">Signed Jun 2023</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Money &amp; banking</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Terms</span><span class="vc-kv-v">Net 15</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Channel</span><span class="vc-kv-v">ACH</span></div>
+            </div>
+            <div class="vc-bank-box">
+              <div class="vc-bank-row"><span class="vc-bank-k">BANK ON FILE</span><span class="vc-bank-v">Citi ••••5512</span></div>
+              <div class="vc-bank-row"><span class="vc-bank-k">VERIFIED</span><span class="vc-bank-v">Jun 2023</span></div>
+            </div>
+          </div>
+
+          <div class="vc-life" data-life-toggle>
+            <button class="vc-life-toggle" type="button"><svg class="chev" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3 1.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>LIFETIME &amp; TRENDS</button>
+            <div class="vc-life-body">
+              <div class="vc-life-grid">
+                <div class="vc-life-cell"><div class="vc-life-n">2y</div><div class="vc-life-l">PARTNERED</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">68</div><div class="vc-life-l">INVOICES</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$670K</div><div class="vc-life-l">PAID LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">14%</div><div class="vc-life-l">% OF AP SPEND</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vc-foot">
+            <a class="vc-btn primary" href="invoices.html">View 4 invoices →</a>
+            <button class="vc-btn">Message vendor</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TechPro Solutions — good standing ─── -->
+      <div class="vc-card" id="vendor-tech" data-status="good" data-volume="22000" data-name="techpro solutions">
+        <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
+          <div class="vc-thumb vc-thumb--tech">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">techprosolutions.com</span>
+              </div>
+              <div class="vc-thumb-page"><img src="techpro.png" alt="TechPro Solutions" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"></div>
+            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill good">Good standing</span></div>
+          </div>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq"><img src="techprosolutions_inc_logo.jpeg" alt="TechPro Solutions"></div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">TechPro Solutions</div>
+              <div class="vc-tag">IT &amp; SaaS · $22K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">3</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
+        </div>
+        <div class="vc-body">
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Open conversations &amp; people</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">AR contact</span><span class="vc-kv-v">billing@techpro.io</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Account manager</span><span class="vc-kv-v">Priya Shah</span></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Active invoices <span class="lbl-count">· 3</span></div>
+            <div class="vc-inv-strip">
+              <div class="vc-inv-cell"><div class="n">0</div><span class="l">Blocked</span></div>
+              <div class="vc-inv-cell"><div class="n">1</div><span class="l">Pending</span></div>
+              <div class="vc-inv-cell"><div class="n">2</div><span class="l">Approved</span></div>
+              <div class="vc-inv-cell"><div class="n">$22.0K</div><span class="l">Outstanding</span></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Documents <span class="lbl-count">· 4 on file</span></div>
+            <div class="vc-docs">
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">W-9 · 2025</div><div class="vc-doc-meta">Current</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">SaaS subscription agreement</div><div class="vc-doc-meta">Renews Jan 2027</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">SOC 2 Type II</div><div class="vc-doc-meta">2025 report on file</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">DPA · data processing</div><div class="vc-doc-meta">Signed 2023</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Money &amp; banking</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Terms</span><span class="vc-kv-v">Net 30 · annual prepay option</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Channel</span><span class="vc-kv-v">ACH</span></div>
+            </div>
+            <div class="vc-bank-box">
+              <div class="vc-bank-row"><span class="vc-bank-k">BANK ON FILE</span><span class="vc-bank-v">SVB ••••2204</span></div>
+              <div class="vc-bank-row"><span class="vc-bank-k">VERIFIED</span><span class="vc-bank-v">Jan 2023</span></div>
+            </div>
+          </div>
+
+          <div class="vc-life" data-life-toggle>
+            <button class="vc-life-toggle" type="button"><svg class="chev" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3 1.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>LIFETIME &amp; TRENDS</button>
+            <div class="vc-life-body">
+              <div class="vc-life-grid">
+                <div class="vc-life-cell"><div class="vc-life-n">3.3y</div><div class="vc-life-l">PARTNERED</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">42</div><div class="vc-life-l">INVOICES</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$780K</div><div class="vc-life-l">PAID LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">11%</div><div class="vc-life-l">% OF AP SPEND</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vc-foot">
+            <a class="vc-btn primary" href="invoices.html">View 3 invoices →</a>
+            <button class="vc-btn">Message vendor</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── FastFlow Shipping — good standing, low activity ─── -->
+      <div class="vc-card" id="vendor-fast" data-status="good" data-volume="6900" data-name="fastflow shipping">
+        <div class="vc-head" onclick="openVendor(this.closest('.vc-card'))">
+          <div class="vc-thumb vc-thumb--fast">
+            <div class="vc-thumb-inner">
+              <div class="vc-thumb-bar">
+                <span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span><span class="vc-thumb-dot"></span>
+                <span class="vc-thumb-url">fastflowship.com</span>
+              </div>
+              <div class="vc-thumb-page"><img src="fastflow.png" alt="FastFlow Shipping" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;"></div>
+            </div>
+            <div class="vc-thumb-badge"><span class="vc-pill good">Good standing</span></div>
+          </div>
+          <div class="vc-card-foot">
+            <div class="vc-id-sq"><img src="FastFlow_Shipping.jpeg" alt="FastFlow Shipping"></div>
+            <div class="vc-card-foot-text">
+              <div class="vc-name">FastFlow Shipping</div>
+              <div class="vc-tag">Freight · $6.9K/mo</div>
+            </div>
+            <svg class="vc-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="vc-signals" style="display:none">
+            <span class="sig"><span class="sig-lbl">Active</span><span class="sig-val">0</span></span>
+            <span class="sig"><span class="sig-lbl">Disputes 90d</span><span class="sig-val">0</span></span>
+          </div>
+        </div>
+        <div class="vc-body">
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Snapshot</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Category</span><span class="vc-kv-v">Freight (overflow carrier)</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">AR contact</span><span class="vc-kv-v">billing@fastflow.us</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Last invoice</span><span class="vc-kv-v">Apr 12 · $1,840 · paid Apr 25</span></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Documents <span class="lbl-count">· 2 on file</span></div>
+            <div class="vc-docs">
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">W-9 · 2025</div><div class="vc-doc-meta">Current</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+              <div class="vc-doc-item"><div class="vc-doc-icon">PDF</div><div><div class="vc-doc-name">COI · freight liability</div><div class="vc-doc-meta">Through Oct 2026</div></div><a class="vc-doc-act primary" href="#">Open</a></div>
+            </div>
+          </div>
+
+          <div class="vc-sec">
+            <div class="vc-sec-lbl">Money &amp; banking</div>
+            <div class="vc-kv">
+              <div class="vc-kv-row"><span class="vc-kv-k">Terms</span><span class="vc-kv-v">Net 15</span></div>
+              <div class="vc-kv-row"><span class="vc-kv-k">Channel</span><span class="vc-kv-v">ACH</span></div>
+            </div>
+            <div class="vc-bank-box">
+              <div class="vc-bank-row"><span class="vc-bank-k">BANK ON FILE</span><span class="vc-bank-v">Truist ••••9018</span></div>
+              <div class="vc-bank-row"><span class="vc-bank-k">VERIFIED</span><span class="vc-bank-v">Oct 2023</span></div>
+            </div>
+          </div>
+
+          <div class="vc-life" data-life-toggle>
+            <button class="vc-life-toggle" type="button"><svg class="chev" width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M3 1.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>LIFETIME &amp; TRENDS</button>
+            <div class="vc-life-body">
+              <div class="vc-life-grid">
+                <div class="vc-life-cell"><div class="vc-life-n">2.6y</div><div class="vc-life-l">PARTNERED</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">19</div><div class="vc-life-l">INVOICES</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">$76K</div><div class="vc-life-l">PAID LIFETIME</div></div>
+                <div class="vc-life-cell"><div class="vc-life-n">2%</div><div class="vc-life-l">% OF AP SPEND</div></div>
+              </div>
+              <div class="vc-life-note">Used as overflow carrier when Acme is at capacity. Activity is irregular but every invoice has cleared without dispute.</div>
+            </div>
+          </div>
+
+          <div class="vc-foot">
+            <a class="vc-btn primary" href="invoices.html">View invoice history →</a>
+            <button class="vc-btn">Message vendor</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="vendors-wrap" id="vendor-table-wrap" style="display: none; background: white; margin-bottom: 28px;">
+      <table class="vnd">
+        <col class="c-vendor" style="width: 28%;" />
+        <col class="c-active" style="width: 11%;" />
+        <col class="c-ontime" style="width: 11%;" />
+        <col class="c-dso" style="width: 11%;" />
+        <col class="c-disp" style="width: 11%;" />
+        <col class="c-vol" style="width: 13%;" />
+        <col class="c-stat" style="width: 15%;" />
+        <thead>
+          <tr>
+            <th>Vendor</th>
+            <th>Active invoices</th>
+            <th>On-time %</th>
+            <th>Terms</th>
+            <th>Disputes 90d</th>
+            <th>Monthly spend</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr onclick="openVendor(document.getElementById('vendor-amazon'))" data-vnd-id="vendor-amazon">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo global"><img src="amazon.jpeg" alt="Amazon Business"></div>
+                <div class="vnd-meta">
+                  <div class="vnd-name">Amazon Business</div>
+                  <div class="vnd-tag">Office &amp; supplies · business.amazon.com</div>
+                </div>
+              </div>
+            </td>
+            <td>14</td>
+            <td>100%</td>
+            <td>Net 30</td>
+            <td>0</td>
+            <td class="metric-strong">$62.4K</td>
+            <td><span class="v-pill flag"><span class="dot"></span>Security hold</span><span class="row-arrow">→</span></td>
+          </tr>
+          <tr onclick="openVendor(document.getElementById('vendor-hudson'))" data-vnd-id="vendor-hudson">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo hudson"><img src="hudson_technologies_logo.jpeg" alt="Hudson MetalCraft"></div>
+                <div class="vnd-meta">
+                  <div class="vnd-name">Hudson MetalCraft</div>
+                  <div class="vnd-tag">Manufacturing · hudsonmetalcraft.com</div>
+                </div>
+              </div>
+            </td>
+            <td>2</td>
+            <td>81%</td>
+            <td>Net 60</td>
+            <td>2</td>
+            <td class="metric-strong">$36.8K</td>
+            <td><span class="v-pill flag"><span class="dot"></span>Compliance · OFAC</span><span class="row-arrow">→</span></td>
+          </tr>
+          <tr onclick="openVendor(document.getElementById('vendor-global'))" data-vnd-id="vendor-global">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo global"><img src="Global_Industrial.jpg" alt="Global Industrial"></div>
+                <div class="vnd-meta">
+                  <div class="vnd-name">Global Industrial</div>
+                  <div class="vnd-tag">MRO supplier · globalindustrial.com</div>
+                </div>
+              </div>
+            </td>
+            <td>7</td>
+            <td>74%</td>
+            <td>Net 30</td>
+            <td>4</td>
+            <td class="metric-strong">$48.2K</td>
+            <td><span class="v-pill watch"><span class="dot"></span>Watch · pattern</span><span class="row-arrow">→</span></td>
+          </tr>
+          <tr onclick="openVendor(document.getElementById('vendor-apex'))" data-vnd-id="vendor-apex">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo apex"><img src="Apex_Manufacturing.png" alt="Apex Manufacturing"></div>
+                <div class="vnd-meta">
+                  <div class="vnd-name">Apex Manufacturing</div>
+                  <div class="vnd-tag">Manufacturing · apexmfg.com</div>
+                </div>
+              </div>
+            </td>
+            <td>3</td>
+            <td>75%</td>
+            <td>2/10 Net 30</td>
+            <td>1</td>
+            <td class="metric-strong">$18.3K</td>
+            <td><span class="v-pill watch"><span class="dot"></span>Discount window</span><span class="row-arrow">→</span></td>
+          </tr>
+          <tr onclick="openVendor(document.getElementById('vendor-coastal'))" data-vnd-id="vendor-coastal">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo coastal"><img src="coastaltx-bing-profile2.jpg" alt="Coastal Office Mart"></div>
+                <div class="vnd-meta">
+                  <div class="vnd-name">Coastal Office Mart</div>
+                  <div class="vnd-tag">Office supplies · coastalofficemart.com</div>
+                </div>
+              </div>
+            </td>
+            <td>2</td>
+            <td>100%</td>
+            <td>Net 30</td>
+            <td>0</td>
+            <td class="metric-strong">$4.1K</td>
+            <td><span class="v-pill new"><span class="dot"></span>New · 14 days</span><span class="row-arrow">→</span></td>
+          </tr>
+          <tr onclick="openVendor(document.getElementById('vendor-bright'))" data-vnd-id="vendor-bright">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo bright"><img src="brightline-logo.png" alt="Brightline Office Supply"></div>
+                <div class="vnd-meta">
+                  <div class="vnd-name">Brightline Office Supply</div>
+                  <div class="vnd-tag">Office supplies · brightlineoffice.com</div>
+                </div>
+              </div>
+            </td>
+            <td>5</td>
+            <td>95%</td>
+            <td>Net 30</td>
+            <td>1</td>
+            <td class="metric-strong">$12.6K</td>
+            <td><span class="v-pill good"><span class="dot"></span>Good standing</span><span class="row-arrow">→</span></td>
+          </tr>
+          <tr onclick="openVendor(document.getElementById('vendor-acme'))" data-vnd-id="vendor-acme">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo acme"><img src="acme.png" alt="Acme Logistics Co."></div>
+                <div class="vnd-meta">
+                  <div class="vnd-name">Acme Logistics Co.</div>
+                  <div class="vnd-tag">Freight &amp; 3PL · acmelogistics.com</div>
+                </div>
+              </div>
+            </td>
+            <td>4</td>
+            <td>100%</td>
+            <td>Net 15</td>
+            <td>0</td>
+            <td class="metric-strong">$28.4K</td>
+            <td><span class="v-pill good"><span class="dot"></span>Good standing</span><span class="row-arrow">→</span></td>
+          </tr>
+          <tr onclick="openVendor(document.getElementById('vendor-tech'))" data-vnd-id="vendor-tech">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo tech"><img src="techprosolutions_inc_logo.jpeg" alt="TechPro Solutions"></div>
+                <div class="vnd-meta">
+                  <div class="vnd-name">TechPro Solutions</div>
+                  <div class="vnd-tag">IT &amp; SaaS · techprosolutions.com</div>
+                </div>
+              </div>
+            </td>
+            <td>3</td>
+            <td>100%</td>
+            <td>Net 30</td>
+            <td>0</td>
+            <td class="metric-strong">$22K</td>
+            <td><span class="v-pill good"><span class="dot"></span>Good standing</span><span class="row-arrow">→</span></td>
+          </tr>
+          <tr onclick="openVendor(document.getElementById('vendor-fast'))" data-vnd-id="vendor-fast">
+            <td>
+              <div class="vnd-cell">
+                <div class="vnd-logo fast"><img src="FastFlow_Shipping.jpeg" alt="FastFlow Shipping"></div>
+                <div class="vnd-meta">
+                  <div class="vnd-name">FastFlow Shipping</div>
+                  <div class="vnd-tag">Freight · fastflowship.com</div>
+                </div>
+              </div>
+            </td>
+            <td>0</td>
+            <td>100%</td>
+            <td>Net 15</td>
+            <td>0</td>
+            <td class="metric-strong">$6.9K</td>
+            <td><span class="v-pill good"><span class="dot"></span>Good standing</span><span class="row-arrow">→</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="padding: 24px; text-align: center; font-size: 13px; color: #adadad; font-style: italic; display: none;" id="empty-vendor-msg">No vendors match the current search or view.</div>
+
+  </div><!-- /.content -->
+</main><!-- /.center -->
+
+<script>
+  // ── Sidebar nav tooltips (collapsed mode) ─────────────
+  (function () {
+    var tooltip = document.getElementById('nav-tooltip');
+    if (!tooltip) return;
+    function showTip(navItem) {
+      var sb = document.querySelector('.sidebar');
+      if (!sb || !sb.classList.contains('collapsed')) return;
+      var label = navItem.getAttribute('data-tip');
+      if (!label) return;
+      var rect = navItem.getBoundingClientRect();
+      tooltip.textContent = label;
+      tooltip.style.top  = (rect.top + rect.height / 2 - 12) + 'px';
+      tooltip.style.left = (rect.right + 10) + 'px';
+      tooltip.classList.add('visible');
+    }
+    function hideTip() { tooltip.classList.remove('visible'); }
+    document.querySelectorAll('.nav-item[data-tip]').forEach(function (item) {
+      item.addEventListener('mouseenter', function () { showTip(item); });
+      item.addEventListener('mouseleave', hideTip);
+      item.addEventListener('click', hideTip);
+    });
+  })();
+
+  // ── Sidebar collapse ───────────────────────────────────
+  (function(){
+    var sb = document.querySelector('.sidebar');
+    var btn = document.querySelector('.sidebar-toggle');
+    if (!sb || !btn) return;
+    // Always open on load
+    btn.addEventListener('click', function(){
+      sb.classList.toggle('collapsed');
+      localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
+    });
+  })();
+
+  // ── Helpers ───────────────────────────────────────────
+  function allCards() { return Array.from(document.querySelectorAll('.vc-card')); }
+
+  // ── Vendor detail slide-over ──────────────────────────
+  // The card's .vc-body is MOVED into the panel (not cloned) so its existing
+  // listeners — life-toggle, trace mentions — keep working. Returned on close.
+  // Looked up lazily: this <script> runs before #vsheet is parsed (it's lower in the DOM).
+  function getSheet() { return document.getElementById('vsheet'); }
+  function returnSheetBody() {
+    const vsheet = getSheet();
+    if (!vsheet) return;
+    const body = vsheet.querySelector('.vsheet-body > .vc-body');
+    if (body && vsheet._source) vsheet._source.appendChild(body);
+    vsheet._source = null;
+  }
+  function openVendor(card) {
+    const vsheet = getSheet();
+    if (!card || !vsheet) return;
+    returnSheetBody();
+    
+    // Toggle active open class on grid cards
+    allCards().forEach(c => c.classList.remove('open'));
+    card.classList.add('open');
+
+    // Also highlight the corresponding table row if it exists
+    document.querySelectorAll('table.vnd tbody tr').forEach(r => r.classList.remove('spotlight'));
+    const matchingRow = document.querySelector(`table.vnd tbody tr[data-vnd-id="${card.id}"]`);
+    if (matchingRow) matchingRow.classList.add('spotlight');
+
+    const txt = sel => { const el = card.querySelector(sel); return el ? el.textContent.trim() : ''; };
+    vsheet.querySelector('.vsheet-pill').textContent = txt('.vc-pill');
+    const idSqEl = card.querySelector('.vc-id-sq');
+    const vsheetIdEl = vsheet.querySelector('.vsheet-id');
+    const logoImg = idSqEl?.querySelector('img');
+    if (logoImg) {
+      const imgClone = logoImg.cloneNode(false);
+      imgClone.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      vsheetIdEl.innerHTML = '';
+      vsheetIdEl.appendChild(imgClone);
+    } else {
+      vsheetIdEl.textContent = txt('.vc-id-sq');
+    }
+    vsheet.querySelector('.vsheet-name').textContent = txt('.vc-name');
+    vsheet.querySelector('.vsheet-tag').textContent  = txt('.vc-tag');
+    vsheet.setAttribute('data-status', card.getAttribute('data-status') || '');
+
+    // Populate tab badges from vendor signals
+    const sigEls = Array.from(card.querySelectorAll('.vc-signals .sig'));
+    function getSigVal(keyword) {
+      const s = sigEls.find(el => el.querySelector('.sig-lbl')?.textContent.includes(keyword));
+      return s ? parseInt(s.querySelector('.sig-val')?.textContent || '0', 10) : 0;
+    }
+    const dispCount = getSigVal('Disputes');
+    const invCount  = getSigVal('Active');
+    const ctDis = vsheet.querySelector('#vs-ct-dis');
+    const ctInv = vsheet.querySelector('#vs-ct-inv');
+    if (ctDis) { ctDis.textContent = dispCount; ctDis.classList.toggle('zero', dispCount === 0); }
+    if (ctInv) { ctInv.textContent = invCount;  ctInv.classList.toggle('zero', invCount === 0); }
+
+    // Reset tabs to Overview
+    vsheet.querySelectorAll('#vsheet-tabs .vp-tab').forEach(b => b.classList.remove('active'));
+    const ovTab = vsheet.querySelector('#vsheet-tabs [data-tab="overview"]');
+    if (ovTab) ovTab.classList.add('active');
+
+    const body = card.querySelector('.vc-body');
+    const holder = vsheet.querySelector('.vsheet-body');
+    if (body) { vsheet._source = card; holder.appendChild(body); holder.scrollTop = 0; }
+    document.body.classList.add('vsheet-open');
+  }
+  function closeVendor() {
+    returnSheetBody();
+    allCards().forEach(c => c.classList.remove('open'));
+    document.querySelectorAll('table.vnd tbody tr').forEach(r => r.classList.remove('spotlight'));
+    document.body.classList.remove('vsheet-open');
+    // Reset tabs
+    const tabs = document.querySelectorAll('#vsheet-tabs .vp-tab');
+    tabs.forEach(b => b.classList.remove('active'));
+    const ov = document.querySelector('#vsheet-tabs [data-tab="overview"]');
+    if (ov) ov.classList.add('active');
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVendor(); });
+
+  // Tab navigation: activate tab + scroll to matching section in vsheet body
+  document.querySelectorAll('#vsheet-tabs .vp-tab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#vsheet-tabs .vp-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.tab;
+      const body = document.querySelector('#vsheet .vsheet-body');
+      if (!body) return;
+      if (tab === 'overview') { body.scrollTop = 0; return; }
+      
+      const keywordMap = { 
+        invoices: ['invoice', 'money'], 
+        disputes: ['invoice', 'flag', 'memory'], 
+        comms: ['conversation', 'activity', 'snapshot'], 
+        docs: ['doc'] 
+      };
+      const keys = keywordMap[tab];
+      if (!keys) return;
+      
+      const lbls = body.querySelectorAll('.vc-sec-lbl, .vc-life-toggle, .vp-block-title');
+      let match = null;
+      for (const k of keys) {
+        match = Array.from(lbls).find(l => l.textContent.toLowerCase().includes(k));
+        if (match) break;
+      }
+      
+      if (match) {
+        const sec = match.closest('.vc-sec, .vc-life');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // ── Saved views: predicate filters ───────────────────
+  const V_VIEWS = {
+    all:         { predicate: () => true },
+    attn:        { predicate: c => c.dataset.status === 'attn' || c.dataset.status === 'compliance' || c.dataset.status === 'fraud' },
+    security:    { predicate: c => c.dataset.status === 'fraud' },
+    discount:    { predicate: c => c.dataset.discount === 'true' },
+    new:         { predicate: c => c.dataset.status === 'new' },
+    compliance:  { predicate: c => c.dataset.status === 'compliance' },
+    highvol:     { predicate: c => parseFloat(c.dataset.volume || '0') >= 20000 }
+  };
+
+  let activeView = 'all';
+  let activeSearch = '';
+
+  function applyFilters() {
+    const pred = (V_VIEWS[activeView] || V_VIEWS.all).predicate;
+    let visible = 0;
+    allCards().forEach(c => {
+      const text = c.textContent.toLowerCase();
+      const passView = pred(c);
+      const passSearch = activeSearch === '' || text.includes(activeSearch) || c.dataset.name.includes(activeSearch);
+      const show = passView && passSearch;
+      c.style.display = show ? '' : 'none';
+      
+      // Update corresponding table row if it exists
+      const row = document.querySelector(`table.vnd tbody tr[data-vnd-id="${c.id}"]`);
+      if (row) {
+        row.style.display = show ? '' : 'none';
+      }
+      
+      if (show) visible++;
+    });
+    document.getElementById('empty-vendor-msg').style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  function setView(key) {
+    if (!V_VIEWS[key]) key = 'all';
+    activeView = key;
+    document.querySelectorAll('.vv-chip').forEach(b => b.classList.toggle('active', b.dataset.view === key));
+    document.querySelectorAll('.v-stat[data-view]').forEach(c => c.classList.toggle('stat-active', c.dataset.view === key));
+    applyFilters();
+    try { localStorage.setItem('witness-vendor-view', key); } catch (e) {}
+  }
+  document.querySelectorAll('.vv-chip').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+
+  // ── Quick search ──────────────────────────────────────
+  document.getElementById('v-quick-search').addEventListener('input', function() {
+    activeSearch = this.value.toLowerCase().trim();
+    applyFilters();
+  });
+
+  // ── Layout toggle (Grid vs Table) ───────────────────
+  (function(){
+    const btnCard = document.getElementById('btn-view-card');
+    const btnTable = document.getElementById('btn-view-table');
+    const cardGrid = document.getElementById('vendor-list');
+    const tableWrap = document.getElementById('vendor-table-wrap');
+    if (!btnCard || !btnTable || !cardGrid || !tableWrap) return;
+
+    function setViewLayout(mode) {
+      if (mode === 'table') {
+        cardGrid.style.display = 'none';
+        tableWrap.style.display = 'block';
+        btnCard.classList.remove('active');
+        btnCard.style.background = 'transparent';
+        btnCard.style.color = '#45556c';
+        btnCard.style.fontWeight = '500';
+        btnCard.style.boxShadow = 'none';
+        
+        btnTable.classList.add('active');
+        btnTable.style.background = 'white';
+        btnTable.style.color = '#120b0b';
+        btnTable.style.fontWeight = '600';
+        btnTable.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
+      } else {
+        cardGrid.style.display = '';
+        tableWrap.style.display = 'none';
+        btnTable.classList.remove('active');
+        btnTable.style.background = 'transparent';
+        btnTable.style.color = '#45556c';
+        btnTable.style.fontWeight = '500';
+        btnTable.style.boxShadow = 'none';
+        
+        btnCard.classList.add('active');
+        btnCard.style.background = 'white';
+        btnCard.style.color = '#120b0b';
+        btnCard.style.fontWeight = '600';
+        btnCard.style.boxShadow = '0 1px 2px rgba(0,0,0,0.06)';
+      }
+      localStorage.setItem('witness-vendor-layout', mode);
+    }
+
+    btnCard.addEventListener('click', () => setViewLayout('card'));
+    btnTable.addEventListener('click', () => setViewLayout('table'));
+
+    // Restore saved layout
+    const savedLayout = localStorage.getItem('witness-vendor-layout') || 'card';
+    setViewLayout(savedLayout);
+  })();
+
+  // ── Hash-anchor jump (e.g. invoices → vendors.html#vendor-global) ──
+  function openVendorFromHash() {
+    if (!location.hash) return;
+    const target = document.querySelector(location.hash);
+    if (!target || !target.classList.contains('vc-card')) return;
+    setTimeout(() => { target.scrollIntoView({behavior: 'smooth', block: 'center'}); openVendor(target); }, 60);
+  }
+  window.addEventListener('DOMContentLoaded', openVendorFromHash);
+  window.addEventListener('hashchange', openVendorFromHash);
+
+  // ── Interactive stat cards: clicking filters the vendor list ─
+  document.querySelectorAll('.v-stat[data-view]').forEach(card => {
+    card.addEventListener('click', function() {
+      const view = this.dataset.view;
+      const isActive = this.classList.contains('stat-active');
+      document.querySelectorAll('.v-stat[data-view]').forEach(c => c.classList.remove('stat-active'));
+      if (isActive) {
+        setView('all');
+      } else {
+        this.classList.add('stat-active');
+        setView(view);
+      }
+    });
+  });
+
+  // ── Stop click bubbling on inline actions inside cards ─
+  document.querySelectorAll('.vc-btn, .lbl-link, .vc-inv-link, .vc-flag-sub a, .vc-doc-act, .vc-tray-act, .v-stat-cta').forEach(el => {
+    el.addEventListener('click', e => e.stopPropagation());
+  });
+
+  // ── Stop click bubbling on table row inline buttons as well ─
+  document.querySelectorAll('table.vnd tbody td a, table.vnd tbody td button').forEach(el => {
+    el.addEventListener('click', e => e.stopPropagation());
+  });
+
+  // ── Lifetime drawer toggle (collapsed by default per dossier design) ─
+  document.querySelectorAll('[data-life-toggle] .vc-life-toggle').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      btn.closest('[data-life-toggle]').classList.toggle('open');
+    });
+  });
+
+  // ── Boot: restore saved view if any ──────────────────
+  try {
+    const saved = localStorage.getItem('witness-vendor-view');
+    if (saved && V_VIEWS[saved]) setView(saved);
+  } catch (e) {}
+</script>
+
+<!-- ═══════════ Vendor detail slide-over ═══════════ -->
+<div class="vsheet-overlay" onclick="closeVendor()"></div>
+<aside class="vsheet" id="vsheet" aria-hidden="true">
+  <div class="vsheet-hd">
+    <span class="vsheet-pill"></span>
+    <span class="vsheet-id"></span>
+    <button class="vsheet-close" type="button" onclick="closeVendor()" aria-label="Close">&times;</button>
+    <div class="vsheet-name"></div>
+    <div class="vsheet-tag"></div>
+  </div>
+  <nav class="vp-tabs" id="vsheet-tabs">
+    <button class="vp-tab active" data-tab="overview">Overview</button>
+    <button class="vp-tab" data-tab="invoices">Invoices <span class="ct zero" id="vs-ct-inv">0</span></button>
+    <button class="vp-tab" data-tab="disputes">Disputes <span class="ct zero" id="vs-ct-dis">0</span></button>
+    <button class="vp-tab" data-tab="comms">Comms</button>
+    <button class="vp-tab" data-tab="docs">Docs</button>
+  </nav>
+  <div class="vsheet-body"></div>
+</aside>
+
+</div><!-- /.app-grid -->
+
+<!-- Force chat to slim before witness-chat.js boots -->
+<script>
+  document.body.setAttribute('data-chat', 'slim');
+  try { localStorage.setItem('witness-chat-mode', 'slim'); } catch(e) {}
+</script>
+<script src="witness-chat.js"></script><script>
+  /* ─── Live clock ─── */
+  (function () {
+    var DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function formatFull(d) {
+      var day  = DAYS[d.getDay()].slice(0, 3);
+      var mon  = MONTHS[d.getMonth()];
+      var date = d.getDate();
+      var h    = d.getHours();
+      var m    = pad(d.getMinutes());
+      var ampm = h >= 12 ? 'PM' : 'AM';
+      var h12  = h % 12 || 12;
+      var tz   = d.toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ').pop();
+      return day + ', ' + mon + ' ' + date + ' · ' + h12 + ':' + m + ' ' + ampm + ' ' + tz;
+    }
+    function tick() {
+      var full = formatFull(new Date());
+      document.querySelectorAll('[data-wt-clock="full"]').forEach(function (el) {
+        el.textContent = full;
+      });
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+</script>
+</body>
+</html>
