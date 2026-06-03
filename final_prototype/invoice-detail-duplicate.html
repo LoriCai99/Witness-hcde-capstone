@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Witness – INV-1027</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400&family=JetBrains+Mono:wght@400;500;600&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    :root { --chat-w: 340px; --chat-min: 300px; --chat-max: 520px; }
+    body { font-family: 'Inter', sans-serif; background: white; color: #0b0d12; overflow: hidden; --sidebar-w: 258px; }
+    body:has(.sidebar.collapsed) { --sidebar-w: 72px; }
+    body[data-chat="float"] { --chat-w: 0px; }
+    body[data-chat="slim"]  { --chat-w: 0px; }
+    .app-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr); transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1); }
+
+
+    /* ─── SIDEBAR — exact from project files ─── */
+    .sidebar { background: #f4f4f4; display: flex; flex-direction: column; height: 100%; overflow-y: auto; overflow-x: visible; transition: width .2s ease; position: relative; }
+    .sidebar.collapsed { overflow: visible; }
+    .sidebar.collapsed .sidebar-nav { overflow: visible; }
+    .sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .brand-logo { width: 32px; height: 32px; background: #120b0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .brand-logo img { width: 26px; height: 26px; display: block; object-fit: contain; }
+    .brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
+    .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
+    .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
+    .sidebar-toggle svg { transition: transform .2s; }
+    .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    .sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+    .nav-group { display: flex; flex-direction: column; gap: 12px; }
+    .nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+    .nav-items { display: flex; flex-direction: column; gap: 1px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: #6b7a92; font-size: 13.5px; font-weight: 500; line-height: 20px; letter-spacing: -0.1px; text-decoration: none; cursor: pointer; transition: background .12s, color .12s; }
+    .nav-item:hover { background: rgba(0,0,0,0.045); color: #120b0b; }
+    .nav-item.active { background: white; color: #120b0b; font-weight: 600; border-radius: 0 8px 8px 0; box-shadow: inset 3px 0 0 #FF6900; }
+    .nav-item.active svg { color: #120b0b; }
+    .nav-item img { width: 16px; height: 16px; flex-shrink: 0; object-fit: contain; }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; color: inherit; transition: color .12s; }
+    .nav-badge { margin-left: auto; background: #eef0f3; color: #45556c; font-size: 11px; font-weight: 600; line-height: 1; padding: 3px 7px; border-radius: 999px; font-variant-numeric: tabular-nums; transition: background .12s, color .12s; }
+    .nav-badge.ai { background: #fff0e8; color: #FF6900; }
+    .nav-item.active .nav-badge { background: #FFE8DF; color: #FF6900; }
+    .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+    .sidebar.collapsed .brand-name { display: none; }
+    .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+    .sidebar.collapsed .nav-label { display: none; }
+    .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
+    .sidebar.collapsed .nav-item.active { padding: 9px 0; }
+    .sidebar.collapsed .nav-badge { display: none; }
+
+    /* ─── MAIN ─── */
+    .main { height: 100%; overflow-y: auto; overflow-x: auto; min-width: 0; display: flex; flex-direction: column; background: white; }
+
+    /* ─── TOPBAR ─── */
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      background: white;
+      border-bottom: 1px solid #ededed;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 23px 24px;
+      flex-shrink: 0;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .topbar-date { font-size: 14px; font-weight: 500; color: #0f172b; letter-spacing: -0.15px; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #adadad; }
+    .breadcrumb a { color: #45556c; text-decoration: none; cursor: pointer; font-weight: 500; }
+    .breadcrumb a:hover { color: #0b0d12; }
+    .bc-sep { opacity: 0.4; font-size: 16px; }
+    .bc-cur { color: #0b0d12; font-weight: 600; }
+    .health-chip { display: inline-flex; align-items: center; gap: 6px; background: #f4f4f4; border-radius: 999px; padding: 4px 10px; height: 28px; }
+    .health-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; }
+    .health-chip span { font-size: 12px; font-weight: 500; color: #45556c; letter-spacing: -0.1px; white-space: nowrap; }
+    .avatar { width: 32px; height: 32px; background: #0f172b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+
+    /* ─── CONTENT AREA ─── */
+    .content { padding: 24px 40px 52px; display: flex; flex-direction: column; gap: 20px; flex: 1; max-width: 1400px; min-width: 900px; width: 100%; margin: 0 auto; }
+
+    /* ─── INVOICE HEADER SECTION ─── */
+    .inv-header-card {
+      background: white;
+      border: 2px solid #e9e9e9;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .inv-header-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .inv-header-left { display: flex; flex-direction: column; gap: 8px; }
+    .inv-breadcrumb-trail { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #adadad; margin-bottom: 4px; }
+    .inv-breadcrumb-trail span { color: #45556c; }
+    .inv-title-row { display: flex; align-items: center; gap: 10px; }
+    .inv-number { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 400; color: #120b0b; line-height: 1.2; }
+    .inv-meta-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #45556c; flex-wrap: wrap; }
+    .inv-meta-sep { color: #adadad; }
+
+    .inv-header-right { text-align: right; }
+    .inv-amount-label { font-size: 11px; font-weight: 600; color: #adadad; letter-spacing: 0.6px; margin-bottom: 4px; }
+    .inv-amount { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 400; color: #120b0b; line-height: 1.1; }
+    .inv-due { font-size: 12px; color: #dc2626; font-weight: 500; margin-top: 4px; }
+
+    /* Financial impact strip */
+    .fin-strip { display: flex; }
+    .fin-cell { flex: 1; padding: 14px 20px; border-right: 1px solid #f0f0f0; }
+    .fin-cell:last-child { border-right: none; }
+    .fin-label { font-size: 11px; font-weight: 600; color: #adadad; letter-spacing: 0.6px; line-height: 16px; margin-bottom: 6px; }
+    .fin-val { font-size: 18px; font-weight: 600; color: #0b0d12; line-height: 1.2; }
+    .fin-val.red   { color: #dc2626; }
+    .fin-val.amber { color: #e9b44c; }
+    .fin-val.green { color: #16a34a; }
+    .fin-sub { font-size: 11px; color: #adadad; margin-top: 3px; line-height: 14px; }
+
+    /* Badges — verbatim from all-invoices */
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .badge.blocked  { background: #fee2e2; color: #b91c1c; }
+    .badge.pending  { background: #fff0e0; color: #d95b03; }
+    .badge.waiting  { background: #fdf2d4; color: #b17728; }
+    .badge.approved { background: #dcfce7; color: #15803d; }
+    .bdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge.blocked  .bdot { background: #dc2626; }
+    .badge.pending  .bdot { background: #ff6900; }
+    .badge.waiting  .bdot { background: #e9b44c; }
+    .badge.approved .bdot { background: #16a34a; }
+
+    /* Source chips */
+    .src-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .src-amazon { background: #e7f4ff; color: #155dfc; }
+    .src-erp    { background: #f4f4f4; color: #45556c; }
+    .src-witness { background: #fff5f0; color: #ff6900; border: 1px solid #ffb088; }
+    .src-dot    { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .src-amazon .src-dot { background: #155dfc; }
+    .src-erp    .src-dot { background: #45556c; }
+    .src-witness .src-dot { background: #ff6900; }
+
+    /* ─── STAT CARDS — autoflow style ─── */
+    .stat-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .stat-card { background: white; border: 1px solid #e9e9e9; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+    .stat-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+    .stat-icon { width: 34px; height: 34px; min-width: 34px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
+    .stat-icon.neutral { background: #f4f4f4; }
+    .stat-icon.green   { background: #dcfce7; }
+    .stat-icon.red     { background: #fee2e2; }
+    .stat-icon.amber   { background: #fdf2d4; }
+    .stat-trend { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; white-space: nowrap; line-height: 1.4; }
+    .stat-trend.safe   { background: #dcfce7; color: #15803d; }
+    .stat-trend.risk   { background: #fee2e2; color: #b91c1c; }
+    .stat-trend.warn   { background: #fdf2d4; color: #b17728; }
+    .stat-trend.flat   { background: #f4f4f4; color: #45556c; }
+    .stat-mid { display: flex; flex-direction: column; gap: 4px; }
+    .stat-num { font-size: 30px; font-weight: 600; color: #0b0d12; line-height: 1; font-variant-numeric: tabular-nums; }
+    .stat-num.red   { color: #dc2626; }
+    .stat-num.amber { color: #e9b44c; }
+    .stat-num.green { color: #16a34a; }
+    .stat-lbl { font-size: 14px; font-weight: 500; color: #45556c; }
+    .stat-foot { display: flex; flex-direction: column; gap: 6px; }
+    .stat-foot-lbl { font-size: 12px; color: #45556c; font-weight: 400; }
+
+    /* ─── THREE COLUMN LAYOUT ─── */
+    .three-col { display: grid; grid-template-columns: 260px 1fr 264px; gap: 0; background: white; border: 2px solid #e9e9e9; border-radius: 10px; overflow: hidden; min-height: 560px; }
+
+    /* ─── LEFT COLUMN ─── */
+    .left-col { border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; overflow-y: auto; }
+    .lcol-section { padding: 16px 18px; border-bottom: 1px solid #f0f0f0; }
+    .lcol-section:last-child { border-bottom: none; flex: 1; }
+    .section-title { font-size: 12px; font-weight: 600; color: #0b0d12; letter-spacing: 0.6px; line-height: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .section-title-badge { width: 16px; height: 16px; border-radius: 50%; background: #dc2626; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+
+    .field-list { display: flex; flex-direction: column; }
+    .field-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #f7f7f7; font-size: 13px; gap: 8px; }
+    .field-row:last-child { border-bottom: none; }
+    .field-label { color: #45556c; flex-shrink: 0; font-weight: 400; }
+    .field-val { color: #0b0d12; font-weight: 500; text-align: right; }
+    .field-val.red { color: #dc2626; }
+    .field-val.amber { color: #b17728; }
+    .field-avatar { display: flex; align-items: center; gap: 5px; }
+    .fa-circle { width: 18px; height: 18px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; background: #e9b44c; }
+
+    /* Blocker cards */
+    .blocker-list { display: flex; flex-direction: column; gap: 8px; }
+    .blocker-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: #fee2e2; border: 1px solid rgba(220,38,38,0.2); border-radius: 10px; }
+    .blocker-ico { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .blocker-body { flex: 1; }
+    .blocker-title { font-size: 12px; font-weight: 600; color: #b91c1c; }
+    .blocker-desc { font-size: 11px; color: #45556c; margin-top: 2px; line-height: 1.4; }
+    .blocker-impact { font-size: 10px; color: #dc2626; font-weight: 600; margin-top: 5px; padding-top: 5px; border-top: 1px dashed rgba(220,38,38,0.25); font-variant-numeric: tabular-nums; }
+
+    /* Next steps */
+    .next-steps { display: flex; flex-direction: column; gap: 6px; }
+    /* Gemini-style rotating gradient border for AI-suggested steps */
+    @property --grad-angle {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
+    @keyframes grad-spin {
+      from { --grad-angle: 0deg; }
+      to   { --grad-angle: 360deg; }
+    }
+
+    .btn-step-primary {
+      width: 100%; padding: 10px 14px; border-radius: 8px; border: none;
+      background: #120b0b; color: white; font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      display: flex; align-items: center; gap: 8px;
+      transition: background .12s, transform .12s;
+    }
+    .btn-step-primary:not([disabled]):hover { background: #2d2d2d; transform: translateY(-1px); }
+    .btn-step-primary:not([disabled]):active { transform: translateY(0); }
+
+    .btn-step-secondary {
+      width: 100%; padding: 10px 14px; border-radius: 8px;
+      border: 1.5px solid #e9e9e9; background: white; color: #45556c;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px;
+      transition: background .12s, border-color .12s, transform .12s;
+    }
+    .btn-step-secondary:not([disabled]):hover { background: #f4f4f4; border-color: #d0d0d0; transform: translateY(-1px); }
+
+    .btn-step-secondary.btn-step-ai {
+      background: white; border-color: #e9e9e9; color: #45556c;
+    }
+    .btn-step-secondary.btn-step-ai:not([disabled]):hover { background: #f4f4f4; border-color: #d0d0d0; }
+
+    .btn-step-secondary.btn-step-danger {
+      background: white; border-color: rgba(220,38,38,0.35); color: #b91c1c;
+    }
+    .btn-step-secondary.btn-step-danger:not([disabled]):hover { background: #fef2f2; border-color: rgba(220,38,38,0.6); }
+
+    .btn-step-tertiary {
+      width: 100%; padding: 10px 14px; border-radius: 8px;
+      border: 1.5px solid #e9e9e9; background: white; color: #45556c;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px;
+      transition: background .12s, border-color .12s, transform .12s;
+    }
+    .btn-step-tertiary:not([disabled]):hover { background: #f4f4f4; border-color: #d0d0d0; transform: translateY(-1px); }
+
+    /* Secondary button internal elements */
+    .btn-step-secondary .auto-pill { background: #f4f4f4; color: #45556c; }
+    .btn-step-secondary:hover .auto-pill { background: #e9e9e9; color: #0b0d12; }
+
+    /* Disabled states (completed actions) */
+    .btn-step-primary[disabled],
+    .btn-step-secondary[disabled],
+    .btn-step-tertiary[disabled] {
+      background: #cbd5e1 !important;
+      color: #64748b !important;
+      cursor: not-allowed;
+      border: none !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    .btn-step-primary[disabled]::before,
+    .btn-step-secondary[disabled]::before,
+    .btn-step-tertiary[disabled]::before,
+    .btn-step-primary[disabled]::after,
+    .btn-step-secondary[disabled]::after,
+    .btn-step-tertiary[disabled]::after {
+      display: none !important;
+    }
+    .step-ico { width: 20px; height: 20px; border-radius: 6px; background: #f4f4f4; border: 1px solid #e9e9e9; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+    .auto-pill { margin-left: auto; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.15); color: white; }
+    .auto-pill-green { margin-left: auto; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #dcfce7; color: #15803d; border: 1px solid rgba(22,163,74,0.3); }
+    .btn-add-note { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px dashed #e9e9e9; background: transparent; color: #adadad; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 6px; transition: all 0.12s; }
+    .btn-add-note:hover { border-color: #adadad; color: #45556c; }
+
+    /* ─── CENTER COLUMN ─── */
+    .center-col { display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #f0f0f0; }
+    .center-tabs { display: flex; background: #f7f7f7; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
+    .ctab { flex: 1; text-align: center; padding: 11px 8px; font-size: 12px; font-weight: 500; color: #45556c; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.12s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Inter', sans-serif; }
+    .ctab:hover { color: #0b0d12; background: #f0f0f0; }
+    .ctab.active { color: #0b0d12; border-bottom-color: #120b0b; background: white; font-weight: 600; }
+    .tl-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; }
+    .tl-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .tl-collapse-btn { font-size: 11px; color: #adadad; cursor: pointer; border: none; background: none; font-family: 'Inter', sans-serif; }
+    .timeline { flex: 1; overflow-y: auto; padding: 20px; }
+
+    /* ─── TAB PANELS ─── */
+    .tab-panel { display: none; flex: 1; overflow-y: auto; flex-direction: column; }
+    .tab-panel.active { display: flex; }
+
+    /* Match summary panel */
+    .ms-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .ms-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .ms-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: #fee2e2; color: #b91c1c; }
+    .ms-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .ms-section { margin-bottom: 28px; display: flex; flex-direction: column; gap: 12px; }
+    .ms-section-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+    .ms-section-title { font-size: 13px; font-weight: 600; color: #0b0d12; display: flex; align-items: center; gap: 8px; }
+    .ms-section-note { font-size: 12px; color: #45556c; padding: 8px 12px; display: flex; align-items: center; gap: 6px; border-left: 2.5px solid #cbd5e1; background: transparent; }
+    .ms-section-note.warn { border-left-color: #e9b44c; color: #b17728; }
+    .ms-section-note.crit { border-left-color: #dc2626; color: #b91c1c; }
+    .ms-section-note.ok { border-left-color: #16a34a; color: #15803d; }
+    .ms-table { width: 100%; border-collapse: collapse; }
+    .ms-table th { font-size: 11px; font-weight: 600; color: #adadad; letter-spacing: 0.5px; padding: 8px 14px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+    .ms-table td { font-size: 13px; padding: 9px 14px; border-bottom: 1px solid #f7f7f7; color: #0b0d12; }
+    .ms-table tr:last-child td { border-bottom: none; }
+    .ms-table td.label { color: #45556c; font-weight: 400; }
+    .ms-table td.ok   { color: #16a34a; font-weight: 600; }
+    .ms-table td.warn { color: #b17728; font-weight: 600; }
+    .ms-table td.crit { color: #dc2626; font-weight: 600; }
+    .ms-ai-note { background: #fff5f0; border: 1px solid #ffb088; border-radius: 10px; padding: 12px 14px; display: flex; gap: 10px; }
+    .ms-conf-row { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid #f0f0f0; background: #fafafa; }
+    .ms-conf-label { font-size: 11px; color: #adadad; }
+    .ms-conf-bar { width: 80px; height: 4px; background: #e9e9e9; border-radius: 999px; overflow: hidden; }
+    .ms-conf-fill { height: 100%; background: #16a34a; border-radius: 999px; }
+    .ms-conf-val { font-size: 11px; font-weight: 600; color: #0b0d12; margin-left: auto; }
+
+    /* Financial impact panel */
+    .fi-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .fi-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .fi-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .fi-summary-strip { display: flex; border: none; border-radius: 0; overflow: hidden; gap: 0; }
+    .fi-sum-cell { flex: 1; padding: 4px 20px; border-right: 1px solid #e4e4e7; }
+    .fi-sum-cell:first-child { padding-left: 0; }
+    .fi-sum-cell:last-child { border-right: none; }
+    .fi-sum-label { font-size: 11px; font-weight: 600; color: #adadad; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .fi-sum-val { font-size: 22px; font-weight: 600; color: #0b0d12; }
+    .fi-sum-val.red { color: #dc2626; }
+    .fi-sum-val.amber { color: #b17728; }
+    .fi-sum-sub { font-size: 11px; color: #adadad; margin-top: 3px; }
+    .fi-breakdown { border: none; border-radius: 0; overflow: hidden; }
+    .fi-breakdown-head { display: flex; align-items: center; justify-content: space-between; padding: 0 0 8px; background: transparent; border-bottom: 1px solid #ececec; }
+    .fi-breakdown-title { font-size: 12px; font-weight: 600; color: #0b0d12; letter-spacing: 0.5px; }
+    .fi-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f4f4f4; font-size: 13px; }
+    .fi-row:last-child { border-bottom: none; }
+    .fi-row-label { color: #45556c; display: flex; align-items: center; gap: 6px; }
+    .fi-row-ico { font-size: 12px; }
+    .fi-row-val { font-weight: 600; }
+    .fi-row-val.red { color: #dc2626; }
+    .fi-row-val.amber { color: #b17728; }
+    .fi-row-val.green { color: #16a34a; }
+    .fi-row-val.muted { color: #adadad; }
+    .fi-total-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: #fee2e2; border-radius: 8px; margin-top: 6px; }
+    .fi-total-label { font-size: 13px; font-weight: 700; color: #b91c1c; }
+    .fi-total-val { font-size: 18px; font-weight: 700; color: #dc2626; }
+    .fi-scenario { border: none; border-radius: 0; overflow: hidden; }
+    .fi-scenario-head { padding: 0 0 8px; background: transparent; border-bottom: 1px solid #ececec; font-size: 12px; font-weight: 600; color: #0b0d12; letter-spacing: 0.5px; }
+    .fi-scenario-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f4f4f4; }
+    .fi-scenario-row:last-child { border-bottom: none; }
+    .fi-scenario-label { font-size: 12px; font-weight: 600; color: #0b0d12; margin-bottom: 2px; }
+    .fi-scenario-desc { font-size: 11px; color: #45556c; line-height: 1.4; }
+    .fi-scenario-outcome { text-align: right; flex-shrink: 0; }
+    .fi-scenario-outcome .val { font-size: 14px; font-weight: 700; }
+    .fi-scenario-outcome .val.green { color: #16a34a; }
+    .fi-scenario-outcome .val.red { color: #dc2626; }
+    .fi-scenario-outcome .sub { font-size: 10px; color: #adadad; margin-top: 2px; }
+    .scenario-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+
+    /* Comments panel */
+    .cm-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .cm-header-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; color: #120b0b; }
+    .cm-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; flex: 1; overflow-y: auto; }
+    .cm-compose { border-top: 1px solid #f0f0f0; padding: 14px 20px; display: flex; gap: 10px; align-items: flex-start; flex-shrink: 0; }
+    .cm-compose-av { width: 28px; height: 28px; border-radius: 50%; background: #0f172b; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cm-compose-input { flex: 1; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: 'Inter', sans-serif; color: #0b0d12; outline: none; resize: none; line-height: 1.5; }
+    .cm-compose-input:focus { border-color: #adadad; }
+    .cm-compose-input::placeholder { color: #adadad; }
+    .cm-send { padding: 8px 14px; background: #120b0b; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; align-self: flex-end; }
+    .cm-send:hover { background: #45556c; }
+    .comment-item { display: flex; gap: 10px; }
+    .cm-av { width: 28px; height: 28px; border-radius: 50%; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cm-bubble { flex: 1; }
+    .cm-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+    .cm-author { font-size: 12px; font-weight: 600; color: #0b0d12; }
+    .cm-role { font-size: 11px; color: #adadad; }
+    .cm-time { font-size: 11px; color: #adadad; margin-left: auto; }
+    .cm-text { font-size: 13px; color: #45556c; line-height: 1.6; background: transparent; border: none; border-radius: 0; padding: 2px 0; }
+    .cm-text.ai { background: #fff5f0; border: 1px solid #ffb088; border-radius: 8px; padding: 10px 12px; }
+    .cm-actions { display: flex; gap: 10px; margin-top: 5px; }
+    .cm-action-btn { font-size: 11px; color: #adadad; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; padding: 0; }
+    .cm-action-btn:hover { color: #45556c; }
+    .cm-divider { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #adadad; }
+    .cm-divider-line { flex: 1; height: 1px; background: #f0f0f0; }
+
+    .tl-step { display: grid; grid-template-columns: 22px 1fr; gap: 12px; position: relative; padding-bottom: 20px; }
+    .tl-step:last-child { padding-bottom: 0; }
+    .tl-line { position: absolute; left: 10px; top: 22px; width: 2px; bottom: 0; background: #f0f0f0; }
+    .tl-step.tl-done .tl-line { background: rgba(22,163,74,0.25); }
+    .tl-step.tl-blocked .tl-line { background-image: repeating-linear-gradient(to bottom, rgba(220,38,38,0.3) 0, rgba(220,38,38,0.3) 4px, transparent 4px, transparent 8px); }
+    .tl-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; z-index: 1; position: relative; }
+    .tl-dot.done    { background: #16a34a; color: white; }
+    .tl-dot.ai      { background: #ff6900; color: white; font-size: 11px; }
+    .tl-dot.blocked { background: #dc2626; color: white; }
+    .tl-dot.future  { background: #e9e9e9; color: #adadad; border: 2px dashed #c8c8c8; }
+    .tl-content { cursor: pointer; }
+    .tl-main-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .tl-step-name { font-size: 13px; font-weight: 600; color: #0b0d12; margin-bottom: 2px; }
+    .tl-step-name.warn    { color: #45556c; }
+    .tl-step-name.blocked { color: #dc2626; }
+    .tl-step-name.muted   { color: #adadad; }
+    .tl-step-desc { font-size: 12px; color: #45556c; margin-bottom: 8px; line-height: 1.65; }
+    .tl-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px; }
+    .tl-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; }
+    .tt-done    { background: #dcfce7; color: #15803d; }
+    .tt-issues  { background: #fee2e2; color: #b91c1c; }
+    .tt-ai      { background: #f4f4f4; color: #45556c; }
+    .tt-waiting { background: #fdf2d4; color: #b17728; }
+    .tt-future  { background: #f4f4f4; color: #adadad; }
+    .tl-step-right { text-align: right; flex-shrink: 0; }
+    .tl-time { font-size: 10px; color: #adadad; font-variant-numeric: tabular-nums; margin-top: 3px; }
+
+    /* AI annotation — matches all-invoices ai-insight-row style */
+    .tl-ai-annotation { margin-top: 8px; padding: 10px 12px; background: #fff5f0; border-left: 2px solid #ffb299; border-radius: 0 8px 8px 0; font-size: 12px; color: #45556c; line-height: 1.65; }
+    .ai-ann-head { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: #ff6900; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .ai-pulse { width: 5px; height: 5px; border-radius: 50%; background: #ff6900; animation: pls 2s infinite; }
+    @keyframes pls { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    .tl-action-needed { margin-top: 8px; padding: 10px 12px; background: #fee2e2; border: 1px solid rgba(220,38,38,0.2); border-radius: 8px; font-size: 12px; color: #45556c; line-height: 1.65; }
+    .tl-action-needed strong { color: #dc2626; }
+
+    .tl-expanded { display: none; margin-top: 10px; }
+    .tl-expanded.open { display: block; }
+    .te-inner { background: transparent; border: none; border-top: 1px solid #ececec; border-radius: 0; padding: 12px 0 0; }
+    .te-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f0f0f0; font-size: 11.5px; }
+    .te-row:last-child { border-bottom: none; }
+    .te-k { color: #adadad; }
+    .te-v { color: #0b0d12; font-weight: 500; }
+    .te-v.ok   { color: #16a34a; }
+    .te-v.warn { color: #b17728; }
+    .te-v.crit { color: #dc2626; }
+    .te-conf { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
+    .te-conf-bar { flex: 1; height: 4px; background: #e9e9e9; border-radius: 999px; overflow: hidden; max-width: 80px; }
+    .te-conf-fill { height: 100%; background: #16a34a; border-radius: 999px; }
+    .te-conf-label { font-size: 10px; color: #adadad; }
+    .te-conf-val { font-size: 10px; font-weight: 600; color: #0b0d12; }
+    .te-sources { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; padding-top: 6px; border-top: 1px solid #f0f0f0; align-items: center; }
+    .te-src-label { font-size: 10px; color: #adadad; }
+    .te-src-chip { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 6px; background: white; color: #45556c; border: 1px solid #e9e9e9; cursor: pointer; }
+    .te-src-chip:hover { border-color: #adadad; }
+
+    /* ─── RIGHT COLUMN ─── */
+    .right-col { overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 20px; }
+    .rs-title { font-size: 12px; font-weight: 600; color: #0b0d12; letter-spacing: 0.6px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .rs-link { font-size: 11px; font-weight: 500; color: #ff6900; text-transform: none; letter-spacing: 0; cursor: pointer; text-decoration: underline; }
+    .rs-meta { font-size: 11px; color: #adadad; margin-bottom: 12px; }
+
+    /* Match triangle */
+    .match-triangle svg { width: 100%; height: auto; }
+    .mt-legend { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .mt-leg { display: flex; align-items: flex-start; gap: 6px; font-size: 10px; color: #45556c; line-height: 1.4; }
+    .mt-leg-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+
+    /* Approval card */
+    .as-card { background: transparent; border: none; border-radius: 0; padding: 0; }
+    .as-person { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #f0f0f0; }
+    .as-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+    .as-name { font-size: 13px; font-weight: 600; color: #0b0d12; }
+    .as-role { font-size: 11px; color: #adadad; }
+    .as-status { margin-left: auto; }
+    .as-field-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 4px 0; }
+    .as-field-label { color: #adadad; }
+    .as-field-val { color: #0b0d12; font-weight: 500; }
+    .as-field-val.red { color: #dc2626; }
+    .view-chain { display: block; margin-top: 8px; font-size: 11px; color: #ff6900; cursor: pointer; text-decoration: underline; }
+
+    /* AI insight banner — matching all-invoices */
+    .ai-insight-banner {
+      background: #fafafa;
+      border: 1px solid #e4e4e7;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .ai-insight-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: white; color: #ff6900;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px; 
+      padding: 3px 8px; border-radius: 999px; border: 1px solid #ffb088;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .ai-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #ff6900; animation: pls 2s infinite; }
+    .ai-insight-txt { font-size: 12px; color: #45556c; line-height: 1.65; }
+    .ai-insight-txt strong { color: #0b0d12; }
+
+    /* Topbar action buttons */
+    .btn-outline { background: white; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 7px 16px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #0b0d12; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-outline:hover { background: #f4f4f4; }
+    .btn-solid { background: #ff7a3d; border: none; border-radius: 999px; padding: 0 20px; height: 32px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: white; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .btn-solid:hover { background: #ff6826; }
+    .btn-solid-dark { background: #fff5f1; border: 1.5px solid #ffd7c2; border-radius: 8px; padding: 0 16px; height: 34px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #FF6900; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; position: relative; transition: background .12s, border-color .12s; }
+    .btn-solid-dark:hover { background: #ffe8df; border-color: #FF6900; }
+
+    /* Dry-run tooltip */
+    .dry-run { position: absolute; top: calc(100% + 8px); right: 0; background: #120b0b; color: #f0ede8; border-radius: 10px; padding: 14px 16px; width: 268px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transform: translateY(-4px); transition: all 0.18s; z-index: 50; text-align: left; white-space: normal; }
+    .btn-solid-dark.open .dry-run,
+    div.open .dry-run { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .tb-cta.open { background: #d95b03; }
+    .dr-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: rgba(240,237,232,0.4); margin-bottom: 10px; }
+    .dr-list { display: flex; flex-direction: column; gap: 6px; }
+    .dr-item { display: flex; gap: 7px; font-size: 11px; color: rgba(240,237,232,0.75); line-height: 1.4; }
+    .dr-num { color: #ff6900; font-size: 9px; font-weight: 700; flex-shrink: 0; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .dr-foot { font-size: 10px; color: rgba(240,237,232,0.4); margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+    /* Page heading row */
+    .page-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .page-hd-left { display: flex; flex-direction: column; gap: 4px; }
+    .page-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+    h1.ptitle { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 400; color: #120b0b; line-height: 1.3; }
+    .page-sub { font-size: 22px; font-weight: 400; color: #120b0b; line-height: 32px; letter-spacing: 0.07px; }
+    .hd-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-outline { background: #fff5f1; border: 1.5px solid #ffd7c2; border-radius: 8px; padding: 0 16px; height: 34px; font-size: 13px; font-weight: 700; color: #FF6900; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; transition: background .12s, border-color .12s; }
+    .btn-outline:hover { background: #ffe8df; border-color: #FF6900; }
+    .btn-solid-action { background: #fff5f1; border: 1.5px solid #ffd7c2; border-radius: 8px; padding: 0 16px; height: 34px; font-size: 13px; font-weight: 700; color: #FF6900; cursor: pointer; white-space: nowrap; display: flex; align-items: center; font-family: 'Inter', sans-serif; transition: background .12s, border-color .12s; }
+    .btn-solid-action:hover { background: #ffe8df; border-color: #FF6900; }
+    .back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 500; color: #45556c; background: white; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 5px 12px; text-decoration: none; transition: background .12s, border-color .12s; }
+    .back-btn:hover { background: #f4f4f4; border-color: #c8c8c8; color: #120b0b; }
+    .greeting { display: flex; flex-direction: column; gap: 10px; }
+    .greeting-title-row { display: flex; align-items: center; gap: 12px; }
+    .greeting-title-row .gclock { margin-left: auto; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; color: #45556c; letter-spacing: -0.1px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; background: #f6f6f6; border-radius: 999px; padding: 6px 12px; }
+    .approve-tooltip { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: #120b0b; color: #f0ede8; border-radius: 10px; padding: 12px 14px; width: 240px; font-size: 11px; line-height: 1.6; z-index: 50; text-align: left; }
+    .approve-wrap:hover .approve-tooltip { display: block; }
+
+    /* SIDEBAR COLLAPSE */
+    .sidebar { transition: width .2s ease; }
+    .sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, transform .2s; }
+    .sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
+    .sidebar-toggle svg { transition: transform .2s; }
+    .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+    .sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+    .sidebar.collapsed .brand-name { display: none; }
+    .sidebar.collapsed .sidebar-toggle { position: absolute; top: 80px; right: -12px; background: #fff; border: 1.5px solid #e9e9e9; box-shadow: 0 1px 3px rgba(0,0,0,0.06); width: 24px; height: 24px; border-radius: 50%; margin: 0; z-index: 21; }
+    .sidebar.collapsed .sidebar-toggle:hover { background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+    .sidebar.collapsed .nav-label { display: none; }
+    .sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
+    .sidebar.collapsed .nav-item.active { padding: 8px 0; }
+    .sidebar.collapsed .nav-badge { display: none; }
+
+    /* ═══════════ REVISION: single-panel main + restructured AI blocks + folded timeline ═══════════ */
+    .main-panel { background: white; border: 1.5px solid #e9e9e9; border-radius: 12px; overflow: hidden; display: flex; box-shadow: 0 4px 24px rgba(0,0,0,0.07); }
+    .right-col-actions { width: 290px; background: #fafafa; border-left: 1px solid #f0f0f0; padding: 20px; display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; overflow-y: auto; }
+    .ai-insight-banner.structured { flex-direction: column; align-items: stretch; gap: 0; padding: 14px 16px; }
+    .ai-banner-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .ai-banner-meta { font-size: 11px; color: #45556c; }
+    .ai-banner-meta strong { color: #0b0d12; font-weight: 600; }
+    .ai-key-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin-top: 12px; }
+    .ai-key-cell { background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 10px 12px; }
+    .ai-key-label { font-size: 10px; font-weight: 700; color: #d95b03; letter-spacing: 0.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .ai-key-val { font-size: 14px; font-weight: 600; color: #0b0d12; line-height: 1.3; }
+    .ai-key-val.red { color: #dc2626; }
+    .ai-key-val.amber { color: #b17728; }
+    .ai-key-val.green { color: #16a34a; }
+    .ai-key-sub { font-size: 11px; color: #45556c; margin-top: 3px; line-height: 1.35; }
+    .ai-banner-foot { font-size: 11px; color: #45556c; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ffd5b8; line-height: 1.65; }
+    .ai-banner-foot strong { color: #0b0d12; }
+    .ai-fact-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 6px; margin-top: 6px; }
+    .ai-fact { background: white; border: 1px solid #ffd5b8; border-radius: 6px; padding: 6px 8px; }
+    .ai-fact-k { font-size: 9px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.4px; }
+    .ai-fact-v { font-size: 12px; font-weight: 600; color: #0b0d12; margin-top: 2px; line-height: 1.3; }
+    .ai-fact-v.red { color: #dc2626; }
+    .ai-fact-v.amber { color: #0b0d12; }
+    .ai-fact-v.green { color: #16a34a; }
+    .ms-ai-note.structured { flex-direction: column; align-items: stretch; gap: 0; }
+    .ms-ai-note .ai-key-grid { margin-top: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .tl-step.tl-folded { padding-bottom: 8px; }
+    .tl-step.tl-folded .tl-dot { width: 16px; height: 16px; background: #e9e9e9; color: #9f9fa6; font-size: 9px; border: none; margin-left: 3px; }
+    .tl-step.tl-folded .tl-dot.done { background: #e9e9e9; color: #9f9fa6; }
+    .tl-step.tl-folded .tl-line { background: #f0f0f0; left: 10px; top: 16px; }
+    .tl-step.tl-folded .tl-tags { display: none; }
+    .tl-step.tl-folded .tl-step-desc { display: none; }
+    .tl-step.tl-folded .tl-ai-annotation { display: none; }
+    .tl-step.tl-folded .tl-action-needed { display: none; }
+    .tl-step.tl-folded .tl-expanded { display: none !important; }
+    .tl-step.tl-folded .tl-step-name { font-size: 12px; font-weight: 500; color: #9f9fa6; margin-bottom: 0; }
+    .tl-step.tl-folded .tl-step-right .src-chip { display: none; }
+    .tl-step.tl-folded .tl-time { color: #c8c8c8; font-size: 10px; margin-top: 0; }
+    .tl-step.tl-folded .tl-content { cursor: pointer; }
+    .tl-step.tl-folded:hover .tl-step-name { color: #45556c; }
+    .tl-step.tl-folded:hover .tl-dot { background: #c8c8c8; color: white; }
+    .tl-phase { display: flex; align-items: center; gap: 8px; margin: 4px 0 12px; }
+    .tl-phase-line { flex: 1; height: 1px; background: #f0f0f0; }
+    .tl-phase-label { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; color: #adadad; }
+    .tl-phase-label.active { color: #ff6900; }
+    .tl-phase-label.blocked { color: #dc2626; }
+    .tl-phase-label.green { color: #16a34a; }
+    .tl-inline-actions { margin-top: 12px; padding: 12px; background: #fafafa; border: 1px solid #e9e9e9; border-radius: 8px; }
+    .tl-inline-actions-head { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; color: #0b0d12; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .tl-inline-actions .next-steps { gap: 6px; }
+
+    /* AI banner — 3-way match flow */
+    .match-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px; align-items: stretch; margin-top: 12px; }
+    .mf-doc { background: white; border: 1px solid #ffd5b8; border-radius: 8px; padding: 10px 12px; }
+    .mf-doc.warn { border-color: #e9b44c; background: #fef9eb; }
+    .mf-doc.crit { border-color: #dc2626; background: #fef2f2; }
+    .mf-doc.ok { border-color: #16a34a; background: #f0fdf4; }
+    .mf-doc-label { font-size: 10px; font-weight: 700; color: #d95b03; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .mf-doc.warn .mf-doc-label { color: #b17728; }
+    .mf-doc.crit .mf-doc-label { color: #b91c1c; }
+    .mf-doc.ok .mf-doc-label { color: #15803d; }
+    .mf-doc-val { font-size: 16px; font-weight: 700; color: #0b0d12; line-height: 1.2; }
+    .mf-doc-val.amber { color: #b17728; }
+    .mf-doc-val.red { color: #dc2626; }
+    .mf-doc-val.green { color: #16a34a; }
+    .mf-doc-sub { font-size: 10px; color: #45556c; margin-top: 4px; line-height: 1.3; }
+    .mf-arrow { font-size: 20px; color: #ffb088; align-self: center; font-weight: 700; }
+
+    /* AI banner — signal comparison */
+    .signal-compare { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-top: 12px; }
+    .sc-col { background: transparent; border: none; border-left: 3px solid #cbd5e1; border-radius: 0; padding: 4px 0 4px 12px; }
+    .sc-col.ok { border-left-color: #16a34a; }
+    .sc-col.warn { border-left-color: #e9b44c; }
+    .sc-head { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .sc-head.ok { color: #15803d; }
+    .sc-head.warn { color: #b17728; }
+    .sc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 12px; }
+    .sc-col:has(.sc-head.warn) .sc-list { grid-template-columns: 1fr; }
+    .sc-item { font-size: 12px; color: #0b0d12; padding-left: 14px; position: relative; line-height: 1.65; }
+    .sc-item::before { content: "✓"; position: absolute; left: 0; color: #16a34a; font-weight: 700; font-size: 11px; }
+    .sc-item.warn { color: #b17728; }
+    .sc-item.warn::before { content: "⚠"; color: #b17728; font-size: 10px; }
+
+    @media (max-width: 760px) {
+      .match-flow { grid-template-columns: 1fr; }
+      .mf-arrow { transform: rotate(90deg); justify-self: center; }
+      .signal-compare { grid-template-columns: 1fr; }
+      .sc-list { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Ask Witness button ─── */
+    .ask-witness-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%); color: white; border: none; border-radius: 999px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 7px 16px; cursor: pointer; flex-shrink: 0; white-space: nowrap; box-shadow: 0 2px 12px rgba(255,105,0,0.4); transition: box-shadow .2s, transform .2s, filter .2s; }
+    .ask-witness-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 20px rgba(255,105,0,0.45); transform: translateY(-1px); }
+    .ask-witness-btn:active { transform: translateY(0); }
+    .btn-sparkle { display: inline-block; font-size: 13px; line-height: 1; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
+
+    /* ─── Agent suggestion callout ─── */
+    .agent-sug-callout { padding: 24px 28px; background: #fff8f3; border: 1.5px solid #ffc8a3; border-radius: 14px; display: grid; grid-template-columns: 52px 1fr; gap: 22px; align-items: center; position: relative; overflow: hidden; }
+    @keyframes vc-breathe { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,105,0,0); } 50% { box-shadow: 0 0 0 6px rgba(255,105,0,0.06), 0 0 28px rgba(255,105,0,0.10); } }
+
+    @keyframes vc-shimmer { 0% { transform: translateX(0); opacity: 0; } 18% { opacity: 1; } 55% { transform: translateX(420%); opacity: 0; } 100% { transform: translateX(420%); opacity: 0; } }
+    .agent-sug-icon { width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #ff7a3d 0%, #ff5c1b 100%); color: white; font-size: 24px; box-shadow: 0 6px 16px rgba(255,105,0,0.28), inset 0 1px 0 rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; align-self: flex-start; position: relative; animation: vc-icon-pulse 4s ease-in-out infinite; }
+    @keyframes vc-icon-pulse { 0%, 100% { box-shadow: 0 6px 16px rgba(255,105,0,0.28), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 0 rgba(255,105,0,0.35); } 50% { box-shadow: 0 6px 16px rgba(255,105,0,0.36), inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 10px rgba(255,105,0,0); } }
+    .agent-sug-body { min-width: 0; }
+    .agent-sug-lbl { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; color: #FF6900; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+    .agent-sug-lbl::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, rgba(255,105,0,0.25), rgba(255,105,0,0)); max-width: 60px; }
+    .agent-sug-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.6; color: #120b0b; font-weight: 400; letter-spacing: -0.15px; }
+    .agent-sug-actions { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+    .agent-sug-btn-primary { background: #120b0b; color: white; padding: 10px 20px; border-radius: 999px; font-size: 12px; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; letter-spacing: -0.05px; white-space: nowrap; border: none; cursor: pointer; transition: transform .15s; box-shadow: 0 2px 6px rgba(0,0,0,0.10); }
+    .agent-sug-btn-primary:hover { transform: translateY(-1px); }
+    .agent-sug-btn-sec { background: white; color: #FF6900; padding: 9px 18px; border-radius: 999px; font-size: 12px; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; letter-spacing: -0.05px; white-space: nowrap; border: 1.5px solid #FF6900; cursor: pointer; transition: all .15s; }
+    .agent-sug-btn-sec:hover { background: #fff5f1; border-color: #FF6900; }
+
+    /* ─── AI activity history strip ─── */
+    .wt-history-strip { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fafafa; border: 1px solid #e9e9e9; border-radius: 8px; font-size: 13px; color: #45556c; line-height: 1.5; }
+    .wt-h-icon { color: #ff6900; font-size: 13px; flex-shrink: 0; font-weight: 700; }
+    .wt-h-link { margin-left: auto; font-size: 12px; font-weight: 500; color: #ff6900; text-decoration: underline; white-space: nowrap; flex-shrink: 0; cursor: pointer; }
+    .wt-h-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─── -->
+<div class="app-grid">
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="4 4 24 24" fill="none" aria-hidden="true" width="26" height="26"><defs><linearGradient id="wgs" x1="4.5" y1="4.5" x2="31.6" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD000"/><stop offset="1" stop-color="#FF6900"/></linearGradient></defs><g transform="rotate(45,16,16)"><g class="witness-logo-rays" style="transform-origin:16px 16px"><g transform="rotate(0,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(45,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(90,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(135,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(180,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(225,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(270,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3125" fill="url(#wgs)"/></g><g transform="rotate(315,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3125" fill="url(#wgs)"/></g></g></g><circle cx="16" cy="16" r="3.2" fill="url(#wgs)" class="witness-logo-center" style="transform-origin:16px 16px"/></svg></div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" id="nav-dashboard" href="witness-dashboard.html" data-tip="Dashboard">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item" id="nav-invoices" href="witness-all_invoices.html" data-tip="All Invoices">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13z M10 1.5V4h3 M5.5 7.5h5 M5.5 10h5 M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Invoices
+          <span class="nav-badge">38</span>
+        </a>
+        <a class="nav-item" href="vendors.html" data-tip="Vendors">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item" href="autoflow.html" data-tip="Autoflow">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Autoflow
+        </a>
+        <a class="nav-item" href="ai-activity.html" data-tip="AI Activity">
+          <svg viewbox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge ai">24</span>
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html" data-tip="Settings">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M6.5 1.5h3l.5 1.5a4.5 4.5 0 011.1.65l1.5-.5 1.5 2.6-1.2 1.1a4.6 4.6 0 010 1.3l1.2 1.1-1.5 2.6-1.5-.5A4.5 4.5 0 0110 12l-.5 1.5h-3L6 12a4.5 4.5 0 01-1.1-.65l-1.5.5L2 9.25l1.2-1.1a4.6 4.6 0 010-1.3L2 5.75l1.5-2.6 1.5.5A4.5 4.5 0 016 3l.5-1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.8" stroke="currentColor" stroke-width="1.3"/></svg>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+
+
+
+  <main class="content">
+
+    <!-- ─── PAGE HEADING ─── -->
+    <div class="greeting">
+      <a id="back-link" href="witness-dashboard.html" class="back-btn" style="align-self:flex-start;">← Dashboard</a>
+      <div class="greeting-title-row">
+<h1 class="ptitle"><span style="font-family:'PT Serif', serif;">INV-1027</span> &nbsp;&ndash;&nbsp; Praxis Logistics</h1>
+        <span class="gclock" aria-label="Current time"><span data-wt-clock="full">Mon, Apr 28 · 6:42 AM PST</span></span>
+        <button class="ask-witness-btn" onclick="window.openWitnessChat()">
+          <span class="btn-sparkle">✦</span>
+          Ask Witness
+        </button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+        <p class="page-sub"><b>Duplicate auto-held</b> &nbsp;·&nbsp; PO-7718 &nbsp;·&nbsp; ERP &nbsp;·&nbsp; Detected <span data-wt-date="today-short">today</span></p>
+        <div class="hd-actions">
+          <div style="position:relative;">
+            <button class="btn-solid-dark" id="topbar-action-btn">Take action ▾</button>
+            <div class="dry-run">
+              <div class="dr-label">If you proceed, Witness will:</div>
+              <div class="dr-list">
+                <div class="dr-item"><span class="dr-num">1.</span><span>Confirm hold on <strong style="color:#f0ede8">INV-1027</strong> · reason "duplicate of INV-1024"</span></div>
+                <div class="dr-item"><span class="dr-num">2.</span><span>Email <strong style="color:#f0ede8">Praxis Logistics</strong> to retract or reissue</span></div>
+                <div class="dr-item"><span class="dr-num">3.</span><span>Mark <strong style="color:#f0ede8">PO-7718</strong> as fully invoiced, blocking future re-bills</span></div>
+              </div>
+              <div class="dr-foot">All actions are reversible · You'll review each before sending</div>
+            </div>
+          </div>
+          <div style="position:relative;display:inline-block;" class="approve-wrap">
+            <button style="background:#f4f4f4;border:1.5px solid #e9e9e9;border-radius:8px;padding:0 16px;height:34px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#adadad;cursor:not-allowed;white-space:nowrap;display:flex;align-items:center;gap:6px;" disabled>Release for payment</button>
+            <div class="approve-tooltip">
+              <strong>Witness has held this</strong><br>Same PO and total were already paid as INV-1024 on <span data-wt-date="minus2-short">Apr 26</span>. Releasing payment now would pay Praxis twice for the same shipment.<br><br>
+              <span style="color:#adadad;">Override requires AP-lead sign-off and a written reason.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── STAT CARDS ─── -->
+    <div style="height:8px"></div>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon neutral"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M5.5 2.5h6l3.5 3.5v11.5h-9.5v-15z" stroke="#45556c" stroke-width="1.5" stroke-linejoin="round"/><path d="M11.5 2.5v3.5h3.5M7 8.5h6M7 11h6M7 13.5h4" stroke="#45556c" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <span class="stat-trend flat">billed</span>
+        </div>
+        <div class="stat-mid">
+          <div class="stat-num">$890.40</div>
+          <div class="stat-lbl">Billed amount</div>
+        </div>
+        <div class="stat-foot"><div class="stat-foot-lbl">INV-1027 · 1 line (freight)</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-8" stroke="#15803d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="stat-trend safe">paid</span>
+        </div>
+        <div class="stat-mid">
+          <div class="stat-num green">$890.40</div>
+          <div class="stat-lbl">Already paid</div>
+        </div>
+        <div class="stat-foot"><div class="stat-foot-lbl">INV-1024 · ACH · <span data-wt-date="minus2-short">Apr 26</span></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon red"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 3v8M10 14.5v1" stroke="#dc2626" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7.5" stroke="#dc2626" stroke-width="1.5"/></svg></div>
+          <span class="stat-trend risk">held</span>
+        </div>
+        <div class="stat-mid">
+          <div class="stat-num red">$890.40</div>
+          <div class="stat-lbl">Duplicate exposure</div>
+        </div>
+        <div class="stat-foot"><div class="stat-foot-lbl">If released in error</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon amber"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 3v14M5 7h5M5 10h8M5 13h6" stroke="#b17728" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <span class="stat-trend warn">pattern</span>
+        </div>
+        <div class="stat-mid">
+          <div class="stat-num amber">2 / 12 mo</div>
+          <div class="stat-lbl">Vendor pattern</div>
+        </div>
+        <div class="stat-foot"><div class="stat-foot-lbl">Praxis · $1,640 recovered prior</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 3v14M6 8l4-4 4 4M6 16h8" stroke="#15803d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="stat-trend safe">safe</span>
+        </div>
+        <div class="stat-mid">
+          <div class="stat-num green">$0.00</div>
+          <div class="stat-lbl">Net exposure</div>
+        </div>
+        <div class="stat-foot"><div class="stat-foot-lbl">Held before payment · safe</div></div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#adadad;padding-left:2px;">Witness auto-held this at <strong style="color:#0b0d12;"><span data-wt-date="today-short">today</span></strong>. Payment will not go out unless you override. &nbsp;·&nbsp; <span style="color:#ff6900;text-decoration:underline;cursor:pointer;">How was this detected?</span></p>
+
+    <!-- ─── AGENT SUGGESTION ─── -->
+    <div class="agent-sug-callout">
+      <div class="agent-sug-icon">✦</div>
+      <div class="agent-sug-body">
+        <div class="agent-sug-lbl">Witness Recommends</div>
+        <div class="agent-sug-txt">
+          Confirm the hold and send Praxis a retract request. Both prior Praxis duplicates resolved within 24h with the same script. PO-7718 is already marked fully invoiced. No payment risk while held.
+        </div>
+        <div class="agent-sug-actions">
+          <button class="agent-sug-btn-primary">Confirm hold &amp; notify Praxis →</button>
+          <button class="agent-sug-btn-sec">View duplicate evidence</button>
+        </div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1.5px solid rgba(255,105,0,0.3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:11px;font-weight:600;color:#0b0d12;letter-spacing:0.4px;">Sources</span>
+          <span style="font-size:11px;font-weight:500;padding:4px 12px;border-radius:999px;background:white;color:#0b0d12;border:1.5px solid #d0d0d0;cursor:pointer;transition:border-color .12s,box-shadow .12s;" onmouseover="this.style.borderColor='#FF6900';this.style.boxShadow='0 0 0 3px rgba(255,105,0,0.08)';" onmouseout="this.style.borderColor='#d0d0d0';this.style.boxShadow='none';">INV-1024.pdf · all lines</span>
+          <span style="font-size:11px;font-weight:500;padding:4px 12px;border-radius:999px;background:white;color:#0b0d12;border:1.5px solid #d0d0d0;cursor:pointer;transition:border-color .12s,box-shadow .12s;" onmouseover="this.style.borderColor='#FF6900';this.style.boxShadow='0 0 0 3px rgba(255,105,0,0.08)';" onmouseout="this.style.borderColor='#d0d0d0';this.style.boxShadow='none';">INV-1027.pdf · all lines</span>
+          <span style="font-size:11px;font-weight:500;padding:4px 12px;border-radius:999px;background:white;color:#0b0d12;border:1.5px solid #d0d0d0;cursor:pointer;transition:border-color .12s,box-shadow .12s;" onmouseover="this.style.borderColor='#FF6900';this.style.boxShadow='0 0 0 3px rgba(255,105,0,0.08)';" onmouseout="this.style.borderColor='#d0d0d0';this.style.boxShadow='none';">PO-7718.pdf</span>
+          <span style="font-size:11px;font-weight:500;padding:4px 12px;border-radius:999px;background:white;color:#0b0d12;border:1.5px solid #d0d0d0;cursor:pointer;transition:border-color .12s,box-shadow .12s;" onmouseover="this.style.borderColor='#FF6900';this.style.boxShadow='0 0 0 3px rgba(255,105,0,0.08)';" onmouseout="this.style.borderColor='#d0d0d0';this.style.boxShadow='none';">Payment ledger · <span data-wt-date="minus2-short">Apr 26</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── AI HISTORY STRIP ─── -->
+    <p style="font-size:12px;color:#adadad;display:flex;align-items:center;gap:6px;"><span style="color:#ff6900;font-size:11px;">✦</span> Witness AI has taken <strong style="color:#0b0d12;">1 action</strong> on this invoice: auto-held as duplicate 1 min after intake. All actions are revertable. <a href="ai-activity.html" style="margin-left:auto;font-size:12px;font-weight:500;color:#ff6900;text-decoration:underline;white-space:nowrap;">View / revert in Activity ↗</a></p>
+
+    <!-- ─── MAIN PANEL ─── -->
+    <div class="main-panel">
+
+      <!-- Tabbed panels -->
+      <div class="center-col" style="flex:1; border-right: 1px solid #f0f0f0;">
+        <div class="center-tabs">
+          <button class="ctab active" data-tab="timeline" onclick="switchTab(this)">Timeline</button>
+          <button class="ctab" data-tab="match" onclick="switchTab(this)">Duplicate comparison</button>
+          <button class="ctab" data-tab="financial" onclick="switchTab(this)">Financial impact</button>
+          <button class="ctab" data-tab="comments" onclick="switchTab(this)">Comments (2)</button>
+        </div>
+
+        <!-- ─── TAB 1: Timeline ─── -->
+        <div class="tab-panel active" id="tab-timeline" style="flex-direction:column;">
+          <div class="tl-header">
+            <div class="tl-header-title">PO-7718 Journey: fully invoiced, second bill arrived</div>
+            <button class="tl-collapse-btn" onclick="collapseAll()">Collapse all ↑</button>
+          </div>
+          <div class="timeline">
+
+            <!-- Phase: Procurement & first invoice — complete, folded -->
+            <div class="tl-phase">
+              <span class="tl-phase-label green">Procurement complete · INV-1024 paid</span>
+              <span class="tl-phase-line"></span>
+              <span style="font-size:10px;color:#c8c8c8;">4 steps · <span data-wt-date="minus10-short">Apr 18</span> → <span data-wt-date="minus2-short">Apr 26</span></span>
+            </div>
+
+            <div class="tl-step tl-done tl-folded">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div><div class="tl-step-name">PO created · PO-7718 freight on SHP-2241</div></div>
+                  <div class="tl-step-right"><div class="tl-time"><span data-wt-date="minus10-short">Apr 18</span></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done tl-folded">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div><div class="tl-step-name">Shipment delivered · GRN-2118 logged</div></div>
+                  <div class="tl-step-right"><div class="tl-time"><span data-wt-date="minus6-short">Apr 22</span></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done tl-folded">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div><div class="tl-step-name">INV-1024 received &amp; matched cleanly</div></div>
+                  <div class="tl-step-right"><div class="tl-time"><span data-wt-date="minus4-short">Apr 24</span></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tl-step tl-done tl-folded">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">$</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div><div class="tl-step-name" style="color:#15803d;">INV-1024 PAID · $890.40 via ACH · PO closed</div></div>
+                  <div class="tl-step-right"><div class="tl-time"><span data-wt-date="minus2-short">Apr 26</span></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase: Second invoice arrived — folded -->
+            <div class="tl-phase">
+              <span class="tl-phase-label">Second invoice arrived</span>
+              <span class="tl-phase-line"></span>
+            </div>
+
+            <div class="tl-step tl-done tl-folded">
+              <div class="tl-line"></div>
+              <div class="tl-dot done">✓</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div><div class="tl-step-name">INV-1027 arrived · vendor portal · same PO &amp; total</div></div>
+                  <div class="tl-step-right"><div class="tl-time" data-wt-date="today-short">today</div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase: AI auto-held — active, expanded -->
+            <div class="tl-phase">
+              <span class="tl-phase-label active">✦ Witness AI · Active step</span>
+              <span class="tl-phase-line"></span>
+            </div>
+
+            <div class="tl-step">
+              <div class="tl-line"></div>
+              <div class="tl-dot ai">✦</div>
+              <div class="tl-content" onclick="toggleStep(this)">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags">
+                      <span class="tl-tag tt-issues">Held</span>
+                      <span class="tl-tag tt-ai">✦ Witness AI</span>
+                    </div>
+                    <div class="tl-step-name warn">Auto-held as duplicate · 1 min after intake</div>
+                    <div class="tl-ai-annotation">
+                      <div class="ai-ann-head"><span class="ai-pulse"></span>Witness detected: 6 of 7 signals match INV-1024</div>
+                      <div class="ai-fact-strip">
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">PO</div>
+                          <div class="ai-fact-v amber">PO-7718</div>
+                        </div>
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">Shipment</div>
+                          <div class="ai-fact-v amber">SHP-2241</div>
+                        </div>
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">Total</div>
+                          <div class="ai-fact-v amber">$890.40</div>
+                        </div>
+                        <div class="ai-fact">
+                          <div class="ai-fact-k">Action taken</div>
+                          <div class="ai-fact-v green">Removed from AP</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tl-step-right">
+                    <span class="src-chip src-witness"><span class="src-dot"></span>Witness AI</span>
+                    <div class="tl-time" data-wt-date="today-short">today</div>
+                  </div>
+                </div>
+                <div class="tl-expanded open">
+                  <div class="te-inner">
+                    <div class="te-row"><span class="te-k">PO reference</span><span class="te-v warn">PO-7718 · already fully invoiced (INV-1024)</span></div>
+                    <div class="te-row"><span class="te-k">Shipment ref</span><span class="te-v warn">SHP-2241 · GRN-2118 already closed</span></div>
+                    <div class="te-row"><span class="te-k">Total match</span><span class="te-v warn">$890.40 to the cent</span></div>
+                    <div class="te-row"><span class="te-k">Days since INV-1024 paid</span><span class="te-v warn"><span data-wt-days-since="minus2">2</span> days</span></div>
+                    <div class="te-row"><span class="te-k">Action taken</span><span class="te-v ok">Removed from AP queue · payment not routed</span></div>
+                    <div class="te-row"><span class="te-k">Ran in</span><span class="te-v">0.3s</span></div>
+                    <div class="te-conf">
+                      <span class="te-conf-label">Confidence</span>
+                      <div class="te-conf-bar"><div class="te-conf-fill" style="width:98%"></div></div>
+                      <span class="te-conf-val">98%</span>
+                    </div>
+                    <div class="te-sources">
+                      <span class="te-src-label">Sources</span>
+                      <span class="te-src-chip">INV-1024.pdf · all lines</span>
+                      <span class="te-src-chip">INV-1027.pdf · all lines</span>
+                      <span class="te-src-chip">PO-7718.pdf</span>
+                      <span class="te-src-chip">Payment ledger · <span data-wt-date="minus2-short">Apr 26</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phase: Awaiting your action -->
+            <div class="tl-phase">
+              <span class="tl-phase-label blocked">Awaiting your decision</span>
+              <span class="tl-phase-line"></span>
+            </div>
+
+            <div class="tl-step">
+              <div class="tl-dot future" style="background:#fff5f0;border-color:#ffb088;color:#ff6900;">→</div>
+              <div class="tl-content">
+                <div class="tl-main-row">
+                  <div>
+                    <div class="tl-tags"><span class="tl-tag tt-waiting">Awaiting you</span></div>
+                    <div class="tl-step-name">Confirm hold &amp; notify vendor</div>
+                    <div class="tl-step-desc">One click confirms the hold and sends Praxis a polite retract request. Auto-archive in 7 days if no action.</div>
+
+                  </div>
+                  <div class="tl-step-right">
+                    <div class="tl-time">pending</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /timeline -->
+        </div><!-- /tab-timeline -->
+
+        <!-- ─── TAB 2: Duplicate comparison ─── -->
+        <div class="tab-panel" id="tab-match">
+          <div class="ms-header">
+            <div class="ms-header-title">INV-1024 (paid) vs INV-1027 (held)</div>
+            <span class="ms-badge">Likely duplicate · 98%</span>
+          </div>
+          <div class="ms-body">
+
+            <!-- ─── AI INSIGHT BANNER — signal evidence (not $ amounts) ─── -->
+            <div class="ai-insight-banner structured" style="margin-bottom: 20px;">
+              <div class="ai-banner-head">
+                <div class="ai-insight-badge">
+                  <div class="ai-badge-dot"></div>
+                  Witness AI
+                </div>
+                <span class="ai-banner-meta"><strong>Matched 6 of 7 fingerprint fields against INV-1024</strong> · auto-held 1 min after intake · 98% confidence</span>
+              </div>
+              <div class="signal-compare">
+                <div class="sc-col ok">
+                  <div class="sc-head ok">✓ Identical fields (6)</div>
+                  <div class="sc-list">
+                    <div class="sc-item">PO reference</div>
+                    <div class="sc-item">Vendor</div>
+                    <div class="sc-item">Shipment ref</div>
+                    <div class="sc-item">Tax amount</div>
+                    <div class="sc-item">Total amount</div>
+                    <div class="sc-item">Bill-to address</div>
+                  </div>
+                </div>
+                <div class="sc-col warn">
+                  <div class="sc-head warn">⚠ Differing fields (2)</div>
+                  <div class="sc-list">
+                    <div class="sc-item warn">Invoice number</div>
+                    <div class="sc-item warn">Submission channel</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ai-banner-foot">
+                <strong>Why this read:</strong> the new invoice number (INV-1027) and the channel switch point to a billing-system re-emission, likely Praxis's portal sync caught up after INV-1024 was paid via email.<br>
+                <strong>Recommended:</strong> ask Praxis to retract. Both prior Praxis duplicates confirmed within 24h. PO-7718 is already marked fully invoiced.
+              </div>
+            </div>
+
+            <!-- Field comparison — the main card -->
+            <div class="ms-section">
+              <div class="ms-section-head">
+                <div class="ms-section-title">
+                  <span style="font-size:15px">📋</span> Field-by-field comparison
+                </div>
+                <span class="badge blocked"><span class="bdot"></span>Likely duplicate</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Field</th><th>INV-1024 · paid</th><th>INV-1027 · held</th><th>Match</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Vendor</td><td>Praxis Logistics</td><td>Praxis Logistics</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">PO reference</td><td>PO-7718</td><td>PO-7718</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Shipment ref</td><td>SHP-2241</td><td>SHP-2241</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Total</td><td>$890.40</td><td>$890.40</td><td class="ok">✓ to the cent</td></tr>
+                  <tr><td class="label">Tax</td><td>$73.40</td><td>$73.40</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Bill-to address</td><td>SF DC · Dock 3</td><td>SF DC · Dock 3</td><td class="ok">✓ identical</td></tr>
+                  <tr><td class="label">Invoice number</td><td>INV-1024</td><td class="warn">INV-1027</td><td class="warn">⚠ differs</td></tr>
+                  <tr><td class="label">Submission channel</td><td>Email · AP inbox</td><td class="warn">Vendor portal upload</td><td class="warn">⚠ differs</td></tr>
+                  <tr><td class="label">Payment status</td><td class="ok">Paid · <span data-wt-date="minus2-short">Apr 26</span> · ACH</td><td class="crit">⏳ Held by Witness</td><td>n/a</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-section-note crit">
+                <strong>If released in error:</strong> &nbsp; −$890.40 paid twice for the same shipment
+              </div>
+            </div>
+
+            <!-- Why might be legitimate -->
+            <div class="ms-section">
+              <div class="ms-section-head">
+                <div class="ms-section-title">
+                  <span style="font-size:15px">⚖</span> The 2%: why this could still be legitimate
+                </div>
+                <span class="badge waiting"><span class="bdot"></span>Worth a check</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Signal that differs</th><th>What it could mean</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Different invoice number (INV-1027 ≠ INV-1024)</td><td>A new invoice number is consistent with Praxis's billing system issuing INV-1027 as a fresh document, typical of an accidental re-emission, not an intentional second bill.</td></tr>
+                  <tr><td class="label">Different submission channel (portal, not email)</td><td>Praxis may have onboarded a new portal sync that re-emitted the open invoice. Could be a process artifact, not a re-bill.</td></tr>
+                  <tr><td class="label">2 days between invoices</td><td>Could be a corrected reissue (e.g., changed remit-to bank). Worth one message to confirm.</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-section-note warn">
+                One message to Praxis resolves this in &lt; 1 day. AP-side script is pre-drafted.
+              </div>
+            </div>
+
+            <!-- Vendor history -->
+            <div class="ms-section">
+              <div class="ms-section-head">
+                <div class="ms-section-title">
+                  <span style="font-size:15px">📊</span> Praxis Logistics — 12-month pattern
+                </div>
+                <span class="badge approved"><span class="bdot"></span>Vendor responds quickly</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">Invoices submitted (12 mo)</td><td>62</td><td>Across all POs</td></tr>
+                  <tr><td class="label">Duplicates flagged by Witness</td><td class="warn">2</td><td>Both confirmed by vendor</td></tr>
+                  <tr><td class="label">$ recovered prior</td><td class="ok">$1,640.00</td><td>Both retractions received within 24h</td></tr>
+                  <tr><td class="label">Avg vendor response</td><td class="ok">14h</td><td>From hold to retract confirmation</td></tr>
+                </tbody>
+              </table>
+              <div class="ms-section-note ok">
+                Both prior Praxis dupes were billing-system errors. No dispute, no escalation, no escalation
+              </div>
+            </div>
+
+            <!-- Source documents -->
+            <div class="ms-section">
+              <div class="ms-section-head">
+                <div class="ms-section-title">
+                  <span style="font-size:15px">📄</span> Source documents
+                </div>
+                <span style="font-size:11px;color:#adadad;"><span data-wt-date="today-short">today</span> · 98% confidence · 0.3s</span>
+              </div>
+              <table class="ms-table">
+                <thead><tr><th>Document</th><th>Source</th><th>Key fields extracted</th></tr></thead>
+                <tbody>
+                  <tr><td class="label">INV-1024.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>Email · AP inbox</span></td><td>Vendor, PO, shipment, total $890.40, tax, bill-to</td></tr>
+                  <tr><td class="label">INV-1027.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>Vendor portal</span></td><td>Vendor, PO, shipment, total $890.40, tax, bill-to</td></tr>
+                  <tr><td class="label">PO-7718.pdf</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>Approved $890.40, scope SHP-2241, status: fully invoiced</td></tr>
+                  <tr><td class="label">Payment ledger</td><td><span class="src-chip src-erp" style="font-size:10px"><span class="src-dot"></span>ERP</span></td><td>ACH <span data-wt-date="minus2-short">Apr 26</span> · $890.40 · Praxis · vendor ack same day</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div><!-- /tab-match -->
+
+        <!-- ─── TAB 3: Financial impact ─── -->
+        <div class="tab-panel" id="tab-financial">
+          <div class="fi-header">
+            <div class="fi-header-title">Financial Impact</div>
+            <span class="badge approved" style="background:#dcfce7;color:#15803d;"><span class="bdot" style="background:#16a34a;"></span>Caught pre-payment</span>
+          </div>
+          <div class="fi-body">
+
+            <!-- Summary strip -->
+            <div class="fi-summary-strip">
+              <div class="fi-sum-cell">
+                <div class="fi-sum-label">Vendor claim (INV-1027)</div>
+                <div class="fi-sum-val">$890.40</div>
+                <div class="fi-sum-sub">Second bill on PO-7718</div>
+              </div>
+              <div class="fi-sum-cell">
+                <div class="fi-sum-label" style="color:#15803d;">Already paid (INV-1024)</div>
+                <div class="fi-sum-val green">$890.40</div>
+                <div class="fi-sum-sub">ACH · <span data-wt-date="minus2-short">Apr 26</span> · vendor ack'd</div>
+              </div>
+              <div class="fi-sum-cell">
+                <div class="fi-sum-label" style="color:#b91c1c;">Exposure if released</div>
+                <div class="fi-sum-val red">−$890.40</div>
+                <div class="fi-sum-sub">Would pay Praxis twice</div>
+              </div>
+              <div class="fi-sum-cell">
+                <div class="fi-sum-label" style="color:#15803d;">Net exposure now</div>
+                <div class="fi-sum-val green">$0.00</div>
+                <div class="fi-sum-sub">Held before AP queue</div>
+              </div>
+            </div>
+
+            <!-- Breakdown -->
+            <div class="fi-breakdown">
+              <div class="fi-breakdown-head">
+                <span class="fi-breakdown-title">What's at stake</span>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">💸</span> Duplicate payment risk if INV-1027 routed through AP without flag</div>
+                <div class="fi-row-val red">−$890.40 <span style="font-size:10px;color:#adadad;font-weight:400;">prevented</span></div>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">⏱</span> Recovery cost if paid then clawed back (AP labor + vendor goodwill)</div>
+                <div class="fi-row-val amber">~$120 <span style="font-size:10px;color:#adadad;font-weight:400;">avoided</span></div>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">✓</span> PO-7718 status: already closed and fully invoiced</div>
+                <div class="fi-row-val green">$890.40 paid · clean</div>
+              </div>
+              <div class="fi-row">
+                <div class="fi-row-label"><span class="fi-row-ico">✓</span> Witness intervention time</div>
+                <div class="fi-row-val green">1 min after intake · 0 AP labor</div>
+              </div>
+              <div class="fi-total-row" style="background:#dcfce7;border-top-color:rgba(22,163,74,0.2);">
+                <div class="fi-total-label" style="color:#15803d;">Loss prevented by auto-hold</div>
+                <div class="fi-total-val" style="color:#16a34a;">$890.40 <span style="font-size:11px;font-weight:400;color:#45556c;">+ recovery cost avoided</span></div>
+              </div>
+            </div>
+
+            <!-- Scenarios -->
+            <div class="fi-scenario">
+              <div class="fi-scenario-head">Resolution scenarios: what happens next</div>
+
+              <div class="fi-scenario-row">
+                <div class="scenario-dot" style="background:#16a34a"></div>
+                <div style="flex:1">
+                  <div class="fi-scenario-label">✦ Most likely: confirm hold, vendor retracts</div>
+                  <div class="fi-scenario-desc">One message to Praxis confirming PO-7718 was already paid via INV-1024. Vendor retracts INV-1027 from portal within 24h (matches prior 2 cases). Case closes, no payment leaves.</div>
+                </div>
+                <div class="fi-scenario-outcome">
+                  <div class="val green">Pay $0.00</div>
+                  <div class="sub">Already paid $890.40 via INV-1024</div>
+                </div>
+              </div>
+
+              <div class="fi-scenario-row">
+                <div class="scenario-dot" style="background:#b17728"></div>
+                <div style="flex:1">
+                  <div class="fi-scenario-label">Vendor claims legitimate reissue</div>
+                  <div class="fi-scenario-desc">Praxis says INV-1027 replaces INV-1024 (e.g., wrong remit-to bank on first version). Need to verify INV-1024 funds returned before paying INV-1027. Would be a swap, not a double-pay.</div>
+                </div>
+                <div class="fi-scenario-outcome">
+                  <div class="val" style="color:#b17728;">Pay $890.40</div>
+                  <div class="sub">Only after INV-1024 reversal confirmed</div>
+                </div>
+              </div>
+
+              <div class="fi-scenario-row">
+                <div class="scenario-dot" style="background:#dc2626"></div>
+                <div style="flex:1">
+                  <div class="fi-scenario-label">Hold overridden without check</div>
+                  <div class="fi-scenario-desc">Someone clicks "Release for payment" without verifying. ACH runs the next cycle. Praxis is paid $890.40 twice for SHP-2241. Recovery via vendor refund or next-invoice offset, with AP labor cost.</div>
+                </div>
+                <div class="fi-scenario-outcome">
+                  <div class="val red">Pay $1,780.80</div>
+                  <div class="sub">−$890.40 to recover</div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div><!-- /tab-financial -->
+
+        <!-- ─── TAB 4: Comments ─── -->
+        <div class="tab-panel" id="tab-comments" style="flex-direction:column;">
+          <div class="cm-header">
+            <div class="cm-header-title">Case comments</div>
+            <span style="font-size:12px;color:#adadad">2 comments</span>
+          </div>
+          <div class="cm-body">
+
+            <!-- Comment 1: AI auto-detection -->
+            <div class="comment-item">
+              <div class="cm-av" style="background:#ff6900;font-size:11px">✦</div>
+              <div class="cm-bubble">
+                <div class="cm-meta">
+                  <span class="cm-author">Witness AI</span>
+                  <span class="cm-role">Automated detection</span>
+                  <span class="cm-time" data-wt-date="today-short">today</span>
+                </div>
+                <div class="cm-text ai">
+                  Held INV-1027 as a likely duplicate of <strong>INV-1024</strong> (paid <span data-wt-date="minus2-short">Apr 26</span> via ACH). 6 of 7 signals match: PO-7718, shipment SHP-2241, total $890.40, tax, vendor, bill-to. Only the invoice number and submission channel differ. PO-7718 is already marked fully invoiced. <strong>Action taken:</strong> removed from AP queue; no payment routed. Awaiting your confirmation to notify Praxis.
+                </div>
+                <div class="cm-actions">
+                  <button class="cm-action-btn">Reply</button>
+                  <button class="cm-action-btn">View sources</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="cm-divider">
+              <div class="cm-divider-line"></div>
+              <span data-wt-date="today-short">today</span>
+              <div class="cm-divider-line"></div>
+            </div>
+
+            <!-- Comment 2: AI pattern note -->
+            <div class="comment-item">
+              <div class="cm-av" style="background:#ff6900;font-size:11px">✦</div>
+              <div class="cm-bubble">
+                <div class="cm-meta">
+                  <span class="cm-author">Witness AI</span>
+                  <span class="cm-role">Pattern note</span>
+                  <span class="cm-time" data-wt-date="today-short">today</span>
+                </div>
+                <div class="cm-text ai">
+                  This is the 3rd duplicate from Praxis Logistics in 12 months. In the prior 2 cases (Aug 2024, Jan 2025), the vendor confirmed billing-system re-emission within 24h and retracted. No disputes, no escalation. Avg recovery: $820. <strong>Suggested:</strong> confirm hold and send the pre-drafted retract request, same script that worked the last two times.
+                </div>
+                <div class="cm-actions">
+                  <button class="cm-action-btn">Reply</button>
+                  <button class="cm-action-btn">View prior cases (2)</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="cm-compose">
+            <div class="cm-compose-av">SC</div>
+            <textarea class="cm-compose-input" rows="2" placeholder="Add a comment or note…"></textarea>
+            <button class="cm-send">Send</button>
+          </div>
+        </div><!-- /tab-comments -->
+
+      </div><!-- /center-col -->
+
+      <!-- ─── RIGHT PERSISTENT PANEL: Action Steps ─── -->
+      <div class="right-col-actions">
+        <div style="font-size: 11px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.6px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+          Steps
+        </div>
+        <div style="font-size: 11px; font-style: italic; color: #71717a; margin-top: -8px; line-height: 1.4; margin-bottom: 4px;">
+          Perform these steps to resolve the duplicate hold.
+        </div>
+        <div class="next-steps" style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn-step-primary" id="btn-confirm-hold">
+            Confirm hold &amp; notify Praxis
+          </button>
+          <button class="btn-step-secondary" id="btn-ask-vendor">
+            Ask Praxis: re-bill or reissue?
+          </button>
+          <button class="btn-step-tertiary" id="btn-open-side">
+            Open INV-1024 side-by-side
+          </button>
+          <button class="btn-step-secondary btn-step-danger" id="btn-override-hold">
+            Override hold: release for payment
+          </button>
+        </div>
+
+        <div style="margin-top: 10px; padding-top: 16px; border-top: 1px dashed #e4e4e7;">
+          <div style="font-size: 11px; font-weight: 600; color: #71717a; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.4px;">Blockers checklist</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #b91c1c;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-weight: bold; width: 14px; text-align: center;">✕</span>
+                <span>Duplicate of INV-1024 ($890.40)</span>
+              </div>
+              <span style="font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #fee2e2; color: #b91c1c; white-space: nowrap;">Steps 1 &amp; 2</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #45556c;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-weight: bold; width: 14px; text-align: center;">○</span>
+                <span>Vendor retraction pending</span>
+              </div>
+              <span style="font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #f4f4f4; color: #45556c; white-space: nowrap;">Step 2</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /right-col-actions -->
+
+    </div><!-- /main-panel -->
+
+  </main>
+</div><!-- /main -->
+
+<script>
+  function toggleStep(el) {
+    const expanded = el.querySelector('.tl-expanded');
+    if (expanded) expanded.classList.toggle('open');
+  }
+
+  function switchTab(btn) {
+    // Update tab buttons
+    document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    // Show matching panel
+    const target = btn.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + target).classList.add('active');
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.tl-expanded.open').forEach(e => e.classList.remove('open'));
+  }
+</script>
+<script>
+(function(){
+  var ref = document.referrer;
+  var dashEl = document.getElementById('nav-dashboard');
+  var invEl  = document.getElementById('nav-invoices');
+  if (ref && ref.indexOf('witness-all_invoices') !== -1) {
+    if (invEl)  invEl.classList.add('active');
+  } else {
+    if (dashEl) dashEl.classList.add('active');
+  }
+  // Sidebar toggle
+  var sb  = document.querySelector('.sidebar');
+  var btn = document.querySelector('.sidebar-toggle');
+  if (sb && btn) {
+    if (localStorage.getItem('witness-sidebar') === 'collapsed') sb.classList.add('collapsed');
+    btn.addEventListener('click', function(){
+      sb.classList.toggle('collapsed');
+      localStorage.setItem('witness-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : 'open');
+    });
+  }
+})();
+</script>
+<script>
+  (function(){
+    var actionBtn = document.getElementById('topbar-action-btn');
+    if (!actionBtn) return;
+    var wrap = actionBtn.parentElement;
+    var bubble = wrap.querySelector('.dry-run');
+    if (bubble) bubble.addEventListener('click', function(e){ e.stopPropagation(); });
+    actionBtn.addEventListener('click', function(e){
+      wrap.classList.toggle('open');
+      e.stopPropagation();
+    });
+    document.addEventListener('click', function(){
+      wrap.classList.remove('open');
+    });
+  })();
+</script>
+
+</div><!-- /.app-grid -->
+
+<script>
+(function() {
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function fmt(d, full) {
+    var s = MONTHS[d.getMonth()] + ' ' + d.getDate();
+    return full ? s + ', ' + d.getFullYear() : s;
+  }
+  function offset(n) { var d = new Date(); d.setDate(d.getDate() + n); return d; }
+  var map = {
+    'today-full':    fmt(offset(0),   true),
+    'today-short':   fmt(offset(0),   false),
+    'minus2-full':   fmt(offset(-2),  true),
+    'minus2-short':  fmt(offset(-2),  false),
+    'minus4-full':   fmt(offset(-4),  true),
+    'minus4-short':  fmt(offset(-4),  false),
+    'minus6-full':   fmt(offset(-6),  true),
+    'minus6-short':  fmt(offset(-6),  false),
+    'minus10-full':  fmt(offset(-10), true),
+    'minus10-short': fmt(offset(-10), false),
+    'minus14-full':  fmt(offset(-14), true),
+    'minus14-short': fmt(offset(-14), false),
+  };
+  document.querySelectorAll('[data-wt-date]').forEach(function(el) {
+    var key = el.getAttribute('data-wt-date');
+    if (map[key]) el.textContent = map[key];
+  });
+})();
+</script>
+<script>
+(function () {
+  var DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function tick() {
+    var d = new Date();
+    var day  = DAYS[d.getDay()].slice(0, 3);
+    var mon  = MONTHS[d.getMonth()];
+    var h    = d.getHours(), m = pad(d.getMinutes());
+    var ampm = h >= 12 ? 'PM' : 'AM', h12 = h % 12 || 12;
+    var tz   = d.toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ').pop();
+    var full = day + ', ' + mon + ' ' + d.getDate() + ' · ' + h12 + ':' + m + ' ' + ampm + ' ' + tz;
+    document.querySelectorAll('[data-wt-clock="full"]').forEach(function(el) {
+      el.textContent = full;
+    });
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+<script src="witness-chat.js"></script>
+
+<script>
+  (function(){
+    var link = document.getElementById('back-link');
+    if (!link) return;
+    var ref = document.referrer;
+    if (ref && ref.indexOf('witness-all_invoices') !== -1) {
+      link.href = 'witness-all_invoices.html';
+      link.textContent = '← All Invoices';
+    } else {
+      link.href = 'witness-dashboard.html';
+      link.textContent = '← Dashboard';
+    }
+  })();
+</script>
+</body>
+</html>
