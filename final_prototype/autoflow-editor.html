@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Witness – Autoflow Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ═══ TOKENS ═══════════════════════════════════════════════════════════════ */
+:root {
+  --sidebar-w: 258px;
+  --chat-w: 340px;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --orange: #FF6900;
+  --orange-glare: #FFF5F1;
+  --orange-touch: #FFE8DF;
+  --border: #e9e9e9;
+  --grey: #f4f4f4;
+  --cool-grey: #45556c;
+  --dark-grey: #adadad;
+  --black: #120b0b;
+  --success-100: #dcfce7; --success-500: #16a34a;
+  --warn-100: #fdf2d4;   --warn-500: #e9b44c;
+  --blue: #155dfc;       --blue-sky: #e7f4ff;
+  --pend-100: #ffe0ca;   --pend-500: #FF6900;
+  --err-100: #fee2e2;    --err-500: #dc2626;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: var(--font-body); color: var(--black); background: #fff; -webkit-font-smoothing: antialiased; }
+body:has(.sidebar.collapsed) { --sidebar-w: 72px; }
+body[data-chat="float"] { --chat-w: 0px; }
+body[data-chat="slim"]  { --chat-w: 0px; }
+
+/* ═══ LAYOUT ═══════════════════════════════════════════════════════════════ */
+.app-grid {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0,1fr) var(--chat-w);
+  transition: grid-template-columns .25s cubic-bezier(.4,0,.2,1);
+}
+
+/* ═══ SIDEBAR ═══════════════════════════════════════════════════════════════ */
+.sidebar { background: #f4f4f4; display: flex; flex-direction: column; height: 100%; overflow-y: auto; overflow-x: visible; transition: width .2s ease; position: relative; }
+.sidebar.collapsed { overflow: visible; }
+.sidebar-brand { padding: 24px; background: rgba(247,247,247,0.5); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.brand-logo { width: 32px; height: 32px; background: #120b0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.brand-name { font-size: 18px; font-weight: 600; color: #120b0b; letter-spacing: -0.44px; }
+.sidebar-toggle { width: 28px; height: 28px; margin-left: auto; background: transparent; border: none; border-radius: 8px; color: #45556c; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s; }
+.sidebar-toggle:hover { background: rgba(0,0,0,0.06); color: #120b0b; }
+.sidebar-toggle svg { transition: transform .2s; }
+.sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+.sidebar.collapsed .sidebar-brand { padding: 24px 0; justify-content: center; gap: 0; }
+.sidebar.collapsed .brand-name { display: none; }
+.sidebar.collapsed .sidebar-toggle { position: fixed; top: 14px; left: calc(var(--sidebar-w) - 14px); background: #fff; border: 1.5px solid #e9e9e9; box-shadow: 0 2px 8px rgba(0,0,0,0.12); width: 28px; height: 28px; border-radius: 50%; margin: 0; z-index: 35; }
+.sidebar-nav { padding: 24px 12px 24px 24px; display: flex; flex-direction: column; gap: 24px; }
+.nav-group { display: flex; flex-direction: column; gap: 12px; }
+.nav-label { font-size: 12px; font-weight: 600; color: #9f9fa6; letter-spacing: 0.6px; line-height: 16px; padding: 0 12px; }
+.nav-items { display: flex; flex-direction: column; gap: 1px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: #6b7a92; font-size: 13.5px; font-weight: 500; line-height: 20px; letter-spacing: -0.1px; text-decoration: none; cursor: pointer; transition: background .12s, color .12s; }
+.nav-item:hover { background: rgba(0,0,0,0.045); color: #120b0b; }
+.nav-item.active { background: white; color: #120b0b; font-weight: 600; border-radius: 0 8px 8px 0; box-shadow: inset 3px 0 0 #FF6900; }
+.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; color: inherit; }
+.nav-badge { margin-left: auto; background: #eef0f3; color: #45556c; font-size: 11px; font-weight: 600; line-height: 1; padding: 3px 7px; border-radius: 999px; }
+.nav-badge.ai { background: #fff0e8; color: #FF6900; }
+.nav-item.active .nav-badge { background: #FFE8DF; color: #FF6900; }
+.sidebar.collapsed .sidebar-nav { padding: 24px 12px; }
+.sidebar.collapsed .nav-label { display: none; }
+.sidebar.collapsed .nav-item { padding: 10px 0; justify-content: center; gap: 0; font-size: 0; line-height: 0; overflow: hidden; }
+.sidebar.collapsed .nav-badge { display: none; }
+#nav-tooltip { position: fixed; background: #120b0b; color: #fff; font-family: var(--font-body); font-size: 12px; font-weight: 500; padding: 5px 10px; border-radius: 7px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .15s ease, transform .15s ease; transform: translateX(-4px); z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.18); }
+#nav-tooltip.visible { opacity: 1; transform: translateX(0); }
+
+/* ═══ MAIN ════════════════════════════════════════════════════════════════ */
+.main { height: 100%; display: flex; flex-direction: column; overflow: hidden; min-width: 0; background: white; }
+
+/* ═══ PAGE HEADER — matches invoice detail exactly ════════════════════════ */
+.back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 500; color: #45556c; background: white; border: 1.5px solid #e9e9e9; border-radius: 8px; padding: 5px 12px; text-decoration: none; transition: background .12s, border-color .12s; align-self: flex-start; }
+.back-btn:hover { background: #f4f4f4; border-color: #c8c8c8; color: #120b0b; }
+.greeting { display: flex; flex-direction: column; gap: 10px; padding: 32px 32px 0; flex-shrink: 0; }
+.greeting-title-row { display: flex; align-items: center; gap: 12px; }
+h1.ptitle { font-family: var(--font-display); font-size: 38px; font-weight: 400; color: #120b0b; line-height: 1.3; }
+.gclock { margin-left: auto; font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: #45556c; letter-spacing: -0.1px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; background: #f6f6f6; border-radius: 999px; padding: 6px 12px; }
+.gclock-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 2.5px rgba(22,163,74,.2); display: inline-block; flex-shrink: 0; }
+.page-sub { font-size: 14px; font-weight: 400; color: #45556c; line-height: 1.5; }
+.ask-witness-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF9500 0%, #FF6900 100%); color: white; border: none; border-radius: 999px; font-family: var(--font-body); font-size: 13px; font-weight: 600; padding: 7px 16px; cursor: pointer; flex-shrink: 0; white-space: nowrap; box-shadow: 0 2px 12px rgba(255,105,0,0.4); transition: box-shadow .2s, transform .2s, filter .2s; }
+.ask-witness-btn:hover { filter: brightness(1.06); box-shadow: 0 6px 20px rgba(255,105,0,0.45); transform: translateY(-1px); }
+.ask-witness-btn:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(255,105,0,0.4); }
+.btn-sparkle { display: inline-block; font-size: 13px; line-height: 1; transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.ask-witness-btn:hover .btn-sparkle { transform: rotate(180deg) scale(1.2); }
+
+/* ═══ EDITOR TOOLBAR ════════════════════════════════════════════════════ */
+.ed-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.ed-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 7px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #e2e5ea; background: white; color: #120b0b; transition: background .12s; white-space: nowrap; }
+.ed-btn:hover { background: var(--grey); }
+.ed-btn.outline { background: #fff5f1; border: 1.5px solid #ffd7c2; color: #FF6900; font-weight: 700; }
+.ed-btn.outline:hover { background: #ffe8df; border-color: #FF6900; }
+.ed-btn.solid { background: #120b0b; color: white; border-color: #120b0b; }
+.ed-btn.solid:hover { background: #374151; }
+
+/* ═══ CANVAS ════════════════════════════════════════════════════════════ */
+.canvas { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 48px 32px 100px; background: white; display: flex; flex-direction: column; align-items: center; }
+.canvas-inner { width: 100%; max-width: 620px; display: flex; flex-direction: column; align-items: center; }
+
+/* Help banner */
+.help-banner { width: 100%; background: var(--blue-sky); border: 1px solid rgba(21,93,252,.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--blue); line-height: 1.55; margin-bottom: 40px; }
+
+/* Connector */
+.connector { width: 2px; height: 40px; background: #e9e9e9; margin: 0 auto; position: relative; flex-shrink: 0; }
+.connector::after { content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid #e9e9e9; }
+
+/* Node */
+.node { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 20px 22px; width: 100%; cursor: pointer; transition: box-shadow .15s, transform .12s; position: relative; overflow: hidden; }
+.node::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 4px; background: var(--cool-grey); }
+.node:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); transform: translateY(-1px); }
+.node.selected { box-shadow: 0 0 0 2px var(--orange), 0 6px 20px rgba(255,105,0,.12); }
+.node[data-perm="manual"]::before { background: var(--cool-grey); }
+.node[data-perm="suggest"]::before { background: var(--warn-500); }
+.node[data-perm="auto"]::before { background: var(--success-500); }
+.node.trigger::before { background: var(--orange); }
+.node.trigger { background: linear-gradient(180deg,var(--orange-glare) 0%,white 70%); }
+.node-type { display: inline-block; font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--dark-grey); background: var(--grey); border-radius: 999px; padding: 2px 9px; margin-bottom: 6px; }
+.node.trigger .node-type { background: var(--orange-touch); color: var(--orange); }
+.node-title { font-size: 14px; font-weight: 600; color: var(--black); letter-spacing: -0.01em; line-height: 1.3; }
+.node-desc { font-size: 12.5px; color: var(--cool-grey); line-height: 1.55; margin-top: 8px; }
+
+/* Permission toggle */
+.perm-toggle { display: flex; background: var(--grey); border-radius: 999px; padding: 3px; gap: 2px; margin: 12px 0 0; width: 100%; }
+.perm-opt { flex: 1; padding: 5px 8px; border-radius: 999px; border: none; background: transparent; font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--cool-grey); cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 5px; white-space: nowrap; }
+.perm-opt:hover { color: var(--black); }
+.perm-opt.active { background: white; color: var(--black); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.perm-opt.active[data-perm="manual"] { background: var(--cool-grey); color: white; }
+.perm-opt.active[data-perm="suggest"] { background: var(--warn-500); color: var(--black); }
+.perm-opt.active[data-perm="auto"] { background: var(--success-500); color: white; }
+.pdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.perm-opt[data-perm="manual"] .pdot { background: var(--cool-grey); }
+.perm-opt[data-perm="suggest"] .pdot { background: var(--warn-500); }
+.perm-opt[data-perm="auto"] .pdot { background: var(--success-500); }
+.perm-opt.active .pdot { background: rgba(255,255,255,.6); }
+.perm-opt.active[data-perm="suggest"] .pdot { background: rgba(0,0,0,.35); }
+
+/* Condition */
+.condition { display: flex; justify-content: center; margin: 0 0 4px; }
+.cond-pill { display: inline-flex; align-items: center; gap: 9px; background: var(--blue-sky); color: var(--blue); border: 1.5px solid rgba(21,93,252,.3); border-radius: 999px; padding: 9px 22px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; font-family: var(--font-body); }
+.cond-pill:hover { background: white; box-shadow: 0 2px 8px rgba(21,93,252,.15); }
+.cond-pill.selected { background: white; box-shadow: 0 0 0 2px var(--blue), 0 4px 12px rgba(21,93,252,.15); }
+
+/* Branch */
+.branch { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; width: 100%; margin: 0; }
+.branch-col { display: flex; flex-direction: column; align-items: center; }
+.branch-line { width: 2px; height: 48px; background: #e9e9e9; margin: 0 auto; }
+.branch-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .08em; padding: 3px 12px; border-radius: 999px; border: 1.5px solid #e9e9e9; background: white; color: var(--cool-grey); margin: 10px 0; }
+.branch-label.yes { background: var(--success-100); border-color: var(--success-100); color: var(--success-500); }
+
+/* Add step */
+.add-step { display: inline-flex; align-items: center; gap: 7px; margin-top: 36px; padding: 8px 18px; border: 1.5px solid #ffd7c2; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--orange); cursor: pointer; background: var(--orange-glare); transition: all .15s; font-family: var(--font-body); }
+.add-step:hover { background: #ffe8df; border-color: var(--orange); }
+.add-step .plus { width: 16px; height: 16px; border-radius: 50%; background: var(--orange); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+
+/* Step picker */
+.picker-overlay { position: fixed; inset: 0; z-index: 60; display: none; }
+.picker-overlay.open { display: block; }
+.picker { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%); width: 480px; max-width: calc(100vw - 48px); background: white; border: 1px solid var(--border); border-radius: 16px 16px 0 0; box-shadow: 0 -8px 40px rgba(0,0,0,.12); transition: transform .25s cubic-bezier(.4,0,.2,1); z-index: 61; display: flex; flex-direction: column; max-height: 80vh; }
+.picker.open { transform: translateX(-50%) translateY(0); }
+.picker-hd { padding: 18px 20px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.picker-title { font-size: 14px; font-weight: 600; color: var(--black); }
+.picker-close { width: 28px; height: 28px; border: none; background: var(--grey); border-radius: 8px; cursor: pointer; font-size: 16px; color: var(--cool-grey); display: flex; align-items: center; justify-content: center; }
+.picker-close:hover { background: #e9e9e9; color: var(--black); }
+.picker-presets { padding: 12px 12px 8px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+.preset-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: background .12s; border: none; background: transparent; width: 100%; text-align: left; font-family: var(--font-body); }
+.preset-row:hover { background: var(--grey); }
+.preset-ico { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.preset-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.preset-name { font-size: 13.5px; font-weight: 500; color: var(--black); }
+.preset-desc { font-size: 12px; color: var(--cool-grey); }
+.picker-custom { padding: 8px 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.picker-custom-label { font-size: 11px; font-weight: 600; color: var(--dark-grey); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.picker-input-row { display: flex; gap: 8px; }
+.picker-input { flex: 1; font-family: var(--font-body); font-size: 13px; color: var(--black); border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; outline: none; background: var(--grey); }
+.picker-input:focus { border-color: var(--orange); background: white; box-shadow: 0 0 0 2px var(--orange-glare); }
+.picker-add-btn { padding: 8px 16px; background: var(--black); color: white; border: none; border-radius: 8px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background .12s; }
+.picker-add-btn:hover { background: #374151; }
+.picker-add-btn:disabled { background: #e9e9e9; color: var(--dark-grey); cursor: not-allowed; }
+@keyframes nodeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.node-new { animation: nodeIn .2s ease forwards; }
+
+/* Side panel */
+.side-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 340px; background: white; border-left: 1px solid var(--border); display: flex; flex-direction: column; transform: translateX(100%); transition: transform .22s cubic-bezier(.4,0,.2,1); box-shadow: -4px 0 24px rgba(0,0,0,.06); z-index: 50; }
+.side-panel.open { transform: translateX(0); }
+.sp-hd { padding: 20px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-shrink: 0; }
+.sp-type { display: inline-block; font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--dark-grey); background: var(--grey); border-radius: 999px; padding: 2px 9px; margin-bottom: 8px; }
+.sp-title { font-family: var(--font-display); font-size: 18px; font-weight: 400; color: var(--black); line-height: 1.3; }
+.sp-close { width: 28px; height: 28px; border-radius: 7px; border: none; background: var(--grey); color: var(--cool-grey); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .12s; }
+.sp-close:hover { background: #e9e9e9; color: var(--black); }
+.sp-body { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 18px; }
+.sp-section { display: flex; flex-direction: column; gap: 6px; }
+.sp-label { font-size: 11px; font-weight: 600; color: var(--cool-grey); letter-spacing: .04em; text-transform: uppercase; font-family: var(--font-body); }
+.sp-text { font-size: 13px; color: var(--black); line-height: 1.55; }
+.sp-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.sp-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--black); line-height: 1.5; }
+.sp-list li::before { content: '✓'; color: var(--success-500); font-weight: 700; flex-shrink: 0; }
+.sp-list.cond li::before { content: '◇'; color: var(--blue); }
+.sp-list.warn li::before { content: '!'; color: var(--pend-500); font-weight: 700; }
+.sp-perm-box { background: var(--grey); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.perm-badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; padding: 3px 10px; border-radius: 999px; font-family: var(--font-body); }
+.perm-badge.manual { background: var(--cool-grey); color: white; }
+.perm-badge.suggest { background: var(--warn-500); color: var(--black); }
+.perm-badge.auto { background: var(--success-500); color: white; }
+.perm-row { display: flex; align-items: center; gap: 10px; }
+.perm-row-desc { font-size: 12.5px; color: var(--cool-grey); }
+.perm-warn { font-size: 12px; color: #b84f00; background: var(--pend-100); padding: 8px 10px; border-radius: 6px; border-left: 3px solid var(--pend-500); display: flex; gap: 8px; line-height: 1.45; }
+.thresh-row { display: flex; align-items: center; gap: 10px; background: var(--grey); border-radius: 8px; padding: 10px 14px; }
+.thresh-row label { font-size: 13px; color: var(--cool-grey); flex-shrink: 0; }
+.thresh-row input { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--black); background: white; border: 1.5px solid var(--border); border-radius: 6px; padding: 5px 10px; flex: 1; min-width: 0; outline: none; }
+.thresh-row input:focus { border-color: var(--orange); box-shadow: 0 0 0 2px var(--orange-glare); }
+</style>
+</head>
+<body data-chat="slim">
+
+<div id="nav-tooltip"></div>
+<div class="app-grid">
+
+<!-- ═══ SIDEBAR ═══════════════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="4 4 24 24" fill="none" width="22" height="22">
+        <defs><linearGradient id="wg" x1="4.5" y1="4.5" x2="31.6" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD000"/><stop offset="1" stop-color="#FF6900"/></linearGradient></defs>
+        <g transform="rotate(45,16,16)"><g style="transform-origin:16px 16px">
+          <g transform="rotate(0,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3" fill="url(#wg)"/></g>
+          <g transform="rotate(45,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3" fill="url(#wg)"/></g>
+          <g transform="rotate(90,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3" fill="url(#wg)"/></g>
+          <g transform="rotate(135,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3" fill="url(#wg)"/></g>
+          <g transform="rotate(180,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3" fill="url(#wg)"/></g>
+          <g transform="rotate(225,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3" fill="url(#wg)"/></g>
+          <g transform="rotate(270,16,16)"><rect x="14.7" y="4.5" width="2.625" height="6.6" rx="1.3" fill="url(#wg)"/></g>
+          <g transform="rotate(315,16,16)"><rect x="14.7" y="8.3" width="2.625" height="2.8" rx="1.3" fill="url(#wg)"/></g>
+        </g></g>
+        <circle cx="16" cy="16" r="3.2" fill="url(#wg)"/>
+      </svg>
+    </div>
+    <span class="brand-name">Witness</span>
+    <button class="sidebar-toggle" type="button" aria-label="Toggle sidebar">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-items">
+        <a class="nav-item" href="witness-dashboard.html" data-tip="Dashboard">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Work</div>
+      <div class="nav-items">
+        <a class="nav-item" href="witness-all_invoices.html" data-tip="All Invoices">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13z M10 1.5V4h3 M5.5 7.5h5 M5.5 10h5 M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Invoice
+          <span class="nav-badge">38</span>
+        </a>
+        <a class="nav-item" href="vendors.html" data-tip="Vendors">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item active" href="autoflow.html" data-tip="Autoflow">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Autoflow
+        </a>
+        <a class="nav-item" href="ai-activity.html" data-tip="AI Activity">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5L9.6 5.5L13.5 6L10.5 8.7L11.5 12.5L8 10.4L4.5 12.5L5.5 8.7L2.5 6L6.4 5.5L8 1.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge">24</span>
+        </a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Settings</div>
+      <div class="nav-items">
+        <a class="nav-item" href="settings.html" data-tip="Settings">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M6.5 1.5h3l.5 1.5a4.5 4.5 0 011.1.65l1.5-.5 1.5 2.6-1.2 1.1a4.6 4.6 0 010 1.3l1.2 1.1-1.5 2.6-1.5-.5A4.5 4.5 0 0110 12l-.5 1.5h-3L6 12a4.5 4.5 0 01-1.1-.65l-1.5.5L2 9.25l1.2-1.1a4.6 4.6 0 010-1.3L2 5.75l1.5-2.6 1.5.5A4.5 4.5 0 016 3l.5-1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.8" stroke="currentColor" stroke-width="1.3"/></svg>
+          Settings
+        </a>
+      </div>
+    </div>
+  </nav>
+</aside>
+
+<!-- ═══ MAIN ════════════════════════════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- Page header — matches invoice detail exactly -->
+  <div class="greeting">
+    <a href="autoflow.html" class="back-btn">← Autoflow</a>
+    <div class="greeting-title-row">
+      <h1 class="ptitle">Autoflow editor</h1>
+      <span class="gclock"><span class="gclock-dot"></span><span id="gclock-txt">Sun, Jun 7 · 10:15 PM PDT</span></span>
+      <button class="ask-witness-btn" id="askWitnessBtn" onclick="window.openWitnessChat()">
+        <span class="btn-sparkle">✦</span> Ask Witness
+      </button>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <p class="page-sub"><span class="saved-dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#16a34a;margin-right:7px;vertical-align:middle;"></span>Invoice approval flow &nbsp;·&nbsp; Saved 4 min ago &nbsp;·&nbsp; 23 runs this week &nbsp;·&nbsp; 95% successful</p>
+      <div class="ed-actions">
+        <button class="ed-btn outline">▶ Test run</button>
+        <button class="ed-btn outline">Save draft</button>
+        <button class="ed-btn solid">Deploy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div class="canvas">
+    <div class="canvas-inner">
+
+      <div class="help-banner">
+        Tap any step to configure its AI permission.
+        <strong>Green = full auto · Amber = AI suggests, you confirm · Grey = always manual.</strong>
+      </div>
+
+      <!-- Trigger -->
+      <div class="node trigger" data-node="trigger" onclick="openPanel('trigger', this)">
+        <div class="node-type">Trigger</div>
+        <div class="node-title">New invoice received</div>
+        <div class="node-desc">From Amazon Business, NetSuite ERP, or forwarded email.</div>
+      </div>
+      <div class="connector"></div>
+
+      <!-- Extract -->
+      <div class="node" data-node="extract" data-perm="auto" onclick="openPanel('extract', this)">
+        <div class="node-type">Action</div>
+        <div class="node-title">Extract invoice data</div>
+        <div class="perm-toggle" onclick="event.stopPropagation()">
+          <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+          <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+          <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+        </div>
+        <div class="node-desc">Parse PDF, identify vendor, line items, amounts, dates.</div>
+      </div>
+      <div class="connector"></div>
+
+      <!-- Match PO -->
+      <div class="node" data-node="match" data-perm="auto" onclick="openPanel('match', this)">
+        <div class="node-type">Action</div>
+        <div class="node-title">Match against PO</div>
+        <div class="perm-toggle" onclick="event.stopPropagation()">
+          <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+          <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+          <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+        </div>
+        <div class="node-desc">Validate quantities, prices, and delivery dates against PO.</div>
+      </div>
+      <!-- Branch split: connector ends at horizontal bar, condition pill overlaps it -->
+      <div style="width:100%;position:relative;flex-shrink:0">
+        <!-- Vertical connector with arrow ending exactly at horizontal bar -->
+        <div style="width:2px;height:40px;background:#e9e9e9;margin:0 auto;position:relative;">
+          <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid #e9e9e9;"></div>
+        </div>
+        <!-- Horizontal bar with condition pill centered on it -->
+        <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+          <div style="position:absolute;left:25%;right:25%;height:2px;background:#e9e9e9;top:50%;transform:translateY(-50%);"></div>
+          <div style="position:absolute;top:50%;left:25%;width:2px;height:30px;background:#e9e9e9;transform:translateY(0);"></div>
+          <div style="position:absolute;top:50%;right:25%;width:2px;height:30px;background:#e9e9e9;transform:translateY(0);"></div>
+          <button class="cond-pill" data-node="threshold" onclick="openPanel('threshold', this)" style="position:relative;z-index:1;">
+            <span>◇</span>
+            <span>If amount &gt; $5,000</span>
+          </button>
+        </div>
+        <!-- Vertical drops to branch labels -->
+        <div style="position:relative;height:40px;">
+          <div style="position:absolute;top:0;left:25%;width:2px;height:100%;background:#e9e9e9;"></div>
+          <div style="position:absolute;top:0;right:25%;width:2px;height:100%;background:#e9e9e9;"></div>
+        </div>
+      </div>
+
+      <!-- Branch -->
+      <div class="branch">
+        <div class="branch-col">
+          <div class="branch-label yes">YES</div>
+          <div class="branch-line"></div>
+          <div class="node" data-node="approve" data-perm="manual" style="width:100%" onclick="openPanel('approve', this)">
+            <div class="node-type">Action</div>
+            <div class="node-title">Send to Sarah for approval</div>
+            <div class="perm-toggle" onclick="event.stopPropagation()">
+              <button class="perm-opt active" data-perm="manual"><span class="pdot"></span>Manual</button>
+              <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+              <button class="perm-opt" data-perm="auto"><span class="pdot"></span>Auto</button>
+            </div>
+            <div class="node-desc">High-value invoices wait for human approval before payment.</div>
+          </div>
+        </div>
+        <div class="branch-col">
+          <div class="branch-label">NO</div>
+          <div class="branch-line"></div>
+          <div class="node" data-node="autopay" data-perm="auto" style="width:100%" onclick="openPanel('autopay', this)">
+            <div class="node-type">Action</div>
+            <div class="node-title">Auto-approve &amp; schedule</div>
+            <div class="perm-toggle" onclick="event.stopPropagation()">
+              <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+              <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+              <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+            </div>
+            <div class="node-desc">Approve, schedule payment per terms, update ERP.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Merge: two verticals → horizontal bar → single drop → Notify -->
+      <div style="width:100%;position:relative;height:48px;flex-shrink:0">
+        <!-- Left vertical from YES card -->
+        <div style="position:absolute;top:0;left:25%;width:2px;height:100%;background:#e9e9e9;"></div>
+        <!-- Right vertical from NO card -->
+        <div style="position:absolute;top:0;right:25%;width:2px;height:100%;background:#e9e9e9;"></div>
+        <!-- Horizontal bar at bottom joining both -->
+        <div style="position:absolute;bottom:0;left:25%;right:25%;height:2px;background:#e9e9e9;"></div>
+      </div>
+      <!-- Single connector with arrow down to Notify -->
+      <div class="connector"></div>
+
+      <!-- Notify -->
+      <div class="node" data-node="notify" data-perm="auto" onclick="openPanel('notify', this)">
+        <div class="node-type">Action</div>
+        <div class="node-title">Notify accounting</div>
+        <div class="perm-toggle" onclick="event.stopPropagation()">
+          <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+          <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+          <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+        </div>
+        <div class="node-desc">Send a summary to the accounting Slack channel; update the daily ledger.</div>
+      </div>
+
+      <button class="add-step" id="addStepBtn" onclick="openStepPicker()">
+        <span class="plus">+</span> Add a step
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CHAT PANEL ════════════════════════════════════════════════════════ -->
+<aside class="chat" id="chat"></aside>
+
+</div><!-- /app-grid -->
+
+<!-- Step picker -->
+<div class="picker-overlay" id="pickerOverlay" onclick="closeStepPicker()"></div>
+<div class="picker" id="stepPicker">
+  <div class="picker-hd">
+    <span class="picker-title">Add a step</span>
+    <button class="picker-close" onclick="closeStepPicker()">×</button>
+  </div>
+  <div class="picker-presets">
+    <button class="preset-row" onclick="addPresetStep('verify','Verify with vendor','Check vendor details or request confirmation before proceeding.','#FDF2D4')">
+      <div class="preset-ico" style="background:#FDF2D4">🔍</div>
+      <div class="preset-text"><span class="preset-name">Verify with vendor</span><span class="preset-desc">Check vendor details or request confirmation</span></div>
+    </button>
+    <button class="preset-row" onclick="addPresetStep('flag','Flag for review','Pause the flow and route to the human review queue.','#FFE0CA')">
+      <div class="preset-ico" style="background:#FFE0CA">🚩</div>
+      <div class="preset-text"><span class="preset-name">Flag for review</span><span class="preset-desc">Pause flow and route to human review queue</span></div>
+    </button>
+    <button class="preset-row" onclick="addPresetStep('erp','Update ERP record','Write a status or field update to NetSuite.','#E7F4FF')">
+      <div class="preset-ico" style="background:#E7F4FF">🗄</div>
+      <div class="preset-text"><span class="preset-name">Update ERP record</span><span class="preset-desc">Write a status or field update to NetSuite</span></div>
+    </button>
+    <button class="preset-row" onclick="addPresetStep('email','Send email','Draft and send a vendor or approver email.','#DCFCE7')">
+      <div class="preset-ico" style="background:#DCFCE7">✉</div>
+      <div class="preset-text"><span class="preset-name">Send email</span><span class="preset-desc">Draft and send a vendor or approver email</span></div>
+    </button>
+  </div>
+  <div class="picker-custom">
+    <div class="picker-custom-label">Custom step</div>
+    <div class="picker-input-row">
+      <input class="picker-input" id="customStepInput" placeholder="e.g. Check duplicate PO..." oninput="document.getElementById('customAddBtn').disabled=!this.value.trim()" />
+      <button class="picker-add-btn" id="customAddBtn" disabled onclick="addCustomStep()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- Side panel -->
+<div class="side-panel" id="sidePanel">
+  <div class="sp-hd">
+    <div>
+      <div class="sp-type" id="spType">Action</div>
+      <div class="sp-title" id="spTitle">Step details</div>
+    </div>
+    <button class="sp-close" onclick="closePanel()">×</button>
+  </div>
+  <div class="sp-body" id="spBody"></div>
+</div>
+
+<script src="witness-chat.js"></script>
+<script>
+// ── Live clock ──
+(function(){
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function pad(n){return n<10?'0'+n:n}
+  function tick(){
+    var d=new Date(),h=d.getHours(),m=pad(d.getMinutes()),ampm=h>=12?'PM':'AM',h12=h%12||12;
+    var tz;try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone;tz=tz==='America/Los_Angeles'?'PDT':tz==='America/New_York'?'EDT':tz.replace(/.*\//,'');}catch(e){tz='Local';}
+    var el=document.getElementById('gclock-txt');
+    if(el)el.textContent=days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate()+' · '+h12+':'+m+' '+ampm+' '+(tz.length<8?tz:'Local');
+  }
+  tick();setInterval(tick,1000);
+})();
+
+// ── Sidebar collapse + tooltips ──
+document.addEventListener('DOMContentLoaded', function(){
+  var sb=document.querySelector('.sidebar');
+  var btn=document.querySelector('.sidebar-toggle');
+  if(sb&&btn){
+    btn.addEventListener('click',function(){
+      sb.classList.toggle('collapsed');
+      localStorage.setItem('witness-sidebar',sb.classList.contains('collapsed')?'collapsed':'open');
+    });
+  }
+  var tooltip=document.getElementById('nav-tooltip');
+  if(tooltip){
+    function showTip(item){
+      if(!sb||!sb.classList.contains('collapsed'))return;
+      var label=item.getAttribute('data-tip');if(!label)return;
+      var rect=item.getBoundingClientRect();
+      tooltip.textContent=label;
+      tooltip.style.top=(rect.top+rect.height/2-12)+'px';
+      tooltip.style.left=(rect.right+10)+'px';
+      tooltip.classList.add('visible');
+    }
+    function hideTip(){tooltip.classList.remove('visible');}
+    document.querySelectorAll('.nav-item[data-tip]').forEach(function(item){
+      item.addEventListener('mouseenter',function(){showTip(item);});
+      item.addEventListener('mouseleave',hideTip);
+      item.addEventListener('click',hideTip);
+    });
+  }
+});
+
+// ── Node data ──
+const NODE_DATA = {
+  trigger: { type:'Trigger', title:'New invoice received', desc:'Fires whenever a new invoice arrives from any connected source: Amazon Business purchase portal, NetSuite AP module, or a forwarded email to the AP inbox.', sources:['Amazon Business','NetSuite ERP','AP email (Gmail)'] },
+  extract: { type:'Action', title:'Extract invoice data', desc:'AI parses the invoice document and extracts structured data: vendor name, line items, amounts, tax, payment terms, and due date.', aiCanDo:['Read PDF or image invoices','Identify all line items and totals','Detect payment terms (Net 30, 2/10 etc.)','Flag missing required fields'] },
+  match: { type:'Action', title:'Match against PO', desc:'Cross-references the extracted invoice against the corresponding purchase order in NetSuite. Checks quantities, unit prices, and delivery dates.', conditions:['Invoice total within 2% of PO total','All line items present in PO','Delivery date within PO window'], aiCanDo:['Pull matching PO from NetSuite','Run field-by-field comparison','Flag variances above tolerance','Suggest override reason if needed'] },
+  threshold: { type:'Condition', title:'If amount > $5,000', desc:'Routes high-value invoices to human approval and auto-processes smaller ones within your pre-authorized limit.', threshold:true, conditions:['Amount exceeds threshold: manual approval required','Amount within threshold: auto-approved and scheduled'] },
+  approve: { type:'Action', title:'Send to Sarah for approval', desc:'Holds the invoice and sends Sarah a notification with the full context: invoice, matched PO, any variances, and a one-tap approve/reject action.', aiCanDo:['Draft the approval notification','Surface the relevant PO and GRN','Highlight any variances to review','Send reminder after 24h if no response'], fallback:'If Sarah does not respond in 48h, escalate to the finance team lead.' },
+  autopay: { type:'Action', title:'Auto-approve & schedule', desc:'Automatically approves the invoice, books it in NetSuite, and schedules payment per the vendor terms (e.g. Net 30 or early-pay discount window).', aiCanDo:['Approve invoice in NetSuite','Calculate optimal payment date','Check for early-pay discount (2/10)','Add to next payment batch'] },
+  notify: { type:'Action', title:'Notify accounting', desc:'Sends a processing summary to the accounting Slack channel and updates the daily AP ledger in NetSuite.', aiCanDo:['Compose a Slack message','Update the daily ledger spreadsheet','Tag the relevant accounting owner'] },
+};
+
+const PERM_LABEL = { manual:'Always manual — you do this step yourself', suggest:'AI suggests, you confirm before it runs', auto:'Full auto — AI runs end-to-end, logged in history' };
+const PERM_WARN = { manual:null, suggest:'AI will draft this step and wait for your one-tap confirmation.', auto:'AI runs this step without asking. Results appear in the run history.' };
+
+let currentEl = null;
+
+function openPanel(id, el) {
+  const data = NODE_DATA[id]; if (!data) return;
+  if (currentEl) currentEl.classList.remove('selected');
+  el.classList.add('selected'); currentEl = el;
+  const perm = el.dataset.perm;
+  document.getElementById('spType').textContent = data.type;
+  document.getElementById('spTitle').textContent = data.title;
+  let html = `<div class="sp-section"><div class="sp-label">What this step does</div><div class="sp-text">${data.desc}</div></div>`;
+  if (data.sources) html += `<div class="sp-section"><div class="sp-label">Sources</div><ul class="sp-list">${data.sources.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+  if (data.type==='Action'&&perm) html += `<div class="sp-section"><div class="sp-label">AI permission</div><div class="sp-perm-box"><div class="perm-row"><span class="perm-badge ${perm}">${perm}</span><span class="perm-row-desc">${PERM_LABEL[perm]}</span></div>${PERM_WARN[perm]?`<div class="perm-warn">⚠ ${PERM_WARN[perm]}</div>`:''}</div></div>`;
+  if (data.aiCanDo) html += `<div class="sp-section"><div class="sp-label">When AI handles this, it can</div><ul class="sp-list">${data.aiCanDo.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+  if (data.conditions) html += `<div class="sp-section"><div class="sp-label">Match rules</div><ul class="sp-list cond">${data.conditions.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+  if (data.threshold) html += `<div class="sp-section"><div class="sp-label">Threshold</div><div class="thresh-row"><label>Amount &gt;</label><input type="text" value="$5,000" /></div></div>`;
+  if (data.fallback) html += `<div class="sp-section"><div class="sp-label">If AI is unsure (fallback)</div><ul class="sp-list warn"><li>${data.fallback}</li></ul></div>`;
+  document.getElementById('spBody').innerHTML = html;
+  document.getElementById('sidePanel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('sidePanel').classList.remove('open');
+  if (currentEl) { currentEl.classList.remove('selected'); currentEl = null; }
+}
+
+document.addEventListener('keydown', e => { if (e.key==='Escape'){closePanel();closeStepPicker();} });
+
+// ── Step picker ──
+let stepCounter = 0;
+function openStepPicker() {
+  document.getElementById('pickerOverlay').classList.add('open');
+  document.getElementById('stepPicker').classList.add('open');
+  document.getElementById('customStepInput').value='';
+  document.getElementById('customAddBtn').disabled=true;
+  setTimeout(()=>document.getElementById('customStepInput').focus(),260);
+}
+function closeStepPicker() {
+  document.getElementById('pickerOverlay').classList.remove('open');
+  document.getElementById('stepPicker').classList.remove('open');
+}
+function insertStep(title, desc) {
+  closeStepPicker(); stepCounter++;
+  const id='custom_'+stepCounter;
+  NODE_DATA[id]={type:'Action',title,desc};
+  const addBtn=document.getElementById('addStepBtn');
+  const conn=document.createElement('div'); conn.className='connector';
+  const node=document.createElement('div');
+  node.className='node node-new'; node.dataset.node=id; node.dataset.perm='suggest';
+  node.innerHTML=`<div class="node-type">Action</div><div class="node-title">${title}</div><div class="perm-toggle" onclick="event.stopPropagation()"><button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button><button class="perm-opt active" data-perm="suggest"><span class="pdot"></span>Suggest</button><button class="perm-opt" data-perm="auto"><span class="pdot"></span>Auto</button></div><div class="node-desc">${desc}</div>`;
+  node.addEventListener('click',()=>openPanel(id,node));
+  node.querySelectorAll('.perm-opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const newPerm=btn.dataset.perm;
+      node.querySelectorAll('.perm-opt').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active'); node.dataset.perm=newPerm;
+      if(currentEl===node)openPanel(id,node);
+    });
+  });
+  addBtn.before(conn); addBtn.before(node);
+  openPanel(id,node);
+}
+function addPresetStep(key,title,desc){insertStep(title,desc);}
+function addCustomStep(){const v=document.getElementById('customStepInput').value.trim();if(!v)return;insertStep(v,'Custom step.');}
+
+// ── Permission toggles ──
+document.querySelectorAll('.perm-toggle').forEach(toggle=>{
+  toggle.querySelectorAll('.perm-opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const node=toggle.closest('.node');
+      const newPerm=btn.dataset.perm;
+      toggle.querySelectorAll('.perm-opt').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active'); node.dataset.perm=newPerm;
+      if(currentEl===node)openPanel(node.dataset.node,node);
+    });
+  });
+});
+</script>
+</body>
+</html>
