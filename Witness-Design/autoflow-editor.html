@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Witness – Autoflow Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ── Design tokens ── */
+:root {
+  --orange:#FF5C1B; --orange-glare:#FFF5F1; --orange-touch:#FFE8DF;
+  --blue:#155DFC; --blue-sky:#E7F4FF;
+  --grey:#F4F4F4; --lotion:#E9E9E9;
+  --dark-grey:#ADADAD; --cool-grey:#45556C;
+  --black:#120B0B; --white:#FFFFFF;
+  --success-100:#DCFCE7; --success-500:#16A34A;
+  --warn-100:#FDF2D4;   --warn-500:#E9B44C;
+  --pend-100:#FFE0CA;   --pend-500:#FF6900;
+  --err-100:#FEE2E2;    --err-500:#DC2626;
+  --border:#e9e9e9;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --sidebar-w:258px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--font-body);color:var(--black);background:var(--white);-webkit-font-smoothing:antialiased}
+
+/* ── App grid ── */
+.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr;height:100vh;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{background:#f7f7f7;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;height:100vh}
+.sidebar-brand{padding:20px 24px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.brand-mark{width:30px;height:30px;background:var(--black);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-mark svg{display:block}
+.brand-name{font-family:var(--font-display);font-size:17px;font-weight:500;letter-spacing:-0.02em}
+.sidebar-nav{padding:20px 12px;display:flex;flex-direction:column;gap:20px;flex:1}
+.nav-group{display:flex;flex-direction:column;gap:4px}
+.nav-label{font-size:11px;font-weight:600;color:var(--dark-grey);letter-spacing:0.06em;text-transform:uppercase;padding:4px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--cool-grey);text-decoration:none;cursor:pointer;transition:background .12s,color .12s}
+.nav-item:hover{background:rgba(0,0,0,0.04);color:var(--black)}
+.nav-item.active{background:var(--white);color:var(--black);box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--black);color:var(--white)}
+.nav-badge.ai{background:var(--pend-500)}
+
+/* ── Main pane ── */
+.main{display:flex;flex-direction:column;height:100vh;overflow:hidden;min-width:0}
+
+/* ── Topbar ── */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:14px 28px;flex-shrink:0}
+.tb-left{display:flex;flex-direction:column;gap:3px}
+.tb-date{font-size:13.5px;font-weight:500;color:var(--black);letter-spacing:-0.01em}
+.breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--dark-grey)}
+.breadcrumb a{color:var(--cool-grey);text-decoration:none;font-weight:500}
+.breadcrumb a:hover{color:var(--black)}
+.bc-sep{opacity:.5}
+.bc-cur{color:var(--black);font-weight:500}
+.tb-right{display:flex;align-items:center;gap:20px}
+.health-chip{display:flex;align-items:center;gap:7px;background:var(--success-100);border-radius:8px;padding:5px 12px}
+.health-chip svg{flex-shrink:0}
+.health-chip span{font-size:13px;font-weight:500;color:var(--success-500);white-space:nowrap}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--black);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+
+/* ── Editor toolbar ── */
+.ed-toolbar{background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:18px 28px;gap:20px;flex-shrink:0}
+.ed-title-block{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ed-title{font-family:var(--font-display);font-size:26px;font-weight:400;color:var(--black);border:none;outline:none;background:transparent;padding:2px 4px;margin-left:-4px;border-radius:6px}
+.ed-title:hover{background:var(--grey)}
+.ed-title:focus{background:var(--orange-glare);box-shadow:0 0 0 1.5px var(--orange)}
+.ed-meta{font-size:12px;color:var(--cool-grey);display:flex;align-items:center;gap:7px}
+.saved-dot{width:6px;height:6px;border-radius:50%;background:var(--success-500);flex-shrink:0}
+.ed-actions{display:flex;gap:8px;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--black);transition:background .12s}
+.btn:hover{background:var(--grey)}
+.btn.solid{background:var(--black);color:var(--white);border-color:var(--black)}
+.btn.solid:hover{background:#2a2222}
+
+/* ── Canvas ── */
+.canvas{flex:1;overflow:auto;padding:48px 28px 80px;background:var(--white);display:flex;flex-direction:column;align-items:center}
+.canvas-inner{width:100%;max-width:640px;display:flex;flex-direction:column;align-items:center}
+
+/* ── Help banner ── */
+.help-banner{width:100%;background:var(--blue-sky);border:1px solid #bfdbff;border-radius:10px;padding:13px 18px;font-size:13px;color:var(--blue);line-height:1.5;margin-bottom:36px}
+
+/* ── Connector ── */
+.connector{width:2px;height:28px;background:var(--lotion);margin:0 auto;position:relative;flex-shrink:0}
+.connector::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid var(--lotion)}
+
+/* ── Node ── */
+.node{background:var(--white);border:1.5px solid var(--border);border-left:4px solid var(--cool-grey);border-radius:12px;padding:18px 20px;width:100%;cursor:pointer;transition:box-shadow .15s,transform .12s;position:relative}
+.node:hover{box-shadow:0 4px 16px rgba(0,0,0,0.07);transform:translateY(-1px)}
+.node.selected{box-shadow:0 0 0 2px var(--orange),0 6px 20px rgba(255,92,27,.12)}
+.node[data-perm="manual"]{border-left-color:var(--cool-grey)}
+.node[data-perm="suggest"]{border-left-color:var(--warn-500)}
+.node[data-perm="auto"]{border-left-color:var(--success-500)}
+.node.trigger{border-left-color:var(--orange);background:linear-gradient(180deg,var(--orange-glare) 0%,var(--white) 70%)}
+.node-type{display:inline-block;font-family:var(--font-mono);font-size:9.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--dark-grey);background:var(--grey);border-radius:999px;padding:2px 9px;margin-bottom:6px}
+.node.trigger .node-type{background:var(--orange-touch);color:var(--orange)}
+.node-title{font-size:15px;font-weight:600;color:var(--black);letter-spacing:-0.01em;line-height:1.3;margin-bottom:0}
+.node-desc{font-size:12.5px;color:var(--cool-grey);line-height:1.55;margin-top:10px}
+
+/* ── Permission toggle ── */
+.perm-toggle{display:flex;background:var(--grey);border-radius:999px;padding:3px;gap:2px;margin:12px 0 0;width:100%}
+.perm-opt{flex:1;padding:5px 8px;border-radius:999px;border:none;background:transparent;font-family:var(--font-body);font-size:12px;font-weight:500;color:var(--cool-grey);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+.perm-opt:hover{color:var(--black)}
+.perm-opt.active{background:var(--white);color:var(--black);box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+.perm-opt.active[data-perm="manual"]{background:var(--cool-grey);color:var(--white)}
+.perm-opt.active[data-perm="suggest"]{background:var(--warn-500);color:var(--black)}
+.perm-opt.active[data-perm="auto"]{background:var(--success-500);color:var(--white)}
+.pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.perm-opt[data-perm="manual"] .pdot{background:var(--cool-grey)}
+.perm-opt[data-perm="suggest"] .pdot{background:var(--warn-500)}
+.perm-opt[data-perm="auto"] .pdot{background:var(--success-500)}
+.perm-opt.active .pdot{background:rgba(255,255,255,.6)}
+.perm-opt.active[data-perm="suggest"] .pdot{background:rgba(0,0,0,.35)}
+
+/* ── Condition ── */
+.condition{display:flex;justify-content:center;margin:0}
+.cond-pill{display:inline-flex;align-items:center;gap:9px;background:var(--blue-sky);color:var(--blue);border:1.5px solid rgba(21,93,252,.3);border-radius:999px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.cond-pill:hover{background:var(--white);box-shadow:0 2px 8px rgba(21,93,252,.15)}
+.cond-pill.selected{background:var(--white);box-shadow:0 0 0 2px var(--blue),0 4px 12px rgba(21,93,252,.15)}
+
+/* ── Branch ── */
+.branch{display:grid;grid-template-columns:1fr 1fr;gap:28px;width:100%;margin:0}
+.branch-col{display:flex;flex-direction:column;align-items:center}
+.branch-line{width:2px;height:28px;background:var(--lotion);margin:0 auto}
+.branch-label{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.08em;padding:3px 12px;border-radius:999px;border:1.5px solid var(--lotion);background:var(--white);color:var(--cool-grey);margin:6px 0}
+.branch-label.yes{background:var(--success-100);border-color:var(--success-100);color:var(--success-500)}
+
+/* ── Merge ── */
+.merge-wrap{width:100%;display:flex;flex-direction:column;align-items:center;height:40px;position:relative}
+.merge-h{position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--lotion)}
+.merge-l{position:absolute;top:0;left:25%;width:2px;height:100%;background:var(--lotion)}
+.merge-r{position:absolute;top:0;right:25%;width:2px;height:100%;background:var(--lotion)}
+.merge-c{position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:100%;background:var(--lotion)}
+
+/* ── Add step ── */
+.add-step{display:inline-flex;align-items:center;gap:7px;margin-top:28px;padding:8px 18px;border:1.5px dashed var(--lotion);border-radius:999px;font-size:12px;font-weight:500;color:var(--cool-grey);cursor:pointer;background:var(--white);transition:all .15s}
+.add-step:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-glare)}
+.add-step .plus{width:16px;height:16px;border-radius:50%;background:var(--grey);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;transition:background .15s,color .15s}
+.add-step:hover .plus{background:var(--orange);color:var(--white)}
+
+/* ── Step picker ── */
+.picker-overlay{position:fixed;inset:0;z-index:60;display:none}
+.picker-overlay.open{display:block}
+.picker{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:480px;max-width:calc(100vw - 48px);background:var(--white);border:1px solid var(--border);border-radius:16px 16px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.12);transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:61;display:flex;flex-direction:column;max-height:80vh}
+.picker.open{transform:translateX(-50%) translateY(0)}
+.picker-hd{padding:18px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.picker-title{font-size:14px;font-weight:600;color:var(--black)}
+.picker-close{width:28px;height:28px;border:none;background:var(--grey);border-radius:8px;cursor:pointer;font-size:16px;color:var(--cool-grey);display:flex;align-items:center;justify-content:center}
+.picker-close:hover{background:var(--lotion);color:var(--black)}
+.picker-presets{padding:12px 12px 8px;display:flex;flex-direction:column;gap:4px;overflow-y:auto}
+.preset-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .12s;border:none;background:transparent;width:100%;text-align:left}
+.preset-row:hover{background:var(--grey)}
+.preset-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.preset-text{display:flex;flex-direction:column;gap:1px;min-width:0}
+.preset-name{font-size:13.5px;font-weight:500;color:var(--black)}
+.preset-desc{font-size:12px;color:var(--cool-grey)}
+.picker-custom{padding:8px 12px 16px;border-top:1px solid var(--border);flex-shrink:0}
+.picker-custom-label{font-size:11px;font-weight:600;color:var(--dark-grey);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.picker-input-row{display:flex;gap:8px}
+.picker-input{flex:1;font-family:var(--font-body);font-size:13px;color:var(--black);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;outline:none;background:var(--grey)}
+.picker-input:focus{border-color:var(--orange);background:var(--white);box-shadow:0 0 0 2px var(--orange-glare)}
+.picker-add-btn{padding:8px 16px;background:var(--black);color:var(--white);border:none;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s}
+.picker-add-btn:hover{background:#2a2222}
+.picker-add-btn:disabled{background:var(--lotion);color:var(--dark-grey);cursor:not-allowed}
+
+/* new node insert animation */
+@keyframes nodeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.node-new{animation:nodeIn .2s ease forwards}
+
+/* ── Side panel ── */
+.side-panel{position:fixed;top:0;right:0;bottom:0;width:360px;background:var(--white);border-left:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1);box-shadow:-4px 0 24px rgba(0,0,0,.05);z-index:50}
+.side-panel.open{transform:translateX(0)}
+.sp-hd{padding:22px 22px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0}
+.sp-type{display:inline-block;font-family:var(--font-mono);font-size:9.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--dark-grey);background:var(--grey);border-radius:999px;padding:2px 9px;margin-bottom:8px}
+.sp-title{font-family:var(--font-display);font-size:20px;font-weight:400;color:var(--black);line-height:1.3}
+.sp-close{width:30px;height:30px;border-radius:8px;border:none;background:var(--grey);color:var(--cool-grey);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s}
+.sp-close:hover{background:var(--lotion);color:var(--black)}
+.sp-body{flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:20px}
+.sp-section{display:flex;flex-direction:column;gap:7px}
+.sp-label{font-size:11px;font-weight:600;color:var(--cool-grey);letter-spacing:.04em;text-transform:uppercase}
+.sp-text{font-size:13px;color:var(--black);line-height:1.55}
+.sp-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.sp-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--black);line-height:1.5}
+.sp-list li::before{content:'✓';color:var(--success-500);font-weight:700;flex-shrink:0}
+.sp-list.cond li::before{content:'◇';color:var(--blue)}
+.sp-list.warn li::before{content:'!';color:var(--pend-500);font-weight:700}
+.sp-perm-box{background:var(--grey);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.perm-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 10px;border-radius:999px}
+.perm-badge.manual{background:var(--cool-grey);color:var(--white)}
+.perm-badge.suggest{background:var(--warn-500);color:var(--black)}
+.perm-badge.auto{background:var(--success-500);color:var(--white)}
+.perm-row{display:flex;align-items:center;gap:10px}
+.perm-row-desc{font-size:12.5px;color:var(--cool-grey)}
+.perm-warn{font-size:12px;color:#b84f00;background:var(--pend-100);padding:8px 10px;border-radius:6px;border-left:3px solid var(--pend-500);display:flex;gap:8px;line-height:1.45}
+.thresh-row{display:flex;align-items:center;gap:10px;background:var(--grey);border-radius:8px;padding:10px 14px}
+.thresh-row label{font-size:13px;color:var(--cool-grey);flex-shrink:0}
+.thresh-row input{font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--black);background:var(--white);border:1.5px solid var(--border);border-radius:6px;padding:5px 10px;flex:1;min-width:0;outline:none}
+.thresh-row input:focus{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-glare)}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark">
+        <svg width="18" height="18" viewbox="0 0 18 18" fill="none">
+          <path d="M9 2L11.2 7.2L16.5 7.6L12.5 11L13.8 16.2L9 13.3L4.2 16.2L5.5 11L1.5 7.6L6.8 7.2L9 2Z" fill="white" stroke="white" stroke-width="0.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="brand-name">Witness</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-label">Main</div>
+        <a class="nav-item" href="witness-dashboard-final_v2.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 01-1 1H3a1 1 0 01-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Dashboard
+        </a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Work</div>
+        <a class="nav-item" href="all-invoices-pages-grouped_option 2.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 1.5h7L13 4v10.5H3.5v-13zM10 1.5V4h3M5.5 7.5h5M5.5 10h5M5.5 12.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Invoice
+          <span class="nav-badge">26</span>
+        </a>
+        <a class="nav-item" href="vendors.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M2 6.5h12M2 6.5L3 3h10l1 3.5M2 6.5v6.5h12V6.5M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Vendors
+          <span class="nav-badge">8</span>
+        </a>
+        <a class="nav-item active" href="auto-workflows.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M9 1.5L3 9h4l-1.5 5.5L12 7H8L9 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Autoflow
+        </a>
+        <a class="nav-item" href="ai-activity.html">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.6 4 4.4.4-3 2.7 1 4.3L8 10.4l-4 2.5 1-4.3-3-2.7 4.4-.4L8 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          AI Activity
+          <span class="nav-badge ai">24</span>
+        </a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Settings</div>
+        <a class="nav-item" href="settings.html">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v2M8 12.5v2M14.5 8h-2M3.5 8h-2M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4M12.6 12.6l-1.4-1.4M4.8 4.8L3.4 3.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Settings
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="tb-left">
+        <div class="tb-date">Monday &nbsp;·&nbsp; April 28 &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; 08:42 AM</div>
+        <nav class="breadcrumb">
+          <a href="auto-workflows.html">Autoflows</a>
+          <span class="bc-sep">›</span>
+          <span class="bc-cur">Invoice approval flow</span>
+        </nav>
+      </div>
+      <div class="tb-right">
+        <div class="health-chip">
+          <svg width="14" height="14" viewbox="0 0 14 14" fill="none">
+            <path d="M2 7.5l3 3 7-7" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>All systems healthy</span>
+        </div>
+        <div class="avatar">SC</div>
+      </div>
+    </header>
+
+    <!-- Editor toolbar -->
+    <div class="ed-toolbar">
+      <div class="ed-title-block">
+        <input class="ed-title" value="Invoice approval flow" spellcheck="false" />
+        <div class="ed-meta">
+          <span class="saved-dot"></span>
+          <span>Saved 4 minutes ago &nbsp;·&nbsp; 23 runs this week &nbsp;·&nbsp; 95% successful</span>
+        </div>
+      </div>
+      <div class="ed-actions">
+        <button class="btn">▶ Test run</button>
+        <button class="btn">Save draft</button>
+        <button class="btn solid">Deploy</button>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas">
+      <div class="canvas-inner">
+
+        <!-- Help banner -->
+        <div class="help-banner">
+          Tap any step to configure its AI permission.&nbsp;
+          <strong>Green = full auto &nbsp;·&nbsp; Amber = AI suggests, you confirm &nbsp;·&nbsp; Grey = always manual.</strong>
+        </div>
+
+        <!-- Trigger -->
+        <div class="node trigger" data-node="trigger" onclick="openPanel('trigger', this)">
+          <div class="node-type">Trigger</div>
+          <div class="node-title">New invoice received</div>
+          <div class="node-desc">From Amazon Business, NetSuite ERP, or forwarded email.</div>
+        </div>
+
+        <div class="connector"></div>
+
+        <!-- Action: Extract -->
+        <div class="node" data-node="extract" data-perm="auto" onclick="openPanel('extract', this)">
+          <div class="node-type">Action</div>
+          <div class="node-title">Extract invoice data</div>
+          <div class="perm-toggle" onclick="event.stopPropagation()">
+            <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+            <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+            <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+          </div>
+          <div class="node-desc">Parse PDF, identify vendor, line items, amounts, dates.</div>
+        </div>
+
+        <div class="connector"></div>
+
+        <!-- Action: Match PO -->
+        <div class="node" data-node="match" data-perm="auto" onclick="openPanel('match', this)">
+          <div class="node-type">Action</div>
+          <div class="node-title">Match against PO</div>
+          <div class="perm-toggle" onclick="event.stopPropagation()">
+            <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+            <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+            <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+          </div>
+          <div class="node-desc">Validate quantities, prices, and delivery dates against PO.</div>
+        </div>
+
+        <div class="connector"></div>
+
+        <!-- Condition -->
+        <div class="condition">
+          <button class="cond-pill" data-node="threshold" onclick="openPanel('threshold', this)">
+            <span>◇</span>
+            <span>If amount &gt; $5,000</span>
+          </button>
+        </div>
+
+        <!-- Branch lines coming down from condition -->
+        <div style="width:100%;position:relative;height:32px;flex-shrink:0">
+          <div style="position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--lotion)"></div>
+          <div style="position:absolute;top:0;left:25%;width:2px;height:100%;background:var(--lotion)"></div>
+          <div style="position:absolute;top:0;right:25%;width:2px;height:100%;background:var(--lotion)"></div>
+        </div>
+
+        <!-- Branch -->
+        <div class="branch">
+          <!-- YES branch -->
+          <div class="branch-col">
+            <div class="branch-label yes">YES</div>
+            <div class="branch-line"></div>
+            <div class="node" data-node="approve" data-perm="manual" style="width:100%" onclick="openPanel('approve', this)">
+              <div class="node-type">Action</div>
+              <div class="node-title">Send to Sarah for approval</div>
+              <div class="perm-toggle" onclick="event.stopPropagation()">
+                <button class="perm-opt active" data-perm="manual"><span class="pdot"></span>Manual</button>
+                <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+                <button class="perm-opt" data-perm="auto"><span class="pdot"></span>Auto</button>
+              </div>
+              <div class="node-desc">High-value invoices wait for human approval before payment.</div>
+            </div>
+          </div>
+          <!-- NO branch -->
+          <div class="branch-col">
+            <div class="branch-label no">NO</div>
+            <div class="branch-line"></div>
+            <div class="node" data-node="autopay" data-perm="auto" style="width:100%" onclick="openPanel('autopay', this)">
+              <div class="node-type">Action</div>
+              <div class="node-title">Auto-approve &amp; schedule</div>
+              <div class="perm-toggle" onclick="event.stopPropagation()">
+                <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+                <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+                <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+              </div>
+              <div class="node-desc">Approve, schedule payment per terms, update ERP.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Merge -->
+        <div style="width:100%;position:relative;height:36px;flex-shrink:0">
+          <div style="position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--lotion)"></div>
+          <div style="position:absolute;top:0;left:25%;width:2px;height:100%;background:var(--lotion)"></div>
+          <div style="position:absolute;top:0;right:25%;width:2px;height:100%;background:var(--lotion)"></div>
+          <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:100%;background:var(--lotion)"></div>
+        </div>
+
+        <!-- Final action -->
+        <div class="node" data-node="notify" data-perm="auto" onclick="openPanel('notify', this)">
+          <div class="node-type">Action</div>
+          <div class="node-title">Notify accounting</div>
+          <div class="perm-toggle" onclick="event.stopPropagation()">
+            <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+            <button class="perm-opt" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+            <button class="perm-opt active" data-perm="auto"><span class="pdot"></span>Auto</button>
+          </div>
+          <div class="node-desc">Send a summary to the accounting Slack channel; update the daily ledger.</div>
+        </div>
+
+        <button class="add-step" id="addStepBtn" onclick="openStepPicker()">
+          <span class="plus">+</span> Add a step
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Step picker -->
+<div class="picker-overlay" id="pickerOverlay" onclick="closeStepPicker()"></div>
+<div class="picker" id="stepPicker">
+  <div class="picker-hd">
+    <span class="picker-title">Add a step</span>
+    <button class="picker-close" onclick="closeStepPicker()">×</button>
+  </div>
+  <div class="picker-presets">
+    <button class="preset-row" onclick="addPresetStep('verify','Verify with vendor','Check vendor details or request confirmation before proceeding.','#FDF2D4')">
+      <div class="preset-ico" style="background:#FDF2D4">🔍</div>
+      <div class="preset-text"><span class="preset-name">Verify with vendor</span><span class="preset-desc">Check vendor details or request confirmation</span></div>
+    </button>
+    <button class="preset-row" onclick="addPresetStep('flag','Flag for review','Pause the flow and route to the human review queue.','#FFE0CA')">
+      <div class="preset-ico" style="background:#FFE0CA">🚩</div>
+      <div class="preset-text"><span class="preset-name">Flag for review</span><span class="preset-desc">Pause flow and route to human review queue</span></div>
+    </button>
+    <button class="preset-row" onclick="addPresetStep('erp','Update ERP record','Write a status or field update to NetSuite.','#E7F4FF')">
+      <div class="preset-ico" style="background:#E7F4FF">🗃️</div>
+      <div class="preset-text"><span class="preset-name">Update ERP record</span><span class="preset-desc">Write a status or field update to NetSuite</span></div>
+    </button>
+    <button class="preset-row" onclick="addPresetStep('email','Send email notification','Compose and send an email to a recipient or team.','#DCFCE7')">
+      <div class="preset-ico" style="background:#DCFCE7">✉️</div>
+      <div class="preset-text"><span class="preset-name">Send email notification</span><span class="preset-desc">Compose and send an email to a recipient or team</span></div>
+    </button>
+    <button class="preset-row" onclick="addPresetStep('log','Log to ledger','Append a record entry to the accounting ledger.','#F4F4F4')">
+      <div class="preset-ico" style="background:#F4F4F4">📋</div>
+      <div class="preset-text"><span class="preset-name">Log to ledger</span><span class="preset-desc">Append a record entry to the accounting ledger</span></div>
+    </button>
+  </div>
+  <div class="picker-custom">
+    <div class="picker-custom-label">Or describe your own step</div>
+    <div class="picker-input-row">
+      <input class="picker-input" id="customStepInput" placeholder="e.g. Archive to SharePoint folder…" oninput="document.getElementById('customAddBtn').disabled=!this.value.trim()" onkeydown="if(event.key==='Enter')addCustomStep()" />
+      <button class="picker-add-btn" id="customAddBtn" disabled onclick="addCustomStep()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- Side panel -->
+<aside class="side-panel" id="sidePanel">
+  <div class="sp-hd">
+    <div>
+      <span class="sp-type" id="spType"></span>
+      <h2 class="sp-title" id="spTitle"></h2>
+    </div>
+    <button class="sp-close" onclick="closePanel()">×</button>
+  </div>
+  <div class="sp-body" id="spBody"></div>
+</aside>
+
+<script>
+const NODE_DATA = {
+  trigger: {
+    type: 'Trigger',
+    title: 'New invoice received',
+    desc: 'Triggered whenever a new invoice arrives. This is the entry point — every invoice follows the steps below.',
+    sources: ['Amazon Business inbox', 'NetSuite ERP webhook', 'Forwarded email (ap@witness.co)'],
+  },
+  extract: {
+    type: 'Action',
+    title: 'Extract invoice data',
+    desc: 'Witness AI parses the invoice file and pulls out structured data: vendor, line items, amounts, due dates, and PO references.',
+    aiCanDo: ['Read PDF and email attachments', 'Identify line items via OCR', 'Match vendor name against your directory', 'Detect currency and tax info'],
+    fallback: 'If extraction confidence is below 80% on any field, route to "Send to Sarah" for manual review.',
+  },
+  match: {
+    type: 'Action',
+    title: 'Match against PO',
+    desc: 'Match invoice line items to the corresponding purchase order. Validates quantities, unit prices, and delivery dates.',
+    conditions: ['Quantity match (exact)', 'Unit price within ±2% of PO', 'Delivery date within PO window'],
+    fallback: 'On any mismatch, escalate to the human-approval branch regardless of amount.',
+  },
+  threshold: {
+    type: 'Condition',
+    title: 'Amount > $5,000',
+    desc: 'A branching decision based on the invoice total. High-value invoices route to a human reviewer; low-value clean invoices auto-approve.',
+    threshold: true,
+  },
+  approve: {
+    type: 'Action',
+    title: 'Send to Sarah for approval',
+    desc: 'Notify Sarah in the Approvals queue. She must approve, reject, or request more info before payment is scheduled.',
+    aiCanDo: ['Pre-fill the approval card with extracted data', 'Surface similar past approvals', 'Highlight unusual line items'],
+    fallback: 'If Sarah is OOO or has not responded in 4 hours, escalate to her backup approver.',
+  },
+  autopay: {
+    type: 'Action',
+    title: 'Auto-approve & schedule payment',
+    desc: 'Mark the invoice as approved, schedule payment per vendor terms (Net 30 default), and update NetSuite ERP.',
+    aiCanDo: ['Approve the invoice', 'Schedule payment in accounts payable', 'Update NetSuite status', 'Send confirmation email to vendor'],
+    fallback: 'If ERP write fails, retry 3× then escalate to Sarah with error details.',
+  },
+  notify: {
+    type: 'Action',
+    title: 'Notify accounting',
+    desc: 'Send a summary of the processed invoice to the accounting Slack channel and update the daily ledger.',
+    aiCanDo: ['Compose a Slack message', 'Update the daily ledger spreadsheet', 'Tag the relevant accounting owner'],
+  },
+};
+
+const PERM_LABEL = {
+  manual: 'Always manual — you do this step yourself',
+  suggest: 'AI suggests, you confirm before it runs',
+  auto: 'Full auto — AI runs end-to-end, logged in history',
+};
+
+const PERM_WARN = {
+  manual: null,
+  suggest: 'AI will draft this step and wait for your one-tap confirmation.',
+  auto: 'AI runs this step without asking. Results appear in the run history.',
+};
+
+let currentEl = null;
+
+function openPanel(id, el) {
+  const data = NODE_DATA[id];
+  if (!data) return;
+
+  // Deselect previous
+  if (currentEl) currentEl.classList.remove('selected');
+  el.classList.add('selected');
+  currentEl = el;
+
+  const perm = el.dataset.perm;
+
+  document.getElementById('spType').textContent = data.type;
+  document.getElementById('spTitle').textContent = data.title;
+
+  let html = `<div class="sp-section"><div class="sp-label">What this step does</div><div class="sp-text">${data.desc}</div></div>`;
+
+  if (data.sources) {
+    html += `<div class="sp-section"><div class="sp-label">Sources</div><ul class="sp-list">${data.sources.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+  }
+
+  if (data.type === 'Action' && perm) {
+    html += `
+      <div class="sp-section">
+        <div class="sp-label">AI permission</div>
+        <div class="sp-perm-box">
+          <div class="perm-row">
+            <span class="perm-badge ${perm}">${perm}</span>
+            <span class="perm-row-desc">${PERM_LABEL[perm]}</span>
+          </div>
+          ${PERM_WARN[perm] ? `<div class="perm-warn">⚠ ${PERM_WARN[perm]}</div>` : ''}
+        </div>
+      </div>`;
+  }
+
+  if (data.aiCanDo) {
+    html += `<div class="sp-section"><div class="sp-label">When AI handles this, it can</div><ul class="sp-list">${data.aiCanDo.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+  }
+
+  if (data.conditions) {
+    html += `<div class="sp-section"><div class="sp-label">Match rules</div><ul class="sp-list cond">${data.conditions.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+  }
+
+  if (data.threshold) {
+    html += `
+      <div class="sp-section">
+        <div class="sp-label">Threshold</div>
+        <div class="thresh-row">
+          <label>Amount &gt;</label>
+          <input type="text" value="$5,000" />
+        </div>
+      </div>`;
+  }
+
+  if (data.fallback) {
+    html += `<div class="sp-section"><div class="sp-label">If AI is unsure (fallback)</div><ul class="sp-list warn"><li>${data.fallback}</li></ul></div>`;
+  }
+
+  document.getElementById('spBody').innerHTML = html;
+  document.getElementById('sidePanel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('sidePanel').classList.remove('open');
+  if (currentEl) { currentEl.classList.remove('selected'); currentEl = null; }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closePanel(); closeStepPicker(); }
+});
+
+// ────────────── Step picker ──────────────
+let stepCounter = 0;
+
+function openStepPicker() {
+  document.getElementById('pickerOverlay').classList.add('open');
+  document.getElementById('stepPicker').classList.add('open');
+  document.getElementById('customStepInput').value = '';
+  document.getElementById('customAddBtn').disabled = true;
+  setTimeout(() => document.getElementById('customStepInput').focus(), 260);
+}
+
+function closeStepPicker() {
+  document.getElementById('pickerOverlay').classList.remove('open');
+  document.getElementById('stepPicker').classList.remove('open');
+}
+
+function insertStep(title, desc) {
+  closeStepPicker();
+  stepCounter++;
+  const id = 'custom_' + stepCounter;
+
+  // Register in NODE_DATA so the side panel works
+  NODE_DATA[id] = {
+    type: 'Action',
+    title: title,
+    desc: desc,
+  };
+
+  const addBtn = document.getElementById('addStepBtn');
+
+  // Connector
+  const conn = document.createElement('div');
+  conn.className = 'connector';
+
+  // Node
+  const node = document.createElement('div');
+  node.className = 'node node-new';
+  node.dataset.node = id;
+  node.dataset.perm = 'suggest';
+  node.innerHTML = `
+    <div class="node-type">Action</div>
+    <div class="node-title">${title}</div>
+    <div class="perm-toggle" onclick="event.stopPropagation()">
+      <button class="perm-opt" data-perm="manual"><span class="pdot"></span>Manual</button>
+      <button class="perm-opt active" data-perm="suggest"><span class="pdot"></span>Suggest</button>
+      <button class="perm-opt" data-perm="auto"><span class="pdot"></span>Auto</button>
+    </div>
+    <div class="node-desc">${desc}</div>
+  `;
+  node.addEventListener('click', () => openPanel(id, node));
+
+  // Wire up the new toggle
+  node.querySelectorAll('.perm-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const newPerm = btn.dataset.perm;
+      node.querySelectorAll('.perm-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      node.dataset.perm = newPerm;
+      if (currentEl === node) openPanel(id, node);
+    });
+  });
+
+  addBtn.before(conn);
+  addBtn.before(node);
+
+  // Auto-open side panel for the new step
+  openPanel(id, node);
+}
+
+function addPresetStep(key, title, desc) {
+  insertStep(title, desc);
+}
+
+function addCustomStep() {
+  const val = document.getElementById('customStepInput').value.trim();
+  if (!val) return;
+  insertStep(val, 'Custom step — describe what this step should do.');
+}
+
+// ────────────── Permission toggle logic ──────────────
+document.querySelectorAll('.perm-toggle').forEach(toggle => {
+  toggle.querySelectorAll('.perm-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const node = toggle.closest('.node');
+      const newPerm = btn.dataset.perm;
+      toggle.querySelectorAll('.perm-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      node.dataset.perm = newPerm;
+      // Refresh side panel if this node is open
+      const id = node.dataset.node;
+      if (currentEl === node) openPanel(id, node);
+    });
+  });
+});
+</script>
+</body>
+</html>
